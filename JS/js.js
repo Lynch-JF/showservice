@@ -1,0 +1,225 @@
+// ======================
+// USUARIOS DE PRUEBA
+// ======================
+const usuarios = [
+  { username: "Juan", password: "1234", rol: "tecnico" },
+  { username: "Xavier", password: "1234", rol: "tecnico" },
+  { username: "Joel", password: "1234", rol: "tecnico" },
+  { username: "Michel", password: "1234", rol: "usuario" },
+  { username: "Pamela", password: "1234", rol: "usuario" },
+  { username: "Eliana", password: "1234", rol: "usuario" },
+  { username: "Doralina", password: "1234", rol: "usuario" },
+  { username: "Anabelle", password: "1234", rol: "usuario" },
+  { username: "Maitte", password: "1234", rol: "usuario" },
+  { username: "Hilda", password: "1234", rol: "usuario" },
+  { username: "Raynieri", password: "1234", rol: "usuario" },
+  { username: "Andreina", password: "1234", rol: "usuario" },
+  { username: "Ana", password: "1234", rol: "usuario" },
+  { username: "Chantal", password: "1234", rol: "usuario" },
+  { username: "Carla", password: "1234", rol: "usuario" },
+  { username: "Yanela", password: "1234", rol: "usuario" },
+  { username: "Elvin", password: "1234", rol: "usuario" },
+  { username: "Fernando", password: "1234", rol: "usuario" },
+  { username: "Clara", password: "1234", rol: "usuario" },
+  { username: "Francisca", password: "1234", rol: "usuario" },
+  { username: "Elizabeth", password: "1234", rol: "usuario" },
+  { username: "Miladys", password: "1234", rol: "usuario" },
+  { username: "Fanty", password: "1234", rol: "usuario" },
+  { username: "Brandy", password: "1234", rol: "usuario" },
+  { username: "Joel", password: "1234", rol: "usuario" },
+  { username: "Joel", password: "1234", rol: "usuario" },
+  { username: "Joel", password: "1234", rol: "usuario" },
+  { username: "Joel", password: "1234", rol: "usuario" }
+];
+
+// ======================
+// LOGIN
+// ======================
+function login() {
+  let user = document.getElementById("username").value;
+  let pass = document.getElementById("password").value;
+  let error = document.getElementById("login-error");
+
+  let encontrado = usuarios.find(u => u.username === user && u.password === pass);
+
+  if (encontrado) {
+    localStorage.setItem("usuario", user);
+    localStorage.setItem("rol", encontrado.rol);
+    if (encontrado.rol === "tecnico") {
+      window.location.href = "asistencia.html";
+    } else {
+      window.location.href = "dashboard.html";
+    }
+  } else {
+    error.textContent = "Usuario o contraseña incorrectos.";
+  }
+}
+
+function logout() {
+  localStorage.removeItem("usuario");
+  localStorage.removeItem("rol");
+  window.location.href = "index.html";
+}
+
+// ======================
+// API SheetBest
+// ======================
+const API_URL = "https://api.sheetbest.com/sheets/6c408e55-23aa-45f2-bf92-34a0fa26db33";
+
+// ======================
+// CREAR TICKET
+// ======================
+function crearTicket() {
+  let titulo = document.getElementById("titulo").value;
+  let descripcion = document.getElementById("descripcion").value;
+  let depto = document.getElementById("depto").value; // 🔹 corregido
+  let usuario = localStorage.getItem("usuario") || "Invitado";
+
+  if (!titulo || !descripcion || !depto) {
+    alert("⚠️ Completa todos los campos");
+    return;
+  }
+
+  let nuevoTicket = {
+    id: Date.now().toString(), // 🔹 siempre string, para Sheets
+    usuario: usuario,
+    depto: depto,
+    titulo: titulo,
+    descripcion: descripcion,
+    fecha: new Date().toLocaleString(),
+    estado: "Pendiente"
+  };
+
+  console.log("➡️ Enviando a SheetBest:", nuevoTicket); // debug
+
+  fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(nuevoTicket)
+  })
+    .then(res => res.json())
+    .then(() => {
+      alert("✅ Ticket creado con éxito");
+      document.getElementById("titulo").value = "";
+      document.getElementById("descripcion").value = "";
+      document.getElementById("depto").value = "";
+      mostrarTickets();
+    })
+    .catch(err => console.error("Error:", err));
+}
+
+// ======================
+// MOSTRAR TICKETS USUARIO
+// ======================
+function mostrarTickets() {
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+      let cont = document.getElementById("listaTickets");
+      if (!cont) return;
+
+      let user = localStorage.getItem("usuario");
+      cont.innerHTML = "";
+
+      data.filter(t => t.usuario === user).forEach(t => {
+        let div = document.createElement("div");
+        div.className = "ticket-item";
+        div.innerHTML = `
+          <strong>[${t.depto}]</strong> ${t.titulo}<br>
+          ${t.descripcion}<br>
+          <small>${t.fecha}</small><br>
+          Estado: <b>${t.estado}</b>
+          ${t.estado === "Pendiente" ? `<button class="btn-delete" onclick="eliminarTicket('${t.id}')">🗑️</button>` : ""}
+        `;
+        cont.appendChild(div);
+      });
+    })
+    .catch(err => console.error("Error cargando tickets:", err));
+}
+
+// ======================
+// ELIMINAR TICKET (solo pendiente)
+// ======================
+function eliminarTicket(id) {
+  if (!id) {
+    console.error("❌ No se encontró ID");
+    return;
+  }
+
+  fetch(`${API_URL}/id/${id}`, { method: "DELETE" })
+    .then(res => res.json())
+    .then(() => {
+      alert("🗑️ Ticket eliminado");
+      mostrarTickets();
+    })
+    .catch(err => console.error("Error eliminando:", err));
+}
+
+// ======================
+// MOSTRAR TICKETS PARA TÉCNICO
+// ======================
+function mostrarTodosTickets() {
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+      let pendientes = document.getElementById("pendientes");
+      let enProceso = document.getElementById("enProceso");
+      let resueltos = document.getElementById("resueltos");
+
+      if (!pendientes) return;
+
+      pendientes.innerHTML = "";
+      enProceso.innerHTML = "";
+      resueltos.innerHTML = "";
+
+      data.forEach(t => {
+        let div = document.createElement("div");
+        div.className = "ticket-card";
+        div.innerHTML = `
+          <strong>[${t.depto}]</strong> ${t.titulo} - ${t.usuario}<br>
+          <em>${t.descripcion}</em><br>
+          <small>${t.fecha}</small><br>
+          Estado: <b>${t.estado}</b><br>
+          <button class="btn-proceso" onclick="cambiarEstado('${t.id}', 'En Proceso')">En Proceso</button>
+          <button class="btn-resuelto" onclick="cambiarEstado('${t.id}', 'Resuelto')">Resuelto</button>
+        `;
+
+        if (t.estado === "Pendiente") pendientes.appendChild(div);
+        else if (t.estado === "En Proceso") enProceso.appendChild(div);
+        else resueltos.appendChild(div);
+      });
+    })
+    .catch(err => console.error("Error mostrando tickets técnico:", err));
+}
+
+// ======================
+// CAMBIAR ESTADO (PATCH)
+// ======================
+function cambiarEstado(id, nuevoEstado) {
+  if (!id) {
+    console.error("❌ No se encontró ID");
+    return;
+  }
+
+  fetch(`${API_URL}/id/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ estado: nuevoEstado })
+  })
+    .then(res => res.json())
+    .then(() => {
+      mostrarTodosTickets();
+    })
+    .catch(err => console.error("Error cambiando estado:", err));
+}
+
+// ======================
+// AUTO CARGA
+// ======================
+window.onload = function () {
+  if (localStorage.getItem("rol") === "usuario") {
+    mostrarTickets();
+  } else if (localStorage.getItem("rol") === "tecnico") {
+    mostrarTodosTickets();
+  }
+};

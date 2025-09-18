@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel de Asistencia</title>
+      <link rel="icon" type="image/png" href="/IMG/2.ico">
+  <link rel="stylesheet" href="/CSS/css.css">
+</head>
+<body>
+  <nav class="navbar">
+    <h2>Panel Técnico</h2>
+    <button onclick="logout()">Cerrar Sesión</button>
+  </nav>
+
+  <div class="container grid-3">
+    <div>
+      <h3>Pendientes</h3>
+      <div id="pendientes" class="ticket-column"></div>
+    </div>
+    <div>
+      <h3>En Proceso</h3>
+      <div id="enProceso" class="ticket-column"></div>
+    </div>
+    <div>
+      <h3>Resueltos</h3>
+      <div id="resueltos" class="ticket-column"></div>
+    </div>
+  </div>
+
+  <script src="/JS/js.js"></script>
+</body>
+</html>

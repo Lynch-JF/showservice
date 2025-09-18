@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Usuario</title>
+      <link rel="icon" type="image/png" href="/IMG/2.ico">
+  <link rel="stylesheet" href="/CSS/css.css">
+</head>
+<body>
+  <nav class="navbar">
+    <h2>Mis Tickets</h2>
+    <button onclick="logout()">Cerrar Sesión</button>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <h3>Crear nuevo ticket</h3>
+      <input type="text" id="titulo" placeholder="Título del problema">
+      <textarea id="descripcion" placeholder="Describe tu problema..."></textarea>
+      <select id="depto">
+        <option value="">-- Selecciona Departamento --</option>
+        <option value="IT">IT</option>
+        <option value="Recursos Humanos">Recursos Humanos</option>
+        <option value="Contabilidad">Contabilidad</option>
+        <option value="Showroom 1">Showroom 1</option>
+        <option value="Showroom 2">Showroom 2</option>
+        <option value="Facturacióm">Facturacióm</option>
+        <option value="Tesorería">Tesorería</option>
+        <option value="Mercadeo">Mercadeo</option>
+        <option value="Logistica">Logistica</option>
+        <option value="Credito y cobros">Credito y cobros</option>
+        <option value="Recepción">Recepción</option>
+      </select>
+      <button onclick="crearTicket()">Enviar Ticket</button>
+    </div>
+
+    <h3 style="margin-top:20px;">📋 Mis Tickets</h3>
+    <div id="listaTickets" class="ticket-list"></div>
+  </div>
+
+  <script src="/JS/js.js"></script>
+</body>
+</html>
