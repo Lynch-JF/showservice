@@ -26,10 +26,10 @@ const usuarios = [
   { username: "Miladys", password: "1234", rol: "usuario" },
   { username: "Fanty", password: "1234", rol: "usuario" },
   { username: "Brandy", password: "1234", rol: "usuario" },
-  { username: "Joel", password: "1234", rol: "usuario" },
-  { username: "Joel", password: "1234", rol: "usuario" },
-  { username: "Joel", password: "1234", rol: "usuario" },
-  { username: "Joel", password: "1234", rol: "usuario" }
+  { username: "Yanna", password: "1234", rol: "tecnico" },
+  { username: "yanna", password: "1234", rol: "usuario" },
+  { username: "joel", password: "1234", rol: "usuario" },
+  { username: "juan", password: "1234", rol: "usuario" }
 ];
 
 // ======================
