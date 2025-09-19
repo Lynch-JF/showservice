@@ -15,5 +15,19 @@
     <p id="login-error" class="error"></p>
   </div>
   <script src="/JS/js.js"></script>
+
+  <script>
+  document.getElementById("username").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      login();
+    }
+  });
+
+  document.getElementById("password").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      login();
+    }
+  });
+</script>
 </body>
 </html>
