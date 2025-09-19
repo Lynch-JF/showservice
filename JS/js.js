@@ -46,9 +46,9 @@ function login() {
     localStorage.setItem("usuario", user);
     localStorage.setItem("rol", encontrado.rol);
     if (encontrado.rol === "tecnico") {
-      window.location.href = "asistencia.html";
+      window.location.href = "Asistencia.html";
     } else {
-      window.location.href = "dashboard.html";
+      window.location.href = "Dashboard.html";
     }
   } else {
     error.textContent = "Usuario o contraseña incorrectos.";
