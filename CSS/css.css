@@ -170,7 +170,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url("technology-7111756_1280.jpg") no-repeat center center/cover; /* 👉 Cambia fondo.jpg por tu imagen */
+  background: url("/IMG/technology-7111756_1280.jpg") no-repeat center center/cover; /* 👉 Cambia fondo.jpg por tu imagen */
 }
 
 /* Capa oscura encima de la imagen */
