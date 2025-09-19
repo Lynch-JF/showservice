@@ -2,16 +2,9 @@
 // USUARIOS DE PRUEBA
 // ======================
 const usuarios = [
-  // ==== TÉCNICOS ====
   { username: "Juan", password: "1234", rol: "tecnico" },
-  { username: "Joel", password: "1234", rol: "tecnico" },
-  { username: "Yanna", password: "1234", rol: "tecnico" },
-  { username: "joel", password: "1234", rol: "tecnico" },
-  { username: "juan", password: "1234", rol: "tecnico" },
-  { username: "yanna", password: "1234", rol: "tecnico" },
-
-  // ==== USUARIOS ====
   { username: "michel", password: "1234", rol: "usuario" },
+  { username: "Joel", password: "1234", rol: "tecnico" },
   { username: "Michel", password: "1234", rol: "usuario" },
   { username: "Pamela", password: "1234", rol: "usuario" },
   { username: "Eliana", password: "1234", rol: "usuario" },
@@ -32,7 +25,11 @@ const usuarios = [
   { username: "Elizabeth", password: "1234", rol: "usuario" },
   { username: "Miladys", password: "1234", rol: "usuario" },
   { username: "elizabeth", password: "1234", rol: "usuario" },
-  { username: "miladys", password: "1234", rol: "usuario" }
+  { username: "miladys", password: "1234", rol: "usuario" },
+  { username: "Yanna", password: "1234", rol: "tecnico" },
+  { username: "yanna", password: "1234", rol: "tecnico" },
+  { username: "joel", password: "1234", rol: "tecnico" },
+  { username: "juan", password: "1234", rol: "tecnico" }
 ];
 
 
