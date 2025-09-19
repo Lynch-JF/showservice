@@ -1,39 +1,40 @@
 // ======================
 // USUARIOS DE PRUEBA
 // ======================
-const tecnicos = [
-  { username: "Juan", password: "1234", rol: "tecnico" },
-  { username: "juan", password: "1234", rol: "tecnico" },
-  { username: "Joel", password: "1234", rol: "tecnico" },
-  { username: "joel", password: "1234", rol: "tecnico" },
-  { username: "Yanna", password: "1234", rol: "tecnico" },
-  { username: "yanna", password: "1234", rol: "tecnico" }
-];
-
 const usuarios = [
+  // ==== TÉCNICOS ====
+  { username: "Juan", password: "1234", rol: "tecnico" },
+  { username: "Joel", password: "1234", rol: "tecnico" },
+  { username: "Yanna", password: "1234", rol: "tecnico" },
+  { username: "joel", password: "1234", rol: "tecnico" },
+  { username: "juan", password: "1234", rol: "tecnico" },
+  { username: "yanna", password: "1234", rol: "tecnico" },
+
+  // ==== USUARIOS ====
   { username: "michel", password: "1234", rol: "usuario" },
   { username: "Michel", password: "1234", rol: "usuario" },
   { username: "Pamela", password: "1234", rol: "usuario" },
-  { username: "pamela", password: "1234", rol: "usuario" },
   { username: "Eliana", password: "1234", rol: "usuario" },
-  { username: "eliana", password: "1234", rol: "usuario" },
+  { username: "pamela", password: "1234", rol: "usuario" },
   { username: "Anabell", password: "1234", rol: "usuario" },
-  { username: "anabell", password: "1234", rol: "usuario" },
   { username: "Maitte", password: "1234", rol: "usuario" },
-  { username: "maytte", password: "1234", rol: "usuario" },
   { username: "Hilda", password: "1234", rol: "usuario" },
   { username: "hilda", password: "1234", rol: "usuario" },
+  { username: "anabell", password: "1234", rol: "usuario" },
+  { username: "maytte", password: "1234", rol: "usuario" },
   { username: "Chantal", password: "1234", rol: "usuario" },
   { username: "Carla", password: "1234", rol: "usuario" },
+  { username: "eliana", password: "1234", rol: "usuario" },
   { username: "carla", password: "1234", rol: "usuario" },
-  { username: "Clara", password: "1234", rol: "usuario" },
   { username: "clara", password: "1234", rol: "usuario" },
+  { username: "Clara", password: "1234", rol: "usuario" },
   { username: "Francisca", password: "1234", rol: "usuario" },
   { username: "Elizabeth", password: "1234", rol: "usuario" },
-  { username: "elizabeth", password: "1234", rol: "usuario" },
   { username: "Miladys", password: "1234", rol: "usuario" },
+  { username: "elizabeth", password: "1234", rol: "usuario" },
   { username: "miladys", password: "1234", rol: "usuario" }
 ];
+
 
 
 // ======================
