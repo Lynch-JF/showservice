@@ -33,7 +33,10 @@
 
     <p>¿Con quién realizaste la tarea?</p>
     <label><input type="checkbox" value="Solo" class="participante"> Solo</label><br>
-    <label><input type="checkbox" value="Otro técnico" class="participante"> Otro técnico</label><br>
+    <label><input type="checkbox" value="Hptronics" class="participante"> Hptronics</label><br>
+    <label><input type="checkbox" value="Yanna" class="participante"> Yanna</label><br>
+    <label><input type="checkbox" value="Joel" class="participante"> Joel</label><br>
+    <label><input type="checkbox" value="Johnson" class="participante"> Johnson</label><br>
     <label><input type="checkbox" value="Soporte externo" class="participante"> Soporte externo</label><br>
 
     <p>Explica cómo se resolvió:</p>
@@ -44,6 +47,98 @@
     <button onclick="cerrarModal()">Cancelar</button>
   </div>
 </div>
+
+
+<style>
+/* Fondo oscuro del modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Contenido del modal */
+.modal-content {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 15px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Checkbox agrupados en columnas */
+.checkbox-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.checkbox-group label {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Textarea estilizado */
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  resize: none;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+/* Botones */
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.btn-guardar {
+  background: #28a745;
+  color: white;
+}
+
+.btn-guardar:hover {
+  background: #218838;
+}
+
+.btn-cancelar {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-cancelar:hover {
+  background: #b02a37;
+}
+</style>
+
 
   <script src="JS/js.js"></script>
 </body>
