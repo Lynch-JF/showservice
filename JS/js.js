@@ -32,8 +32,6 @@ const usuarios = [
   { username: "juan", password: "1234", rol: "tecnico" }
 ];
 
-
-
 // ======================
 // LOGIN
 // ======================
@@ -62,7 +60,6 @@ function logout() {
   localStorage.removeItem("rol");
   window.location.href = "index.html";
 }
-
 // ======================
 // API SheetBest
 // ======================
@@ -74,7 +71,7 @@ const API_URL = "https://api.sheetbest.com/sheets/6c408e55-23aa-45f2-bf92-34a0fa
 function crearTicket() {
   let titulo = document.getElementById("titulo").value;
   let descripcion = document.getElementById("descripcion").value;
-  let depto = document.getElementById("depto").value; // 🔹 corregido
+  let depto = document.getElementById("depto").value;
   let usuario = localStorage.getItem("usuario") || "Invitado";
 
   if (!titulo || !descripcion || !depto) {
@@ -83,16 +80,17 @@ function crearTicket() {
   }
 
   let nuevoTicket = {
-    id: Date.now().toString(), // 🔹 siempre string, para Sheets
+    id: Date.now().toString(),
     usuario: usuario,
     depto: depto,
     titulo: titulo,
     descripcion: descripcion,
     fecha: new Date().toLocaleString(),
-    estado: "Pendiente"
+    estado: "Pendiente",
+    resolucion: "",
+    participantes: "",
+    fecha_resuelto: ""
   };
-
-  console.log("➡️ Enviando a SheetBest:", nuevoTicket); // debug
 
   fetch(API_URL, {
     method: "POST",
@@ -126,12 +124,26 @@ function mostrarTickets() {
       data.filter(t => t.usuario === user).forEach(t => {
         let div = document.createElement("div");
         div.className = "ticket-item";
+
+        let extra = "";
+        if (t.estado === "Resuelto") {
+          extra = `
+            <div class="resolucion-box">
+              <strong>✅ Resolución:</strong><br>
+              ${t.resolucion || "No hay detalle"}<br>
+              <small><b>Participantes:</b> ${t.participantes || "N/A"}</small><br>
+              <small><b>Fecha Resuelto:</b> ${t.fecha_resuelto || "-"}</small>
+            </div>
+          `;
+        }
+
         div.innerHTML = `
           <strong>[${t.depto}]</strong> ${t.titulo}<br>
           ${t.descripcion}<br>
           <small>${t.fecha}</small><br>
           Estado: <b>${t.estado}</b>
           ${t.estado === "Pendiente" ? `<button class="btn-delete" onclick="eliminarTicket('${t.id}')">🗑️</button>` : ""}
+          ${extra}
         `;
         cont.appendChild(div);
       });
@@ -177,13 +189,29 @@ function mostrarTodosTickets() {
       data.forEach(t => {
         let div = document.createElement("div");
         div.className = "ticket-card";
+
+        let extra = "";
+        if (t.estado === "Resuelto") {
+          extra = `
+            <div class="resolucion-box">
+              <strong>✅ Resolución:</strong><br>
+              ${t.resolucion || "No hay detalle"}<br>
+              <small><b>Participantes:</b> ${t.participantes || "N/A"}</small><br>
+              <small><b>Fecha Resuelto:</b> ${t.fecha_resuelto || "-"}</small>
+            </div>
+          `;
+        }
+
         div.innerHTML = `
           <strong>[${t.depto}]</strong> ${t.titulo} - ${t.usuario}<br>
           <em>${t.descripcion}</em><br>
           <small>${t.fecha}</small><br>
           Estado: <b>${t.estado}</b><br>
-          <button class="btn-proceso" onclick="cambiarEstado('${t.id}', 'En Proceso')">En Proceso</button>
-          <button class="btn-resuelto" onclick="cambiarEstado('${t.id}', 'Resuelto')">Resuelto</button>
+          ${t.estado !== "Resuelto" ? `
+            <button class="btn-proceso" onclick="cambiarEstado('${t.id}', 'En Proceso')">En Proceso</button>
+            <button class="btn-resuelto" onclick="marcarResuelto('${t.id}')">Resuelto</button>
+          ` : ""}
+          ${extra}
         `;
 
         if (t.estado === "Pendiente") pendientes.appendChild(div);
@@ -216,17 +244,9 @@ function cambiarEstado(id, nuevoEstado) {
 }
 
 // ======================
-// AUTO CARGA
+// MODAL RESOLVER TICKET
 // ======================
-window.onload = function () {
-  if (localStorage.getItem("rol") === "usuario") {
-    mostrarTickets();
-  } else if (localStorage.getItem("rol") === "tecnico") {
-    mostrarTodosTickets();
-  }
-};
-
-let ticketResueltoId = null; // Para saber qué ticket se está resolviendo
+let ticketResueltoId = null;
 
 function marcarResuelto(id) {
   ticketResueltoId = id;
@@ -235,6 +255,8 @@ function marcarResuelto(id) {
 
 function cerrarModal() {
   document.getElementById("resueltoModal").style.display = "none";
+  document.getElementById("detalleResolucion").value = "";
+  document.querySelectorAll(".participante").forEach(c => c.checked = false);
   ticketResueltoId = null;
 }
 
@@ -264,7 +286,30 @@ function guardarResolucion() {
     .then(() => {
       alert("✅ Ticket marcado como resuelto");
       cerrarModal();
+      mostrarTodosTickets();
       mostrarTickets();
     })
     .catch(err => console.error("Error:", err));
 }
+
+// ======================
+// AUTO REFRESH cada 30s
+// ======================
+setInterval(() => {
+  if (localStorage.getItem("rol") === "usuario") {
+    mostrarTickets();
+  } else if (localStorage.getItem("rol") === "tecnico") {
+    mostrarTodosTickets();
+  }
+}, 30000);
+
+// ======================
+// AUTO CARGA
+// ======================
+window.onload = function () {
+  if (localStorage.getItem("rol") === "usuario") {
+    mostrarTickets();
+  } else if (localStorage.getItem("rol") === "tecnico") {
+    mostrarTodosTickets();
+  }
+};
