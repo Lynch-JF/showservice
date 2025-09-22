@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Panel de Asistencia</title>
-      <link rel="icon" type="image/png" href="/IMG/2.ico">
-  <link rel="stylesheet" href="/CSS/css.css">
+      <link rel="icon" type="image/png" href="IMG/2.ico">
+  <link rel="stylesheet" href="CSS/css.css">
 </head>
 <body>
   <nav class="navbar">
@@ -26,7 +26,25 @@
       <div id="resueltos" class="ticket-column"></div>
     </div>
   </div>
+<!-- Modal oculto al inicio -->
+<div id="resueltoModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
+  <div style="background:#fff; padding:20px; border-radius:10px; max-width:500px; margin:100px auto;">
+    <h2>Detalles de resolución</h2>
 
-  <script src="/JS/js.js"></script>
+    <p>¿Con quién realizaste la tarea?</p>
+    <label><input type="checkbox" value="Solo" class="participante"> Solo</label><br>
+    <label><input type="checkbox" value="Otro técnico" class="participante"> Otro técnico</label><br>
+    <label><input type="checkbox" value="Soporte externo" class="participante"> Soporte externo</label><br>
+
+    <p>Explica cómo se resolvió:</p>
+    <textarea id="detalleResolucion" rows="4" style="width:100%;"></textarea>
+
+    <br><br>
+    <button onclick="guardarResolucion()">Guardar</button>
+    <button onclick="cerrarModal()">Cancelar</button>
+  </div>
+</div>
+
+  <script src="JS/js.js"></script>
 </body>
 </html>

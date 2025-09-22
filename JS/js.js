@@ -225,3 +225,46 @@ window.onload = function () {
     mostrarTodosTickets();
   }
 };
+
+let ticketResueltoId = null; // Para saber qué ticket se está resolviendo
+
+function marcarResuelto(id) {
+  ticketResueltoId = id;
+  document.getElementById("resueltoModal").style.display = "block";
+}
+
+function cerrarModal() {
+  document.getElementById("resueltoModal").style.display = "none";
+  ticketResueltoId = null;
+}
+
+function guardarResolucion() {
+  let checks = document.querySelectorAll(".participante:checked");
+  let participantes = Array.from(checks).map(c => c.value).join(", ");
+  let detalle = document.getElementById("detalleResolucion").value;
+
+  if (!detalle) {
+    alert("⚠️ Escribe cómo se resolvió la tarea");
+    return;
+  }
+
+  let updateData = {
+    estado: "Resuelto",
+    participantes: participantes,
+    resolucion: detalle,
+    fecha_resuelto: new Date().toLocaleString()
+  };
+
+  fetch(`${API_URL}/id/${ticketResueltoId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updateData)
+  })
+    .then(res => res.json())
+    .then(() => {
+      alert("✅ Ticket marcado como resuelto");
+      cerrarModal();
+      mostrarTickets();
+    })
+    .catch(err => console.error("Error:", err));
+}
