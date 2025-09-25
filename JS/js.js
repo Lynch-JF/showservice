@@ -313,3 +313,12 @@ window.onload = function () {
     mostrarTodosTickets();
   }
 };
+
+function abrirAyuda() {
+  document.getElementById("ayudaModal").style.display = "flex";
+}
+
+function cerrarAyuda() {
+  document.getElementById("ayudaModal").style.display = "none";
+}
+

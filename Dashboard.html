@@ -3,13 +3,95 @@
 <head>
   <meta charset="UTF-8">
   <title>Dashboard Usuario</title>
-      <link rel="icon" type="image/png" href="IMG/2.ico">
+  <link rel="icon" type="image/png" href="IMG/2.ico">
   <link rel="stylesheet" href="CSS/css.css">
+
+  <style>
+    /* === Estilos del modal de ayuda rápida === */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      width: 80%;
+      max-width: 800px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .card-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .card-ayuda {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      width: 200px;
+      text-align: center;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .card-ayuda:hover {
+      transform: translateY(-5px);
+      box-shadow: 0px 6px 15px rgba(0,0,0,0.2);
+    }
+
+    .card-ayuda img {
+      border-radius: 50%;
+      margin-bottom: 15px;
+      width: 100px;
+      height: 100px;
+    }
+
+    .modal-buttons {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .btn-cerrar {
+      padding: 10px 20px;
+      border: none;
+      background: #ff4d4d;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-cerrar:hover {
+      background: #e60000;
+    }
+  </style>
 </head>
 <body>
   <nav class="navbar">
     <h2>Mis Tickets</h2>
-    <button onclick="logout()">Cerrar Sesión</button>
+    <div style="display:flex; gap:10px;">
+      <button onclick="abrirAyuda()">Ayuda rápida</button>
+      <button onclick="logout()">Cerrar Sesión</button>
+    </div>
   </nav>
 
   <div class="container">
@@ -38,6 +120,56 @@
     <div id="listaTickets" class="ticket-list"></div>
   </div>
 
+  <!-- ================== MODAL AYUDA ================== -->
+  <div id="ayudaModal" class="modal">
+    <div class="modal-content">
+      <h2 style="text-align:center; margin-bottom: 20px;">📞 Ayuda Rápida</h2>
+      <p style="text-align:center; margin-bottom: 20px;">Contacta a nuestros técnicos disponibles:</p>
+
+      <div class="card-container">
+        <!-- Card 1 -->
+        <div class="card-ayuda">
+<img src="https://ui-avatars.com/api/?name=Yanna&background=0D8ABC&color=fff" alt="Yanna">
+          <h3>YANNA MARTINEZ</h3>
+          <p>📧 y.martinez@grupomichel.com</p>
+          <p>📱 -- -- --</p>
+          <p>📟 Flota: (809) 390-5286</p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="card-ayuda">
+<img src="https://ui-avatars.com/api/?name=Joel&background=F39C12&color=fff" alt="Joel">
+          <h3>Joel Holguin</h3>
+          <p>📧 j.holguin@grupomichel.com</p>
+          <p>📱 -- -- --</p>
+          <p>📟 Flota: (809) 722-2874</p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="card-ayuda">
+<img src="https://ui-avatars.com/api/?name=JuanFrancisco&background=27AE60&color=fff" alt="Juan Francisco">
+          <h3>Juan Francisco Jimenez</h3>
+          <p>📧 departamentoIT@grupomichel.com</p>
+          <p>📱 (809) 931-3720</p>
+          <p>📟 Flota: (809) 722-1076</p>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button class="btn-cerrar" onclick="cerrarAyuda()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
   <script src="JS/js.js"></script>
+  <script>
+    function abrirAyuda() {
+      document.getElementById("ayudaModal").style.display = "flex";
+    }
+
+    function cerrarAyuda() {
+      document.getElementById("ayudaModal").style.display = "none";
+    }
+  </script>
 </body>
 </html>

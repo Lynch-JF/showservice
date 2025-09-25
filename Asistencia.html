@@ -7,11 +7,55 @@
   <link rel="stylesheet" href="CSS/css.css">
 </head>
 <body>
-  <nav class="navbar">
-    <h2>Panel Técnico</h2>
+ <nav class="navbar">
+  <h2>Panel Técnico</h2>
+  <div style="display:flex; gap:10px;">
+    <button onclick="abrirAyuda()">Ayuda rápida</button>
     <button onclick="logout()">Cerrar Sesión</button>
-  </nav>
+  </div>
+</nav>
 
+<!-- ================== MODAL AYUDA ================== -->
+<div id="ayudaModal" class="modal">
+  <div class="modal-content">
+    <h2 style="text-align:center; margin-bottom: 20px;">📞 Ayuda Rápida</h2>
+    <p style="text-align:center; margin-bottom: 20px;">Contacta a nuestros técnicos disponibles:</p>
+
+    <div class="card-container">
+      <!-- Card 1 -->
+      <div class="card">
+        <img src="https://via.placeholder.com/100" alt="Yanna">
+        <h3>Yanna</h3>
+        <p>📧 yanna@empresa.com</p>
+        <p>📱 829-000-0000</p>
+        <p>📟 Flota: 1234</p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card">
+        <img src="https://via.placeholder.com/100" alt="Joel">
+        <h3>Joel</h3>
+        <p>📧 joel@empresa.com</p>
+        <p>📱 849-000-0000</p>
+        <p>📟 Flota: 5678</p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="card">
+        <img src="https://via.placeholder.com/100" alt="Johnson">
+        <h3>Johnson</h3>
+        <p>📧 johnson@empresa.com</p>
+        <p>📱 809-000-0000</p>
+        <p>📟 Flota: 9999</p>
+      </div>
+    </div>
+
+    <div class="modal-buttons" style="text-align:center; margin-top:20px;">
+      <button class="btn btn-cancelar" onclick="cerrarAyuda()">Cerrar</button>
+    </div>
+  </div>
+</div>
+                                                      
   <div class="container grid-3">
     <div>
       <h3>Pendientes</h3>
@@ -147,6 +191,43 @@ textarea {
 .btn-cancelar:hover {
   background: #b02a37;
 }
+
+/* Contenedor de cards */
+.card-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Card individual */
+.card {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+  padding: 20px;
+  width: 200px;
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 6px 15px rgba(0,0,0,0.2);
+}
+
+/* Imagen redonda */
+.card img {
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+/* Nombre */
+.card h3 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
 </style>
 
   <script src="JS/js.js"></script>
