@@ -250,7 +250,7 @@ let ticketResueltoId = null;
 
 function marcarResuelto(id) {
   ticketResueltoId = id;
-  document.getElementById("resueltoModal").style.display = "block";
+  document.getElementById("resueltoModal").style.display = "flex";
 }
 
 function cerrarModal() {
