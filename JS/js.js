@@ -2,7 +2,7 @@
 // USUARIOS DE PRUEBA
 // ======================
 const usuarios = [
-  { username: "Juan", password: "1234", rol: "tecnico" },
+  { username: "Juan",  password: "1234", rol: "tecnico" },
   { username: "michel", password: "1234", rol: "usuario" },
   { username: "Joel", password: "1234", rol: "tecnico" },
   { username: "Michel", password: "1234", rol: "usuario" },
