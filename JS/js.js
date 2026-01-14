@@ -1,36 +1,63 @@
 // ======================
 // USUARIOS DE PRUEBA
 // ======================
-const usuarios = [
-  { username: "Juan",  password: "1234", rol: "tecnico" },
-  { username: "michel", password: "1234", rol: "usuario" },
-  { username: "Joel", password: "1234", rol: "tecnico" },
-  { username: "Michel", password: "1234", rol: "usuario" },
-  { username: "Pamela", password: "1234", rol: "usuario" },
-  { username: "Eliana", password: "1234", rol: "usuario" },
-  { username: "pamela", password: "1234", rol: "usuario" },
-  { username: "Anabell", password: "1234", rol: "usuario" },
-  { username: "Maitte", password: "1234", rol: "usuario" },
-  { username: "Hilda", password: "1234", rol: "usuario" },
-  { username: "hilda", password: "1234", rol: "usuario" },
-  { username: "anabell", password: "1234", rol: "usuario" },
-  { username: "maytte", password: "1234", rol: "usuario" },
-  { username: "Chantal", password: "1234", rol: "usuario" },
-  { username: "Carla", password: "1234", rol: "usuario" },
-  { username: "eliana", password: "1234", rol: "usuario" },
-  { username: "carla", password: "1234", rol: "usuario" },
-  { username: "clara", password: "1234", rol: "usuario" },
-  { username: "Clara", password: "1234", rol: "usuario" },
-  { username: "Francisca", password: "1234", rol: "usuario" },
-  { username: "Elizabeth", password: "1234", rol: "usuario" },
-  { username: "Miladys", password: "1234", rol: "usuario" },
-  { username: "elizabeth", password: "1234", rol: "usuario" },
-  { username: "miladys", password: "1234", rol: "usuario" },
-  { username: "Yanna", password: "1234", rol: "tecnico" },
-  { username: "yanna", password: "1234", rol: "tecnico" },
-  { username: "joel", password: "1234", rol: "tecnico" },
-  { username: "juan", password: "1234", rol: "tecnico" }
-];
+const usuarios = {
+  tecnico: [
+    { username: "Juan", password: "1234", rol: "tecnico" },
+    { username: "juan", password: "1234", rol: "tecnico" },
+    { username: "JUAN", password: "1234", rol: "tecnico" },
+    { username: "Joel", password: "1234", rol: "tecnico" },
+    { username: "joel", password: "1234", rol: "tecnico" },
+    { username: "Yanna", password: "1234", rol: "tecnico" },
+    { username: "yanna", password: "1234", rol: "tecnico" }
+  ],
+
+  usuario: [
+    { username: "michel", password: "1234", rol: "usuario" },
+    { username: "Michel", password: "1234", rol: "usuario" },
+    { username: "Pamela", password: "1234", rol: "usuario" },
+    { username: "pamela", password: "1234", rol: "usuario" },
+    { username: "Eliana", password: "1234", rol: "usuario" },
+    { username: "eliana", password: "1234", rol: "usuario" },
+    { username: "Anabell", password: "1234", rol: "usuario" },
+    { username: "anabell", password: "1234", rol: "usuario" },
+    { username: "Maitte", password: "1234", rol: "usuario" },
+    { username: "maytte", password: "1234", rol: "usuario" },
+    { username: "Hilda", password: "1234", rol: "usuario" },
+    { username: "hilda", password: "1234", rol: "usuario" },
+    { username: "Chantal", password: "1234", rol: "usuario" },
+    { username: "chantal", password: "1234", rol: "usuario" },
+    { username: "Carla", password: "1234", rol: "usuario" },
+    { username: "carla", password: "1234", rol: "usuario" },
+    { username: "Clara", password: "1234", rol: "usuario" },
+    { username: "clara", password: "1234", rol: "usuario" },
+    { username: "Francisca", password: "1234", rol: "usuario" },
+    { username: "francisca", password: "1234", rol: "usuario" },
+    { username: "Miladys", password: "1234", rol: "usuario" },
+    { username: "miladys", password: "1234", rol: "usuario" },
+    { username: "Jasnaya", password: "1234", rol: "usuario" },
+    { username: "jasnaya", password: "1234", rol: "usuario" },
+    { username: "Enelson", password: "1234", rol: "usuario" },
+    { username: "enelson", password: "1234", rol: "usuario" },
+    { username: "Alexandra", password: "1234", rol: "usuario" },
+    { username: "alexandra", password: "1234", rol: "usuario" },
+    { username: "Ricarda", password: "1234", rol: "usuario" },
+    { username: "ricarda", password: "1234", rol: "usuario" },
+    { username: "Eduard", password: "1234", rol: "usuario" },
+    { username: "eduard", password: "1234", rol: "usuario" },
+    { username: "Enmanuel", password: "1234", rol: "usuario" },
+    { username: "enmanuel", password: "1234", rol: "usuario" },
+    { username: "Francis", password: "1234", rol: "usuario" },
+    { username: "francis", password: "1234", rol: "usuario" },
+    { username: "Edgar", password: "1234", rol: "usuario" },
+    { username: "edgar", password: "1234", rol: "usuario" },
+    { username: "Merlyn", password: "1234", rol: "usuario" },
+    { username: "merlyn", password: "1234", rol: "usuario" },
+    { username: "Elaine", password: "1234", rol: "usuario" },
+    { username: "elaine", password: "1234", rol: "usuario" },
+  ]
+};
+
 
 
 // ======================
@@ -41,11 +68,21 @@ function login() {
   let pass = document.getElementById("password").value;
   let error = document.getElementById("login-error");
 
-  let encontrado = usuarios.find(u => u.username === user && u.password === pass);
+  // Unimos todos los usuarios
+  const todos = [
+    ...usuarios.tecnico,
+    ...usuarios.usuario
+  ];
+
+  // Búsqueda sin importar mayúsculas/minúsculas
+  let encontrado = todos.find(
+    u => u.username.toLowerCase() === user.toLowerCase() && u.password === pass
+  );
 
   if (encontrado) {
-    localStorage.setItem("usuario", user);
+    localStorage.setItem("usuario", encontrado.username);
     localStorage.setItem("rol", encontrado.rol);
+
     if (encontrado.rol === "tecnico") {
       window.location.href = "Asistencia.html";
     } else {
@@ -65,7 +102,7 @@ function logout() {
 // API SheetBest
 // ======================
 
-console.log("🟡 Iniciando creación de ticket correo A...");
+console.log("🟡 Iniciando creación de ticket y nuevos usuarios administradores tiendas...");
 const API_URL = "https://api.sheetbest.com/sheets/e42b765b-5d18-4924-84d5-e42e02c21947";
 
 // ======================
