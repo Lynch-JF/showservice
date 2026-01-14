@@ -65,7 +65,7 @@ function logout() {
 // API SheetBest
 // ======================
 
-console.log("🟡 Iniciando creación de ticket...");
+console.log("🟡 Iniciando creación de ticket correo...");
 const API_URL = "https://api.sheetbest.com/sheets/e42b765b-5d18-4924-84d5-e42e02c21947";
 
 // ======================
