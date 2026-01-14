@@ -69,8 +69,8 @@ const API_URL = "https://api.sheetbest.com/sheets/e42b765b-5d18-4924-84d5-e42e02
 // CREAR TICKET
 // ======================
 function crearTicket() {
-  let titulo = document.getElementById("titulo").value;
-  let descripcion = document.getElementById("descripcion").value;
+  let titulo = document.getElementById("titulo").value.trim();
+  let descripcion = document.getElementById("descripcion").value.trim();
   let depto = document.getElementById("depto").value;
   let usuario = localStorage.getItem("usuario") || "Invitado";
 
@@ -92,20 +92,40 @@ function crearTicket() {
     fecha_resuelto: ""
   };
 
+  // 1️⃣ Guardar ticket en la API
   fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(nuevoTicket)
   })
-    .then(res => res.json())
-    .then(() => {
-      alert("✅ Ticket creado con éxito");
-      document.getElementById("titulo").value = "";
-      document.getElementById("descripcion").value = "";
-      document.getElementById("depto").value = "";
-      mostrarTickets();
-    })
-    .catch(err => console.error("Error:", err));
+  .then(res => res.json())
+  .then(() => {
+
+    // 2️⃣ Enviar correo con EmailJS
+    return emailjs.send("juan_jf0094", "template_mferzbn", {
+      ticket_id: nuevoTicket.id,
+      ticket_usuario: usuario,
+      ticket_departamento: depto,
+      ticket_titulo: titulo,
+      ticket_descripcion: descripcion,
+      ticket_fecha: nuevoTicket.fecha,
+      to_email: "departamentoIT@grupomichel.com, j.holguin@grupomichel.com"
+    });
+
+  })
+  .then(() => {
+    alert("✅ Ticket creado y enviado por correo");
+
+    document.getElementById("titulo").value = "";
+    document.getElementById("descripcion").value = "";
+    document.getElementById("depto").value = "";
+
+    mostrarTickets();
+  })
+  .catch(err => {
+    console.error("Error:", err);
+    alert("❌ Error al crear o enviar el ticket");
+  });
 }
 
 // ======================
