@@ -83,7 +83,7 @@ function crearTicket() {
   }
 
   let nuevoTicket = {
-    id: Date.now().toString(),
+    id: Date.now().toString(), // solo informativo
     usuario,
     depto,
     titulo,
@@ -95,39 +95,60 @@ function crearTicket() {
     fecha_resuelto: ""
   };
 
+  console.log("🟡 Creando ticket:", nuevoTicket);
+
   fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(nuevoTicket)
   })
   .then(res => {
-    if (!res.ok) throw new Error("Error API");
+    if (!res.ok) throw new Error("Error creando ticket");
     return res.text();
   })
   .then(() => {
-    return emailjs.send("juan_jf0094", "template_mferzbn", {
-      ticket_id: nuevoTicket.id,
-      ticket_usuario: usuario,
-      ticket_departamento: depto,
-      ticket_titulo: titulo,
-      ticket_descripcion: descripcion,
-      ticket_fecha: nuevoTicket.fecha
-    });
-  })
-  .then(() => {
-    alert("✅ Ticket creado y enviado correctamente");
+    console.log("✅ Ticket creado correctamente");
 
+    alert("✅ Ticket creado correctamente");
+
+    // Limpiar formulario
     document.getElementById("titulo").value = "";
     document.getElementById("descripcion").value = "";
     document.getElementById("depto").value = "";
 
     mostrarTickets();
+
+    // ⏱ Enviar correo DESPUÉS del alert
+    setTimeout(() => {
+      enviarCorreoTicket(nuevoTicket);
+    }, 0);
   })
   .catch(err => {
-    console.error(err);
-    alert("❌ Ocurrió un error inesperado");
+    console.error("❌ Error creando ticket:", err);
+    alert("❌ Error al crear el ticket");
   });
 }
+
+
+function enviarCorreoTicket(ticket) {
+  console.log("📤 Intentando enviar correo del ticket:", ticket);
+
+  return emailjs.send("juan_jf0094", "template_mferzbn", {
+    ticket_id: ticket.id,
+    ticket_usuario: ticket.usuario,
+    ticket_departamento: ticket.depto,
+    ticket_titulo: ticket.titulo,
+    ticket_descripcion: ticket.descripcion,
+    ticket_fecha: ticket.fecha
+  })
+  .then(() => {
+    console.log("📧 Correo enviado correctamente");
+  })
+  .catch(err => {
+    console.error("❌ Error enviando correo:", err);
+  });
+}
+
 
 
 // ======================
