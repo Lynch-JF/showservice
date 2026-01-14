@@ -32,6 +32,7 @@ const usuarios = [
   { username: "juan", password: "1234", rol: "tecnico" }
 ];
 
+
 // ======================
 // LOGIN
 // ======================
@@ -63,6 +64,8 @@ function logout() {
 // ======================
 // API SheetBest
 // ======================
+
+console.log("🟡 Iniciando creación de ticket...");
 const API_URL = "https://api.sheetbest.com/sheets/e42b765b-5d18-4924-84d5-e42e02c21947";
 
 // ======================
