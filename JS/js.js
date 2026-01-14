@@ -133,7 +133,7 @@ function crearTicket() {
 function enviarCorreoTicket(ticket) {
   console.log("📤 Intentando enviar correo del ticket:", ticket);
 
-  return emailjs.send("juan_jf0094", "template_mferzbn", {
+  return emailjs.send("service_8oishge", "template_mferzbn", {
     ticket_id: ticket.id,
     ticket_usuario: ticket.usuario,
     ticket_departamento: ticket.depto,
