@@ -81,10 +81,10 @@ function crearTicket() {
 
   let nuevoTicket = {
     id: Date.now().toString(),
-    usuario: usuario,
-    depto: depto,
-    titulo: titulo,
-    descripcion: descripcion,
+    usuario,
+    depto,
+    titulo,
+    descripcion,
     fecha: new Date().toLocaleString(),
     estado: "Pendiente",
     resolucion: "",
@@ -92,29 +92,27 @@ function crearTicket() {
     fecha_resuelto: ""
   };
 
-  // 1️⃣ Guardar ticket en la API
   fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(nuevoTicket)
   })
-  .then(res => res.json())
+  .then(res => {
+    if (!res.ok) throw new Error("Error API");
+    return res.text();
+  })
   .then(() => {
-
-    // 2️⃣ Enviar correo con EmailJS
     return emailjs.send("juan_jf0094", "template_mferzbn", {
       ticket_id: nuevoTicket.id,
       ticket_usuario: usuario,
       ticket_departamento: depto,
       ticket_titulo: titulo,
       ticket_descripcion: descripcion,
-      ticket_fecha: nuevoTicket.fecha,
-      to_email: "departamentoIT@grupomichel.com, j.holguin@grupomichel.com"
+      ticket_fecha: nuevoTicket.fecha
     });
-
   })
   .then(() => {
-    alert("✅ Ticket creado y enviado por correo");
+    alert("✅ Ticket creado y enviado correctamente");
 
     document.getElementById("titulo").value = "";
     document.getElementById("descripcion").value = "";
@@ -123,10 +121,11 @@ function crearTicket() {
     mostrarTickets();
   })
   .catch(err => {
-    console.error("Error:", err);
-    alert("❌ Error al crear o enviar el ticket");
+    console.error(err);
+    alert("❌ Ocurrió un error inesperado");
   });
 }
+
 
 // ======================
 // MOSTRAR TICKETS USUARIO
