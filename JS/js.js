@@ -103,7 +103,7 @@ function logout() {
 // ======================
 
 console.log("🟡 Iniciando creación de ticket y nuevos usuarios administradores tiendas...");
-const API_URL = "https://api.sheetbest.com/sheets/e42b765b-5d18-4924-84d5-e42e02c21947";
+const API_URL = "https://api.sheetbest.com/sheets/f5ce6065-9813-468a-bc04-6495dcd23ed4";
 
 // ======================
 // CREAR TICKET
