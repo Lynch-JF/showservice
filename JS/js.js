@@ -250,6 +250,30 @@ function eliminarTicket(id) {
 }
 
 // ======================
+// UTILIDADES DE FECHA
+// ======================
+function parseFechaLatina(fechaStr) {
+  if (!fechaStr) return null;
+
+  // Ej: "25/9/2025, 10:04:15 a. m."
+  const partes = fechaStr.split(",");
+  const [d, m, y] = partes[0].trim().split("/");
+
+  return new Date(`${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`);
+}
+
+function esHoyLatina(fechaStr) {
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  const f = parseFechaLatina(fechaStr);
+  if (!f) return false;
+
+  f.setHours(0, 0, 0, 0);
+  return f.getTime() === hoy.getTime();
+}
+
+// ======================
 // MOSTRAR TICKETS PARA TÉCNICO
 // ======================
 function mostrarTodosTickets() {
@@ -294,9 +318,18 @@ function mostrarTodosTickets() {
           ${extra}
         `;
 
-        if (t.estado === "Pendiente") pendientes.appendChild(div);
-        else if (t.estado === "En Proceso") enProceso.appendChild(div);
-        else resueltos.appendChild(div);
+        if (t.estado === "Pendiente") {
+          pendientes.appendChild(div);
+        }
+        else if (t.estado === "En Proceso") {
+          enProceso.appendChild(div);
+        }
+        else if (t.estado === "Resuelto") {
+          // 🔥 SOLO LOS RESUELTOS DE HOY
+          if (esHoyLatina(t.fecha_resuelto)) {
+            resueltos.appendChild(div);
+          }
+        }
       });
     })
     .catch(err => console.error("Error mostrando tickets técnico:", err));
@@ -371,6 +404,7 @@ function guardarResolucion() {
     })
     .catch(err => console.error("Error:", err));
 }
+
 
 // ======================
 // AUTO REFRESH cada 30s
