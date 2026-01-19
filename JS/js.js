@@ -192,43 +192,62 @@ function enviarCorreoTicket(ticket) {
 // MOSTRAR TICKETS USUARIO
 // ======================
 function mostrarTickets() {
-  fetch(API_URL)
-    .then(res => res.json())
-    .then(data => {
-      let cont = document.getElementById("listaTickets");
-      if (!cont) return;
+  const cont = document.getElementById("listaTickets");
+  if (!cont) return;
 
-      let user = localStorage.getItem("usuario");
-      cont.innerHTML = "";
+  const user = localStorage.getItem("usuario");
 
-      data.filter(t => t.usuario === user).forEach(t => {
-        let div = document.createElement("div");
-        div.className = "ticket-item";
+  // 1️⃣ Primero intentamos desde cache
+  const cache = JSON.parse(localStorage.getItem("tickets_cache"));
+  if (cache) {
+    renderTickets(cache, user, cont);
+  }
 
-        let extra = "";
-        if (t.estado === "Resuelto") {
-          extra = `
-            <div class="resolucion-box">
-              <strong>✅ Resolución:</strong><br>
-              ${t.resolucion || "No hay detalle"}<br>
-              <small><b>Participantes:</b> ${t.participantes || "N/A"}</small><br>
-              <small><b>Fecha Resuelto:</b> ${t.fecha_resuelto || "-"}</small>
-            </div>
-          `;
-        }
+  // 2️⃣ Solo sincronizamos si no hay cache o si quieres forzar actualización
+  if (!cache) {
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => {
+        // Guardamos en cache
+        localStorage.setItem("tickets_cache", JSON.stringify(data));
+        renderTickets(data, user, cont);
+      })
+      .catch(err => console.error("Error cargando tickets:", err));
+  }
+}
 
-        div.innerHTML = `
-          <strong>[${t.depto}]</strong> ${t.titulo}<br>
-          ${t.descripcion}<br>
-          <small>${t.fecha}</small><br>
-          Estado: <b>${t.estado}</b>
-          ${t.estado === "Pendiente" ? `<button class="btn-delete" onclick="eliminarTicket('${t.id}')">🗑️</button>` : ""}
-          ${extra}
+function renderTickets(data, user, cont) {
+  cont.innerHTML = "";
+
+  data
+    .filter(t => t.usuario === user)
+    .forEach(t => {
+      let div = document.createElement("div");
+      div.className = "ticket-item";
+
+      let extra = "";
+      if (t.estado === "Resuelto") {
+        extra = `
+          <div class="resolucion-box">
+            <strong>✅ Resolución:</strong><br>
+            ${t.resolucion || "No hay detalle"}<br>
+            <small><b>Participantes:</b> ${t.participantes || "N/A"}</small><br>
+            <small><b>Fecha Resuelto:</b> ${t.fecha_resuelto || "-"}</small>
+          </div>
         `;
-        cont.appendChild(div);
-      });
-    })
-    .catch(err => console.error("Error cargando tickets:", err));
+      }
+
+      div.innerHTML = `
+        <strong>[${t.depto}]</strong> ${t.titulo}<br>
+        ${t.descripcion}<br>
+        <small>${t.fecha}</small><br>
+        Estado: <b>${t.estado}</b>
+        ${t.estado === "Pendiente" ? `<button class="btn-delete" onclick="eliminarTicket('${t.id}')">🗑️</button>` : ""}
+        ${extra}
+      `;
+
+      cont.appendChild(div);
+    });
 }
 
 // ======================
