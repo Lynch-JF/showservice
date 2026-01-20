@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Usuario</title>
   <link rel="icon" type="image/png" href="IMG/2.ico">
   <link rel="stylesheet" href="CSS/css.css">
@@ -87,6 +88,46 @@
     .btn-cerrar:hover {
       background: #e60000;
     }
+
+    /* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .navbar button {
+    width: 100%;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 15px;
+  }
+
+  .card-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card-ayuda {
+    width: 90%;
+  }
+
+  .container {
+    padding: 10px;
+  }
+
+  .card {
+    padding: 15px;
+  }
+
+  textarea, input, select {
+    font-size: 16px; /* más cómodo en móvil */
+  }
+}
+
   </style>
 </head>
 <body>
