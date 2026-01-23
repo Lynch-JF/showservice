@@ -11,6 +11,9 @@
  <nav class="navbar">
   <h2>Panel Técnico</h2>
   <div style="display:flex; gap:10px;">
+    <button class="user-btn" id="userBtn">
+  👤 <span id="userNameTop"></span>
+</button>
     <button onclick="abrirAyuda()">Ayuda rápida</button>
     <button onclick="logout()">Cerrar Sesión</button>
   </div>
@@ -287,6 +290,20 @@ textarea {
   textarea {
     font-size: 16px; /* mejor para móvil */
   }
+}
+
+  .user-btn {
+  background: #1f2a6d;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.user-btn:hover {
+  background: #2f3fa3;
 }
 
 
