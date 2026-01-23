@@ -9,7 +9,9 @@ const usuarios = {
     { username: "Joel", password: "1234", rol: "tecnico", po:"SUPERIOR LOGISTICA" },
     { username: "joel", password: "1234", rol: "tecnico" , po:"SUPERIOR LOGISTICA"},
     { username: "Yanna", password: "1234", rol: "tecnico" , po:"SUPERIOR IT"},
-    { username: "yanna", password: "1234", rol: "tecnico", po:"SUPERIOR IT" }
+    { username: "yanna", password: "1234", rol: "tecnico", po:"SUPERIOR IT" },
+    { username: "Xavier", password: "1234", rol: "tecnico" , po:"Auxiliar Analista"}
+
   ],
 
   usuario: [
