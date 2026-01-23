@@ -195,3 +195,36 @@
   text-align: center;
 }
 
+
+.user-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 160px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  width: 180px;
+  display: none;
+  z-index: 999;
+}
+
+.user-dropdown.show {
+  display: block;
+}
+
+.dropdown-item {
+  padding: 10px 14px;
+  cursor: default;
+  font-size: 14px;
+}
+
+.dropdown-item:hover {
+  background: #f1f1f1;
+}
+
+.logout-item {
+  color: #c0392b;
+  cursor: pointer;
+  font-weight: bold;
+}
+
