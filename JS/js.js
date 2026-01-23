@@ -82,6 +82,7 @@ function login() {
   if (encontrado) {
     localStorage.setItem("usuario", encontrado.username);
     localStorage.setItem("rol", encontrado.rol);
+    localStorage.setItem("po", encontrado.po); // 🔥 NUEVO
 
     if (encontrado.rol === "tecnico") {
       window.location.href = "Asistencia.html";
@@ -445,7 +446,7 @@ setInterval(() => {
 // ======================
 function mostrarUsuarioTop() {
   const usuario = localStorage.getItem("usuario");
-  const rol = localStorage.getItem("po");
+  const po = localStorage.getItem("po"); // 🔥 POSICIÓN
 
   if (!usuario) return;
 
@@ -463,7 +464,7 @@ function mostrarUsuarioTop() {
     dropdown.className = "user-dropdown";
     dropdown.innerHTML = `
       <div class="dropdown-item"><strong>👤 ${usuario}</strong></div>
-      <div class="dropdown-item">🔑 Rol: ${po}</div>
+      <div class="dropdown-item">🏷️ ${po || "Sin posición"}</div>
       <hr>
       <div class="dropdown-item logout-item" onclick="logout()">🚪 Cerrar sesión</div>
     `;
@@ -482,7 +483,6 @@ document.addEventListener("click", () => {
   const dropdown = document.getElementById("userDropdown");
   if (dropdown) dropdown.classList.remove("show");
 });
-
 
 
 
