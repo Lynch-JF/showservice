@@ -219,11 +219,11 @@
 }
 
 .dropdown-item:hover {
-  background: #f1f1f1;
+  background: black;
 }
 
 .logout-item {
-  color: black;
+  color: #c0392b;
   cursor: pointer;
   font-weight: bold;
 }
