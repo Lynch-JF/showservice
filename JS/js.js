@@ -439,7 +439,56 @@ setInterval(() => {
 // ======================
 // AUTO CARGA
 // ======================
+
+// ======================
+// USUARIO TOP (OPCIÓN PRO)
+// ======================
+function mostrarUsuarioTop() {
+  const usuario = localStorage.getItem("usuario");
+  const rol = localStorage.getItem("rol");
+
+  if (!usuario) return;
+
+  const userBtn = document.getElementById("userBtn");
+  const userName = document.getElementById("userNameTop");
+
+  if (!userBtn || !userName) return;
+
+  userName.textContent = usuario;
+
+  // Crear dropdown si no existe
+  if (!document.getElementById("userDropdown")) {
+    const dropdown = document.createElement("div");
+    dropdown.id = "userDropdown";
+    dropdown.className = "user-dropdown";
+    dropdown.innerHTML = `
+      <div class="dropdown-item"><strong>👤 ${usuario}</strong></div>
+      <div class="dropdown-item">🔑 Rol: ${rol}</div>
+      <hr>
+      <div class="dropdown-item logout-item" onclick="logout()">🚪 Cerrar sesión</div>
+    `;
+    userBtn.parentElement.appendChild(dropdown);
+  }
+
+  // Toggle dropdown
+  userBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.getElementById("userDropdown").classList.toggle("show");
+  });
+}
+
+// Cerrar dropdown al hacer click fuera
+document.addEventListener("click", () => {
+  const dropdown = document.getElementById("userDropdown");
+  if (dropdown) dropdown.classList.remove("show");
+});
+
+
+
+
 window.onload = function () {
+    mostrarUsuarioTop();
+
   if (localStorage.getItem("rol") === "usuario") {
     mostrarTickets();
   } else if (localStorage.getItem("rol") === "tecnico") {
