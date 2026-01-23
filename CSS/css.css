@@ -183,34 +183,65 @@
   z-index: 1;
 }
 
+/* Caja de login por encima */
+.login-box {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  width: 320px;
+  text-align: center;
+}
+
 .user-dropdown {
   position: absolute;
   top: 50px;
   right: 160px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-  width: 180px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  width: 190px;
   display: none;
   z-index: 999;
 }
 
+/* Mostrar dropdown */
 .user-dropdown.show {
   display: block;
 }
 
-.dropdown-item {
-  padding: 10px 14px;
-  cursor: default;
+/* Items */
+.user-dropdown .dropdown-item {
+  color: #2c3e50;        /* 🔥 COLOR TEXTO */
+  padding: 12px 14px;
   font-size: 14px;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.dropdown-item:hover {
-  background: #f1f1f1;
+/* Hover */
+.user-dropdown .dropdown-item:hover {
+  background: #f4f6f8;
 }
 
-.logout-item {
-  color: #c0392b;
+/* Línea separadora */
+.user-dropdown hr {
+  border: none;
+  border-top: 1px solid #e1e4e8;
+  margin: 6px 0;
+}
+
+/* Cerrar sesión */
+.user-dropdown .logout-item {
+  color: #c0392b;        /* 🔴 ROJO PRO */
+  font-weight: 600;
   cursor: pointer;
-  font-weight: bold;
+}
+
+.user-dropdown .logout-item:hover {
+  background: #fdecea;
 }
