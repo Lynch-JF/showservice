@@ -13,7 +13,7 @@ const usuarios = {
   ],
 
   usuario: [
-    { username: "michel", password: "1234", rol: "usuario" },
+    { username: "michel", password: "1234", rol: "usuario", po:"Administradora SJM" },
     { username: "Michel", password: "1234", rol: "usuario" },
     { username: "Pamela", password: "1234", rol: "usuario" },
     { username: "pamela", password: "1234", rol: "usuario" },
@@ -445,7 +445,7 @@ setInterval(() => {
 // ======================
 function mostrarUsuarioTop() {
   const usuario = localStorage.getItem("usuario");
-  const rol = localStorage.getItem("rol");
+  const rol = localStorage.getItem("po");
 
   if (!usuario) return;
 
@@ -463,7 +463,7 @@ function mostrarUsuarioTop() {
     dropdown.className = "user-dropdown";
     dropdown.innerHTML = `
       <div class="dropdown-item"><strong>👤 ${usuario}</strong></div>
-      <div class="dropdown-item">🔑 Rol: ${rol}</div>
+      <div class="dropdown-item">🔑 Rol: ${po}</div>
       <hr>
       <div class="dropdown-item logout-item" onclick="logout()">🚪 Cerrar sesión</div>
     `;
