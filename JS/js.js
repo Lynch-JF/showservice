@@ -3,13 +3,13 @@
 // ======================
 const usuarios = {
   tecnico: [
-    { username: "Juan", password: "1234", rol: "IT" },
-    { username: "juan", password: "1234", rol: "IT" },
-    { username: "JUAN", password: "1234", rol: "IT" },
-    { username: "Joel", password: "1234", rol: "SUPERIOR LOGISTICA" },
-    { username: "joel", password: "1234", rol: "SUPERIOR LOGISTICA" },
-    { username: "Yanna", password: "1234", rol: "SUPERIOR IT" },
-    { username: "yanna", password: "1234", rol: "SUPERIOR IT" }
+    { username: "Juan", password: "1234", rol: "tecnico", po:"IT" },
+    { username: "juan", password: "1234", rol: "tecnico", po:"IT" },
+    { username: "JUAN", password: "1234", rol: "tecnico", po:"IT" },
+    { username: "Joel", password: "1234", rol: "tecnico", po:"SUPERIOR LOGISTICA" },
+    { username: "joel", password: "1234", rol: "tecnico" , po:"SUPERIOR LOGISTICA"},
+    { username: "Yanna", password: "1234", rol: "tecnico" , po:"SUPERIOR IT"},
+    { username: "yanna", password: "1234", rol: "tecnico", po:"SUPERIOR IT" }
   ],
 
   usuario: [
