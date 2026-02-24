@@ -12,137 +12,233 @@
 </script>
   
   <style>
-    /* === Estilos del modal de ayuda rápida === */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-    }
+     /* =========================
+   MODAL OVERLAY PREMIUM
+========================= */
 
-    .modal-content {
-      background: #fff;
-      padding: 25px;
-      border-radius: 15px;
-      width: 80%;
-      max-width: 800px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      animation: fadeIn 0.3s ease-in-out;
-    }
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  z-index: 2000;
+  padding: 20px;
+  animation: fadeOverlay 0.3s ease;
+}
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
-    }
+@keyframes fadeOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-    .card-container {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+/* Mostrar modal */
+.modal.show {
+  display: flex;
+}
 
-    .card-ayuda {
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-      padding: 20px;
-      width: 200px;
-      text-align: center;
-      transition: transform 0.2s ease-in-out;
-    }
+/* =========================
+   CONTENIDO DEL MODAL
+========================= */
 
-    .card-ayuda:hover {
-      transform: translateY(-5px);
-      box-shadow: 0px 6px 15px rgba(0,0,0,0.2);
-    }
+.modal-content {
+  background: #ffffff;
+  padding: 35px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+  animation: modalEnter 0.35s ease;
+  position: relative;
+}
 
-    .card-ayuda img {
-      border-radius: 50%;
-      margin-bottom: 15px;
-      width: 100px;
-      height: 100px;
-    }
-
-    .modal-buttons {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .btn-cerrar {
-      padding: 10px 20px;
-      border: none;
-      background: #ff4d4d;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .btn-cerrar:hover {
-      background: #e60000;
-    }
-
-    /* ====== RESPONSIVE ====== */
-@media (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    gap: 10px;
-    text-align: center;
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
   }
-
-  .navbar button {
-    width: 100%;
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
+}
 
+/* =========================
+   GRID DE CARDS
+========================= */
+
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+/* =========================
+   CARD AYUDA PREMIUM
+========================= */
+
+.card-ayuda {
+  background: #f9fafb;
+  border-radius: 18px;
+  padding: 25px 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efecto hover elegante */
+.card-ayuda:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+  border-color: #4e54c8;
+}
+
+/* Imagen */
+.card-ayuda img {
+  width: 95px;
+  height: 95px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  object-fit: cover;
+  border: 3px solid #e5e7eb;
+  transition: 0.3s ease;
+}
+
+.card-ayuda:hover img {
+  transform: scale(1.05);
+  border-color: #4e54c8;
+}
+
+/* Nombre */
+.card-ayuda h4 {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #1e293b;
+}
+
+/* Descripción */
+.card-ayuda p {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* =========================
+   BOTONES DEL MODAL
+========================= */
+
+.modal-buttons {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.btn-cerrar {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cerrar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(239,68,68,0.3);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 600px) {
   .modal-content {
-    width: 95%;
-    padding: 15px;
-  }
-
-  .card-container {
-    flex-direction: column;
-    align-items: center;
+    padding: 25px;
   }
 
   .card-ayuda {
-    width: 90%;
-  }
-
-  .container {
-    padding: 10px;
-  }
-
-  .card {
-    padding: 15px;
-  }
-
-  textarea, input, select {
-    font-size: 16px; /* más cómodo en móvil */
+    padding: 20px 15px;
   }
 }
 
-    .user-btn {
-  background: #1f2a6d;
-  color: #fff;
-  border: none;
-  padding: 8px 14px;
+/* =========================
+   LISTA DE TICKETS PRO
+========================= */
+
+.ticket-list {
+  display: grid;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.ticket-item {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px 25px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.ticket-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+}
+
+/* Título */
+.ticket-item h4 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: #1e293b;
+}
+
+/* Estado */
+.ticket-status {
+  display: inline-block;
+  padding: 5px 12px;
   border-radius: 20px;
-  cursor: pointer;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 8px;
 }
 
-.user-btn:hover {
-  background: #2f3fa3;
+.status-resuelto {
+  background: #d1fae5;
+  color: #065f46;
 }
 
+.status-proceso {
+  background: #fef3c7;
+  color: #92400e;
+}
 
+.status-pendiente {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Separadores */
+.ticket-item p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #475569;
+}
+
+.resolucion-box {
+  margin-top: 15px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border-left: 4px solid #10b981;
+  font-size: 14px;
+}
   </style>
 </head>
 <body>
