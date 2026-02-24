@@ -1,247 +1,304 @@
-/* Reset */
-* { margin:0; padding:0; box-sizing:border-box; }
+/* =========================
+   RESET GLOBAL
+========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-/* Login */
-.login-body {
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-  background: linear-gradient(135deg, #4e54c8, #8f94fb);
+body {
   font-family: 'Segoe UI', sans-serif;
+  background: #f4f6f9;
+  color: #2c3e50;
 }
 
-.login-box {
-  background:white;
-  padding:30px;
-  border-radius:15px;
-  box-shadow:0px 5px 20px rgba(0,0,0,0.2);
-  text-align:center;
-  width:300px;
-}
+/* =========================
+   LOGIN PROFESIONAL
+========================= */
 
-.login-box h2 {
-  margin-bottom:20px;
-  color:#333;
-}
-
-.login-box input {
-  width:100%;
-  padding:10px;
-  margin:8px 0;
-  border-radius:8px;
-  border:1px solid #ccc;
-}
-
-.login-box button {
-  width:100%;
-  padding:10px;
-  border:none;
-  border-radius:8px;
-  background:#060847;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.login-box button:hover {
-  background:#060847;
-}
-
-/* Navbar */
-.navbar {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#060847;
-  color:white;
-  padding:10px 20px;
-}
-
-.navbar button {
-  background:#ff4d4d;
-  border:none;
-  padding:8px 12px;
-  color:white;
-  border-radius:5px;
-  cursor:pointer;
-}
-
-/* Container */
-.container {
-  padding:20px;
-  font-family:'Segoe UI', sans-serif;
-}
-
-/* Cards */
-.card {
-  background:white;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 4px 8px rgba(0,0,0,0.1);
-  margin-bottom:20px;
-}
-
-.card input, .card textarea, .card select, .card button {
-  width:100%;
-  margin:10px 0;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
-}
-
-.card button {
-  background:#4e54c8;
-  color:white;
-  border:none;
-  cursor:pointer;
-}
-
-.card button:hover {
-  background:#3b3fb8;
-}
-
-/* Lista de tickets del usuario */
-.ticket-list {
-  display:grid;
-  gap:10px;
-}
-
-.ticket-item {
-  background:white;
-  padding:15px;
-  border-radius:8px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
-}
-
-/* Panel técnico */
-.grid-3 {
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:20px;
-}
-
-.ticket-column {
-  background:#f4f6f9;
-  padding:10px;
-  border-radius:10px;
-  min-height:200px;
-}
-
-.ticket-card {
-  background:white;
-  padding:10px;
-  margin-bottom:10px;
-  border-radius:8px;
-  box-shadow:0 2px 5px rgba(0,0,0,0.1);
-}
-
-.ticket-card button {
-  margin-top:5px;
-  margin-right:5px;
-  padding:5px 10px;
-  border:none;
-  border-radius:5px;
-  cursor:pointer;
-}
-
-.ticket-card .btn-proceso { background:#ff9800; color:white; }
-.ticket-card .btn-resuelto { background:#4caf50; color:white; }
-
-.btn-delete {
-  background: #ff4d4d;
-  border: none;
-  color: white;
-  padding: 5px 8px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-left: 10px;
-  font-size: 14px;
-}
-
-.btn-delete:hover {
-  background: #cc0000;
-}
-
-/* Fondo con imagen para login */
 .login-body {
   position: relative;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url("/IMG/technology-7111756_1280.jpg") no-repeat center center/cover; /* 👉 Cambia fondo.jpg por tu imagen */
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  overflow: hidden;
 }
 
-/* Capa oscura encima de la imagen */
+/* Efecto animado de fondo */
 .login-body::before {
   content: "";
   position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5); /* opacidad oscura */
-  z-index: 1;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05), transparent 40%),
+              radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05), transparent 40%);
+  animation: moveBackground 12s infinite linear;
 }
 
-/* Caja de login por encima */
+@keyframes moveBackground {
+  0% { transform: translate(0,0); }
+  50% { transform: translate(-5%, -5%); }
+  100% { transform: translate(0,0); }
+}
+
 .login-box {
   position: relative;
   z-index: 2;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-  width: 320px;
-  text-align: center;
+  background: rgba(255,255,255,0.95);
+  padding: 40px;
+  border-radius: 16px;
+  width: 360px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  animation: fadeInUp 0.8s ease;
 }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-box h2 {
+  margin-bottom: 25px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #dcdfe6;
+  transition: all 0.3s ease;
+}
+
+.login-box input:focus {
+  border-color: #4e54c8;
+  box-shadow: 0 0 0 3px rgba(78,84,200,0.15);
+  outline: none;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #4e54c8, #8f94fb);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-box button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(78,84,200,0.4);
+}
+
+/* =========================
+   NAVBAR MODERNA
+========================= */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #111827;
+  padding: 15px 30px;
+  color: white;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.navbar h3 {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.navbar button {
+  background: linear-gradient(135deg, #ff4d4d, #ff6b6b);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.navbar button:hover {
+  transform: scale(1.05);
+}
+
+/* =========================
+   CONTENEDOR
+========================= */
+
+.container {
+  padding: 30px;
+}
+
+/* =========================
+   CARDS MODERNAS
+========================= */
+
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  margin-bottom: 25px;
+  transition: 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+}
+
+.card input,
+.card textarea,
+.card select {
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  transition: 0.3s ease;
+}
+
+.card input:focus,
+.card textarea:focus,
+.card select:focus {
+  border-color: #4e54c8;
+  box-shadow: 0 0 0 3px rgba(78,84,200,0.1);
+  outline: none;
+}
+
+.card button {
+  background: linear-gradient(135deg, #4e54c8, #6366f1);
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.card button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(78,84,200,0.3);
+}
+
+/* =========================
+   PANEL TÉCNICO PROFESIONAL
+========================= */
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+
+.ticket-column {
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 12px;
+  min-height: 250px;
+  border: 1px solid #e5e7eb;
+}
+
+.ticket-column h4 {
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.ticket-card {
+  background: white;
+  padding: 15px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: 0.3s ease;
+}
+
+.ticket-card:hover {
+  transform: scale(1.02);
+}
+
+.ticket-card button {
+  margin-top: 8px;
+  margin-right: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-proceso {
+  background: #f59e0b;
+  color: white;
+}
+
+.btn-resuelto {
+  background: #10b981;
+  color: white;
+}
+
+.btn-delete {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-delete:hover {
+  opacity: 0.85;
+}
+
+/* =========================
+   DROPDOWN MEJORADO
+========================= */
 
 .user-dropdown {
   position: absolute;
-  top: 50px;
-  right: 160px;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  width: 190px;
+  top: 60px;
+  right: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+  width: 220px;
   display: none;
-  z-index: 999;
+  overflow: hidden;
+  animation: fadeIn 0.3s ease;
 }
 
-/* Mostrar dropdown */
 .user-dropdown.show {
   display: block;
 }
 
-/* Items */
 .user-dropdown .dropdown-item {
-  color: #2c3e50;        /* 🔥 COLOR TEXTO */
-  padding: 12px 14px;
+  padding: 14px;
   font-size: 14px;
-  cursor: default;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Hover */
-.user-dropdown .dropdown-item:hover {
-  background: #f4f6f8;
-}
-
-/* Línea separadora */
-.user-dropdown hr {
-  border: none;
-  border-top: 1px solid #e1e4e8;
-  margin: 6px 0;
-}
-
-/* Cerrar sesión */
-.user-dropdown .logout-item {
-  color: #c0392b;        /* 🔴 ROJO PRO */
-  font-weight: 600;
   cursor: pointer;
+  transition: 0.2s ease;
 }
 
-.user-dropdown .logout-item:hover {
+.user-dropdown .dropdown-item:hover {
+  background: #f3f4f6;
+}
+
+.logout-item {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.logout-item:hover {
   background: #fdecea;
 }
