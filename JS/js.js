@@ -240,14 +240,40 @@ function renderTickets(data, user, cont) {
         `;
       }
 
-      div.innerHTML = `
-        <strong>[${t.depto}]</strong> ${t.titulo}<br>
-        ${t.descripcion}<br>
-        <small>${t.fecha}</small><br>
-        Estado: <b>${t.estado}</b>
-        ${t.estado === "Pendiente" ? `<button class="btn-delete" onclick="eliminarTicket('${t.id}')">🗑️</button>` : ""}
-        ${extra}
-      `;
+       div.innerHTML = `
+  <h4>
+    <span style="color:#4e54c8; font-weight:600;">
+      [${t.depto}]
+    </span> 
+    ${t.titulo}
+  </h4>
+
+  <p>${t.descripcion}</p>
+
+  <p><small>📅 ${t.fecha}</small></p>
+
+  <div class="ticket-status ${
+    t.estado === "Pendiente" ? "status-pendiente" :
+    t.estado === "En Proceso" ? "status-proceso" :
+    "status-resuelto"
+  }">
+    ${t.estado}
+  </div>
+
+  ${t.estado === "Pendiente" 
+    ? `<button class="btn-delete" onclick="eliminarTicket('${t.id}')">🗑️ Eliminar</button>` 
+    : ""
+  }
+
+  ${t.estado === "Resuelto" ? `
+    <div class="resolucion-box">
+      <strong>✅ Resolución:</strong>
+      <p>${t.resolucion || "No hay detalle"}</p>
+      <small><b>Participantes:</b> ${t.participantes || "N/A"}</small><br>
+      <small><b>Fecha:</b> ${t.fecha_resuelto || "-"}</small>
+    </div>
+  ` : ""}
+`;
 
       cont.appendChild(div);
     });
