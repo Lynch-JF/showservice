@@ -2,9 +2,118 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - GM TICKETS TI</title>
-    <link rel="icon" type="image/png" href="/IMG/2.ico">
+  <link rel="icon" type="image/png" href="/IMG/2.ico">
   <link rel="stylesheet" href="CSS/css.css">
+
+  <style>
+
+/* ===== RESET BÁSICO ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ===== FONDO RESPONSIVO ===== */
+.login-body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  padding: 20px;
+}
+
+/* ===== CAJA LOGIN ===== */
+.login-box {
+  background: #ffffff;
+  width: 100%;
+  max-width: 400px;
+  padding: 40px 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  text-align: center;
+  transition: 0.3s ease;
+}
+
+/* TÍTULO */
+.login-box h2 {
+  margin-bottom: 25px;
+  color: #1e3c72;
+}
+
+/* INPUTS */
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  transition: 0.2s ease;
+}
+
+.login-box input:focus {
+  border-color: #2a5298;
+  outline: none;
+  box-shadow: 0 0 5px rgba(42,82,152,0.4);
+}
+
+/* BOTÓN */
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: #1e3c72;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.login-box button:hover {
+  background-color: #2a5298;
+  transform: scale(1.03);
+}
+
+/* MENSAJE ERROR */
+.error {
+  color: red;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* ===== RESPONSIVE EXTRA ===== */
+
+/* Celulares pequeños */
+@media (max-width: 480px) {
+  .login-box {
+    padding: 30px 20px;
+  }
+
+  .login-box h2 {
+    font-size: 20px;
+  }
+
+  .login-box input,
+  .login-box button {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+/* Pantallas grandes */
+@media (min-width: 1200px) {
+  .login-box {
+    max-width: 450px;
+  }
+}
+    
+  </style>
 </head>
 <body class="login-body">
   <div class="login-box">
