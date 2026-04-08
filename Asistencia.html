@@ -4,311 +4,371 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <title>Panel de Asistencia</title>
-      <link rel="icon" type="image/png" href="IMG/2.ico">
+  <link rel="icon" type="image/png" href="IMG/2.ico">
   <link rel="stylesheet" href="CSS/css.css">
 </head>
 <body>
- <nav class="navbar">
-  <h2>Panel Técnico</h2>
-  <div style="display:flex; gap:10px;">
-    <button class="user-btn" id="userBtn">
-  👤 <span id="userNameTop"></span>
-</button>
-    <button onclick="abrirAyuda()">Ayuda rápida</button>
-    <button onclick="logout()">Cerrar Sesión</button>
-  </div>
-</nav>
 
-<!-- ================== MODAL AYUDA ================== -->
-<div id="ayudaModal" class="modal">
-  <div class="modal-content">
-    <h2 style="text-align:center; margin-bottom: 20px;">📞 Ayuda Rápida</h2>
-    <p style="text-align:center; margin-bottom: 20px;">Contacta a nuestros técnicos disponibles:</p>
+  <nav class="navbar">
+    <h2>Panel Técnico</h2>
+    <div style="display:flex; gap:10px;">
+      <button class="user-btn" id="userBtn">
+        👤 <span id="userNameTop"></span>
+      </button>
+      <button onclick="abrirAyuda()">Ayuda rápida</button>
+      <button onclick="logout()">Cerrar Sesión</button>
+    </div>
+  </nav>
 
-    <div class="card-container">
-      <!-- Card 1 -->
-      <div class="card">
-        <img src="https://via.placeholder.com/100" alt="Yanna">
-        <h3>Yanna</h3>
-        <p>📧 yanna@empresa.com</p>
-        <p>📱 829-000-0000</p>
-        <p>📟 Flota: 1234</p>
+  <!-- ================== MODAL AYUDA ================== -->
+  <div id="ayudaModal" class="modal">
+    <div class="modal-content">
+      <h2 style="text-align:center; margin-bottom: 20px;">📞 Ayuda Rápida IT</h2>
+      <p style="text-align:center; margin-bottom: 20px;">Contacta a nuestros técnicos disponibles:</p>
+
+      <div class="card-container">
+        <div class="card-ayuda">
+          <img src="https://ui-avatars.com/api/?name=Yanna+Martinez&background=0D8ABC&color=fff" alt="Yanna">
+          <h4>YANNA MARTINEZ</h4>
+          <p>📧 y.martinez@grupomichel.com</p>
+          <p>📟 Flota: (809) 390-5286</p>
+        </div>
+
+        <div class="card-ayuda">
+          <img src="https://ui-avatars.com/api/?name=Joel+Holguin&background=F39C12&color=fff" alt="Joel">
+          <h4>Joel Holguin</h4>
+          <p>📧 j.holguin@grupomichel.com</p>
+          <p>📟 Flota: (809) 722-2874</p>
+        </div>
+
+        <div class="card-ayuda">
+          <img src="https://ui-avatars.com/api/?name=Xavier+Rosario&background=E74C3C&color=fff" alt="Xavier">
+          <h4>Xavier Rosario</h4>
+          <p>📧 x.rosario@grupomichel.com</p>
+          <p>📟 Flota: (000) 000-0000</p>
+        </div>
+
+        <div class="card-ayuda">
+          <img src="https://ui-avatars.com/api/?name=JuanFrancisco&background=27AE60&color=fff" alt="Juan Francisco">
+          <h4>Juan F. Jimenez</h4>
+          <p>📧 dptoIT@grupomichel.com</p>
+          <p>📱 (809) 931-3720</p>
+          <p>📟 Flota: (809) 722-1076</p>
+        </div>
       </div>
 
-      <!-- Card 2 -->
-      <div class="card">
-        <img src="https://via.placeholder.com/100" alt="Joel">
-        <h3>Joel</h3>
-        <p>📧 joel@empresa.com</p>
-        <p>📱 849-000-0000</p>
-        <p>📟 Flota: 5678</p>
-      </div>
-
-      <!-- Card 3 -->
-      <div class="card">
-        <img src="https://via.placeholder.com/100" alt="Johnson">
-        <h3>Johnson</h3>
-        <p>📧 johnson@empresa.com</p>
-        <p>📱 809-000-0000</p>
-        <p>📟 Flota: 9999</p>
+      <div style="text-align:center; margin-top:20px;">
+        <button class="btn btn-cancelar" onclick="cerrarAyuda()">Cerrar</button>
       </div>
     </div>
-
-    <div class="modal-buttons" style="text-align:center; margin-top:20px;">
-      <button class="btn btn-cancelar" onclick="cerrarAyuda()">Cerrar</button>
-    </div>
   </div>
-</div>
-                                                      
+
+  <!-- ================== COLUMNAS KANBAN ================== -->
   <div class="container grid-3">
     <div>
-      <h3>Pendientes</h3>
+      <h3>⏳ Pendientes</h3>
       <div id="pendientes" class="ticket-column"></div>
     </div>
     <div>
-      <h3>En Proceso</h3>
+      <h3>🔧 En Proceso</h3>
       <div id="enProceso" class="ticket-column"></div>
     </div>
     <div>
-      <h3>Resueltos</h3>
+      <h3>✅ Resueltos hoy</h3>
       <div id="resueltos" class="ticket-column"></div>
     </div>
   </div>
 
-  <!-- Modal oculto al inicio -->
-<div id="resueltoModal" class="modal">
-  <div class="modal-content">
-    <h2>Detalles de resolución</h2>
+  <!-- ================== MODAL RESOLUCIÓN ================== -->
+  <div id="resueltoModal" class="modal">
+    <div class="modal-content">
+      <h2>Detalles de resolución</h2>
 
-    <p>👥 ¿Con quién realizaste la tarea?</p>
-    <div class="checkbox-group">
-      <label><input type="checkbox" value="Solo" class="participante"> Juan Francisco</label>
-      <label><input type="checkbox" value="Hptronics" class="participante"> Hptronics</label>
-      <label><input type="checkbox" value="Yanna" class="participante"> Yanna Martinez</label>
-      <label><input type="checkbox" value="Joel" class="participante"> Joel Holguin</label>
-      <label><input type="checkbox" value="Johnson" class="participante"> Johnson Basora</label>
-      <label><input type="checkbox" value="Soporte externo" class="participante"> Soporte externo</label>
-    </div>
+      <p>👥 ¿Con quién realizaste la tarea?</p>
+      <div class="checkbox-group">
+        <label><input type="checkbox" value="Juan Francisco" class="participante"> Juan Francisco</label>
+        <label><input type="checkbox" value="Hptronics"      class="participante"> Hptronics</label>
+        <label><input type="checkbox" value="Yanna"          class="participante"> Yanna Martinez</label>
+        <label><input type="checkbox" value="Joel"           class="participante"> Joel Holguin</label>
+        <label><input type="checkbox" value="Xavier"         class="participante"> Xavier Rosario</label>
+        <label><input type="checkbox" value="Soporte externo" class="participante"> Soporte externo</label>
+      </div>
 
-    <p>📝 Explica cómo se resolvió:</p>
-    <textarea id="detalleResolucion" rows="4"></textarea>
+      <p>📝 Explica cómo se resolvió:</p>
+      <textarea id="detalleResolucion" rows="4" placeholder="Describe la solución aplicada..."></textarea>
 
-    <div class="modal-buttons">
-      <button class="btn btn-guardar" onclick="guardarResolucion()">💾 Guardar</button>
-      <button class="btn btn-cancelar" onclick="cerrarModal()">❌ Cancelar</button>
+      <div class="modal-buttons">
+        <button class="btn btn-guardar"   onclick="guardarResolucion()">💾 Guardar</button>
+        <button class="btn btn-cancelar"  onclick="cerrarModal()">❌ Cancelar</button>
+      </div>
     </div>
   </div>
-</div>
 
+  <style>
+    /* ================== MODAL ================== */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(3px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
 
+    .modal.show { display: flex; }
 
-<style>
-/* ==== MODAL ==== */
-.modal {
-  display: none; /* oculto al inicio */
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(3px); /* efecto glass */
-  z-index: 9999;
+    .modal-content {
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      max-width: 520px;
+      width: 90%;
+      box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
+      animation: fadeIn 0.3s ease-in-out;
+      font-family: Arial, sans-serif;
+      color: #333;
+    }
 
-  align-items: center;
-  justify-content: center;
-}
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to   { opacity: 1; transform: scale(1);   }
+    }
 
-/* Contenido del modal */
-.modal-content {
-  background: #fff;
-  padding: 25px;
-  border-radius: 15px;
-  max-width: 500px;
-  width: 90%;
-  box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
-  animation: fadeIn 0.3s ease-in-out;
-  font-family: Arial, sans-serif;
-  color: #333;
-}
+    /* ================== CHECKBOXES ================== */
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 15px;
+    }
 
-/* Animación */
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to   { opacity: 1; transform: scale(1); }
-}
+    .checkbox-group label { font-size: 14px; color: #444; }
 
-/* Checkboxes */
-.checkbox-group {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  margin-bottom: 15px;
-}
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      resize: none;
+      font-size: 14px;
+      margin-bottom: 15px;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
 
-.checkbox-group label {
-  font-size: 14px;
-  color: #444;
-}
+    /* ================== BOTONES ================== */
+    .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; }
 
-/* Textarea */
-textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #bbb;
-  border-radius: 8px;
-  resize: none;
-  font-size: 14px;
-  margin-bottom: 15px;
-  font-family: inherit;
-}
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
 
-/* Botones */
-.modal-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
+    .btn-guardar  { background: #28a745; color: white; }
+    .btn-guardar:hover  { background: #218838; }
+    .btn-cancelar { background: #dc3545; color: white; }
+    .btn-cancelar:hover { background: #b02a37; }
 
-.btn {
-  padding: 10px 18px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 14px;
-  transition: background 0.2s;
-}
+    /* ================== CARDS AYUDA ================== */
+    .card-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
 
-.btn-guardar {
-  background: #28a745;
-  color: white;
-}
+    .card-ayuda {
+      background: #f9fafb;
+      border-radius: 18px;
+      padding: 20px 15px;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 1px solid #e5e7eb;
+      cursor: default;
+      width: 180px;
+    }
 
-.btn-guardar:hover {
-  background: #218838;
-}
+    .card-ayuda:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+      border-color: #4e54c8;
+    }
 
-.btn-cancelar {
-  background: #dc3545;
-  color: white;
-}
+    .card-ayuda img {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      object-fit: cover;
+      border: 3px solid #e5e7eb;
+    }
 
-.btn-cancelar:hover {
-  background: #b02a37;
-}
+    .card-ayuda h4 { font-weight: 600; margin-bottom: 6px; color: #1e293b; font-size: 14px; }
+    .card-ayuda p  { font-size: 12px; color: #64748b; margin: 2px 0; }
 
-/* Contenedor de cards */
-.card-container {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
+    /* ================== BADGE ASIGNADO ================== */
+    .badge-asignado {
+      display: inline-block;
+      background: #ede9fe;
+      color: #5b21b6;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      margin: 5px 0 4px;
+    }
 
-/* Card individual */
-.card {
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-  padding: 20px;
-  width: 200px;
-  text-align: center;
-  transition: transform 0.2s ease-in-out;
-}
+    .badge-sin-asignar {
+      display: inline-block;
+      background: #fef3c7;
+      color: #92400e;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      margin: 5px 0 4px;
+    }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 6px 15px rgba(0,0,0,0.2);
-}
+    /* ================== TICKET CARD ================== */
+    .ticket-card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.07);
+      border: 1px solid #e5e7eb;
+      transition: all 0.25s ease;
+      font-size: 13px;
+      color: #334155;
+    }
 
-/* Imagen redonda */
-.card img {
-  border-radius: 50%;
-  margin-bottom: 15px;
-}
+    .ticket-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.11);
+    }
 
-/* Nombre */
-.card h3 {
-  margin-bottom: 10px;
-  color: #333;
-}
+    .ticket-card strong { color: #4e54c8; }
 
-  /* ====== RESPONSIVE ====== */
+    .ticket-card .depto-tag {
+      font-weight: 700;
+      color: #4e54c8;
+    }
 
-/* Tablets */
-@media (max-width: 900px) {
-  .container.grid-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 2 columnas */
-    gap: 15px;
-  }
+    .ticket-card .titulo {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 4px 0;
+    }
 
-  .navbar {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
+    .ticket-card .descripcion {
+      color: #64748b;
+      margin: 4px 0 8px;
+      font-size: 13px;
+    }
 
-  .navbar h2 {
-    width: 100%;
-    text-align: center;
-  }
-}
+    .ticket-card .fecha {
+      font-size: 11px;
+      color: #94a3b8;
+    }
 
-/* Móviles */
-@media (max-width: 600px) {
-  .container.grid-3 {
-    grid-template-columns: 1fr; /* 1 columna */
-  }
+    .ticket-card .usuario-tag {
+      font-size: 12px;
+      color: #475569;
+    }
 
-  .navbar {
-    flex-direction: column;
-    align-items: stretch;
-    text-align: center;
-  }
+    /* Botones acción */
+    .btn-proceso, .btn-resuelto {
+      padding: 7px 13px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 10px;
+      margin-right: 6px;
+      transition: all 0.2s ease;
+    }
 
-  .navbar button {
-    width: 100%;
-  }
+    .btn-proceso  { background: #fef3c7; color: #92400e; }
+    .btn-proceso:hover  { background: #fde68a; }
+    .btn-resuelto { background: #d1fae5; color: #065f46; }
+    .btn-resuelto:hover { background: #a7f3d0; }
 
-  .modal-content {
-    max-width: 95%;
-    padding: 15px;
-  }
+    /* Caja resolución */
+    .resolucion-box {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f0fdf4;
+      border-radius: 8px;
+      border-left: 4px solid #10b981;
+      font-size: 12px;
+      color: #374151;
+    }
 
-  .card-container {
-    flex-direction: column;
-    align-items: center;
-  }
+    /* ================== USER BTN ================== */
+    .user-btn {
+      background: #1f2a6d;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 500;
+    }
 
-  .card {
-    width: 90%;
-  }
+    .user-btn:hover { background: #2f3fa3; }
 
-  .checkbox-group {
-    grid-template-columns: 1fr; /* checkboxes en una sola columna */
-  }
+    /* ================== RESPONSIVE ================== */
+    @media (max-width: 900px) {
+      .container.grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+    }
 
-  textarea {
-    font-size: 16px; /* mejor para móvil */
-  }
-}
+    @media (max-width: 600px) {
+      .container.grid-3 { grid-template-columns: 1fr; }
 
-  .user-btn {
-  background: #1f2a6d;
-  color: #fff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: 500;
-}
+      .navbar { flex-direction: column; align-items: stretch; text-align: center; }
+      .navbar button { width: 100%; }
 
-.user-btn:hover {
-  background: #2f3fa3;
-}
-
-
-</style>
+      .modal-content { max-width: 95%; padding: 15px; }
+      .card-container { flex-direction: column; align-items: center; }
+      .card-ayuda { width: 90%; }
+      .checkbox-group { grid-template-columns: 1fr; }
+      textarea { font-size: 16px; }
+    }
+  </style>
 
   <script src="JS/js.js"></script>
+  <script>
+    // Mostrar nombre del técnico en el navbar
+    document.getElementById("userNameTop").textContent = localStorage.getItem("usuario") || "";
+
+    function abrirAyuda() {
+      document.getElementById("ayudaModal").classList.add("show");
+    }
+
+    function cerrarAyuda() {
+      document.getElementById("ayudaModal").classList.remove("show");
+    }
+
+    // Cerrar modales al hacer clic fuera
+    window.addEventListener("click", function(e) {
+      const ayuda    = document.getElementById("ayudaModal");
+      const resuelto = document.getElementById("resueltoModal");
+
+      if (e.target === ayuda)    ayuda.classList.remove("show");
+      if (e.target === resuelto) resuelto.classList.remove("show");
+    });
+  </script>
 </body>
 </html>
