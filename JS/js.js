@@ -3,80 +3,78 @@
 // ======================
 const usuarios = {
   tecnico: [
-    { username: "Juan", password: "1234", rol: "tecnico", po:"IT" },
-    { username: "juan", password: "1234", rol: "tecnico", po:"IT" },
-    { username: "JUAN", password: "1234", rol: "tecnico", po:"IT" },
-    { username: "Joel", password: "1234", rol: "tecnico", po:"SUPERIOR LOGISTICA" },
-    { username: "joel", password: "1234", rol: "tecnico" , po:"SUPERIOR LOGISTICA"},
-    { username: "Yanna", password: "1234", rol: "tecnico" , po:"SUPERIOR IT"},
-    { username: "yanna", password: "1234", rol: "tecnico", po:"SUPERIOR IT" },
-    { username: "Xavier", password: "1234", rol: "tecnico" , po:"Auxiliar Analista"}
-
+    { username: "Juan",   password: "1234", rol: "tecnico" },
+    { username: "juan",   password: "1234", rol: "tecnico" },
+    { username: "JUAN",   password: "1234", rol: "tecnico" },
+    { username: "Joel",   password: "1234", rol: "tecnico" },
+    { username: "joel",   password: "1234", rol: "tecnico" },
+    { username: "Yanna",  password: "1234", rol: "tecnico" },
+    { username: "Xavier", password: "1234", rol: "tecnico" },
+    { username: "xavier", password: "1234", rol: "tecnico" },
+    { username: "yanna",  password: "1234", rol: "tecnico" }
   ],
 
   usuario: [
-    { username: "michel", password: "1234", rol: "usuario", po:"Administradora SJM" },
-    { username: "Michel", password: "1234", rol: "usuario", po:"Administradora SJM" },
-    { username: "Pamela", password: "1234", rol: "usuario", po:"Auxiliar CRM" },
-    { username: "pamela", password: "1234", rol: "usuario", po:"Auxiliar CRM" },
-    { username: "Eliana", password: "1234", rol: "usuario", po:"Superior Tesoreria" },
-    { username: "eliana", password: "1234", rol: "usuario", po:"Superior Tesoreria" },
-    { username: "Anabell", password: "1234", rol: "usuario", po:"RRHH" },
-    { username: "anabell", password: "1234", rol: "usuario", po:"RRHH" },
-    { username: "Maitte", password: "1234", rol: "usuario", po:"RRHH" },
-    { username: "maytte", password: "1234", rol: "usuario", po:"RRHH" },
-    { username: "Hilda", password: "1234", rol: "usuario", po:"Superior Contabilidad" },
-    { username: "hilda", password: "1234", rol: "usuario", po:"Superior Contabilidad" },
-    { username: "Chantal", password: "1234", rol: "usuario", po:"Auxiliar Tesoreria" },
-    { username: "chantal", password: "1234", rol: "usuario", po:"Auxiliar Tesoreria" },
-    { username: "Carla", password: "1234", rol: "usuario", po:"Auxiliar CRM" },
-    { username: "carla", password: "1234", rol: "usuario", po:"Auxiliar CRM" },
-    { username: "Clara", password: "1234", rol: "usuario", po:"Auxiliar Facturacion"  },
-    { username: "clara", password: "1234", rol: "usuario", po:"Auxiliar Facturacion" },
-    { username: "Francisca", password: "1234", rol: "usuario", po:"Recepcion" },
-    { username: "francisca", password: "1234", rol: "usuario", po:"Recepcion" },
-    { username: "Miladys", password: "1234", rol: "usuario", po:"Superior CRM" },
-    { username: "miladys", password: "1234", rol: "usuario", po:"Superior CRM" },
-    { username: "Jasnahia", password: "1234", rol: "usuario", po:"ADM CM LV2" },
-    { username: "Jasnahia", password: "1234", rol: "usuario", po:"ADM CM LV2"  },
-    { username: "Enelso", password: "1234", rol: "usuario", po:"ADM LA70 LV1"  },
-    { username: "enelso", password: "1234", rol: "usuario", po:"ADM LA70 LV1" },
-    { username: "Alexandra", password: "1234", rol: "usuario", po:"ADM LA70 SD" },
-    { username: "alexandra", password: "1234", rol: "usuario", po:"ADM LA70 SD" },
-    { username: "Ricarda", password: "1234", rol: "usuario", po:"ADM CM SD" },
-    { username: "ricarda", password: "1234", rol: "usuario", po:"ADM CM SD" },
-    { username: "Eduard", password: "1234", rol: "usuario", po:"ADM LA70 STGO" },
-    { username: "eduard", password: "1234", rol: "usuario", po:"ADM LA70 STGO" },
-    { username: "Enmanuel", password: "1234", rol: "usuario", po:"ADM CM STGO" },
-    { username: "enmanuel", password: "1234", rol: "usuario", po:"ADM CM STGO" },
-    { username: "Francis", password: "1234", rol: "usuario" , po:"ADM CM MOCA"},
-    { username: "francis", password: "1234", rol: "usuario", po:"ADM CM MOCA" },
-    { username: "Edgar", password: "1234", rol: "usuario" , po:"ADM CM BONAO"},
-    { username: "edgar", password: "1234", rol: "usuario" , po:"ADM CM BONAO"},
-    { username: "Merlyn", password: "1234", rol: "usuario", po:"ADM LA70 SFM" },
-    { username: "merlyn", password: "1234", rol: "usuario" , po:"ADM LA70 SFM"},
-    { username: "Elaine", password: "1234", rol: "usuario" , po:"ADM CM SFM"},
-    { username: "elaine", password: "1234", rol: "usuario", po:"ADM CM SFM" },
+    { username: "michel",     password: "1234", rol: "usuario" },
+    { username: "Michel",     password: "1234", rol: "usuario" },
+    { username: "Pamela",     password: "1234", rol: "usuario" },
+    { username: "pamela",     password: "1234", rol: "usuario" },
+    { username: "Eliana",     password: "1234", rol: "usuario" },
+    { username: "eliana",     password: "1234", rol: "usuario" },
+    { username: "Anabell",    password: "1234", rol: "usuario" },
+    { username: "anabell",    password: "1234", rol: "usuario" },
+    { username: "Maitte",     password: "1234", rol: "usuario" },
+    { username: "maytte",     password: "1234", rol: "usuario" },
+    { username: "Hilda",      password: "1234", rol: "usuario" },
+    { username: "hilda",      password: "1234", rol: "usuario" },
+    { username: "Chantal",    password: "1234", rol: "usuario" },
+    { username: "chantal",    password: "1234", rol: "usuario" },
+    { username: "Carla",      password: "1234", rol: "usuario" },
+    { username: "carla",      password: "1234", rol: "usuario" },
+    { username: "Clara",      password: "1234", rol: "usuario" },
+    { username: "clara",      password: "1234", rol: "usuario" },
+    { username: "Francisca",  password: "1234", rol: "usuario" },
+    { username: "francisca",  password: "1234", rol: "usuario" },
+    { username: "Miladys",    password: "1234", rol: "usuario" },
+    { username: "miladys",    password: "1234", rol: "usuario" },
+    { username: "Jasnaya",    password: "1234", rol: "usuario" },
+    { username: "jasnaya",    password: "1234", rol: "usuario" },
+    { username: "Enelson",    password: "1234", rol: "usuario" },
+    { username: "enelson",    password: "1234", rol: "usuario" },
+    { username: "Alexandra",  password: "1234", rol: "usuario" },
+    { username: "alexandra",  password: "1234", rol: "usuario" },
+    { username: "Ricarda",    password: "1234", rol: "usuario" },
+    { username: "ricarda",    password: "1234", rol: "usuario" },
+    { username: "Eduard",     password: "1234", rol: "usuario" },
+    { username: "eduard",     password: "1234", rol: "usuario" },
+    { username: "Enmanuel",   password: "1234", rol: "usuario" },
+    { username: "enmanuel",   password: "1234", rol: "usuario" },
+    { username: "Francis",    password: "1234", rol: "usuario" },
+    { username: "francis",    password: "1234", rol: "usuario" },
+    { username: "Edgar",      password: "1234", rol: "usuario" },
+    { username: "edgar",      password: "1234", rol: "usuario" },
+    { username: "Merlyn",     password: "1234", rol: "usuario" },
+    { username: "merlyn",     password: "1234", rol: "usuario" },
+    { username: "Elaine",     password: "1234", rol: "usuario" },
+    { username: "elaine",     password: "1234", rol: "usuario" }
   ]
 };
 
-
+// ======================
+// API SheetBest
+// ======================
+const API_URL = "https://api.sheetbest.com/sheets/06ce2eea-4aea-44d9-96d0-136e689a9902";
 
 // ======================
 // LOGIN
 // ======================
 function login() {
-  let user = document.getElementById("username").value;
-  let pass = document.getElementById("password").value;
+  let user  = document.getElementById("username").value;
+  let pass  = document.getElementById("password").value;
   let error = document.getElementById("login-error");
 
-  // Unimos todos los usuarios
-  const todos = [
-    ...usuarios.tecnico,
-    ...usuarios.usuario
-  ];
+  const todos = [...usuarios.tecnico, ...usuarios.usuario];
 
-  // Búsqueda sin importar mayúsculas/minúsculas
   let encontrado = todos.find(
     u => u.username.toLowerCase() === user.toLowerCase() && u.password === pass
   );
@@ -84,7 +82,6 @@ function login() {
   if (encontrado) {
     localStorage.setItem("usuario", encontrado.username);
     localStorage.setItem("rol", encontrado.rol);
-    localStorage.setItem("po", encontrado.po); // 🔥 NUEVO
 
     if (encontrado.rol === "tecnico") {
       window.location.href = "Asistencia.html";
@@ -101,38 +98,30 @@ function logout() {
   localStorage.removeItem("rol");
   window.location.href = "index.html";
 }
-// ======================
-// API SheetBest
-// ======================
-
-console.log("🟡 Iniciando creación de ticket y nuevos usuarios administradores tiendas...");
-const API_URL = "https://api.sheetbest.com/sheets/06ce2eea-4aea-44d9-96d0-136e689a9902";
 
 // ======================
-// CREAR TICKET
+// CREAR TICKET ✅ CORREGIDO
 // ======================
 function crearTicket() {
-  let titulo = document.getElementById("titulo").value.trim();
-  let descripcion = document.getElementById("descripcion").value.trim();
-  let depto = document.getElementById("depto").value;
-  let usuario = localStorage.getItem("usuario") || "Invitado";
+  const titulo      = document.getElementById('titulo').value.trim();
+  const descripcion = document.getElementById('descripcion').value.trim();
+  const depto       = document.getElementById('depto').value;
+  const asignado    = document.getElementById('asignadoA').value; // ✅ ID correcto
+  const usuario     = localStorage.getItem("usuario");
 
   if (!titulo || !descripcion || !depto) {
-    alert("⚠️ Completa todos los campos");
+    alert("Por favor rellena los campos obligatorios");
     return;
   }
 
-  let nuevoTicket = {
-    id: Date.now().toString(), // solo informativo
-    usuario,
-    depto,
-    titulo,
-    descripcion,
-    fecha: new Date().toLocaleString(),
-    estado: "Pendiente",
-    resolucion: "",
-    participantes: "",
-    fecha_resuelto: ""
+  const nuevoTicket = {
+    titulo:      titulo,
+    descripcion: descripcion,
+    depto:       depto,                              // ✅ campo unificado como "depto"
+    asignado:    asignado || "Sin asignar",          // ✅ técnico asignado
+    estado:      "Pendiente",
+    usuario:     usuario,                            // ✅ incluye el usuario que creó el ticket
+    fecha:       new Date().toLocaleString()
   };
 
   console.log("🟡 Creando ticket:", nuevoTicket);
@@ -147,21 +136,14 @@ function crearTicket() {
     return res.text();
   })
   .then(() => {
-    console.log("✅ Ticket creado correctamente");
-
     alert("✅ Ticket creado correctamente");
-
-    // Limpiar formulario
+    mostrarTickets();
+    enviarCorreoTicket(nuevoTicket);
+    // Limpiar campos
     document.getElementById("titulo").value = "";
     document.getElementById("descripcion").value = "";
     document.getElementById("depto").value = "";
-
-    mostrarTickets();
-
-    // ⏱ Enviar correo DESPUÉS del alert
-    setTimeout(() => {
-      enviarCorreoTicket(nuevoTicket);
-    }, 0);
+    document.getElementById("asignadoA").value = "Sin asignar";
   })
   .catch(err => {
     console.error("❌ Error creando ticket:", err);
@@ -169,132 +151,125 @@ function crearTicket() {
   });
 }
 
-
+// ======================
+// ENVIAR CORREO
+// ======================
 function enviarCorreoTicket(ticket) {
-  console.log("📤 Intentando enviar correo del ticket:", ticket);
+  console.log("📤 Enviando correo del ticket:", ticket);
 
-  return emailjs.send("service_8oishge", "template_mferzbn", {
-    ticket_id: ticket.id,
-    ticket_usuario: ticket.usuario,
-    ticket_departamento: ticket.depto,
-    ticket_titulo: ticket.titulo,
-    ticket_descripcion: ticket.descripcion,
-    ticket_fecha: ticket.fecha
-  })
-  .then(() => {
-    console.log("📧 Correo enviado correctamente");
-  })
-  .catch(err => {
-    console.error("❌ Error enviando correo:", err);
-  });
+  const form = document.getElementById("ticketForm");
+  if (!form) return;
+
+  form.querySelector('[name="ticket_id"]').value          = ticket.id || "";
+  form.querySelector('[name="ticket_usuario"]').value     = ticket.usuario;
+  form.querySelector('[name="ticket_departamento"]').value = ticket.depto;
+  form.querySelector('[name="ticket_titulo"]').value      = ticket.titulo;
+  form.querySelector('[name="ticket_descripcion"]').value = ticket.descripcion;
+  form.querySelector('[name="ticket_fecha"]').value       = ticket.fecha;
+
+  return emailjs.sendForm(
+    "service_8oishge",
+    "template_mferzbn",
+    form,
+    "60Wdt0a0Ejlr-BGGa"
+  )
+  .then(() => console.log("📧 Correo enviado"))
+  .catch(err => console.error("❌ Error enviando correo:", err));
 }
-
-
 
 // ======================
 // MOSTRAR TICKETS USUARIO
 // ======================
 function mostrarTickets() {
-  const cont = document.getElementById("listaTickets");
-  if (!cont) return;
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+      let cont = document.getElementById("listaTickets");
+      if (!cont) return;
 
-  const user = localStorage.getItem("usuario");
+      let user = localStorage.getItem("usuario");
+      cont.innerHTML = "";
 
-  // 1️⃣ Primero intentamos desde cache
-  const cache = JSON.parse(localStorage.getItem("tickets_cache"));
-  if (cache) {
-    renderTickets(cache, user, cont);
-  }
+      const misTickets = data.filter(t => t.usuario === user);
 
-  // 2️⃣ Solo sincronizamos si no hay cache o si quieres forzar actualización
-  if (!cache) {
-    fetch(API_URL)
-      .then(res => res.json())
-      .then(data => {
-        // Guardamos en cache
-        localStorage.setItem("tickets_cache", JSON.stringify(data));
-        renderTickets(data, user, cont);
-      })
-      .catch(err => console.error("Error cargando tickets:", err));
-  }
-}
-
-function renderTickets(data, user, cont) {
-  cont.innerHTML = "";
-
-  data
-    .filter(t => t.usuario === user)
-    .forEach(t => {
-      let div = document.createElement("div");
-      div.className = "ticket-item";
-
-      let extra = "";
-      if (t.estado === "Resuelto") {
-        extra = `
-          <div class="resolucion-box">
-            <strong>✅ Resolución:</strong><br>
-            ${t.resolucion || "No hay detalle"}<br>
-            <small><b>Participantes:</b> ${t.participantes || "N/A"}</small><br>
-            <small><b>Fecha Resuelto:</b> ${t.fecha_resuelto || "-"}</small>
-          </div>
-        `;
+      if (misTickets.length === 0) {
+        cont.innerHTML = "<p style='color:#94a3b8; text-align:center;'>No tienes tickets aún.</p>";
+        return;
       }
 
-       div.innerHTML = `
-  <h4>
-    <span style="color:#4e54c8; font-weight:600;">
-      [${t.depto}]
-    </span> 
-    ${t.titulo}
-  </h4>
+      misTickets.forEach(t => {
+        let div = document.createElement("div");
+        div.className = "ticket-item";
 
-  <p>${t.descripcion}</p>
+        div.innerHTML = `
+          <h4>
+            <span style="color:#4e54c8; font-weight:600;">[${t.depto}]</span>
+            ${t.titulo}
+          </h4>
 
-  <p><small>📅 ${t.fecha}</small></p>
+          <p>${t.descripcion}</p>
+          <p><small>📅 ${t.fecha}</small></p>
 
-  <div class="ticket-status ${
-    t.estado === "Pendiente" ? "status-pendiente" :
-    t.estado === "En Proceso" ? "status-proceso" :
-    "status-resuelto"
-  }">
-    ${t.estado}
-  </div>
+          <!-- ✅ Técnico asignado visible con nombre completo -->
+          ${(() => {
+            const nombresCompletos = { "Xavier": "Xavier Rosario", "Juan": "Juan Francisco Jimenez" };
+            const asig = t.asignado || "";
+            const nombre = nombresCompletos[asig] || asig;
+            return (asig && asig !== "Sin asignar")
+              ? `<span class="badge-asignado">👤 Asignado a: ${nombre}</span>`
+              : `<span class="badge-asignado" style="background:#fef3c7;color:#92400e;">⚠️ Sin asignar</span>`;
+          })()}
 
-  ${t.estado === "Pendiente" 
-    ? `<button class="btn-delete" onclick="eliminarTicket('${t.id}')">🗑️ Eliminar</button>` 
-    : ""
-  }
+          <div class="ticket-status ${
+            t.estado === "Pendiente"  ? "status-pendiente" :
+            t.estado === "En Proceso" ? "status-proceso"   :
+            "status-resuelto"
+          }">
+            ${t.estado}
+          </div>
 
-  ${t.estado === "Resuelto" ? `
-    <div class="resolucion-box">
-      <strong>✅ Resolución:</strong>
-      <p>${t.resolucion || "No hay detalle"}</p>
-      <small><b>Participantes:</b> ${t.participantes || "N/A"}</small><br>
-      <small><b>Fecha:</b> ${t.fecha_resuelto || "-"}</small>
-    </div>
-  ` : ""}
-`;
+          ${t.estado === "Pendiente"
+            ? `<button class="btn-delete" onclick="eliminarTicket('${encodeURIComponent(t.titulo)}', '${encodeURIComponent(t.fecha)}')">🗑️ Eliminar</button>`
+            : ""
+          }
 
-      cont.appendChild(div);
-    });
+          ${t.estado === "Resuelto" ? `
+            <div class="resolucion-box">
+              <strong>✅ Resolución:</strong>
+              <p>${t.resolucion || "No hay detalle"}</p>
+              <small><b>Participantes:</b> ${t.participantes || "N/A"}</small><br>
+              <small><b>Fecha:</b> ${t.fecha_resuelto || "-"}</small>
+            </div>
+          ` : ""}
+        `;
+
+        cont.appendChild(div);
+      });
+    })
+    .catch(err => console.error("Error cargando tickets:", err));
 }
+
 
 // ======================
 // ELIMINAR TICKET (solo pendiente)
 // ======================
-function eliminarTicket(id) {
-  if (!id) {
-    console.error("❌ No se encontró ID");
+function eliminarTicket(titulo, fecha) {
+  if (!titulo) {
+    console.error("❌ No se encontró referencia del ticket");
     return;
   }
 
-  fetch(`${API_URL}/id/${id}`, { method: "DELETE" })
-    .then(res => res.json())
-    .then(() => {
-      alert("🗑️ Ticket eliminado");
-      mostrarTickets();
-    })
-    .catch(err => console.error("Error eliminando:", err));
+  if (!confirm("¿Seguro que deseas eliminar este ticket?")) return;
+
+  // Busca y elimina por titulo y fecha (campos únicos combinados)
+  fetch(`${API_URL}/titulo/${encodeURIComponent(titulo)}/fecha/${encodeURIComponent(fecha)}`, {
+    method: "DELETE"
+  })
+  .then(() => {
+    alert("🗑️ Ticket eliminado");
+    mostrarTickets();
+  })
+  .catch(err => console.error("Error eliminando:", err));
 }
 
 // ======================
@@ -302,43 +277,47 @@ function eliminarTicket(id) {
 // ======================
 function parseFechaLatina(fechaStr) {
   if (!fechaStr) return null;
-
-  // Ej: "25/9/2025, 10:04:15 a. m."
   const partes = fechaStr.split(",");
   const [d, m, y] = partes[0].trim().split("/");
-
   return new Date(`${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`);
 }
 
 function esHoyLatina(fechaStr) {
   const hoy = new Date();
   hoy.setHours(0, 0, 0, 0);
-
   const f = parseFechaLatina(fechaStr);
   if (!f) return false;
-
   f.setHours(0, 0, 0, 0);
   return f.getTime() === hoy.getTime();
 }
 
 // ======================
-// MOSTRAR TICKETS PARA TÉCNICO
+// MOSTRAR TICKETS PARA TÉCNICO ✅ FILTRO POR ASIGNACIÓN
 // ======================
 function mostrarTodosTickets() {
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
       let pendientes = document.getElementById("pendientes");
-      let enProceso = document.getElementById("enProceso");
-      let resueltos = document.getElementById("resueltos");
+      let enProceso  = document.getElementById("enProceso");
+      let resueltos  = document.getElementById("resueltos");
 
       if (!pendientes) return;
 
       pendientes.innerHTML = "";
-      enProceso.innerHTML = "";
-      resueltos.innerHTML = "";
+      enProceso.innerHTML  = "";
+      resueltos.innerHTML  = "";
 
-      data.forEach(t => {
+      const tecnicoActual = localStorage.getItem("usuario");
+
+      // Cada técnico ve sus tickets + los sin asignar
+      const ticketsFiltrados = data.filter(t =>
+        !t.asignado ||
+        t.asignado === "Sin asignar" ||
+        t.asignado.toLowerCase() === tecnicoActual.toLowerCase()
+      );
+
+      ticketsFiltrados.forEach(t => {
         let div = document.createElement("div");
         div.className = "ticket-card";
 
@@ -354,26 +333,37 @@ function mostrarTodosTickets() {
           `;
         }
 
+        // Badge de asignación — mapea username corto a nombre completo para mostrar
+        const nombresCompletos = {
+          "Xavier": "Xavier Rosario",
+          "Juan":   "Juan Francisco Jimenez"
+        };
+        const tecnicoAsignado = t.asignado || "";
+        const nombreMostrar   = nombresCompletos[tecnicoAsignado] || tecnicoAsignado;
+        const badgeAsignado   = (tecnicoAsignado && tecnicoAsignado !== "Sin asignar")
+          ? `<span class="badge-asignado">👤 ${nombreMostrar}</span>`
+          : `<span class="badge-sin-asignar">⚠️ Sin asignar</span>`;
+
         div.innerHTML = `
-          <strong>[${t.depto}]</strong> ${t.titulo} - ${t.usuario}<br>
-          <em>${t.descripcion}</em><br>
-          <small>${t.fecha}</small><br>
-          Estado: <b>${t.estado}</b><br>
+          <div class="depto-tag">[${t.depto || ""}]</div>
+          <div class="titulo">${t.titulo || ""}</div>
+          <div class="descripcion">${t.descripcion || ""}</div>
+          <div class="usuario-tag">🙍 Solicitado por: <b>${t.usuario || ""}</b></div>
+          <div class="fecha">📅 ${t.fecha || ""}</div>
+          ${badgeAsignado}
+          <br>
           ${t.estado !== "Resuelto" ? `
-            <button class="btn-proceso" onclick="cambiarEstado('${t.id}', 'En Proceso')">En Proceso</button>
-            <button class="btn-resuelto" onclick="marcarResuelto('${t.id}')">Resuelto</button>
+            <button class="btn-proceso"  onclick="cambiarEstado('${encodeURIComponent(t.titulo)}', '${encodeURIComponent(t.fecha)}', 'En Proceso')">🔧 En Proceso</button>
+            <button class="btn-resuelto" onclick="marcarResuelto('${encodeURIComponent(t.titulo)}', '${encodeURIComponent(t.fecha)}')">✅ Resuelto</button>
           ` : ""}
           ${extra}
         `;
 
         if (t.estado === "Pendiente") {
           pendientes.appendChild(div);
-        }
-        else if (t.estado === "En Proceso") {
+        } else if (t.estado === "En Proceso") {
           enProceso.appendChild(div);
-        }
-        else if (t.estado === "Resuelto") {
-          // 🔥 SOLO LOS RESUELTOS DE HOY
+        } else if (t.estado === "Resuelto") {
           if (esHoyLatina(t.fecha_resuelto)) {
             resueltos.appendChild(div);
           }
@@ -386,31 +376,29 @@ function mostrarTodosTickets() {
 // ======================
 // CAMBIAR ESTADO (PATCH)
 // ======================
-function cambiarEstado(id, nuevoEstado) {
-  if (!id) {
-    console.error("❌ No se encontró ID");
-    return;
-  }
+function cambiarEstado(titulo, fecha, nuevoEstado) {
+  titulo = decodeURIComponent(titulo);
+  fecha  = decodeURIComponent(fecha);
 
-  fetch(`${API_URL}/id/${id}`, {
+  fetch(`${API_URL}/titulo/${encodeURIComponent(titulo)}/fecha/${encodeURIComponent(fecha)}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ estado: nuevoEstado })
   })
-    .then(res => res.json())
-    .then(() => {
-      mostrarTodosTickets();
-    })
-    .catch(err => console.error("Error cambiando estado:", err));
+  .then(res => res.json())
+  .then(() => mostrarTodosTickets())
+  .catch(err => console.error("Error cambiando estado:", err));
 }
 
 // ======================
 // MODAL RESOLVER TICKET
 // ======================
-let ticketResueltoId = null;
+let ticketResueltoTitulo = null;
+let ticketResueltoFecha  = null;
 
-function marcarResuelto(id) {
-  ticketResueltoId = id;
+function marcarResuelto(titulo, fecha) {
+  ticketResueltoTitulo = decodeURIComponent(titulo);
+  ticketResueltoFecha  = decodeURIComponent(fecha);
   document.getElementById("resueltoModal").style.display = "flex";
 }
 
@@ -418,13 +406,14 @@ function cerrarModal() {
   document.getElementById("resueltoModal").style.display = "none";
   document.getElementById("detalleResolucion").value = "";
   document.querySelectorAll(".participante").forEach(c => c.checked = false);
-  ticketResueltoId = null;
+  ticketResueltoTitulo = null;
+  ticketResueltoFecha  = null;
 }
 
 function guardarResolucion() {
-  let checks = document.querySelectorAll(".participante:checked");
+  let checks        = document.querySelectorAll(".participante:checked");
   let participantes = Array.from(checks).map(c => c.value).join(", ");
-  let detalle = document.getElementById("detalleResolucion").value;
+  let detalle       = document.getElementById("detalleResolucion").value;
 
   if (!detalle) {
     alert("⚠️ Escribe cómo se resolvió la tarea");
@@ -432,27 +421,26 @@ function guardarResolucion() {
   }
 
   let updateData = {
-    estado: "Resuelto",
-    participantes: participantes,
-    resolucion: detalle,
+    estado:         "Resuelto",
+    participantes:  participantes,
+    resolucion:     detalle,
     fecha_resuelto: new Date().toLocaleString()
   };
 
-  fetch(`${API_URL}/id/${ticketResueltoId}`, {
+  fetch(`${API_URL}/titulo/${encodeURIComponent(ticketResueltoTitulo)}/fecha/${encodeURIComponent(ticketResueltoFecha)}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(updateData)
   })
-    .then(res => res.json())
-    .then(() => {
-      alert("✅ Ticket marcado como resuelto");
-      cerrarModal();
-      mostrarTodosTickets();
-      mostrarTickets();
-    })
-    .catch(err => console.error("Error:", err));
+  .then(res => res.json())
+  .then(() => {
+    alert("✅ Ticket marcado como resuelto");
+    cerrarModal();
+    mostrarTodosTickets();
+    mostrarTickets();
+  })
+  .catch(err => console.error("Error:", err));
 }
-
 
 // ======================
 // AUTO REFRESH cada 30s
@@ -468,55 +456,7 @@ setInterval(() => {
 // ======================
 // AUTO CARGA
 // ======================
-
-// ======================
-// USUARIO TOP (OPCIÓN PRO)
-// ======================
-function mostrarUsuarioTop() {
-  const usuario = localStorage.getItem("usuario");
-  const po = localStorage.getItem("po"); // 🔥 POSICIÓN
-
-  if (!usuario) return;
-
-  const userBtn = document.getElementById("userBtn");
-  const userName = document.getElementById("userNameTop");
-
-  if (!userBtn || !userName) return;
-
-  userName.textContent = usuario;
-
-  // Crear dropdown si no existe
-  if (!document.getElementById("userDropdown")) {
-    const dropdown = document.createElement("div");
-    dropdown.id = "userDropdown";
-    dropdown.className = "user-dropdown";
-    dropdown.innerHTML = `
-      <div class="dropdown-item"><strong>👤 ${usuario}</strong></div>
-      <div class="dropdown-item">🏷️ ${po || "Sin posición"}</div>
-      <hr>
-      <div class="dropdown-item logout-item" onclick="logout()">🚪 Cerrar sesión</div>
-    `;
-    userBtn.parentElement.appendChild(dropdown);
-  }
-
-  // Toggle dropdown
-  userBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    document.getElementById("userDropdown").classList.toggle("show");
-  });
-}
-
-// Cerrar dropdown al hacer click fuera
-document.addEventListener("click", () => {
-  const dropdown = document.getElementById("userDropdown");
-  if (dropdown) dropdown.classList.remove("show");
-});
-
-
-
 window.onload = function () {
-    mostrarUsuarioTop();
-
   if (localStorage.getItem("rol") === "usuario") {
     mostrarTickets();
   } else if (localStorage.getItem("rol") === "tecnico") {
@@ -524,11 +464,13 @@ window.onload = function () {
   }
 };
 
+// ======================
+// MODAL AYUDA
+// ======================
 function abrirAyuda() {
-  document.getElementById("ayudaModal").style.display = "flex";
+  document.getElementById("ayudaModal").classList.add("show");
 }
 
 function cerrarAyuda() {
-  document.getElementById("ayudaModal").style.display = "none";
+  document.getElementById("ayudaModal").classList.remove("show");
 }
-
