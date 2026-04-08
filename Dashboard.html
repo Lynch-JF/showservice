@@ -6,248 +6,203 @@
   <title>Dashboard Usuario</title>
   <link rel="icon" type="image/png" href="IMG/2.ico">
   <link rel="stylesheet" href="CSS/css.css">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>
-  emailjs.init("60Wdt0a0Ejlr-BGGa");
-</script>
-  
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    emailjs.init("60Wdt0a0Ejlr-BGGa");
+  </script>
+
   <style>
-     /* =========================
-   MODAL OVERLAY PREMIUM
-========================= */
+    /* ========================= MODAL OVERLAY ========================= */
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(6px);
+      z-index: 2000;
+      padding: 20px;
+      animation: fadeOverlay 0.3s ease;
+    }
 
-.modal {
-  position: fixed;
-  inset: 0;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(6px);
-  z-index: 2000;
-  padding: 20px;
-  animation: fadeOverlay 0.3s ease;
-}
+    @keyframes fadeOverlay {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
 
-@keyframes fadeOverlay {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+    .modal.show { display: flex; }
 
-/* Mostrar modal */
-.modal.show {
-  display: flex;
-}
+    .modal-content {
+      background: #ffffff;
+      padding: 35px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 900px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+      animation: modalEnter 0.35s ease;
+      position: relative;
+    }
 
-/* =========================
-   CONTENIDO DEL MODAL
-========================= */
+    @keyframes modalEnter {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
 
-.modal-content {
-  background: #ffffff;
-  padding: 35px;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 900px;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.25);
-  animation: modalEnter 0.35s ease;
-  position: relative;
-}
+    .card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      margin-top: 20px;
+    }
 
-@keyframes modalEnter {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
+    .card-ayuda {
+      background: #f9fafb;
+      border-radius: 18px;
+      padding: 25px 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 1px solid #e5e7eb;
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+    }
 
-/* =========================
-   GRID DE CARDS
-========================= */
+    .card-ayuda:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+      border-color: #4e54c8;
+    }
 
-.card-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 25px;
-  margin-top: 20px;
-}
+    .card-ayuda img {
+      width: 95px;
+      height: 95px;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      object-fit: cover;
+      border: 3px solid #e5e7eb;
+      transition: 0.3s ease;
+    }
 
-/* =========================
-   CARD AYUDA PREMIUM
-========================= */
+    .card-ayuda:hover img {
+      transform: scale(1.05);
+      border-color: #4e54c8;
+    }
 
-.card-ayuda {
-  background: #f9fafb;
-  border-radius: 18px;
-  padding: 25px 20px;
-  text-align: center;
-  transition: all 0.3s ease;
-  border: 1px solid #e5e7eb;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
+    .card-ayuda h4 { font-weight: 600; margin-bottom: 8px; color: #1e293b; }
+    .card-ayuda p  { font-size: 13px; color: #64748b; margin: 3px 0; }
 
-/* Efecto hover elegante */
-.card-ayuda:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.12);
-  border-color: #4e54c8;
-}
+    .modal-buttons { text-align: center; margin-top: 30px; }
 
-/* Imagen */
-.card-ayuda img {
-  width: 95px;
-  height: 95px;
-  border-radius: 50%;
-  margin-bottom: 15px;
-  object-fit: cover;
-  border: 3px solid #e5e7eb;
-  transition: 0.3s ease;
-}
+    .btn-cerrar {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
 
-.card-ayuda:hover img {
-  transform: scale(1.05);
-  border-color: #4e54c8;
-}
+    .btn-cerrar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(239,68,68,0.3);
+    }
 
-/* Nombre */
-.card-ayuda h4 {
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #1e293b;
-}
+    @media (max-width: 600px) {
+      .modal-content { padding: 25px; }
+      .card-ayuda    { padding: 20px 15px; }
+    }
 
-/* Descripción */
-.card-ayuda p {
-  font-size: 13px;
-  color: #64748b;
-}
+    /* ========================= LISTA DE TICKETS ========================= */
+    .ticket-list { display: grid; gap: 20px; margin-top: 20px; }
 
-/* =========================
-   BOTONES DEL MODAL
-========================= */
+    .ticket-item {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px 25px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border: 1px solid #e5e7eb;
+      transition: all 0.3s ease;
+      position: relative;
+    }
 
-.modal-buttons {
-  text-align: center;
-  margin-top: 30px;
-}
+    .ticket-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+    }
 
-.btn-cerrar {
-  padding: 12px 25px;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
+    .ticket-item h4 { font-size: 18px; margin-bottom: 8px; color: #1e293b; }
 
-.btn-cerrar:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(239,68,68,0.3);
-}
+    .ticket-status {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
 
-/* =========================
-   RESPONSIVE
-========================= */
+    .status-resuelto  { background: #d1fae5; color: #065f46; }
+    .status-proceso   { background: #fef3c7; color: #92400e; }
+    .status-pendiente { background: #fee2e2; color: #991b1b; }
 
-@media (max-width: 600px) {
-  .modal-content {
-    padding: 25px;
-  }
+    .ticket-item p { margin: 4px 0; font-size: 14px; color: #475569; }
 
-  .card-ayuda {
-    padding: 20px 15px;
-  }
-}
+    .resolucion-box {
+      margin-top: 15px;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 10px;
+      border-left: 4px solid #10b981;
+      font-size: 14px;
+    }
 
-/* =========================
-   LISTA DE TICKETS PRO
-========================= */
+    .badge-asignado {
+      display: inline-block;
+      background: #ede9fe;
+      color: #5b21b6;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 6px;
+    }
 
-.ticket-list {
-  display: grid;
-  gap: 20px;
-  margin-top: 20px;
-}
+    .badge-sin-asignar {
+      display: inline-block;
+      background: #fef3c7;
+      color: #92400e;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 6px;
+    }
 
-.ticket-item {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 20px 25px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-  border: 1px solid #e5e7eb;
-  transition: all 0.3s ease;
-  position: relative;
-}
+    .btn-delete {
+      margin-top: 10px;
+      padding: 7px 14px;
+      background: #fee2e2;
+      color: #991b1b;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-block;
+    }
 
-.ticket-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.12);
-}
-
-/* Título */
-.ticket-item h4 {
-  font-size: 18px;
-  margin-bottom: 8px;
-  color: #1e293b;
-}
-
-/* Estado */
-.ticket-status {
-  display: inline-block;
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  margin-top: 8px;
-}
-
-.status-resuelto {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.status-proceso {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.status-pendiente {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-/* Separadores */
-.ticket-item p {
-  margin: 4px 0;
-  font-size: 14px;
-  color: #475569;
-}
-
-.resolucion-box {
-  margin-top: 15px;
-  padding: 12px;
-  background: #f8fafc;
-  border-radius: 10px;
-  border-left: 4px solid #10b981;
-  font-size: 14px;
-}
+    .btn-delete:hover { background: #fca5a5; }
   </style>
 </head>
 <body>
+
   <nav class="navbar">
     <h2>Mis Tickets</h2>
     <div style="display:flex; gap:10px;">
-      <button class="user-btn" id="userBtn">
-  👤 <span id="userNameTop"></span>
-</button>
       <button onclick="abrirAyuda()">Ayuda rápida</button>
       <button onclick="logout()">Cerrar Sesión</button>
     </div>
@@ -256,68 +211,92 @@
   <div class="container">
     <div class="card">
       <h3>Crear nuevo ticket</h3>
-      <input type="text" id="titulo" placeholder="Título del problema">
-      <textarea id="descripcion" placeholder="Describe tu problema..."></textarea>
-      <select id="depto">
-        <option value="">-- Selecciona Departamento --</option>
+
+      <form id="ticketForm">
+        <!-- Campos ocultos para EmailJS -->
+        <input type="hidden" name="ticket_id">
+        <input type="hidden" name="ticket_usuario">
+        <input type="hidden" name="ticket_departamento">
+        <input type="hidden" name="ticket_titulo">
+        <input type="hidden" name="ticket_descripcion">
+        <input type="hidden" name="ticket_fecha">
+
+        <input type="text" id="titulo" placeholder="Título del problema">
+        <textarea id="descripcion" placeholder="Describe tu problema..."></textarea>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <select id="depto">
+            <option value="">-- Departamento --</option>
             <option value="Recursos Humanos">Recursos Humanos</option>
-        <option value="Contabilidad">Contabilidad</option>
-        <option value="Showroom 1">Showroom 1</option>
-        <option value="Showroom 2">Showroom 2</option>
-        <option value="Facturacióm">Facturacióm</option>
-        <option value="Tesorería">Tesorería</option>
-        <option value="Mercadeo">Mercadeo</option>
-        <option value="Logistica">Logistica</option>
-        <option value="Credito y cobros">Credito y cobros</option>
-        <option value="Recepción">Recepción</option>
-        <option value="CM LV2">CM LV2</option>
-        <option value="La70 LV">La70 LV</option>
-        <option value="La70 SD">La70 SD</option>
-        <option value="CM SD">CM SD</option>
-        <option value="La70 SFM">La70 SFM</option>
-        <option value="CM SFM">CM SFM</option>
-        <option value="CM MOCA">CM MOCA</option>
-        <option value="CM BONAO">CM BONAO</option>
-        <option value="CM STGO">CM STGO</option>
-        <option value="LA70 STGO">LA70 STGO</option>
-      </select>
-      <button onclick="crearTicket()">Enviar Ticket</button>
+            <option value="Contabilidad">Contabilidad</option>
+            <option value="Showroom 1">Showroom 1</option>
+            <option value="Showroom 2">Showroom 2</option>
+            <option value="Facturación">Facturación</option>
+            <option value="Tesorería">Tesorería</option>
+            <option value="Mercadeo">Mercadeo</option>
+            <option value="Logistica">Logistica</option>
+            <option value="Credito y cobros">Credito y cobros</option>
+            <option value="Recepción">Recepción</option>
+            <option value="CM LV2">CM LV2</option>
+            <option value="La70 LV">La70 LV</option>
+            <option value="La70 SD">La70 SD</option>
+            <option value="CM SD">CM SD</option>
+            <option value="La70 SFM">La70 SFM</option>
+            <option value="CM SFM">CM SFM</option>
+            <option value="CM MOCA">CM MOCA</option>
+            <option value="CM BONAO">CM BONAO</option>
+            <option value="CM STGO">CM STGO</option>
+            <option value="LA70 STGO">LA70 STGO</option>
+          </select>
+
+          <!-- value = username exacto del técnico en el sistema -->
+          <select id="asignadoA">
+            <option value="Sin asignar">-- Asignar a --</option>
+            <option value="Xavier">Xavier Rosario</option>
+            <option value="Juan">Juan Francisco Jimenez</option>
+          </select>
+        </div>
+
+        <button type="button" onclick="crearTicket()">Enviar Ticket</button>
+      </form>
     </div>
 
     <h3 style="margin-top:20px;">📋 Mis Tickets</h3>
     <div id="listaTickets" class="ticket-list"></div>
   </div>
 
-  <!-- ================== MODAL AYUDA ================== -->
+  <!-- ========================= MODAL AYUDA ========================= -->
   <div id="ayudaModal" class="modal">
     <div class="modal-content">
-      <h2 style="text-align:center; margin-bottom: 20px;">📞 Ayuda Rápida</h2>
+      <h2 style="text-align:center; margin-bottom: 20px;">📞 Ayuda Rápida IT</h2>
       <p style="text-align:center; margin-bottom: 20px;">Contacta a nuestros técnicos disponibles:</p>
 
       <div class="card-container">
-        <!-- Card 1 -->
         <div class="card-ayuda">
-<img src="https://ui-avatars.com/api/?name=Yanna&background=0D8ABC&color=fff" alt="Yanna">
-          <h3>YANNA MARTINEZ</h3>
+          <img src="https://ui-avatars.com/api/?name=Yanna+Martinez&background=0D8ABC&color=fff" alt="Yanna">
+          <h4>YANNA MARTINEZ</h4>
           <p>📧 y.martinez@grupomichel.com</p>
-          <p>📱 -- -- --</p>
           <p>📟 Flota: (809) 390-5286</p>
         </div>
 
-        <!-- Card 2 -->
         <div class="card-ayuda">
-<img src="https://ui-avatars.com/api/?name=Joel&background=F39C12&color=fff" alt="Joel">
-          <h3>Joel Holguin</h3>
+          <img src="https://ui-avatars.com/api/?name=Joel+Holguin&background=F39C12&color=fff" alt="Joel">
+          <h4>Joel Holguin</h4>
           <p>📧 j.holguin@grupomichel.com</p>
-          <p>📱 -- -- --</p>
           <p>📟 Flota: (809) 722-2874</p>
         </div>
 
-        <!-- Card 3 -->
         <div class="card-ayuda">
-<img src="https://ui-avatars.com/api/?name=JuanFrancisco&background=27AE60&color=fff" alt="Juan Francisco">
-          <h3>Juan Francisco Jimenez</h3>
-          <p>📧 departamentoIT@grupomichel.com</p>
+          <img src="https://ui-avatars.com/api/?name=Xavier+Rosario&background=E74C3C&color=fff" alt="Xavier">
+          <h4>Xavier Rosario</h4>
+          <p>📧 x.rosario@grupomichel.com</p>
+          <p>📟 Flota: (000) 000-0000</p>
+        </div>
+
+        <div class="card-ayuda">
+          <img src="https://ui-avatars.com/api/?name=JuanFrancisco&background=27AE60&color=fff" alt="Juan Francisco">
+          <h4>Juan F. Jimenez</h4>
+          <p>📧 dptoIT@grupomichel.com</p>
           <p>📱 (809) 931-3720</p>
           <p>📟 Flota: (809) 722-1076</p>
         </div>
@@ -332,11 +311,18 @@
   <script src="JS/js.js"></script>
   <script>
     function abrirAyuda() {
-      document.getElementById("ayudaModal").style.display = "flex";
+      document.getElementById("ayudaModal").classList.add("show");
     }
 
     function cerrarAyuda() {
-      document.getElementById("ayudaModal").style.display = "none";
+      document.getElementById("ayudaModal").classList.remove("show");
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById("ayudaModal");
+      if (event.target === modal) {
+        modal.classList.remove("show");
+      }
     }
   </script>
 </body>
