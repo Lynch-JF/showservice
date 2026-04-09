@@ -8,8 +8,6 @@
   <link rel="stylesheet" href="CSS/css.css">
 
   <style>
-
-/* ===== RESET BÁSICO ===== */
 * {
   margin: 0;
   padding: 0;
@@ -17,126 +15,268 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* ===== FONDO RESPONSIVO ===== */
 .login-body {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
+  background: linear-gradient(135deg, #0f1c2e 0%, #1a2f4a 50%, #0d2137 100%);
 }
 
-/* ===== CAJA LOGIN ===== */
 .login-box {
   background: #ffffff;
   width: 100%;
   max-width: 400px;
-  padding: 40px 30px;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  text-align: center;
-  transition: 0.3s ease;
+  padding: 40px 36px;
+  border-radius: 16px;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.18);
 }
 
-/* TÍTULO */
+.login-logo {
+  width: 52px;
+  height: 52px;
+  background: #1e3c72;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.login-logo svg {
+  width: 26px;
+  height: 26px;
+}
+
 .login-box h2 {
-  margin-bottom: 25px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
   color: #1e3c72;
+  margin-bottom: 4px;
 }
 
-/* INPUTS */
-.login-box input {
+.login-subtitle {
+  text-align: center;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 28px;
+}
+
+.field-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  display: block;
+  margin-bottom: 6px;
+  letter-spacing: 0.03em;
+}
+
+.input-wrap {
+  position: relative;
+  margin-bottom: 14px;
+}
+
+.input-wrap .input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.4;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrap input {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-  transition: 0.2s ease;
-}
-
-.login-box input:focus {
-  border-color: #2a5298;
-  outline: none;
-  box-shadow: 0 0 5px rgba(42,82,152,0.4);
-}
-
-/* BOTÓN */
-.login-box button {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  background-color: #1e3c72;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-.login-box button:hover {
-  background-color: #2a5298;
-  transform: scale(1.03);
-}
-
-/* MENSAJE ERROR */
-.error {
-  color: red;
-  margin-top: 10px;
+  padding: 10px 12px 10px 36px;
+  border: 1px solid #d1d5db !important;
+  border-radius: 8px !important;
   font-size: 14px;
+  background: #f9fafb !important;
+  color: #111827;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: none !important;
 }
 
-/* ===== RESPONSIVE EXTRA ===== */
+.input-wrap input:focus {
+  border-color: #2a5298 !important;
+  box-shadow: 0 0 0 3px rgba(42,82,152,0.12) !important;
+  outline: none;
+  background: #fff !important;
+}
 
-/* Celulares pequeños */
+.toggle-pass {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none !important;
+  border: none !important;
+  cursor: pointer;
+  padding: 4px;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  box-shadow: none !important;
+  width: auto !important;
+  border-radius: 0 !important;
+}
+
+.toggle-pass:hover {
+  color: #6b7280;
+  background: none !important;
+  transform: translateY(-50%) !important;
+}
+
+/* ===== BOTÓN CORREGIDO ===== */
+.btn-ingresar {
+  width: 100% !important;
+  padding: 12px !important;
+  background: #1e3c72 !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: background 0.2s, transform 0.1s !important;
+  margin-top: 8px !important;
+  box-shadow: none !important;
+  letter-spacing: 0.02em;
+  display: block;
+}
+
+.btn-ingresar:hover {
+  background: #2a5298 !important;
+  transform: scale(1.01) !important;
+  color: #ffffff !important;
+}
+
+.btn-ingresar:active {
+  transform: scale(0.98) !important;
+}
+
+.error {
+  color: #dc2626;
+  margin-top: 10px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.login-help {
+  text-align: center;
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 20px;
+}
+
+.login-help span {
+  color: #2a5298;
+  font-weight: 500;
+}
+
 @media (max-width: 480px) {
   .login-box {
-    padding: 30px 20px;
+    padding: 28px 20px;
   }
-
   .login-box h2 {
-    font-size: 20px;
+    font-size: 18px;
   }
-
-  .login-box input,
-  .login-box button {
-    font-size: 14px;
-    padding: 10px;
+  .input-wrap input,
+  .btn-ingresar {
+    font-size: 14px !important;
   }
 }
 
-/* Pantallas grandes */
 @media (min-width: 1200px) {
   .login-box {
-    max-width: 450px;
+    max-width: 420px;
   }
 }
-    
   </style>
 </head>
 <body class="login-body">
+
   <div class="login-box">
-    <h2>🎫 GM TICKETS TI</h2>
-    <input type="text" id="username" placeholder="Usuario">
-    <input type="password" id="password" placeholder="Contraseña">
-    <button onclick="login()">Ingresar</button>
-    
+
+    <div class="login-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="5" width="20" height="14" rx="2"/>
+        <path d="M2 10h20"/>
+      </svg>
+    </div>
+
+    <h2>GM Tickets TI</h2>
+    <p class="login-subtitle">Ingresa tus credenciales para continuar</p>
+
+    <label class="field-label" for="username">Usuario</label>
+    <div class="input-wrap">
+      <span class="input-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+      </span>
+      <input type="text" id="username" placeholder="Tu usuario">
+    </div>
+
+    <label class="field-label" for="password">Contraseña</label>
+    <div class="input-wrap">
+      <span class="input-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </span>
+      <input type="password" id="password" placeholder="Tu contraseña">
+      <button class="toggle-pass" type="button" onclick="togglePassword()">
+        <svg id="eye-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
+    </div>
+
+    <button class="btn-ingresar" onclick="login()">Ingresar</button>
     <p id="login-error" class="error"></p>
+
+    <p class="login-help">¿Problemas para acceder? Contacta a <span>soporte TI</span></p>
+
   </div>
+
   <script src="JS/js.js"></script>
 
   <script>
-  document.getElementById("username").addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-      login();
-    }
-  });
+    document.getElementById("username").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") login();
+    });
 
-  document.getElementById("password").addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-      login();
+    document.getElementById("password").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") login();
+    });
+
+    function togglePassword() {
+      const input = document.getElementById("password");
+      const icon  = document.getElementById("eye-icon");
+      if (input.type === "password") {
+        input.type = "text";
+        icon.innerHTML = `
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+          <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+          <line x1="1" y1="1" x2="23" y2="23"/>
+        `;
+      } else {
+        input.type = "password";
+        icon.innerHTML = `
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+          <circle cx="12" cy="12" r="3"/>
+        `;
+      }
     }
-  });
-</script>
+  </script>
+
 </body>
 </html>
