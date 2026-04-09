@@ -106,11 +106,15 @@ function logout() {
 // ======================
 // CREAR TICKET ✅ CORREGIDO
 // ======================
+function generarID() {
+  return "TK-" + Date.now().toString().slice(-6);
+}
+
 function crearTicket() {
   const titulo      = document.getElementById('titulo').value.trim();
   const descripcion = document.getElementById('descripcion').value.trim();
   const depto       = document.getElementById('depto').value;
-  const asignado    = document.getElementById('asignadoA').value; // ✅ ID correcto
+  const asignado    = document.getElementById('asignadoA').value;
   const usuario     = localStorage.getItem("usuario");
 
   if (!titulo || !descripcion || !depto) {
@@ -119,12 +123,13 @@ function crearTicket() {
   }
 
   const nuevoTicket = {
+    id:          generarID(),
     titulo:      titulo,
     descripcion: descripcion,
-    depto:       depto,                              // ✅ campo unificado como "depto"
-    asignado:    asignado || "Sin asignar",          // ✅ técnico asignado
+    depto:       depto,
+    asignado:    asignado || "Sin asignar",
     estado:      "Pendiente",
-    usuario:     usuario,                            // ✅ incluye el usuario que creó el ticket
+    usuario:     usuario,
     fecha:       new Date().toLocaleString()
   };
 
@@ -143,11 +148,10 @@ function crearTicket() {
     alert("✅ Ticket creado correctamente");
     mostrarTickets();
     enviarCorreoTicket(nuevoTicket);
-    // Limpiar campos
-    document.getElementById("titulo").value = "";
-    document.getElementById("descripcion").value = "";
-    document.getElementById("depto").value = "";
-    document.getElementById("asignadoA").value = "Sin asignar";
+    document.getElementById("titulo").value       = "";
+    document.getElementById("descripcion").value  = "";
+    document.getElementById("depto").value        = "";
+    document.getElementById("asignadoA").value    = "Sin asignar";
   })
   .catch(err => {
     console.error("❌ Error creando ticket:", err);
@@ -380,16 +384,16 @@ function mostrarTodosTickets() {
 // ======================
 // CAMBIAR ESTADO (PATCH)
 // ======================
-function cambiarEstado(titulo, fecha, nuevoEstado) {
-  titulo = decodeURIComponent(titulo);
-  fecha  = decodeURIComponent(fecha);
-
-  fetch(`${API_URL}/titulo/${encodeURIComponent(titulo)}/fecha/${encodeURIComponent(fecha)}`, {
+function cambiarEstado(id, nuevoEstado) {
+  fetch(`${API_URL}/id/${encodeURIComponent(id)}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ estado: nuevoEstado })
   })
-  .then(res => res.json())
+  .then(res => {
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  })
   .then(() => mostrarTodosTickets())
   .catch(err => console.error("Error cambiando estado:", err));
 }
