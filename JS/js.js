@@ -15,52 +15,50 @@ const usuarios = {
   ],
 
   usuario: [
-    { username: "michel",     password: "1234", rol: "usuario" },
-    { username: "Doralina",     password: "gm1234", rol: "usuario" },
-    { username: "doralina",     password: "gm1234", rol: "usuario" },
-    { username: "Michel",     password: "1234", rol: "usuario" },
-    { username: "Pamela",     password: "1234", rol: "usuario" },
-    { username: "pamela",     password: "1234", rol: "usuario" },
-    { username: "Eliana",     password: "1234", rol: "usuario" },
-    { username: "eliana",     password: "1234", rol: "usuario" },
-    { username: "Anabell",    password: "1234", rol: "usuario" },
-    { username: "anabell",    password: "1234", rol: "usuario" },
-    { username: "Maitte",     password: "1234", rol: "usuario" },
-    { username: "maytte",     password: "1234", rol: "usuario" },
-    { username: "Hilda",      password: "1234", rol: "usuario" },
-    { username: "hilda",      password: "1234", rol: "usuario" },
-    { username: "Chantal",    password: "1234", rol: "usuario" },
-    { username: "chantal",    password: "1234", rol: "usuario" },
-    { username: "Carla",      password: "1234", rol: "usuario" },
-    { username: "carla",      password: "1234", rol: "usuario" },
-    { username: "Clara",      password: "1234", rol: "usuario" },
-    { username: "clara",      password: "1234", rol: "usuario" },
-    { username: "Francisca",  password: "1234", rol: "usuario" },
-    { username: "francisca",  password: "1234", rol: "usuario" },
-    { username: "Miladys",    password: "1234", rol: "usuario" },
-    { username: "miladys",    password: "1234", rol: "usuario" },
-    { username: "Jasnaya",    password: "1234", rol: "usuario" },
-    { username: "jasnaya",    password: "1234", rol: "usuario" },
-    { username: "Enelson",    password: "1234", rol: "usuario" },
-    { username: "enelson",    password: "1234", rol: "usuario" },
+    { username: "michel",     password: "1234",     rol: "usuario" },
+    { username: "Doralina",   password: "gm1234",   rol: "usuario" },
+    { username: "doralina",   password: "gm1234",   rol: "usuario" },
+    { username: "Michel",     password: "1234",     rol: "usuario" },
+    { username: "Pamela",     password: "1234",     rol: "usuario" },
+    { username: "pamela",     password: "1234",     rol: "usuario" },
+    { username: "Eliana",     password: "1234",     rol: "usuario" },
+    { username: "eliana",     password: "1234",     rol: "usuario" },
+    { username: "Anabell",    password: "1234",     rol: "usuario" },
+    { username: "anabell",    password: "1234",     rol: "usuario" },
+    { username: "Maitte",     password: "1234",     rol: "usuario" },
+    { username: "maytte",     password: "1234",     rol: "usuario" },
+    { username: "Hilda",      password: "1234",     rol: "usuario" },
+    { username: "hilda",      password: "1234",     rol: "usuario" },
+    { username: "Chantal",    password: "1234",     rol: "usuario" },
+    { username: "chantal",    password: "1234",     rol: "usuario" },
+    { username: "Carla",      password: "1234",     rol: "usuario" },
+    { username: "carla",      password: "1234",     rol: "usuario" },
+    { username: "Clara",      password: "1234",     rol: "usuario" },
+    { username: "clara",      password: "1234",     rol: "usuario" },
+    { username: "Francisca",  password: "1234",     rol: "usuario" },
+    { username: "francisca",  password: "1234",     rol: "usuario" },
+    { username: "Miladys",    password: "1234",     rol: "usuario" },
+    { username: "miladys",    password: "1234",     rol: "usuario" },
+    { username: "Jasnaya",    password: "1234",     rol: "usuario" },
+    { username: "jasnaya",    password: "1234",     rol: "usuario" },
+    { username: "Enelson",    password: "1234",     rol: "usuario" },
+    { username: "enelson",    password: "1234",     rol: "usuario" },
     { username: "Alexandra",  password: "LA701234", rol: "usuario" },
     { username: "alexandra",  password: "LA701234", rol: "usuario" },
-    { username: "Ricarda",    password: "1234", rol: "usuario" },
-    { username: "ricarda",    password: "1234", rol: "usuario" },
-    { username: "Eduard",     password: "1234", rol: "usuario" },
-    { username: "eduard",     password: "1234", rol: "usuario" },
-    { username: "Enmanuel",   password: "1234", rol: "usuario" },
-    { username: "enmanuel",   password: "1234", rol: "usuario" },
-    { username: "Francis",    password: "1234", rol: "usuario" },
-    { username: "francis",    password: "1234", rol: "usuario" },
-    { username: "Edgar",      password: "1234", rol: "usuario" },
-    { username: "edgar",      password: "1234", rol: "usuario" },
-    { username: "Merlyn",     password: "1234", rol: "usuario" },
-    { username: "merlyn",     password: "1234", rol: "usuario" },
-    { username: "Elaine",     password: "1234", rol: "usuario" },
-    { username: "Elaine",     password: "1234", rol: "usuario" },
-    { username: "Esmerkin",     password: "CM1234", rol: "usuario" },
-    { username: "Esmerkin",     password: "CM1234", rol: "usuario" }
+    { username: "Ricarda",    password: "1234",     rol: "usuario" },
+    { username: "ricarda",    password: "1234",     rol: "usuario" },
+    { username: "Eduard",     password: "1234",     rol: "usuario" },
+    { username: "eduard",     password: "1234",     rol: "usuario" },
+    { username: "Enmanuel",   password: "1234",     rol: "usuario" },
+    { username: "enmanuel",   password: "1234",     rol: "usuario" },
+    { username: "Francis",    password: "1234",     rol: "usuario" },
+    { username: "francis",    password: "1234",     rol: "usuario" },
+    { username: "Edgar",      password: "1234",     rol: "usuario" },
+    { username: "edgar",      password: "1234",     rol: "usuario" },
+    { username: "Merlyn",     password: "1234",     rol: "usuario" },
+    { username: "merlyn",     password: "1234",     rol: "usuario" },
+    { username: "Elaine",     password: "1234",     rol: "usuario" },
+    { username: "Esmerkin",   password: "CM1234",   rol: "usuario" }
   ]
 };
 
@@ -104,12 +102,15 @@ function logout() {
 }
 
 // ======================
-// CREAR TICKET ✅ CORREGIDO
+// GENERAR ID
 // ======================
 function generarID() {
   return "TK-" + Date.now().toString().slice(-6);
 }
 
+// ======================
+// CREAR TICKET
+// ======================
 function crearTicket() {
   const titulo      = document.getElementById('titulo').value.trim();
   const descripcion = document.getElementById('descripcion').value.trim();
@@ -148,10 +149,10 @@ function crearTicket() {
     alert("✅ Ticket creado correctamente");
     mostrarTickets();
     enviarCorreoTicket(nuevoTicket);
-    document.getElementById("titulo").value       = "";
-    document.getElementById("descripcion").value  = "";
-    document.getElementById("depto").value        = "";
-    document.getElementById("asignadoA").value    = "Sin asignar";
+    document.getElementById("titulo").value      = "";
+    document.getElementById("descripcion").value = "";
+    document.getElementById("depto").value       = "";
+    document.getElementById("asignadoA").value   = "Sin asignar";
   })
   .catch(err => {
     console.error("❌ Error creando ticket:", err);
@@ -168,12 +169,13 @@ function enviarCorreoTicket(ticket) {
   const form = document.getElementById("ticketForm");
   if (!form) return;
 
-  form.querySelector('[name="ticket_id"]').value          = ticket.id || "";
-  form.querySelector('[name="ticket_usuario"]').value     = ticket.usuario;
+  form.querySelector('[name="ticket_id"]').value           = ticket.id || "";
+  form.querySelector('[name="ticket_usuario"]').value      = ticket.usuario;
   form.querySelector('[name="ticket_departamento"]').value = ticket.depto;
-  form.querySelector('[name="ticket_titulo"]').value      = ticket.titulo;
-  form.querySelector('[name="ticket_descripcion"]').value = ticket.descripcion;
-  form.querySelector('[name="ticket_fecha"]').value       = ticket.fecha;
+  form.querySelector('[name="ticket_titulo"]').value       = ticket.titulo;
+  form.querySelector('[name="ticket_descripcion"]').value  = ticket.descripcion;
+  form.querySelector('[name="ticket_fecha"]').value        = ticket.fecha;
+  form.querySelector('[name="ticket_asignado"]').value     = ticket.asignado || "Sin asignar";
 
   return emailjs.sendForm(
     "service_8oishge",
@@ -214,15 +216,16 @@ function mostrarTickets() {
             <span style="color:#4e54c8; font-weight:600;">[${t.depto}]</span>
             ${t.titulo}
           </h4>
-
           <p>${t.descripcion}</p>
           <p><small>📅 ${t.fecha}</small></p>
 
-          <!-- ✅ Técnico asignado visible con nombre completo -->
           ${(() => {
-            const nombresCompletos = { "Xavier": "Xavier Rosario", "Juan": "Juan Francisco Jimenez" };
-            const asig = t.asignado || "";
-            const nombre = nombresCompletos[asig] || asig;
+            const nombresCompletos = {
+              "Xavier": "Xavier Rosario",
+              "Juan":   "Juan Francisco Jimenez"
+            };
+            const asig    = t.asignado || "";
+            const nombre  = nombresCompletos[asig] || asig;
             return (asig && asig !== "Sin asignar")
               ? `<span class="badge-asignado">👤 Asignado a: ${nombre}</span>`
               : `<span class="badge-asignado" style="background:#fef3c7;color:#92400e;">⚠️ Sin asignar</span>`;
@@ -237,7 +240,7 @@ function mostrarTickets() {
           </div>
 
           ${t.estado === "Pendiente"
-            ? `<button class="btn-delete" onclick="eliminarTicket('${encodeURIComponent(t.titulo)}', '${encodeURIComponent(t.fecha)}')">🗑️ Eliminar</button>`
+            ? `<button class="btn-delete" onclick="eliminarTicket('${encodeURIComponent(t.id)}')">🗑️ Eliminar</button>`
             : ""
           }
 
@@ -257,20 +260,18 @@ function mostrarTickets() {
     .catch(err => console.error("Error cargando tickets:", err));
 }
 
-
 // ======================
-// ELIMINAR TICKET (solo pendiente)
+// ELIMINAR TICKET
 // ======================
-function eliminarTicket(titulo, fecha) {
-  if (!titulo) {
-    console.error("❌ No se encontró referencia del ticket");
+function eliminarTicket(id) {
+  if (!id) {
+    console.error("❌ No se encontró el ID del ticket");
     return;
   }
 
   if (!confirm("¿Seguro que deseas eliminar este ticket?")) return;
 
-  // Busca y elimina por titulo y fecha (campos únicos combinados)
-  fetch(`${API_URL}/titulo/${encodeURIComponent(titulo)}/fecha/${encodeURIComponent(fecha)}`, {
+  fetch(`${API_URL}/id/${encodeURIComponent(id)}`, {
     method: "DELETE"
   })
   .then(() => {
@@ -300,7 +301,7 @@ function esHoyLatina(fechaStr) {
 }
 
 // ======================
-// MOSTRAR TICKETS PARA TÉCNICO ✅ FILTRO POR ASIGNACIÓN
+// MOSTRAR TICKETS TÉCNICO
 // ======================
 function mostrarTodosTickets() {
   fetch(API_URL)
@@ -318,7 +319,6 @@ function mostrarTodosTickets() {
 
       const tecnicoActual = localStorage.getItem("usuario");
 
-      // Cada técnico ve sus tickets + los sin asignar
       const ticketsFiltrados = data.filter(t =>
         !t.asignado ||
         t.asignado === "Sin asignar" ||
@@ -341,7 +341,6 @@ function mostrarTodosTickets() {
           `;
         }
 
-        // Badge de asignación — mapea username corto a nombre completo para mostrar
         const nombresCompletos = {
           "Xavier": "Xavier Rosario",
           "Juan":   "Juan Francisco Jimenez"
@@ -361,8 +360,8 @@ function mostrarTodosTickets() {
           ${badgeAsignado}
           <br>
           ${t.estado !== "Resuelto" ? `
-            <button class="btn-proceso"  onclick="cambiarEstado('${encodeURIComponent(t.titulo)}', '${encodeURIComponent(t.fecha)}', 'En Proceso')">🔧 En Proceso</button>
-            <button class="btn-resuelto" onclick="marcarResuelto('${encodeURIComponent(t.titulo)}', '${encodeURIComponent(t.fecha)}')">✅ Resuelto</button>
+            <button class="btn-proceso"  onclick="cambiarEstado('${encodeURIComponent(t.id)}', 'En Proceso')">🔧 En Proceso</button>
+            <button class="btn-resuelto" onclick="marcarResuelto('${encodeURIComponent(t.id)}')">✅ Resuelto</button>
           ` : ""}
           ${extra}
         `;
@@ -401,12 +400,10 @@ function cambiarEstado(id, nuevoEstado) {
 // ======================
 // MODAL RESOLVER TICKET
 // ======================
-let ticketResueltoTitulo = null;
-let ticketResueltoFecha  = null;
+let ticketResueltoId = null;
 
-function marcarResuelto(titulo, fecha) {
-  ticketResueltoTitulo = decodeURIComponent(titulo);
-  ticketResueltoFecha  = decodeURIComponent(fecha);
+function marcarResuelto(id) {
+  ticketResueltoId = decodeURIComponent(id);
   document.getElementById("resueltoModal").style.display = "flex";
 }
 
@@ -414,8 +411,7 @@ function cerrarModal() {
   document.getElementById("resueltoModal").style.display = "none";
   document.getElementById("detalleResolucion").value = "";
   document.querySelectorAll(".participante").forEach(c => c.checked = false);
-  ticketResueltoTitulo = null;
-  ticketResueltoFecha  = null;
+  ticketResueltoId = null;
 }
 
 function guardarResolucion() {
@@ -435,7 +431,7 @@ function guardarResolucion() {
     fecha_resuelto: new Date().toLocaleString()
   };
 
-  fetch(`${API_URL}/titulo/${encodeURIComponent(ticketResueltoTitulo)}/fecha/${encodeURIComponent(ticketResueltoFecha)}`, {
+  fetch(`${API_URL}/id/${encodeURIComponent(ticketResueltoId)}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(updateData)
