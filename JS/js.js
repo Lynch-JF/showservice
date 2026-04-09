@@ -16,6 +16,8 @@ const usuarios = {
 
   usuario: [
     { username: "michel",     password: "1234", rol: "usuario" },
+    { username: "Doralina",     password: "gm1234", rol: "usuario" },
+    { username: "doralina",     password: "gm1234", rol: "usuario" },
     { username: "Michel",     password: "1234", rol: "usuario" },
     { username: "Pamela",     password: "1234", rol: "usuario" },
     { username: "pamela",     password: "1234", rol: "usuario" },
