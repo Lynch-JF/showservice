@@ -3,7 +3,7 @@
 // ======================
 const usuarios = {
   tecnico: [
-    { username: "Juan",   password: "1234", rol: "tecnico" },
+    { username: "Juan",   password: "12340094", rol: "tecnico" },
     { username: "juan",   password: "1234", rol: "tecnico" },
     { username: "JUAN",   password: "1234", rol: "tecnico" },
     { username: "Joel",   password: "1234", rol: "tecnico" },
