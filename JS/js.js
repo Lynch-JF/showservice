@@ -4,15 +4,11 @@
 const usuarios = {
   tecnico: [
     { username: "Juan",   password: "12340094", rol: "tecnico" },
-    { username: "juan",   password: "1234", rol: "tecnico" },
-    { username: "JUAN",   password: "1234", rol: "tecnico" },
-    { username: "Joel",   password: "1234", rol: "tecnico" },
-    { username: "joel",   password: "1234", rol: "tecnico" },
-    { username: "Yanna",  password: "1234", rol: "tecnico" },
-    { username: "Xavier", password: "1234", rol: "tecnico" },
-    { username: "xavier", password: "1234", rol: "tecnico" },
-    { username: "yanna",  password: "1234", rol: "tecnico" }
-  ],
+    { username: "juan",   password: "1234",      rol: "tecnico" },
+    { username: "JUAN",   password: "1234",      rol: "tecnico" },
+    { username: "Xavier", password: "1234",      rol: "tecnico" },
+    { username: "xavier", password: "1234",      rol: "tecnico" }
+    ],
   usuario: [
     { username: "michel",     password: "1234",     rol: "usuario" },
     { username: "Doralina",   password: "gm1234",   rol: "usuario" },
@@ -58,6 +54,10 @@ const usuarios = {
     { username: "merlyn",     password: "1234",     rol: "usuario" },
     { username: "Elaine",     password: "1234",     rol: "usuario" },
     { username: "Esmerkin",   password: "CM1234",   rol: "usuario" }
+  ],
+  admin: [
+    { username: "Yanna",  password: "GM1234", rol: "admin" },
+    { username: "Joel",  password: "GM1234", rol: "admin" }
   ]
 };
 
@@ -69,12 +69,11 @@ const API_URL = "https://api.sheetbest.com/sheets/5b2f2a41-ad46-4a89-8cc2-9f768b
 // ======================
 // CLOUDINARY CONFIG
 // ======================
-const CLOUDINARY_CLOUD_NAME   = "dy50psi1g";
+const CLOUDINARY_CLOUD_NAME    = "dy50psi1g";
 const CLOUDINARY_UPLOAD_PRESET = "tickets_preset";
 
 // ======================
 // ESTADO DE ARCHIVOS
-// (compartido entre Dashboard.html y js.js)
 // ======================
 let archivosSeleccionados = [];
 let archivosSubidos       = [];
@@ -87,7 +86,7 @@ function login() {
   const pass  = document.getElementById("password").value;
   const error = document.getElementById("login-error");
 
-  const todos     = [...usuarios.tecnico, ...usuarios.usuario];
+  const todos      = [...usuarios.tecnico, ...usuarios.usuario, ...usuarios.admin];
   const encontrado = todos.find(
     u => u.username.toLowerCase() === user.toLowerCase() && u.password === pass
   );
@@ -95,7 +94,10 @@ function login() {
   if (encontrado) {
     localStorage.setItem("usuario", encontrado.username);
     localStorage.setItem("rol",     encontrado.rol);
-    window.location.href = encontrado.rol === "tecnico" ? "Asistencia.html" : "Dashboard.html";
+
+    if      (encontrado.rol === "tecnico") window.location.href = "Asistencia.html";
+    else if (encontrado.rol === "admin")   window.location.href = "Admin.html";
+    else                                   window.location.href = "Dashboard.html";
   } else {
     error.textContent = "Usuario o contraseña incorrectos.";
   }
@@ -182,7 +184,7 @@ async function subirArchivosACloudinary() {
   const progressFill = document.getElementById("uploadProgressFill");
   const statusLabel  = document.getElementById("uploadStatus");
 
-  if (progressBar)  progressBar.style.display  = "block";
+  if (progressBar)  progressBar.style.display = "block";
   if (statusLabel)  statusLabel.style.display  = "block";
 
   const resultados = [];
@@ -193,10 +195,10 @@ async function subirArchivosACloudinary() {
     if (statusLabel) statusLabel.textContent = `Subiendo ${i + 1} de ${total}: ${nombre}`;
 
     const formData = new FormData();
-    formData.append("file",           file);
-    formData.append("upload_preset",  CLOUDINARY_UPLOAD_PRESET);
-    formData.append("folder",         "tickets");
-    formData.append("public_id",      `ticket_${Date.now()}_${nombre.replace(/\s+/g, "_")}`);
+    formData.append("file",          file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder",        "tickets");
+    formData.append("public_id",     `ticket_${Date.now()}_${nombre.replace(/\s+/g, "_")}`);
 
     try {
       const ext          = nombre.split(".").pop().toLowerCase();
@@ -220,20 +222,20 @@ async function subirArchivosACloudinary() {
     if (progressFill) progressFill.style.width = Math.round(((i + 1) / total) * 100) + "%";
   }
 
-  if (statusLabel) statusLabel.textContent = `✅ ${resultados.length} archivo(s) subido(s) correctamente.`;
+  if (statusLabel)  statusLabel.textContent  = `✅ ${resultados.length} archivo(s) subido(s) correctamente.`;
   if (progressFill) progressFill.style.width = "100%";
 
   setTimeout(() => {
     if (progressBar)  { progressBar.style.display  = "none"; }
-    if (statusLabel)  { statusLabel.style.display  = "none"; }
-    if (progressFill) { progressFill.style.width   = "0%";   }
+    if (statusLabel)  { statusLabel.style.display   = "none"; }
+    if (progressFill) { progressFill.style.width    = "0%";   }
   }, 3000);
 
   return resultados;
 }
 
 // ======================
-// CREAR TICKET  ← ÚNICA versión, usa SheetBest
+// CREAR TICKET
 // ======================
 async function crearTicket() {
   const titulo      = document.getElementById("titulo").value.trim();
@@ -250,34 +252,31 @@ async function crearTicket() {
   const btnEnviar = document.querySelector('#ticketForm button[type="button"]');
   if (btnEnviar) { btnEnviar.disabled = true; btnEnviar.textContent = "Subiendo archivos..."; }
 
-  // 1. Subir archivos a Cloudinary
   archivosSubidos = await subirArchivosACloudinary();
 
   if (btnEnviar) btnEnviar.textContent = "Enviando ticket...";
 
-  // 2. Construir ticket (campos normalizados)
-  const ticketId     = "TK-" + Date.now();
-  const fecha        = new Date().toLocaleString("es-DO");
-  const adjuntosStr  = archivosSubidos.map(a => a.url).join(", ");
+  const ticketId    = "TK-" + Date.now();
+  const fecha       = new Date().toLocaleString("es-DO");
+  const adjuntosStr = archivosSubidos.map(a => a.url).join(", ");
 
   const nuevoTicket = {
-    id:           ticketId,
-    titulo:       titulo,
-    descripcion:  descripcion,
-    depto:        depto,          // ← columna en el sheet
-    asignado:     asignadoA,      // ← columna en el sheet
-    estado:       "Pendiente",
-    usuario:      usuario,
-    fecha:        fecha,
-    adjuntos:     adjuntosStr,    // URLs separadas por coma
-    resolucion:   "",
-    participantes:"",
+    id:            ticketId,
+    titulo:        titulo,
+    descripcion:   descripcion,
+    depto:         depto,
+    asignado:      asignadoA,
+    estado:        "Pendiente",
+    usuario:       usuario,
+    fecha:         fecha,
+    adjuntos:      adjuntosStr,
+    resolucion:    "",
+    participantes: "",
     fecha_resuelto:""
   };
 
   console.log("🟡 Enviando a SheetBest:", nuevoTicket);
 
-  // 3. POST a SheetBest
   try {
     const res = await fetch(API_URL, {
       method:  "POST",
@@ -289,10 +288,8 @@ async function crearTicket() {
 
     console.log("✅ Ticket guardado en SheetBest");
 
-    // 4. Enviar correo vía EmailJS
     enviarCorreoTicket(nuevoTicket, archivosSubidos.map(a => a.url));
 
-    // 5. Limpiar formulario
     document.getElementById("titulo").value      = "";
     document.getElementById("descripcion").value = "";
     document.getElementById("depto").value       = "";
@@ -337,6 +334,75 @@ function enviarCorreoTicket(ticket, adjuntosUrls = []) {
 }
 
 // ======================
+// HELPER — construir card de ticket
+// ======================
+function _buildTicketCard(t, opciones = {}) {
+  const { mostrarBotones = false, esAdmin = false } = opciones;
+
+  const nombresCompletos = {
+    "Xavier": "Xavier Rosario",
+    "Juan":   "Juan Francisco Jimenez",
+    "AJoel":   "Joel Holguin",
+    "AYanna":  "Yanna Martínez"
+  };
+  const nombreMostrar = nombresCompletos[t.asignado] || t.asignado || "";
+  const badgeAsignado = (t.asignado && t.asignado !== "Sin asignar")
+    ? `<span class="badge-asignado">👤 ${nombreMostrar}</span>`
+    : `<span class="badge-sin-asignar">⚠️ Sin asignar</span>`;
+
+  const extra = t.estado === "Resuelto" ? `
+    <div class="resolucion-box">
+      <strong>✅ Resolución:</strong><br>${t.resolucion || "No hay detalle"}<br>
+      <small><b>Participantes:</b> ${t.participantes || "N/A"}</small><br>
+      <small><b>Fecha Resuelto:</b> ${t.fecha_resuelto || "-"}</small>
+    </div>` : "";
+
+  let adjuntosHtml = "";
+  if (t.adjuntos && t.adjuntos.trim() !== "") {
+    const urls  = t.adjuntos.split(",").map(u => u.trim()).filter(Boolean);
+    const links = urls.map(url => {
+      const nombre = decodeURIComponent(url.split("/").pop().split("?")[0]);
+      const ext    = nombre.split(".").pop().toLowerCase();
+      return `<a class="uploaded-file-link" href="${url}" target="_blank" rel="noopener">
+                ${getFileIcon(ext)} ${nombre}
+              </a>`;
+    }).join("");
+    adjuntosHtml = `
+      <div style="margin-top:10px; padding-top:8px; border-top:1px dashed #e2e8f0;">
+        <p style="font-size:11px; font-weight:600; color:#94a3b8; margin:0 0 6px;">📎 Archivos adjuntos</p>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">${links}</div>
+      </div>`;
+  }
+
+  const botonesAccion = (mostrarBotones && t.estado !== "Resuelto") ? `
+    <button class="btn-proceso"  onclick="cambiarEstado('${encodeURIComponent(t.id)}', 'En Proceso')">🔧 En Proceso</button>
+    <button class="btn-resuelto" onclick="marcarResuelto('${encodeURIComponent(t.id)}')">✅ Resuelto</button>
+  ` : "";
+
+  // Botón reasignar — solo visible para admin
+  const btnReasignar = esAdmin ? `
+    <button class="btn-reasignar" onclick="abrirReasignar('${encodeURIComponent(t.id)}')">🔁 Reasignar</button>
+  ` : "";
+
+  const div = document.createElement("div");
+  div.className = "ticket-card";
+  div.innerHTML = `
+    <div class="depto-tag">[${t.depto || ""}]</div>
+    <div class="titulo">${t.titulo || ""}</div>
+    <div class="descripcion">${t.descripcion || ""}</div>
+    <div class="usuario-tag">🙍 Solicitado por: <b>${t.usuario || ""}</b></div>
+    <div class="fecha">📅 ${t.fecha || ""}</div>
+    ${badgeAsignado}
+    ${adjuntosHtml}
+    <br>
+    ${botonesAccion}
+    ${btnReasignar}
+    ${extra}
+  `;
+  return div;
+}
+
+// ======================
 // MOSTRAR TICKETS USUARIO
 // ======================
 function mostrarTickets() {
@@ -359,11 +425,16 @@ function mostrarTickets() {
 
       misTickets.reverse().forEach(t => {
         const statusClass =
-          t.estado === "Resuelto"    ? "status-resuelto"  :
-          t.estado === "En Proceso"  ? "status-proceso"   : "status-pendiente";
+          t.estado === "Resuelto"   ? "status-resuelto"  :
+          t.estado === "En Proceso" ? "status-proceso"    : "status-pendiente";
 
-        const nombresCompletos = { "Xavier": "Xavier Rosario", "Juan": "Juan Francisco Jimenez" };
-        const nombreAsignado   = nombresCompletos[t.asignado] || t.asignado || "";
+        const nombresCompletos = {
+          "Xavier": "Xavier Rosario",
+          "Juan":   "Juan Francisco Jimenez",
+          "AJoel":   "Joel Holguin",
+          "AYanna":  "Yanna Martínez"
+        };
+        const nombreAsignado = nombresCompletos[t.asignado] || t.asignado || "";
 
         const asignadoBadge = (t.asignado && t.asignado !== "Sin asignar")
           ? `<span class="badge-asignado">👤 ${nombreAsignado}</span>`
@@ -375,7 +446,6 @@ function mostrarTickets() {
                <br><small><b>Fecha:</b> ${t.fecha_resuelto || "-"}</small>
              </div>` : "";
 
-        // Adjuntos: el campo es string CSV en SheetBest
         let adjuntosHtml = "";
         if (t.adjuntos && t.adjuntos.trim() !== "") {
           const urls  = t.adjuntos.split(",").map(u => u.trim()).filter(Boolean);
@@ -452,55 +522,7 @@ function mostrarTodosTickets() {
       );
 
       ticketsFiltrados.forEach(t => {
-        const div = document.createElement("div");
-        div.className = "ticket-card";
-
-        const nombresCompletos = { "Xavier": "Xavier Rosario", "Juan": "Juan Francisco Jimenez" };
-        const nombreMostrar    = nombresCompletos[t.asignado] || t.asignado || "";
-        const badgeAsignado    = (t.asignado && t.asignado !== "Sin asignar")
-          ? `<span class="badge-asignado">👤 ${nombreMostrar}</span>`
-          : `<span class="badge-sin-asignar">⚠️ Sin asignar</span>`;
-
-        const extra = t.estado === "Resuelto" ? `
-          <div class="resolucion-box">
-            <strong>✅ Resolución:</strong><br>${t.resolucion || "No hay detalle"}<br>
-            <small><b>Participantes:</b> ${t.participantes || "N/A"}</small><br>
-            <small><b>Fecha Resuelto:</b> ${t.fecha_resuelto || "-"}</small>
-          </div>` : "";
-
-        // Adjuntos del ticket
-        let adjuntosHtml = "";
-        if (t.adjuntos && t.adjuntos.trim() !== "") {
-          const urls  = t.adjuntos.split(",").map(u => u.trim()).filter(Boolean);
-          const links = urls.map(url => {
-            const nombre = decodeURIComponent(url.split("/").pop().split("?")[0]);
-            const ext    = nombre.split(".").pop().toLowerCase();
-            return `<a class="uploaded-file-link" href="${url}" target="_blank" rel="noopener">
-                      ${getFileIcon(ext)} ${nombre}
-                    </a>`;
-          }).join("");
-          adjuntosHtml = `
-            <div style="margin-top:10px; padding-top:8px; border-top:1px dashed #e2e8f0;">
-              <p style="font-size:11px; font-weight:600; color:#94a3b8; margin:0 0 6px;">📎 Archivos adjuntos</p>
-              <div style="display:flex; flex-wrap:wrap; gap:6px;">${links}</div>
-            </div>`;
-        }
-
-        div.innerHTML = `
-          <div class="depto-tag">[${t.depto || ""}]</div>
-          <div class="titulo">${t.titulo || ""}</div>
-          <div class="descripcion">${t.descripcion || ""}</div>
-          <div class="usuario-tag">🙍 Solicitado por: <b>${t.usuario || ""}</b></div>
-          <div class="fecha">📅 ${t.fecha || ""}</div>
-          ${badgeAsignado}
-          ${adjuntosHtml}
-          <br>
-          ${t.estado !== "Resuelto" ? `
-            <button class="btn-proceso"  onclick="cambiarEstado('${encodeURIComponent(t.id)}', 'En Proceso')">🔧 En Proceso</button>
-            <button class="btn-resuelto" onclick="marcarResuelto('${encodeURIComponent(t.id)}')">✅ Resuelto</button>
-          ` : ""}
-          ${extra}
-        `;
+        const div = _buildTicketCard(t, { mostrarBotones: true });
 
         if      (t.estado === "Pendiente")  pendientes.appendChild(div);
         else if (t.estado === "En Proceso") enProceso.appendChild(div);
@@ -508,6 +530,70 @@ function mostrarTodosTickets() {
       });
     })
     .catch(err => console.error("Error mostrando tickets técnico:", err));
+}
+
+// ======================
+// MOSTRAR TICKETS ADMIN
+// Ve TODOS los tickets sin filtro de técnico.
+// ======================
+function mostrarTicketsAdmin() {
+  const pendientes   = document.getElementById("pendientes");
+  const enProceso    = document.getElementById("enProceso");
+  const resueltos    = document.getElementById("resueltos");
+  const misAsignados = document.getElementById("misAsignados");
+  if (!pendientes) return;
+
+  pendientes.innerHTML   = enProceso.innerHTML = resueltos.innerHTML = "";
+  if (misAsignados) misAsignados.innerHTML = "";
+
+  const adminActual = localStorage.getItem("usuario");
+
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+      let cntPendientes = 0, cntProceso = 0, cntResueltos = 0;
+
+      data.forEach(t => {
+        if (t.estado === "Pendiente") {
+          pendientes.appendChild(_buildTicketCard(t, { mostrarBotones: false, esAdmin: true }));
+          cntPendientes++;
+        } else if (t.estado === "En Proceso") {
+          enProceso.appendChild(_buildTicketCard(t, { mostrarBotones: false, esAdmin: true }));
+          cntProceso++;
+        } else if (t.estado === "Resuelto") {
+          resueltos.appendChild(_buildTicketCard(t, { mostrarBotones: false, esAdmin: true }));
+          cntResueltos++;
+        }
+
+        if (
+          misAsignados &&
+          t.asignado &&
+          t.asignado.toLowerCase() === adminActual.toLowerCase() &&
+          t.estado !== "Resuelto"
+        ) {
+          misAsignados.appendChild(_buildTicketCard(t, { mostrarBotones: false, esAdmin: true }));
+        }
+      });
+
+      const el = id => document.getElementById(id);
+      if (el("statsTotal"))       el("statsTotal").textContent       = data.length;
+      if (el("statsPendientes"))  el("statsPendientes").textContent  = cntPendientes;
+      if (el("statsEnProceso"))   el("statsEnProceso").textContent   = cntProceso;
+      if (el("statsResueltos"))   el("statsResueltos").textContent   = cntResueltos;
+
+      if (misAsignados && misAsignados.innerHTML.trim() === "")
+        misAsignados.innerHTML = "<p style='color:#94a3b8; text-align:center;'>No tienes tickets asignados activos.</p>";
+      if (pendientes.innerHTML.trim() === "")
+        pendientes.innerHTML   = "<p style='color:#94a3b8; text-align:center;'>Sin tickets pendientes.</p>";
+      if (enProceso.innerHTML.trim() === "")
+        enProceso.innerHTML    = "<p style='color:#94a3b8; text-align:center;'>Ningún ticket en proceso.</p>";
+      if (resueltos.innerHTML.trim() === "")
+        resueltos.innerHTML    = "<p style='color:#94a3b8; text-align:center;'>Sin tickets resueltos.</p>";
+    })
+    .catch(err => {
+      console.error("Error mostrando tickets admin:", err);
+      pendientes.innerHTML = "<p style='color:#ef4444;'>Error al cargar tickets.</p>";
+    });
 }
 
 // ======================
@@ -549,10 +635,10 @@ function guardarResolucion() {
   if (!detalle) { alert("⚠️ Escribe cómo se resolvió la tarea"); return; }
 
   const updateData = {
-    estado:          "Resuelto",
-    participantes:   participantes,
-    resolucion:      detalle,
-    fecha_resuelto:  new Date().toLocaleString()
+    estado:         "Resuelto",
+    participantes:  participantes,
+    resolucion:     detalle,
+    fecha_resuelto: new Date().toLocaleString()
   };
 
   fetch(`${API_URL}/id/${encodeURIComponent(ticketResueltoId)}`, {
@@ -561,8 +647,61 @@ function guardarResolucion() {
     body:    JSON.stringify(updateData)
   })
   .then(res => res.json())
-  .then(() => { alert("✅ Ticket marcado como resuelto"); cerrarModal(); mostrarTodosTickets(); mostrarTickets(); })
+  .then(() => {
+    alert("✅ Ticket marcado como resuelto");
+    cerrarModal();
+    mostrarTodosTickets();
+    mostrarTickets();
+  })
   .catch(err => console.error("Error:", err));
+}
+
+// ======================
+// MODAL REASIGNAR TICKET (ADMIN)
+// ======================
+const TECNICOS_DISPONIBLES = [
+  "Sin asignar",
+  "Juan Francisco Jimenez",
+  "Joel Holguin",
+  "Yanna Martínez",
+  "Xavier Rosario"
+];
+
+let ticketReasignarId = null;
+
+function abrirReasignar(id) {
+  ticketReasignarId = decodeURIComponent(id);
+  const select = document.getElementById("selectTecnico");
+  if (!select) return;
+
+  select.innerHTML = TECNICOS_DISPONIBLES.map(t =>
+    `<option value="${t}">${t === "Sin asignar" ? "⚠️ Sin asignar" : "👤 " + t}</option>`
+  ).join("");
+
+  document.getElementById("reasignarModal").style.display = "flex";
+}
+
+function cerrarReasignar() {
+  document.getElementById("reasignarModal").style.display = "none";
+  ticketReasignarId = null;
+}
+
+function guardarReasignacion() {
+  const nuevo = document.getElementById("selectTecnico").value;
+  if (!ticketReasignarId) return;
+
+  fetch(`${API_URL}/id/${encodeURIComponent(ticketReasignarId)}`, {
+    method:  "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body:    JSON.stringify({ asignado: nuevo })
+  })
+  .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
+  .then(() => {
+    alert(`✅ Ticket reasignado a: ${nuevo}`);
+    cerrarReasignar();
+    mostrarTicketsAdmin();
+  })
+  .catch(err => console.error("Error reasignando:", err));
 }
 
 // ======================
@@ -594,8 +733,9 @@ function cerrarAyuda() { document.getElementById("ayudaModal").classList.remove(
 // ======================
 setInterval(() => {
   const rol = localStorage.getItem("rol");
-  if (rol === "usuario")  mostrarTickets();
-  else if (rol === "tecnico") mostrarTodosTickets();
+  if      (rol === "usuario")  mostrarTickets();
+  else if (rol === "tecnico")  mostrarTodosTickets();
+  else if (rol === "admin")    mostrarTicketsAdmin();
 }, 30000);
 
 // ======================
@@ -603,6 +743,7 @@ setInterval(() => {
 // ======================
 window.onload = function () {
   const rol = localStorage.getItem("rol");
-  if (rol === "usuario")  mostrarTickets();
-  else if (rol === "tecnico") mostrarTodosTickets();
+  if      (rol === "usuario")  mostrarTickets();
+  else if (rol === "tecnico")  mostrarTodosTickets();
+  else if (rol === "admin")    mostrarTicketsAdmin();
 };
