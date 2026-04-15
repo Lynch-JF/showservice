@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Panel de Administración</title>
+  <link rel="icon" type="image/png" href="IMG/2.ico">
+  <link rel="stylesheet" href="CSS/css.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <h2>⚙️ Panel Admin</h2>
+    <div style="display:flex; gap:10px;">
+      <button class="user-btn" id="userBtn">
+        👤 <span id="userNameTop"></span>
+      </button>
+      <button onclick="abrirAyuda()">Ayuda rápida</button>
+      <button onclick="logout()">Cerrar Sesión</button>
+    </div>
+  </nav>
+
+  <!-- ================== MODAL AYUDA ================== -->
+  <div id="ayudaModal" class="modal">
+    <div class="modal-content">
+      <h2 style="text-align:center; margin-bottom:20px;">📞 Ayuda Rápida IT</h2>
+      <p style="text-align:center; margin-bottom:20px;">Contacta a nuestros técnicos disponibles:</p>
+      <div class="card-container">
+        <div class="card-ayuda">
+          <img src="https://ui-avatars.com/api/?name=Yanna+Martinez&background=0D8ABC&color=fff" alt="Yanna">
+          <h4>YANNA MARTINEZ</h4>
+          <p>📧 y.martinez@grupomichel.com</p>
+          <p>📟 Flota: (809) 390-5286</p>
+        </div>
+        <div class="card-ayuda">
+          <img src="https://ui-avatars.com/api/?name=Joel+Holguin&background=F39C12&color=fff" alt="Joel">
+          <h4>Joel Holguin</h4>
+          <p>📧 j.holguin@grupomichel.com</p>
+          <p>📟 Flota: (809) 722-2874</p>
+        </div>
+        <div class="card-ayuda">
+          <img src="https://ui-avatars.com/api/?name=Xavier+Rosario&background=E74C3C&color=fff" alt="Xavier">
+          <h4>Xavier Rosario</h4>
+          <p>📧 x.rosario@grupomichel.com</p>
+          <p>📟 Flota: (000) 000-0000</p>
+        </div>
+        <div class="card-ayuda">
+          <img src="https://ui-avatars.com/api/?name=JuanFrancisco&background=27AE60&color=fff" alt="Juan Francisco">
+          <h4>Juan F. Jimenez</h4>
+          <p>📧 dptoIT@grupomichel.com</p>
+          <p>📱 (809) 931-3720</p>
+          <p>📟 Flota: (809) 722-1076</p>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:20px;">
+        <button class="btn btn-cancelar" onclick="cerrarAyuda()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================== TARJETAS DE ESTADÍSTICAS ================== -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-icon">🎫</div>
+      <div>
+        <div class="stat-num" id="statsTotal">—</div>
+        <div class="stat-label">Total tickets</div>
+      </div>
+    </div>
+    <div class="stat-card stat-pending">
+      <div class="stat-icon">⏳</div>
+      <div>
+        <div class="stat-num" id="statsPendientes">—</div>
+        <div class="stat-label">Pendientes</div>
+      </div>
+    </div>
+    <div class="stat-card stat-process">
+      <div class="stat-icon">🔧</div>
+      <div>
+        <div class="stat-num" id="statsEnProceso">—</div>
+        <div class="stat-label">En proceso</div>
+      </div>
+    </div>
+    <div class="stat-card stat-done">
+      <div class="stat-icon">✅</div>
+      <div>
+        <div class="stat-num" id="statsResueltos">—</div>
+        <div class="stat-label">Resueltos</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================== SECCIÓN: MIS ASIGNADOS ================== -->
+  <div class="section-block">
+    <div class="section-header">
+      <span>📌 Mis tickets asignados</span>
+      <span class="section-sub">Tickets activos asignados a ti</span>
+    </div>
+    <div id="misAsignados" class="ticket-column ticket-column-horiz"></div>
+  </div>
+
+  <!-- ================== KANBAN GLOBAL ================== -->
+  <div class="container grid-3">
+    <div>
+      <h3>⏳ Pendientes</h3>
+      <div id="pendientes" class="ticket-column"></div>
+    </div>
+    <div>
+      <h3>🔧 En Proceso</h3>
+      <div id="enProceso" class="ticket-column"></div>
+    </div>
+    <div>
+      <h3 style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <span>✅ Resueltos</span>
+        <button
+          id="toggleResueltosBtn"
+          onclick="toggleResueltos()"
+          style="font-size:12px; padding:4px 12px; border-radius:20px;
+                 border:1px solid #e5e7eb; background:#f1f5f9; color:#475569;
+                 cursor:pointer; font-weight:600; white-space:nowrap; flex-shrink:0;">
+          Mostrar
+        </button>
+      </h3>
+      <div id="resueltos" class="ticket-column" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ================== MODAL RESOLUCIÓN ================== -->
+  <div id="resueltoModal" class="modal">
+    <div class="modal-content">
+      <h2>Detalles de resolución</h2>
+      <p>👥 ¿Con quién realizaste la tarea?</p>
+      <div class="checkbox-group">
+        <label><input type="checkbox" value="Juan Francisco" class="participante"> Juan Francisco</label>
+        <label><input type="checkbox" value="Hptronics"      class="participante"> Hptronics</label>
+        <label><input type="checkbox" value="Yanna"          class="participante"> Yanna Martinez</label>
+        <label><input type="checkbox" value="Joel"           class="participante"> Joel Holguin</label>
+        <label><input type="checkbox" value="Xavier"         class="participante"> Xavier Rosario</label>
+        <label><input type="checkbox" value="Soporte externo" class="participante"> Soporte externo</label>
+      </div>
+      <p>📝 Explica cómo se resolvió:</p>
+      <textarea id="detalleResolucion" rows="4" placeholder="Describe la solución aplicada..."></textarea>
+      <div class="modal-buttons">
+        <button class="btn btn-guardar"  onclick="guardarResolucion()">💾 Guardar</button>
+        <button class="btn btn-cancelar" onclick="cerrarModal()">❌ Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================== MODAL REASIGNAR ================== -->
+  <div id="reasignarModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <h2>🔁 Reasignar ticket</h2>
+      <p>Selecciona el técnico al que quieres asignar este ticket:</p>
+      <select id="selectTecnico"
+        style="width:100%; padding:10px; border-radius:8px; border:1px solid #bbb;
+               font-size:14px; margin-bottom:20px; font-family:inherit; box-sizing:border-box;">
+      </select>
+      <div class="modal-buttons">
+        <button class="btn btn-guardar"  onclick="guardarReasignacion()">💾 Guardar</button>
+        <button class="btn btn-cancelar" onclick="cerrarReasignar()">❌ Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================== ESTILOS ================== -->
+  <style>
+
+    /* ── Stats bar ─────────────────────────────────────── */
+    .stats-bar {
+      display: flex;
+      gap: 16px;
+      padding: 20px 30px 0;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 16px 22px;
+      flex: 1;
+      min-width: 160px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+    }
+
+    .stat-icon { font-size: 28px; }
+
+    .stat-num {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .stat-pending .stat-num { color: #d97706; }
+    .stat-process .stat-num { color: #2563eb; }
+    .stat-done    .stat-num { color: #16a34a; }
+
+    /* ── Sección mis asignados ─────────────────────────── */
+    .section-block {
+      margin: 24px 30px 0;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 20px 22px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 16px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .section-sub {
+      font-size: 12px;
+      font-weight: 400;
+      color: #94a3b8;
+    }
+
+    .ticket-column-horiz {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .ticket-column-horiz .ticket-card {
+      flex: 1;
+      min-width: 260px;
+      max-width: 340px;
+    }
+
+    /* ── Modal ─────────────────────────────────────────── */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(3px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show { display: flex; }
+
+    .modal-content {
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      max-width: 520px;
+      width: 90%;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      animation: fadeIn 0.3s ease-in-out;
+      font-family: Arial, sans-serif;
+      color: #333;
+    }
+
+    @keyframes fadeIn {
+      from { opacity:0; transform:scale(0.9); }
+      to   { opacity:1; transform:scale(1);   }
+    }
+
+    /* ── Checkboxes ────────────────────────────────────── */
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 15px;
+    }
+    .checkbox-group label { font-size:14px; color:#444; }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      resize: none;
+      font-size: 14px;
+      margin-bottom: 15px;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+
+    .modal-buttons { display:flex; justify-content:flex-end; gap:10px; }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .btn-guardar        { background:#28a745; color:#fff; }
+    .btn-guardar:hover  { background:#218838; }
+    .btn-cancelar       { background:#dc3545; color:#fff; }
+    .btn-cancelar:hover { background:#b02a37; }
+
+    /* ── Cards ayuda ───────────────────────────────────── */
+    .card-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .card-ayuda {
+      background: #f9fafb;
+      border-radius: 18px;
+      padding: 20px 15px;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 1px solid #e5e7eb;
+      cursor: default;
+      width: 180px;
+    }
+    .card-ayuda:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+      border-color: #4e54c8;
+    }
+    .card-ayuda img {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      object-fit: cover;
+      border: 3px solid #e5e7eb;
+    }
+    .card-ayuda h4 { font-weight:600; margin-bottom:6px; color:#1e293b; font-size:14px; }
+    .card-ayuda p  { font-size:12px; color:#64748b; margin:2px 0; }
+
+    /* ── Badges ────────────────────────────────────────── */
+    .badge-asignado {
+      display: inline-block;
+      background: #ede9fe;
+      color: #5b21b6;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      margin: 5px 0 4px;
+    }
+    .badge-sin-asignar {
+      display: inline-block;
+      background: #fef3c7;
+      color: #92400e;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      margin: 5px 0 4px;
+    }
+
+    /* ── Ticket card ───────────────────────────────────── */
+    .ticket-card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.07);
+      border: 1px solid #e5e7eb;
+      transition: all 0.25s ease;
+      font-size: 13px;
+      color: #334155;
+    }
+    .ticket-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.11);
+    }
+    .ticket-card .depto-tag  { font-weight:700; color:#4e54c8; }
+    .ticket-card .titulo     { font-size:15px; font-weight:600; color:#1e293b; margin:4px 0; }
+    .ticket-card .descripcion{ color:#64748b; margin:4px 0 8px; font-size:13px; }
+    .ticket-card .fecha      { font-size:11px; color:#94a3b8; }
+    .ticket-card .usuario-tag{ font-size:12px; color:#475569; }
+
+    /* ── Botones acción ────────────────────────────────── */
+    .btn-proceso, .btn-resuelto, .btn-reasignar {
+      padding: 7px 13px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 10px;
+      margin-right: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-proceso        { background:#fef3c7; color:#92400e; }
+    .btn-proceso:hover  { background:#fde68a; }
+    .btn-resuelto       { background:#d1fae5; color:#065f46; }
+    .btn-resuelto:hover { background:#a7f3d0; }
+    .btn-reasignar        { background:#e0f2fe; color:#0369a1; }
+    .btn-reasignar:hover  { background:#bae6fd; }
+
+    /* ── Resolución ────────────────────────────────────── */
+    .resolucion-box {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f0fdf4;
+      border-radius: 8px;
+      border-left: 4px solid #10b981;
+      font-size: 12px;
+      color: #374151;
+    }
+
+    /* ── Adjuntos ──────────────────────────────────────── */
+    .uploaded-file-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #ede9fe;
+      color: #5b21b6;
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .uploaded-file-link:hover { background:#ddd6fe; }
+
+    /* ── User btn navbar ───────────────────────────────── */
+    .user-btn {
+      background: #1f2a6d;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .user-btn:hover { background:#2f3fa3; }
+
+    /* ── Responsive ────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .stats-bar { padding: 16px 16px 0; }
+      .section-block { margin: 16px 16px 0; }
+      .container.grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .stats-bar { flex-direction: column; }
+      .container.grid-3 { grid-template-columns: 1fr; }
+      .navbar { flex-direction: column; align-items: stretch; text-align: center; }
+      .navbar button { width: 100%; }
+      .modal-content { max-width:95%; padding:15px; }
+      .card-container { flex-direction: column; align-items: center; }
+      .card-ayuda { width: 90%; }
+      .checkbox-group { grid-template-columns: 1fr; }
+      textarea { font-size: 16px; }
+    }
+  </style>
+
+  <script src="JS/js.js"></script>
+  <script>
+    // Mostrar nombre del admin en el navbar
+    document.getElementById("userNameTop").textContent = localStorage.getItem("usuario") || "";
+
+    // Redirigir si no es admin
+    (function() {
+      const rol = localStorage.getItem("rol");
+      if (rol !== "admin") window.location.href = "index.html";
+    })();
+
+    // ── Toggle sección resueltos ──────────────────────────
+    let resueltosVisible = false;
+    function toggleResueltos() {
+      resueltosVisible = !resueltosVisible;
+      const col = document.getElementById("resueltos");
+      const btn = document.getElementById("toggleResueltosBtn");
+      col.style.display = resueltosVisible ? "block" : "none";
+      btn.textContent   = resueltosVisible ? "Ocultar" : "Mostrar";
+    }
+
+    // ── Cerrar modales al hacer clic fuera ────────────────
+    window.addEventListener("click", function(e) {
+      const ayuda      = document.getElementById("ayudaModal");
+      const resuelto   = document.getElementById("resueltoModal");
+      const reasignar  = document.getElementById("reasignarModal");
+
+      if (e.target === ayuda)     ayuda.classList.remove("show");
+      if (e.target === resuelto)  resuelto.style.display  = "none";
+      if (e.target === reasignar) cerrarReasignar();
+    });
+  </script>
+</body>
+</html>
