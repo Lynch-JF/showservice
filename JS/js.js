@@ -6,8 +6,12 @@ const usuarios = {
     { username: "Juan",   password: "12340094", rol: "tecnico" },
     { username: "juan",   password: "1234",      rol: "tecnico" },
     { username: "JUAN",   password: "1234",      rol: "tecnico" },
+    { username: "Joel",   password: "1234",      rol: "tecnico" },
+    { username: "joel",   password: "1234",      rol: "tecnico" },
+    { username: "Yanna",  password: "1234",      rol: "tecnico" },
     { username: "Xavier", password: "1234",      rol: "tecnico" },
-    { username: "xavier", password: "1234",      rol: "tecnico" }
+    { username: "xavier", password: "1234",      rol: "tecnico" },
+    { username: "yanna",  password: "1234",      rol: "tecnico" }
   ],
   usuario: [
     { username: "michel",     password: "1234",     rol: "usuario" },
@@ -57,8 +61,8 @@ const usuarios = {
   ],
   // ── ADMIN ─────────────────────────────────────────────
   admin: [
-    { username: "Yanna", password: "GM1234", rol: "admin" },
-    { username: "Joel", password: "GM1234", rol: "admin" }
+    { username: "Admin", password: "admin1234", rol: "admin" },
+    { username: "admin", password: "admin1234", rol: "admin" }
   ]
 };
 
@@ -340,9 +344,7 @@ function _buildTicketCard(t, opciones = {}) {
 
   const nombresCompletos = {
     "Xavier": "Xavier Rosario",
-    "Juan":   "Juan Francisco Jimenez",
-    "Joel":   "Joel Holguin"
-    "Yanna":   "Yanna Martínez",
+    "Juan":   "Juan Francisco Jimenez"
   };
   const nombreMostrar = nombresCompletos[t.asignado] || t.asignado || "";
   const badgeAsignado = (t.asignado && t.asignado !== "Sin asignar")
@@ -435,10 +437,7 @@ function mostrarTickets() {
 
         const nombresCompletos = {
           "Xavier": "Xavier Rosario",
-          "Juan":   "Juan Francisco Jimenez",
-          "Joel":   "Joel Holguin",
-          "Yanna":   "Yanna Martínez"
-          
+          "Juan":   "Juan Francisco Jimenez"
         };
         const nombreAsignado = nombresCompletos[t.asignado] || t.asignado || "";
 
