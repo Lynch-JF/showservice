@@ -6,12 +6,8 @@ const usuarios = {
     { username: "Juan",   password: "12340094", rol: "tecnico" },
     { username: "juan",   password: "1234",      rol: "tecnico" },
     { username: "JUAN",   password: "1234",      rol: "tecnico" },
-    { username: "Joel",   password: "1234",      rol: "tecnico" },
-    { username: "joel",   password: "1234",      rol: "tecnico" },
-    { username: "Yanna",  password: "1234",      rol: "tecnico" },
     { username: "Xavier", password: "1234",      rol: "tecnico" },
-    { username: "xavier", password: "1234",      rol: "tecnico" },
-    { username: "yanna",  password: "1234",      rol: "tecnico" }
+    { username: "xavier", password: "1234",      rol: "tecnico" }
   ],
   usuario: [
     { username: "michel",     password: "1234",     rol: "usuario" },
@@ -61,8 +57,8 @@ const usuarios = {
   ],
   // ── ADMIN ─────────────────────────────────────────────
   admin: [
-    { username: "Admin", password: "admin1234", rol: "admin" },
-    { username: "admin", password: "admin1234", rol: "admin" }
+    { username: "Joel", password: "GM1234", rol: "admin" },
+    { username: "Yanna", password: "GM1234", rol: "admin" }
   ]
 };
 
@@ -437,7 +433,9 @@ function mostrarTickets() {
 
         const nombresCompletos = {
           "Xavier": "Xavier Rosario",
-          "Juan":   "Juan Francisco Jimenez"
+          "Juan":   "Juan Francisco Jimenez",
+          "Yanna":   "Yanna Martínez",
+          "Joel":   "Joel Holguin"
         };
         const nombreAsignado = nombresCompletos[t.asignado] || t.asignado || "";
 
@@ -674,10 +672,10 @@ function guardarResolucion() {
 // ======================
 const TECNICOS_DISPONIBLES = [
   "Sin asignar",
-  "Juan",
-  "Joel",
-  "Yanna",
-  "Xavier"
+  "Juan Francisco Jiménez",
+  "Joel Holguin",
+  "Yanna Martínez",
+  "Xavier Rosario"
 ];
 
 let ticketReasignarId = null;
