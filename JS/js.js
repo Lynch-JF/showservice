@@ -6,9 +6,13 @@ const usuarios = {
     { username: "Juan",   password: "12340094", rol: "tecnico" },
     { username: "juan",   password: "1234",      rol: "tecnico" },
     { username: "JUAN",   password: "1234",      rol: "tecnico" },
+    { username: "Joel",   password: "1234",      rol: "tecnico" },
+    { username: "joel",   password: "1234",      rol: "tecnico" },
+    { username: "Yanna",  password: "1234",      rol: "tecnico" },
     { username: "Xavier", password: "1234",      rol: "tecnico" },
-    { username: "xavier", password: "1234",      rol: "tecnico" }
-    ],
+    { username: "xavier", password: "1234",      rol: "tecnico" },
+    { username: "yanna",  password: "1234",      rol: "tecnico" }
+  ],
   usuario: [
     { username: "michel",     password: "1234",     rol: "usuario" },
     { username: "Doralina",   password: "gm1234",   rol: "usuario" },
@@ -55,9 +59,10 @@ const usuarios = {
     { username: "Elaine",     password: "1234",     rol: "usuario" },
     { username: "Esmerkin",   password: "CM1234",   rol: "usuario" }
   ],
+  // ── ADMIN ─────────────────────────────────────────────
   admin: [
-    { username: "Yanna",  password: "GM1234", rol: "admin" },
-    { username: "Joel",  password: "GM1234", rol: "admin" }
+    { username: "Admin", password: "admin1234", rol: "admin" },
+    { username: "admin", password: "admin1234", rol: "admin" }
   ]
 };
 
@@ -253,7 +258,6 @@ async function crearTicket() {
   if (btnEnviar) { btnEnviar.disabled = true; btnEnviar.textContent = "Subiendo archivos..."; }
 
   archivosSubidos = await subirArchivosACloudinary();
-
   if (btnEnviar) btnEnviar.textContent = "Enviando ticket...";
 
   const ticketId    = "TK-" + Date.now();
@@ -275,8 +279,6 @@ async function crearTicket() {
     fecha_resuelto:""
   };
 
-  console.log("🟡 Enviando a SheetBest:", nuevoTicket);
-
   try {
     const res = await fetch(API_URL, {
       method:  "POST",
@@ -285,8 +287,6 @@ async function crearTicket() {
     });
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-    console.log("✅ Ticket guardado en SheetBest");
 
     enviarCorreoTicket(nuevoTicket, archivosSubidos.map(a => a.url));
 
@@ -335,15 +335,15 @@ function enviarCorreoTicket(ticket, adjuntosUrls = []) {
 
 // ======================
 // HELPER — construir card de ticket
+// Escribe data-fecha-resuelto en cards resueltas para que
+// el filtro del Admin pueda leer la fecha sin reparsear HTML.
 // ======================
 function _buildTicketCard(t, opciones = {}) {
-  const { mostrarBotones = false, esAdmin = false } = opciones;
+  const { mostrarBotones = false } = opciones;
 
   const nombresCompletos = {
     "Xavier": "Xavier Rosario",
-    "Juan":   "Juan Francisco Jimenez",
-    "AJoel":   "Joel Holguin",
-    "AYanna":  "Yanna Martínez"
+    "Juan":   "Juan Francisco Jimenez"
   };
   const nombreMostrar = nombresCompletos[t.asignado] || t.asignado || "";
   const badgeAsignado = (t.asignado && t.asignado !== "Sin asignar")
@@ -379,13 +379,14 @@ function _buildTicketCard(t, opciones = {}) {
     <button class="btn-resuelto" onclick="marcarResuelto('${encodeURIComponent(t.id)}')">✅ Resuelto</button>
   ` : "";
 
-  // Botón reasignar — solo visible para admin
-  const btnReasignar = esAdmin ? `
-    <button class="btn-reasignar" onclick="abrirReasignar('${encodeURIComponent(t.id)}')">🔁 Reasignar</button>
-  ` : "";
-
   const div = document.createElement("div");
   div.className = "ticket-card";
+
+  // Guardar fecha_resuelto en dataset para que el filtro del Admin la lea
+  if (t.fecha_resuelto) {
+    div.dataset.fechaResuelto = t.fecha_resuelto;
+  }
+
   div.innerHTML = `
     <div class="depto-tag">[${t.depto || ""}]</div>
     <div class="titulo">${t.titulo || ""}</div>
@@ -396,7 +397,6 @@ function _buildTicketCard(t, opciones = {}) {
     ${adjuntosHtml}
     <br>
     ${botonesAccion}
-    ${btnReasignar}
     ${extra}
   `;
   return div;
@@ -430,9 +430,7 @@ function mostrarTickets() {
 
         const nombresCompletos = {
           "Xavier": "Xavier Rosario",
-          "Juan":   "Juan Francisco Jimenez",
-          "AJoel":   "Joel Holguin",
-          "AYanna":  "Yanna Martínez"
+          "Juan":   "Juan Francisco Jimenez"
         };
         const nombreAsignado = nombresCompletos[t.asignado] || t.asignado || "";
 
@@ -534,7 +532,9 @@ function mostrarTodosTickets() {
 
 // ======================
 // MOSTRAR TICKETS ADMIN
-// Ve TODOS los tickets sin filtro de técnico.
+// Ve TODOS los tickets. Los resueltos van al slider horizontal
+// con data-fecha-resuelto para que el filtro del HTML los maneje.
+// Después de cargar, llama a aplicarFiltroResueltos() si existe.
 // ======================
 function mostrarTicketsAdmin() {
   const pendientes   = document.getElementById("pendientes");
@@ -551,44 +551,50 @@ function mostrarTicketsAdmin() {
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
-      let cntPendientes = 0, cntProceso = 0, cntResueltos = 0;
+      let cntPendientes = 0, cntProceso = 0;
 
       data.forEach(t => {
         if (t.estado === "Pendiente") {
-          pendientes.appendChild(_buildTicketCard(t, { mostrarBotones: false, esAdmin: true }));
+          pendientes.appendChild(_buildTicketCard(t, { mostrarBotones: false }));
           cntPendientes++;
         } else if (t.estado === "En Proceso") {
-          enProceso.appendChild(_buildTicketCard(t, { mostrarBotones: false, esAdmin: true }));
+          enProceso.appendChild(_buildTicketCard(t, { mostrarBotones: false }));
           cntProceso++;
         } else if (t.estado === "Resuelto") {
-          resueltos.appendChild(_buildTicketCard(t, { mostrarBotones: false, esAdmin: true }));
-          cntResueltos++;
+          // Agregar todos los resueltos; el filtro del HTML se encargará de mostrar/ocultar
+          resueltos.appendChild(_buildTicketCard(t, { mostrarBotones: false }));
         }
 
+        // Sección mis asignados (solo activos)
         if (
           misAsignados &&
           t.asignado &&
           t.asignado.toLowerCase() === adminActual.toLowerCase() &&
           t.estado !== "Resuelto"
         ) {
-          misAsignados.appendChild(_buildTicketCard(t, { mostrarBotones: false, esAdmin: true }));
+          misAsignados.appendChild(_buildTicketCard(t, { mostrarBotones: false }));
         }
       });
 
+      // Actualizar contadores de stats (resueltos lo maneja el filtro)
       const el = id => document.getElementById(id);
-      if (el("statsTotal"))       el("statsTotal").textContent       = data.length;
-      if (el("statsPendientes"))  el("statsPendientes").textContent  = cntPendientes;
-      if (el("statsEnProceso"))   el("statsEnProceso").textContent   = cntProceso;
-      if (el("statsResueltos"))   el("statsResueltos").textContent   = cntResueltos;
+      if (el("statsTotal"))      el("statsTotal").textContent      = data.length;
+      if (el("statsPendientes")) el("statsPendientes").textContent  = cntPendientes;
+      if (el("statsEnProceso"))  el("statsEnProceso").textContent   = cntProceso;
 
+      // Mensajes vacíos pendientes / proceso
       if (misAsignados && misAsignados.innerHTML.trim() === "")
         misAsignados.innerHTML = "<p style='color:#94a3b8; text-align:center;'>No tienes tickets asignados activos.</p>";
       if (pendientes.innerHTML.trim() === "")
         pendientes.innerHTML   = "<p style='color:#94a3b8; text-align:center;'>Sin tickets pendientes.</p>";
       if (enProceso.innerHTML.trim() === "")
         enProceso.innerHTML    = "<p style='color:#94a3b8; text-align:center;'>Ningún ticket en proceso.</p>";
-      if (resueltos.innerHTML.trim() === "")
-        resueltos.innerHTML    = "<p style='color:#94a3b8; text-align:center;'>Sin tickets resueltos.</p>";
+
+      // Aplicar filtro de resueltos (por defecto: mes en curso)
+      // La función vive en Admin.html — se llama si existe
+      if (typeof aplicarFiltroResueltos === "function") {
+        aplicarFiltroResueltos();
+      }
     })
     .catch(err => {
       console.error("Error mostrando tickets admin:", err);
@@ -657,54 +663,6 @@ function guardarResolucion() {
 }
 
 // ======================
-// MODAL REASIGNAR TICKET (ADMIN)
-// ======================
-const TECNICOS_DISPONIBLES = [
-  "Sin asignar",
-  "Juan Francisco Jimenez",
-  "Joel Holguin",
-  "Yanna Martínez",
-  "Xavier Rosario"
-];
-
-let ticketReasignarId = null;
-
-function abrirReasignar(id) {
-  ticketReasignarId = decodeURIComponent(id);
-  const select = document.getElementById("selectTecnico");
-  if (!select) return;
-
-  select.innerHTML = TECNICOS_DISPONIBLES.map(t =>
-    `<option value="${t}">${t === "Sin asignar" ? "⚠️ Sin asignar" : "👤 " + t}</option>`
-  ).join("");
-
-  document.getElementById("reasignarModal").style.display = "flex";
-}
-
-function cerrarReasignar() {
-  document.getElementById("reasignarModal").style.display = "none";
-  ticketReasignarId = null;
-}
-
-function guardarReasignacion() {
-  const nuevo = document.getElementById("selectTecnico").value;
-  if (!ticketReasignarId) return;
-
-  fetch(`${API_URL}/id/${encodeURIComponent(ticketReasignarId)}`, {
-    method:  "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body:    JSON.stringify({ asignado: nuevo })
-  })
-  .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
-  .then(() => {
-    alert(`✅ Ticket reasignado a: ${nuevo}`);
-    cerrarReasignar();
-    mostrarTicketsAdmin();
-  })
-  .catch(err => console.error("Error reasignando:", err));
-}
-
-// ======================
 // UTILIDADES DE FECHA
 // ======================
 function parseFechaLatina(fechaStr) {
@@ -729,14 +687,23 @@ function abrirAyuda() { document.getElementById("ayudaModal").classList.add("sho
 function cerrarAyuda() { document.getElementById("ayudaModal").classList.remove("show"); }
 
 // ======================
-// AUTO REFRESH cada 30s
+// AUTO REFRESH
+// ─ Usuario / Técnico : cada 30 segundos
+// ─ Admin             : cada 1 hora (3 600 000 ms)
 // ======================
-setInterval(() => {
+(function iniciarAutoRefresh() {
   const rol = localStorage.getItem("rol");
-  if      (rol === "usuario")  mostrarTickets();
-  else if (rol === "tecnico")  mostrarTodosTickets();
-  else if (rol === "admin")    mostrarTicketsAdmin();
-}, 30000);
+
+  if (rol === "usuario") {
+    setInterval(() => mostrarTickets(), 30000);
+
+  } else if (rol === "tecnico") {
+    setInterval(() => mostrarTodosTickets(), 30000);
+
+  } else if (rol === "admin") {
+    setInterval(() => mostrarTicketsAdmin(), 3600000); // 1 hora
+  }
+})();
 
 // ======================
 // AUTO CARGA
