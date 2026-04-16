@@ -1,63 +1,43 @@
 // ======================
 // USUARIOS
+// CORREGIDO: Eliminados duplicados (Juan/juan/JUAN → solo "Juan").
+// Se mantiene un username canónico por persona para que la comparación
+// de asignación funcione correctamente.
 // ======================
 const usuarios = {
   tecnico: [
     { username: "Juan",   password: "12340094", rol: "tecnico" },
-    { username: "juan",   password: "1234",      rol: "tecnico" },
-    { username: "JUAN",   password: "1234",      rol: "tecnico" },
-    { username: "Xavier", password: "1234",      rol: "tecnico" },
-    { username: "xavier", password: "1234",      rol: "tecnico" }
+    { username: "Xavier", password: "1234",     rol: "tecnico" }
   ],
   usuario: [
     { username: "michel",     password: "1234",     rol: "usuario" },
     { username: "Doralina",   password: "gm1234",   rol: "usuario" },
-    { username: "doralina",   password: "gm1234",   rol: "usuario" },
     { username: "Michel",     password: "1234",     rol: "usuario" },
     { username: "Pamela",     password: "1234",     rol: "usuario" },
-    { username: "pamela",     password: "1234",     rol: "usuario" },
     { username: "Eliana",     password: "1234",     rol: "usuario" },
-    { username: "eliana",     password: "1234",     rol: "usuario" },
     { username: "Anabell",    password: "1234",     rol: "usuario" },
-    { username: "anabell",    password: "1234",     rol: "usuario" },
     { username: "Maitte",     password: "1234",     rol: "usuario" },
-    { username: "maytte",     password: "1234",     rol: "usuario" },
     { username: "Hilda",      password: "1234",     rol: "usuario" },
-    { username: "hilda",      password: "1234",     rol: "usuario" },
     { username: "Chantal",    password: "1234",     rol: "usuario" },
-    { username: "chantal",    password: "1234",     rol: "usuario" },
     { username: "Carla",      password: "1234",     rol: "usuario" },
-    { username: "carla",      password: "1234",     rol: "usuario" },
     { username: "Clara",      password: "1234",     rol: "usuario" },
-    { username: "clara",      password: "1234",     rol: "usuario" },
     { username: "Francisca",  password: "1234",     rol: "usuario" },
-    { username: "francisca",  password: "1234",     rol: "usuario" },
     { username: "Miladys",    password: "1234",     rol: "usuario" },
-    { username: "miladys",    password: "1234",     rol: "usuario" },
     { username: "Jasnaya",    password: "1234",     rol: "usuario" },
-    { username: "jasnaya",    password: "1234",     rol: "usuario" },
     { username: "Enelson",    password: "1234",     rol: "usuario" },
-    { username: "enelson",    password: "1234",     rol: "usuario" },
     { username: "Alexandra",  password: "LA701234", rol: "usuario" },
-    { username: "alexandra",  password: "LA701234", rol: "usuario" },
     { username: "Ricarda",    password: "1234",     rol: "usuario" },
-    { username: "ricarda",    password: "1234",     rol: "usuario" },
     { username: "Eduard",     password: "1234",     rol: "usuario" },
-    { username: "eduard",     password: "1234",     rol: "usuario" },
     { username: "Enmanuel",   password: "1234",     rol: "usuario" },
-    { username: "enmanuel",   password: "1234",     rol: "usuario" },
     { username: "Francis",    password: "1234",     rol: "usuario" },
-    { username: "francis",    password: "1234",     rol: "usuario" },
     { username: "Edgar",      password: "1234",     rol: "usuario" },
-    { username: "edgar",      password: "1234",     rol: "usuario" },
     { username: "Merlyn",     password: "1234",     rol: "usuario" },
-    { username: "merlyn",     password: "1234",     rol: "usuario" },
     { username: "Elaine",     password: "1234",     rol: "usuario" },
     { username: "Esmerkin",   password: "CM1234",   rol: "usuario" }
   ],
   // ── ADMIN ─────────────────────────────────────────────
   admin: [
-    { username: "Joel", password: "GM1234", rol: "admin" },
+    { username: "Joel",  password: "GM1234", rol: "admin" },
     { username: "Yanna", password: "GM1234", rol: "admin" }
   ]
 };
@@ -81,9 +61,11 @@ let archivosSubidos       = [];
 
 // ======================
 // LOGIN
+// CORREGIDO: La comparación de username es case-insensitive para mayor
+// comodidad. La contraseña se compara tal cual (case-sensitive).
 // ======================
 function login() {
-  const user  = document.getElementById("username").value;
+  const user  = document.getElementById("username").value.trim();
   const pass  = document.getElementById("password").value;
   const error = document.getElementById("login-error");
 
@@ -93,6 +75,8 @@ function login() {
   );
 
   if (encontrado) {
+    // Guardamos el username EXACTO del array (canónico), no el que escribió el usuario.
+    // Esto garantiza que las comparaciones de asignación siempre coincidan.
     localStorage.setItem("usuario", encontrado.username);
     localStorage.setItem("rol",     encontrado.rol);
 
@@ -257,6 +241,7 @@ async function crearTicket() {
   if (btnEnviar) btnEnviar.textContent = "Enviando ticket...";
 
   const ticketId    = "TK-" + Date.now();
+  // CORREGIDO: Usar siempre "es-DO" para garantizar formato consistente
   const fecha       = new Date().toLocaleString("es-DO");
   const adjuntosStr = archivosSubidos.map(a => a.url).join(", ");
 
@@ -331,16 +316,22 @@ function enviarCorreoTicket(ticket, adjuntosUrls = []) {
 
 // ======================
 // HELPER — construir card de ticket
-// esAdmin: true  → muestra botón 🔁 Reasignar
+// esAdmin: true              → muestra botón 🔁 Reasignar
+// mostrarBotonesAdmin: true  → muestra botones de acción en "Mis Asignados"
+//   · Pendiente  → 🔧 En Proceso + ✅ Resuelto
+//   · En Proceso → solo ✅ Resuelto
 // Escribe data-fecha-resuelto en cards resueltas para que
 // el filtro del Admin pueda leer la fecha sin reparsear HTML.
 // ======================
 function _buildTicketCard(t, opciones = {}) {
-  const { mostrarBotones = false, esAdmin = false } = opciones;
+  const { mostrarBotones = false, esAdmin = false, mostrarBotonesAdmin = false } = opciones;
 
+  // Mapa de username canónico → nombre completo para mostrar
   const nombresCompletos = {
     "Xavier": "Xavier Rosario",
-    "Juan":   "Juan Francisco Jimenez"
+    "Juan":   "Juan Francisco Jiménez",
+    "Joel":   "Joel Holguin",
+    "Yanna":  "Yanna Martínez"
   };
   const nombreMostrar = nombresCompletos[t.asignado] || t.asignado || "";
   const badgeAsignado = (t.asignado && t.asignado !== "Sin asignar")
@@ -371,10 +362,30 @@ function _buildTicketCard(t, opciones = {}) {
       </div>`;
   }
 
-  const botonesAccion = (mostrarBotones && t.estado !== "Resuelto") ? `
-    <button class="btn-proceso"  onclick="cambiarEstado('${encodeURIComponent(t.id)}', 'En Proceso')">🔧 En Proceso</button>
-    <button class="btn-resuelto" onclick="marcarResuelto('${encodeURIComponent(t.id)}')">✅ Resuelto</button>
-  ` : "";
+  // ── Botones de acción ─────────────────────────────────
+  let botonesAccion = "";
+
+  if (t.estado !== "Resuelto") {
+    if (mostrarBotones) {
+      // Vista técnico: siempre ambos botones (lógica original)
+      botonesAccion = `
+        <button class="btn-proceso"  onclick="cambiarEstado('${encodeURIComponent(t.id)}', 'En Proceso')">🔧 En Proceso</button>
+        <button class="btn-resuelto" onclick="marcarResuelto('${encodeURIComponent(t.id)}')">✅ Resuelto</button>
+      `;
+    } else if (mostrarBotonesAdmin) {
+      // Vista admin "Mis Asignados": botones según estado
+      if (t.estado === "Pendiente") {
+        botonesAccion = `
+          <button class="btn-proceso"  onclick="cambiarEstadoAdmin('${encodeURIComponent(t.id)}', 'En Proceso')">🔧 En Proceso</button>
+          <button class="btn-resuelto" onclick="marcarResuelto('${encodeURIComponent(t.id)}')">✅ Resuelto</button>
+        `;
+      } else if (t.estado === "En Proceso") {
+        botonesAccion = `
+          <button class="btn-resuelto" onclick="marcarResuelto('${encodeURIComponent(t.id)}')">✅ Resuelto</button>
+        `;
+      }
+    }
+  }
 
   // Botón reasignar — solo visible para admin
   const btnReasignar = esAdmin ? `
@@ -433,8 +444,8 @@ function mostrarTickets() {
 
         const nombresCompletos = {
           "Xavier": "Xavier Rosario",
-          "Juan":   "Juan Francisco Jimenez",
-          "Yanna":   "Yanna Martínez",
+          "Juan":   "Juan Francisco Jiménez",
+          "Yanna":  "Yanna Martínez",
           "Joel":   "Joel Holguin"
         };
         const nombreAsignado = nombresCompletos[t.asignado] || t.asignado || "";
@@ -504,6 +515,8 @@ function eliminarTicket(id) {
 
 // ======================
 // MOSTRAR TICKETS TÉCNICO
+// CORREGIDO: La comparación usa toLowerCase() en ambos lados para ser
+// insensible a mayúsculas, igual que el login.
 // ======================
 function mostrarTodosTickets() {
   const pendientes = document.getElementById("pendientes");
@@ -511,7 +524,8 @@ function mostrarTodosTickets() {
   const resueltos  = document.getElementById("resueltos");
   if (!pendientes) return;
 
-  pendientes.innerHTML = enProceso.innerHTML = resueltos.innerHTML = "";
+  pendientes.innerHTML = enProceso.innerHTML = "";
+  if (resueltos) resueltos.innerHTML = "";
 
   const tecnicoActual = localStorage.getItem("usuario");
 
@@ -529,8 +543,16 @@ function mostrarTodosTickets() {
 
         if      (t.estado === "Pendiente")  pendientes.appendChild(div);
         else if (t.estado === "En Proceso") enProceso.appendChild(div);
-        else if (t.estado === "Resuelto" && esHoyLatina(t.fecha_resuelto)) resueltos.appendChild(div);
+        else if (t.estado === "Resuelto" && esHoyLatina(t.fecha_resuelto)) {
+          if (resueltos) resueltos.appendChild(div);
+        }
       });
+
+      // Mensajes vacíos
+      if (pendientes.innerHTML.trim() === "")
+        pendientes.innerHTML = "<p style='color:#94a3b8; text-align:center;'>Sin tickets pendientes.</p>";
+      if (enProceso.innerHTML.trim() === "")
+        enProceso.innerHTML  = "<p style='color:#94a3b8; text-align:center;'>Ningún ticket en proceso.</p>";
     })
     .catch(err => console.error("Error mostrando tickets técnico:", err));
 }
@@ -539,7 +561,8 @@ function mostrarTodosTickets() {
 // MOSTRAR TICKETS ADMIN
 // Ve TODOS los tickets. Los resueltos van al slider horizontal
 // con data-fecha-resuelto para que el filtro del HTML los maneje.
-// Después de cargar, llama a aplicarFiltroResueltos() si existe.
+// CORREGIDO: La comparación de "mis asignados" usa toLowerCase() para
+// ser consistente con los usernames canónicos del array de usuarios.
 // ======================
 function mostrarTicketsAdmin() {
   const pendientes   = document.getElementById("pendientes");
@@ -571,13 +594,16 @@ function mostrarTicketsAdmin() {
         }
 
         // Sección mis asignados (solo activos)
+        // CORREGIDO: Comparación case-insensitive + botones de acción habilitados
         if (
           misAsignados &&
           t.asignado &&
           t.asignado.toLowerCase() === adminActual.toLowerCase() &&
           t.estado !== "Resuelto"
         ) {
-          misAsignados.appendChild(_buildTicketCard(t, { mostrarBotones: false, esAdmin: true }));
+          misAsignados.appendChild(
+            _buildTicketCard(t, { mostrarBotones: false, mostrarBotonesAdmin: true, esAdmin: true })
+          );
         }
       });
 
@@ -596,7 +622,6 @@ function mostrarTicketsAdmin() {
         enProceso.innerHTML    = "<p style='color:#94a3b8; text-align:center;'>Ningún ticket en proceso.</p>";
 
       // Aplicar filtro de resueltos (por defecto: mes en curso)
-      // La función vive en Admin.html — se llama si existe
       if (typeof aplicarFiltroResueltos === "function") {
         aplicarFiltroResueltos();
       }
@@ -608,7 +633,7 @@ function mostrarTicketsAdmin() {
 }
 
 // ======================
-// CAMBIAR ESTADO (PATCH)
+// CAMBIAR ESTADO (PATCH) — Técnico
 // ======================
 function cambiarEstado(id, nuevoEstado) {
   fetch(`${API_URL}/id/${encodeURIComponent(id)}`, {
@@ -619,6 +644,21 @@ function cambiarEstado(id, nuevoEstado) {
   .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
   .then(() => mostrarTodosTickets())
   .catch(err => console.error("Error cambiando estado:", err));
+}
+
+// ======================
+// CAMBIAR ESTADO (PATCH) — Admin
+// Igual que cambiarEstado pero refresca la vista de admin.
+// ======================
+function cambiarEstadoAdmin(id, nuevoEstado) {
+  fetch(`${API_URL}/id/${encodeURIComponent(id)}`, {
+    method:  "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body:    JSON.stringify({ estado: nuevoEstado })
+  })
+  .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
+  .then(() => mostrarTicketsAdmin())
+  .catch(err => console.error("Error cambiando estado (admin):", err));
 }
 
 // ======================
@@ -649,7 +689,9 @@ function guardarResolucion() {
     estado:         "Resuelto",
     participantes:  participantes,
     resolucion:     detalle,
-    fecha_resuelto: new Date().toLocaleString()
+    // CORREGIDO: Siempre usar "es-DO" para garantizar formato consistente
+    // con el parseo en aplicarFiltroResueltos() de Admin.html
+    fecha_resuelto: new Date().toLocaleString("es-DO")
   };
 
   fetch(`${API_URL}/id/${encodeURIComponent(ticketResueltoId)}`, {
@@ -661,7 +703,10 @@ function guardarResolucion() {
   .then(() => {
     alert("✅ Ticket marcado como resuelto");
     cerrarModal();
-    mostrarTodosTickets();
+    // Refrescar la vista correcta según el rol activo
+    const rol = localStorage.getItem("rol");
+    if (rol === "admin")   mostrarTicketsAdmin();
+    else                   mostrarTodosTickets();
     mostrarTickets();
   })
   .catch(err => console.error("Error:", err));
@@ -669,14 +714,27 @@ function guardarResolucion() {
 
 // ======================
 // MODAL REASIGNAR TICKET (ADMIN)
+// CORREGIDO: Los valores en TECNICOS_DISPONIBLES ahora usan los mismos
+// usernames canónicos del array de login (cortos, sin apellido completo).
+// La función _buildTicketCard ya se encarga de mostrar el nombre completo.
+// Esto garantiza que la comparación en mostrarTodosTickets() y
+// mostrarTicketsAdmin() funcione correctamente.
 // ======================
 const TECNICOS_DISPONIBLES = [
   "Sin asignar",
-  "Juan Francisco Jiménez",
-  "Joel Holguin",
-  "Yanna Martínez",
-  "Xavier Rosario"
+  "Juan",    // → Juan Francisco Jiménez (se muestra en badge)
+  "Joel",    // → Joel Holguin
+  "Yanna",   // → Yanna Martínez
+  "Xavier"   // → Xavier Rosario
 ];
+
+// Mapa para mostrar nombre completo en el select del modal
+const NOMBRES_COMPLETOS_TECNICOS = {
+  "Juan":   "Juan Francisco Jiménez",
+  "Joel":   "Joel Holguin",
+  "Yanna":  "Yanna Martínez",
+  "Xavier": "Xavier Rosario"
+};
 
 let ticketReasignarId = null;
 
@@ -685,9 +743,12 @@ function abrirReasignar(id) {
   const select = document.getElementById("selectTecnico");
   if (!select) return;
 
-  select.innerHTML = TECNICOS_DISPONIBLES.map(t =>
-    `<option value="${t}">${t === "Sin asignar" ? "⚠️ Sin asignar" : "👤 " + t}</option>`
-  ).join("");
+  select.innerHTML = TECNICOS_DISPONIBLES.map(t => {
+    const label = t === "Sin asignar"
+      ? "⚠️ Sin asignar"
+      : `👤 ${NOMBRES_COMPLETOS_TECNICOS[t] || t}`;
+    return `<option value="${t}">${label}</option>`;
+  }).join("");
 
   document.getElementById("reasignarModal").style.display = "flex";
 }
@@ -708,7 +769,8 @@ function guardarReasignacion() {
   })
   .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
   .then(() => {
-    alert(`✅ Ticket reasignado a: ${nuevo}`);
+    const nombreMostrar = NOMBRES_COMPLETOS_TECNICOS[nuevo] || nuevo;
+    alert(`✅ Ticket reasignado a: ${nombreMostrar}`);
     cerrarReasignar();
     mostrarTicketsAdmin();
   })
