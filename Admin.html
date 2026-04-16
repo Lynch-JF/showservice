@@ -165,6 +165,22 @@
     </div>
   </div>
 
+  <!-- ================== MODAL REASIGNAR ================== -->
+  <div id="reasignarModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <h2>🔁 Reasignar ticket</h2>
+      <p>Selecciona el técnico al que quieres asignar este ticket:</p>
+      <select id="selectTecnico"
+        style="width:100%; padding:10px; border-radius:8px; border:1px solid #bbb;
+               font-size:14px; margin-bottom:20px; font-family:inherit; box-sizing:border-box;">
+      </select>
+      <div class="modal-buttons">
+        <button class="btn btn-guardar"  onclick="guardarReasignacion()">💾 Guardar</button>
+        <button class="btn btn-cancelar" onclick="cerrarReasignar()">❌ Cancelar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ================== ESTILOS ================== -->
   <style>
 
@@ -178,8 +194,8 @@
     #card-resuelto {    
          width: 47%;
          margin-left: 51%;
-         margin-top: -180%;
- }
+         margin-top: -205%;
+    }
 
     .stat-card {
       display: flex;
@@ -357,14 +373,14 @@
       border-radius: 10px;
     }
 
-   /* Cards del slider — misma apariencia que los de En Proceso */
-.slider-track .ticket-card {
-  min-width: 340px;
-  max-width: 420px;
-  flex-shrink: 0;
-  margin-bottom: 0;
-  border-left: none;   /* quita la raya verde lateral */
-}
+    /* Cards del slider — misma apariencia que los de En Proceso */
+    .slider-track .ticket-card {
+      min-width: 340px;
+      max-width: 420px;
+      flex-shrink: 0;
+      margin-bottom: 0;
+      border-left: none;
+    }
 
     /* Flechas */
     .slider-arrow {
@@ -535,7 +551,8 @@
     .ticket-card .fecha       { font-size:11px; color:#94a3b8; }
     .ticket-card .usuario-tag { font-size:12px; color:#475569; }
 
-    .btn-proceso, .btn-resuelto {
+    /* ── Botones acción ────────────────────────────────── */
+    .btn-proceso, .btn-resuelto, .btn-reasignar {
       padding: 7px 13px;
       border: none;
       border-radius: 8px;
@@ -550,7 +567,10 @@
     .btn-proceso:hover  { background:#fde68a; }
     .btn-resuelto       { background:#d1fae5; color:#065f46; }
     .btn-resuelto:hover { background:#a7f3d0; }
+    .btn-reasignar      { background:#e0f2fe; color:#0369a1; }
+    .btn-reasignar:hover{ background:#bae6fd; }
 
+    /* ── Resolución ────────────────────────────────────── */
     .resolucion-box {
       margin-top: 10px;
       padding: 10px;
@@ -561,6 +581,7 @@
       color: #374151;
     }
 
+    /* ── Adjuntos ──────────────────────────────────────── */
     .uploaded-file-link {
       display: inline-flex;
       align-items: center;
@@ -576,6 +597,7 @@
     }
     .uploaded-file-link:hover { background:#ddd6fe; }
 
+    /* ── User btn navbar ───────────────────────────────── */
     .user-btn {
       background: #1f2a6d;
       color: #fff;
@@ -622,10 +644,12 @@
 
     // ── Cerrar modales al hacer clic fuera ────────────────
     window.addEventListener("click", function(e) {
-      const ayuda    = document.getElementById("ayudaModal");
-      const resuelto = document.getElementById("resueltoModal");
-      if (e.target === ayuda)    ayuda.classList.remove("show");
-      if (e.target === resuelto) resuelto.style.display = "none";
+      const ayuda      = document.getElementById("ayudaModal");
+      const resuelto   = document.getElementById("resueltoModal");
+      const reasignar  = document.getElementById("reasignarModal");
+      if (e.target === ayuda)     ayuda.classList.remove("show");
+      if (e.target === resuelto)  resuelto.style.display  = "none";
+      if (e.target === reasignar) cerrarReasignar();
     });
 
     // ── Nombres meses español ─────────────────────────────
