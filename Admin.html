@@ -85,7 +85,7 @@
       <div class="stat-icon">✅</div>
       <div>
         <div class="stat-num" id="statsResueltos">—</div>
-        <div class="stat-label">Resueltos</div>
+        <div class="stat-label">Resueltos este mes</div>
       </div>
     </div>
   </div>
@@ -99,8 +99,8 @@
     <div id="misAsignados" class="ticket-column ticket-column-horiz"></div>
   </div>
 
-  <!-- ================== KANBAN GLOBAL ================== -->
-  <div class="container grid-3">
+  <!-- ================== KANBAN: PENDIENTES + EN PROCESO ================== -->
+  <div class="container grid-2">
     <div>
       <h3>⏳ Pendientes</h3>
       <div id="pendientes" class="ticket-column"></div>
@@ -109,20 +109,38 @@
       <h3>🔧 En Proceso</h3>
       <div id="enProceso" class="ticket-column"></div>
     </div>
-    <div>
-      <h3 style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-        <span>✅ Resueltos</span>
-        <button
-          id="toggleResueltosBtn"
-          onclick="toggleResueltos()"
-          style="font-size:12px; padding:4px 12px; border-radius:20px;
-                 border:1px solid #e5e7eb; background:#f1f5f9; color:#475569;
-                 cursor:pointer; font-weight:600; white-space:nowrap; flex-shrink:0;">
-          Mostrar
-        </button>
-      </h3>
-      <div id="resueltos" class="ticket-column" style="display:none;"></div>
+  </div>
+
+  <!-- ================== SECCIÓN RESUELTOS (horizontal + filtro) ================== -->
+  <div class="section-block resueltos-block" id="card-resuelto">
+
+    <div class="resueltos-header">
+      <div class="section-header" style="margin-bottom:0;">
+        <span>✅ Tickets resueltos</span>
+        <span class="section-sub" id="resueltos-sub">Mes en curso</span>
+      </div>
+
+      <div class="filtros-resueltos">
+        <label for="filtroMes">📅 Mes:</label>
+        <select id="filtroMes" onchange="aplicarFiltroResueltos()"></select>
+
+        <label for="filtroFecha">📆 Día:</label>
+        <input type="date" id="filtroFecha" onchange="aplicarFiltroResueltos()">
+
+        <button class="btn-limpiar" onclick="limpiarFiltros()">✖ Limpiar</button>
+      </div>
     </div>
+
+    <!-- Slider horizontal con flechas -->
+    <div class="slider-wrapper">
+      <button class="slider-arrow" onclick="scrollResueltos(-1)">&#8249;</button>
+      <div class="slider-track" id="resueltos"></div>
+      <button class="slider-arrow" onclick="scrollResueltos(1)">&#8250;</button>
+    </div>
+
+    <p id="resueltos-empty" style="display:none; color:#94a3b8; text-align:center; padding:16px 0; font-size:13px;">
+      Sin tickets resueltos para el período seleccionado.
+    </p>
   </div>
 
   <!-- ================== MODAL RESOLUCIÓN ================== -->
@@ -147,22 +165,6 @@
     </div>
   </div>
 
-  <!-- ================== MODAL REASIGNAR ================== -->
-  <div id="reasignarModal" class="modal" style="display:none;">
-    <div class="modal-content">
-      <h2>🔁 Reasignar ticket</h2>
-      <p>Selecciona el técnico al que quieres asignar este ticket:</p>
-      <select id="selectTecnico"
-        style="width:100%; padding:10px; border-radius:8px; border:1px solid #bbb;
-               font-size:14px; margin-bottom:20px; font-family:inherit; box-sizing:border-box;">
-      </select>
-      <div class="modal-buttons">
-        <button class="btn btn-guardar"  onclick="guardarReasignacion()">💾 Guardar</button>
-        <button class="btn btn-cancelar" onclick="cerrarReasignar()">❌ Cancelar</button>
-      </div>
-    </div>
-  </div>
-
   <!-- ================== ESTILOS ================== -->
   <style>
 
@@ -173,6 +175,11 @@
       padding: 20px 30px 0;
       flex-wrap: wrap;
     }
+    #card-resuelto {    
+         width: 47%;
+         margin-left: 51%;
+         margin-top: -180%;
+ }
 
     .stat-card {
       display: flex;
@@ -206,7 +213,7 @@
     .stat-process .stat-num { color: #2563eb; }
     .stat-done    .stat-num { color: #16a34a; }
 
-    /* ── Sección mis asignados ─────────────────────────── */
+    /* ── Section blocks ────────────────────────────────── */
     .section-block {
       margin: 24px 30px 0;
       background: #fff;
@@ -215,6 +222,8 @@
       padding: 20px 22px;
       box-shadow: 0 4px 14px rgba(0,0,0,0.05);
     }
+
+    .resueltos-block { margin-bottom: 30px; }
 
     .section-header {
       display: flex;
@@ -232,6 +241,7 @@
       color: #94a3b8;
     }
 
+    /* ── Mis asignados horizontal ──────────────────────── */
     .ticket-column-horiz {
       display: flex;
       gap: 14px;
@@ -244,7 +254,144 @@
       max-width: 340px;
     }
 
-    /* ── Modal ─────────────────────────────────────────── */
+    /* ── Grid 2 columnas ───────────────────────────────── */
+    .container.grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      padding: 20px 30px 0;
+    }
+
+    .container.grid-2 h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 12px;
+    }
+
+    /* ── Resueltos header ──────────────────────────────── */
+    .resueltos-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    /* ── Filtros ───────────────────────────────────────── */
+    .filtros-resueltos {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filtros-resueltos label {
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .filtros-resueltos select,
+    .filtros-resueltos input[type="date"] {
+      padding: 6px 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #1e293b;
+      background: #f8fafc;
+      cursor: pointer;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .filtros-resueltos select:focus,
+    .filtros-resueltos input[type="date"]:focus {
+      border-color: #4e54c8;
+    }
+
+    .btn-limpiar {
+      padding: 6px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-limpiar:hover {
+      background: #fee2e2;
+      color: #dc2626;
+      border-color: #fca5a5;
+    }
+
+    /* ── Slider ────────────────────────────────────────── */
+    .slider-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slider-track {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding: 8px 4px 14px;
+      flex: 1;
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 transparent;
+      cursor: grab;
+    }
+
+    .slider-track:active { cursor: grabbing; }
+
+    .slider-track::-webkit-scrollbar { height: 5px; }
+    .slider-track::-webkit-scrollbar-track { background: transparent; }
+    .slider-track::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+   /* Cards del slider — misma apariencia que los de En Proceso */
+.slider-track .ticket-card {
+  min-width: 340px;
+  max-width: 420px;
+  flex-shrink: 0;
+  margin-bottom: 0;
+  border-left: none;   /* quita la raya verde lateral */
+}
+
+    /* Flechas */
+    .slider-arrow {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      font-size: 22px;
+      cursor: pointer;
+      color: #475569;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .slider-arrow:hover {
+      background: #4e54c8;
+      color: #fff;
+      border-color: #4e54c8;
+    }
+
+    /* ── Modales ───────────────────────────────────────── */
     .modal {
       display: none;
       position: fixed;
@@ -275,7 +422,6 @@
       to   { opacity:1; transform:scale(1);   }
     }
 
-    /* ── Checkboxes ────────────────────────────────────── */
     .checkbox-group {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -383,14 +529,13 @@
       transform: translateY(-3px);
       box-shadow: 0 12px 28px rgba(0,0,0,0.11);
     }
-    .ticket-card .depto-tag  { font-weight:700; color:#4e54c8; }
-    .ticket-card .titulo     { font-size:15px; font-weight:600; color:#1e293b; margin:4px 0; }
-    .ticket-card .descripcion{ color:#64748b; margin:4px 0 8px; font-size:13px; }
-    .ticket-card .fecha      { font-size:11px; color:#94a3b8; }
-    .ticket-card .usuario-tag{ font-size:12px; color:#475569; }
+    .ticket-card .depto-tag   { font-weight:700; color:#4e54c8; }
+    .ticket-card .titulo      { font-size:15px; font-weight:600; color:#1e293b; margin:4px 0; }
+    .ticket-card .descripcion { color:#64748b; margin:4px 0 8px; font-size:13px; }
+    .ticket-card .fecha       { font-size:11px; color:#94a3b8; }
+    .ticket-card .usuario-tag { font-size:12px; color:#475569; }
 
-    /* ── Botones acción ────────────────────────────────── */
-    .btn-proceso, .btn-resuelto, .btn-reasignar {
+    .btn-proceso, .btn-resuelto {
       padding: 7px 13px;
       border: none;
       border-radius: 8px;
@@ -405,10 +550,7 @@
     .btn-proceso:hover  { background:#fde68a; }
     .btn-resuelto       { background:#d1fae5; color:#065f46; }
     .btn-resuelto:hover { background:#a7f3d0; }
-    .btn-reasignar        { background:#e0f2fe; color:#0369a1; }
-    .btn-reasignar:hover  { background:#bae6fd; }
 
-    /* ── Resolución ────────────────────────────────────── */
     .resolucion-box {
       margin-top: 10px;
       padding: 10px;
@@ -419,7 +561,6 @@
       color: #374151;
     }
 
-    /* ── Adjuntos ──────────────────────────────────────── */
     .uploaded-file-link {
       display: inline-flex;
       align-items: center;
@@ -435,7 +576,6 @@
     }
     .uploaded-file-link:hover { background:#ddd6fe; }
 
-    /* ── User btn navbar ───────────────────────────────── */
     .user-btn {
       background: #1f2a6d;
       color: #fff;
@@ -449,59 +589,145 @@
 
     /* ── Responsive ────────────────────────────────────── */
     @media (max-width: 900px) {
-      .stats-bar { padding: 16px 16px 0; }
-      .section-block { margin: 16px 16px 0; }
-      .container.grid-3 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-      }
+      .stats-bar        { padding: 16px 16px 0; }
+      .section-block    { margin: 16px 16px 0; }
+      .container.grid-2 { grid-template-columns: 1fr; padding: 16px 16px 0; }
+      .resueltos-header { flex-direction: column; align-items: flex-start; }
     }
 
     @media (max-width: 600px) {
-      .stats-bar { flex-direction: column; }
-      .container.grid-3 { grid-template-columns: 1fr; }
-      .navbar { flex-direction: column; align-items: stretch; text-align: center; }
-      .navbar button { width: 100%; }
-      .modal-content { max-width:95%; padding:15px; }
-      .card-container { flex-direction: column; align-items: center; }
-      .card-ayuda { width: 90%; }
-      .checkbox-group { grid-template-columns: 1fr; }
-      textarea { font-size: 16px; }
+      .stats-bar         { flex-direction: column; }
+      .navbar            { flex-direction: column; align-items: stretch; text-align: center; }
+      .navbar button     { width: 100%; }
+      .modal-content     { max-width: 95%; padding: 15px; }
+      .card-container    { flex-direction: column; align-items: center; }
+      .card-ayuda        { width: 90%; }
+      .checkbox-group    { grid-template-columns: 1fr; }
+      textarea           { font-size: 16px; }
+      .filtros-resueltos { flex-direction: column; align-items: flex-start; }
+      .slider-track .ticket-card { min-width: 240px; }
     }
   </style>
 
   <script src="JS/js.js"></script>
   <script>
-    // Mostrar nombre del admin en el navbar
+
+    // ── Init ──────────────────────────────────────────────
     document.getElementById("userNameTop").textContent = localStorage.getItem("usuario") || "";
 
     // Redirigir si no es admin
     (function() {
-      const rol = localStorage.getItem("rol");
-      if (rol !== "admin") window.location.href = "index.html";
+      if (localStorage.getItem("rol") !== "admin") window.location.href = "index.html";
     })();
-
-    // ── Toggle sección resueltos ──────────────────────────
-    let resueltosVisible = false;
-    function toggleResueltos() {
-      resueltosVisible = !resueltosVisible;
-      const col = document.getElementById("resueltos");
-      const btn = document.getElementById("toggleResueltosBtn");
-      col.style.display = resueltosVisible ? "block" : "none";
-      btn.textContent   = resueltosVisible ? "Ocultar" : "Mostrar";
-    }
 
     // ── Cerrar modales al hacer clic fuera ────────────────
     window.addEventListener("click", function(e) {
-      const ayuda      = document.getElementById("ayudaModal");
-      const resuelto   = document.getElementById("resueltoModal");
-      const reasignar  = document.getElementById("reasignarModal");
-
-      if (e.target === ayuda)     ayuda.classList.remove("show");
-      if (e.target === resuelto)  resuelto.style.display  = "none";
-      if (e.target === reasignar) cerrarReasignar();
+      const ayuda    = document.getElementById("ayudaModal");
+      const resuelto = document.getElementById("resueltoModal");
+      if (e.target === ayuda)    ayuda.classList.remove("show");
+      if (e.target === resuelto) resuelto.style.display = "none";
     });
+
+    // ── Nombres meses español ─────────────────────────────
+    const MESES = [
+      "Enero","Febrero","Marzo","Abril","Mayo","Junio",
+      "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
+    ];
+
+    // ── Poblar selector de mes (últimos 12 meses) ─────────
+    (function poblarMeses() {
+      const sel = document.getElementById("filtroMes");
+      const hoy = new Date();
+      for (let i = 0; i <= 11; i++) {
+        const d   = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1);
+        const opt = document.createElement("option");
+        opt.value       = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+        opt.textContent = `${MESES[d.getMonth()]} ${d.getFullYear()}`;
+        if (i === 0) opt.selected = true;
+        sel.appendChild(opt);
+      }
+    })();
+
+    // ── Scroll botones del slider ─────────────────────────
+    function scrollResueltos(dir) {
+      document.getElementById("resueltos").scrollBy({ left: dir * 320, behavior: "smooth" });
+    }
+
+    // ── Drag-to-scroll ────────────────────────────────────
+    (function dragScroll() {
+      const track = document.getElementById("resueltos");
+      let isDown = false, startX, scrollLeft;
+
+      track.addEventListener("mousedown", e => {
+        isDown     = true;
+        startX     = e.pageX - track.offsetLeft;
+        scrollLeft = track.scrollLeft;
+      });
+      track.addEventListener("mouseleave", () => { isDown = false; });
+      track.addEventListener("mouseup",    () => { isDown = false; });
+      track.addEventListener("mousemove",  e => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x    = e.pageX - track.offsetLeft;
+        const walk = (x - startX) * 1.2;
+        track.scrollLeft = scrollLeft - walk;
+      });
+    })();
+
+    // ── Filtro de resueltos ───────────────────────────────
+    // Llamada también desde js.js después de cargar los tickets
+    function aplicarFiltroResueltos() {
+      const mesSel   = document.getElementById("filtroMes").value;    // "2025-04"
+      const fechaSel = document.getElementById("filtroFecha").value;   // "2025-04-16" o ""
+      const track    = document.getElementById("resueltos");
+      const empty    = document.getElementById("resueltos-empty");
+      const sub      = document.getElementById("resueltos-sub");
+
+      const cards = track.querySelectorAll(".ticket-card");
+      let visibles = 0;
+
+      cards.forEach(card => {
+        // La fecha viene del dataset que js.js escribe en cada card
+        const fechaCard = card.dataset.fechaResuelto || "";
+
+        // Parsear formato es-DO: "d/m/yyyy, hh:mm a.m."
+        const partes = fechaCard.split(",")[0].trim().split("/");
+        if (partes.length < 3) { card.style.display = "none"; return; }
+
+        const [d, m, y] = partes;
+        const cardMes = `${y.trim()}-${String(m).padStart(2, "0")}`;
+        const cardDia = `${y.trim()}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+
+        let mostrar = false;
+
+        if (fechaSel) {
+          mostrar         = cardDia === fechaSel;
+          sub.textContent = fechaSel;
+        } else {
+          mostrar = cardMes === mesSel;
+          const [anio, mes] = mesSel.split("-");
+          sub.textContent   = `${MESES[parseInt(mes) - 1]} ${anio}`;
+        }
+
+        card.style.display = mostrar ? "" : "none";
+        if (mostrar) visibles++;
+      });
+
+      empty.style.display = visibles === 0 ? "block" : "none";
+
+      // Actualizar contador del mes
+      const statEl = document.getElementById("statsResueltos");
+      if (statEl) statEl.textContent = visibles;
+    }
+
+    // ── Limpiar → volver al mes en curso ─────────────────
+    function limpiarFiltros() {
+      const hoy = new Date();
+      document.getElementById("filtroMes").value =
+        `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, "0")}`;
+      document.getElementById("filtroFecha").value = "";
+      aplicarFiltroResueltos();
+    }
   </script>
 </body>
 </html>
