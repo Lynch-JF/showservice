@@ -6,12 +6,8 @@ const usuarios = {
     { username: "Juan",   password: "12340094", rol: "tecnico" },
     { username: "juan",   password: "1234",      rol: "tecnico" },
     { username: "JUAN",   password: "1234",      rol: "tecnico" },
-    { username: "Joel",   password: "1234",      rol: "tecnico" },
-    { username: "joel",   password: "1234",      rol: "tecnico" },
-    { username: "Yanna",  password: "1234",      rol: "tecnico" },
     { username: "Xavier", password: "1234",      rol: "tecnico" },
-    { username: "xavier", password: "1234",      rol: "tecnico" },
-    { username: "yanna",  password: "1234",      rol: "tecnico" }
+    { username: "xavier", password: "1234",      rol: "tecnico" }
   ],
   usuario: [
     { username: "michel",     password: "1234",     rol: "usuario" },
@@ -61,8 +57,8 @@ const usuarios = {
   ],
   // ── ADMIN ─────────────────────────────────────────────
   admin: [
-    { username: "Admin", password: "admin1234", rol: "admin" },
-    { username: "admin", password: "admin1234", rol: "admin" }
+    { username: "Yanna", password: "GM1234", rol: "admin" },
+    { username: "Joel", password: "GM1234", rol: "admin" }
   ]
 };
 
@@ -335,15 +331,18 @@ function enviarCorreoTicket(ticket, adjuntosUrls = []) {
 
 // ======================
 // HELPER — construir card de ticket
+// esAdmin: true  → muestra botón 🔁 Reasignar
 // Escribe data-fecha-resuelto en cards resueltas para que
 // el filtro del Admin pueda leer la fecha sin reparsear HTML.
 // ======================
 function _buildTicketCard(t, opciones = {}) {
-  const { mostrarBotones = false } = opciones;
+  const { mostrarBotones = false, esAdmin = false } = opciones;
 
   const nombresCompletos = {
     "Xavier": "Xavier Rosario",
-    "Juan":   "Juan Francisco Jimenez"
+    "Juan":   "Juan Francisco Jimenez",
+    "Joel":   "Joel Holguin"
+    "Yanna":   "Yanna Martínez",
   };
   const nombreMostrar = nombresCompletos[t.asignado] || t.asignado || "";
   const badgeAsignado = (t.asignado && t.asignado !== "Sin asignar")
@@ -379,6 +378,11 @@ function _buildTicketCard(t, opciones = {}) {
     <button class="btn-resuelto" onclick="marcarResuelto('${encodeURIComponent(t.id)}')">✅ Resuelto</button>
   ` : "";
 
+  // Botón reasignar — solo visible para admin
+  const btnReasignar = esAdmin ? `
+    <button class="btn-reasignar" onclick="abrirReasignar('${encodeURIComponent(t.id)}')">🔁 Reasignar</button>
+  ` : "";
+
   const div = document.createElement("div");
   div.className = "ticket-card";
 
@@ -397,6 +401,7 @@ function _buildTicketCard(t, opciones = {}) {
     ${adjuntosHtml}
     <br>
     ${botonesAccion}
+    ${btnReasignar}
     ${extra}
   `;
   return div;
@@ -430,7 +435,10 @@ function mostrarTickets() {
 
         const nombresCompletos = {
           "Xavier": "Xavier Rosario",
-          "Juan":   "Juan Francisco Jimenez"
+          "Juan":   "Juan Francisco Jimenez",
+          "Joel":   "Joel Holguin",
+          "Yanna":   "Yanna Martínez"
+          
         };
         const nombreAsignado = nombresCompletos[t.asignado] || t.asignado || "";
 
@@ -555,14 +563,14 @@ function mostrarTicketsAdmin() {
 
       data.forEach(t => {
         if (t.estado === "Pendiente") {
-          pendientes.appendChild(_buildTicketCard(t, { mostrarBotones: false }));
+          pendientes.appendChild(_buildTicketCard(t, { mostrarBotones: false, esAdmin: true }));
           cntPendientes++;
         } else if (t.estado === "En Proceso") {
-          enProceso.appendChild(_buildTicketCard(t, { mostrarBotones: false }));
+          enProceso.appendChild(_buildTicketCard(t, { mostrarBotones: false, esAdmin: true }));
           cntProceso++;
         } else if (t.estado === "Resuelto") {
           // Agregar todos los resueltos; el filtro del HTML se encargará de mostrar/ocultar
-          resueltos.appendChild(_buildTicketCard(t, { mostrarBotones: false }));
+          resueltos.appendChild(_buildTicketCard(t, { mostrarBotones: false, esAdmin: true }));
         }
 
         // Sección mis asignados (solo activos)
@@ -572,7 +580,7 @@ function mostrarTicketsAdmin() {
           t.asignado.toLowerCase() === adminActual.toLowerCase() &&
           t.estado !== "Resuelto"
         ) {
-          misAsignados.appendChild(_buildTicketCard(t, { mostrarBotones: false }));
+          misAsignados.appendChild(_buildTicketCard(t, { mostrarBotones: false, esAdmin: true }));
         }
       });
 
@@ -663,6 +671,54 @@ function guardarResolucion() {
 }
 
 // ======================
+// MODAL REASIGNAR TICKET (ADMIN)
+// ======================
+const TECNICOS_DISPONIBLES = [
+  "Sin asignar",
+  "Juan",
+  "Joel",
+  "Yanna",
+  "Xavier"
+];
+
+let ticketReasignarId = null;
+
+function abrirReasignar(id) {
+  ticketReasignarId = decodeURIComponent(id);
+  const select = document.getElementById("selectTecnico");
+  if (!select) return;
+
+  select.innerHTML = TECNICOS_DISPONIBLES.map(t =>
+    `<option value="${t}">${t === "Sin asignar" ? "⚠️ Sin asignar" : "👤 " + t}</option>`
+  ).join("");
+
+  document.getElementById("reasignarModal").style.display = "flex";
+}
+
+function cerrarReasignar() {
+  document.getElementById("reasignarModal").style.display = "none";
+  ticketReasignarId = null;
+}
+
+function guardarReasignacion() {
+  const nuevo = document.getElementById("selectTecnico").value;
+  if (!ticketReasignarId) return;
+
+  fetch(`${API_URL}/id/${encodeURIComponent(ticketReasignarId)}`, {
+    method:  "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body:    JSON.stringify({ asignado: nuevo })
+  })
+  .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
+  .then(() => {
+    alert(`✅ Ticket reasignado a: ${nuevo}`);
+    cerrarReasignar();
+    mostrarTicketsAdmin();
+  })
+  .catch(err => console.error("Error reasignando:", err));
+}
+
+// ======================
 // UTILIDADES DE FECHA
 // ======================
 function parseFechaLatina(fechaStr) {
@@ -696,12 +752,10 @@ function cerrarAyuda() { document.getElementById("ayudaModal").classList.remove(
 
   if (rol === "usuario") {
     setInterval(() => mostrarTickets(), 30000);
-
   } else if (rol === "tecnico") {
     setInterval(() => mostrarTodosTickets(), 30000);
-
   } else if (rol === "admin") {
-    setInterval(() => mostrarTicketsAdmin(), 3600000); // 1 hora
+    setInterval(() => mostrarTicketsAdmin(), 3600000);
   }
 })();
 
