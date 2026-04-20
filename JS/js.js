@@ -33,6 +33,7 @@ const usuarios = {
     { username: "Edgar",      password: "1234",     rol: "usuario" },
     { username: "Merlyn",     password: "1234",     rol: "usuario" },
     { username: "Elaine",     password: "1234",     rol: "usuario" },
+    { username: "Nathaly",     password: "La701234",     rol: "usuario" },
     { username: "Esmerkin",   password: "CM1234",   rol: "usuario" }
   ],
   // ── ADMIN ─────────────────────────────────────────────
