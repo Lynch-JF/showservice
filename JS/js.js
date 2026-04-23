@@ -1,9 +1,3 @@
-// ======================
-// USUARIOS
-// CORREGIDO: Eliminados duplicados (Juan/juan/JUAN → solo "Juan").
-// Se mantiene un username canónico por persona para que la comparación
-// de asignación funcione correctamente.
-// ======================
 const usuarios = {
   tecnico: [
     { username: "Juan",   password: "12340094", rol: "tecnico" },
