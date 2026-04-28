@@ -12,7 +12,7 @@ const usuarios = {
     { username: "Anabell",    password: "1234",     rol: "usuario" },
     { username: "Maitte",     password: "1234",     rol: "usuario" },
     { username: "Hilda",      password: "1234",     rol: "usuario" },
-    { username: "Chantal",    password: "1234",     rol: "usuario" },
+    { username: "Luisa",    password: "1234",     rol: "usuario" },
     { username: "Carla",      password: "1234",     rol: "usuario" },
     { username: "Clara",      password: "1234",     rol: "usuario" },
     { username: "Francisca",  password: "1234",     rol: "usuario" },
@@ -28,7 +28,6 @@ const usuarios = {
     { username: "Merlyn",     password: "1234",     rol: "usuario" },
     { username: "Elaine",     password: "1234",     rol: "usuario" },
     { username: "Nathaly",     password: "La701234",     rol: "usuario" },
-    { username: "Luisa",     password: "La70LV",     rol: "usuario" },
     { username: "Esmerkin",   password: "CM1234",   rol: "usuario" }
   ],
   // ── ADMIN ─────────────────────────────────────────────
