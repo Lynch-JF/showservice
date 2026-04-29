@@ -10,14 +10,14 @@
   <script>emailjs.init("60Wdt0a0Ejlr-BGGa");</script>
 
   <style>
-    /* ========================= MODAL OVERLAY ========================= */
+    /* ── MODAL OVERLAY ── */
     .modal {
       position: fixed; inset: 0; display: none;
       justify-content: center; align-items: center;
       background: rgba(15,23,42,0.65); backdrop-filter: blur(6px);
       z-index: 2000; padding: 20px; animation: fadeOverlay 0.3s ease;
     }
-    @keyframes fadeOverlay { from { opacity:0; } to { opacity:1; } }
+    @keyframes fadeOverlay { from{opacity:0} to{opacity:1} }
     .modal.show { display: flex; }
 
     .modal-content {
@@ -28,7 +28,7 @@
     }
     @keyframes modalEnter {
       from { opacity:0; transform: translateY(20px) scale(0.95); }
-      to   { opacity:1; transform: translateY(0)    scale(1);    }
+      to   { opacity:1; transform: translateY(0) scale(1); }
     }
 
     .card-container { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 25px; margin-top: 20px; }
@@ -38,11 +38,10 @@
       border: 1px solid #e5e7eb; cursor: default; position: relative; overflow: hidden;
     }
     .card-ayuda:hover { transform: translateY(-6px); box-shadow: 0 15px 30px rgba(0,0,0,0.12); border-color: #4e54c8; }
-    .card-ayuda img { width:95px; height:95px; border-radius:50%; margin-bottom:15px; object-fit:cover; border:3px solid #e5e7eb; transition:0.3s ease; }
+    .card-ayuda img { width:95px; height:95px; border-radius:50%; margin-bottom:15px; object-fit:cover; border:3px solid #e5e7eb; transition:0.3s; }
     .card-ayuda:hover img { transform: scale(1.05); border-color: #4e54c8; }
     .card-ayuda h4 { font-weight:600; margin-bottom:8px; color:#1e293b; }
     .card-ayuda p  { font-size:13px; color:#64748b; margin:3px 0; }
-
     .modal-buttons { text-align:center; margin-top:30px; }
     .btn-cerrar {
       padding: 12px 25px; border: none; border-radius: 10px;
@@ -51,34 +50,27 @@
     }
     .btn-cerrar:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(239,68,68,0.3); }
 
-    @media (max-width:600px) { .modal-content { padding:25px; } .card-ayuda { padding:20px 15px; } }
-
-    /* ========================= LISTA DE TICKETS ========================= */
+    /* ── LISTA DE TICKETS ── */
     .ticket-list { display:grid; gap:20px; margin-top:20px; }
     .ticket-item {
       background:#ffffff; border-radius:16px; padding:20px 25px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.08); border:1px solid #e5e7eb;
-      transition: all 0.3s ease; position: relative;
+      transition: all 0.3s ease;
     }
     .ticket-item:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(0,0,0,0.12); }
     .ticket-item h4 { font-size:18px; margin-bottom:8px; color:#1e293b; }
-
     .ticket-status { display:inline-block; padding:5px 12px; border-radius:20px; font-size:12px; font-weight:600; margin-top:8px; }
     .status-resuelto  { background:#d1fae5; color:#065f46; }
     .status-proceso   { background:#fef3c7; color:#92400e; }
     .status-pendiente { background:#fee2e2; color:#991b1b; }
-
     .ticket-item p { margin:4px 0; font-size:14px; color:#475569; }
-
     .resolucion-box { margin-top:15px; padding:12px; background:#f8fafc; border-radius:10px; border-left:4px solid #10b981; font-size:14px; }
-
-    .badge-asignado   { display:inline-block; background:#ede9fe; color:#5b21b6; border-radius:20px; padding:3px 10px; font-size:12px; font-weight:600; margin-top:6px; }
-    .badge-sin-asignar{ display:inline-block; background:#fef3c7; color:#92400e; border-radius:20px; padding:3px 10px; font-size:12px; font-weight:600; margin-top:6px; }
-
+    .badge-asignado    { display:inline-block; background:#ede9fe; color:#5b21b6; border-radius:20px; padding:3px 10px; font-size:12px; font-weight:600; margin-top:6px; }
+    .badge-sin-asignar { display:inline-block; background:#fef3c7; color:#92400e; border-radius:20px; padding:3px 10px; font-size:12px; font-weight:600; margin-top:6px; }
     .btn-delete { margin-top:10px; padding:7px 14px; background:#fee2e2; color:#991b1b; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition:all 0.2s; }
     .btn-delete:hover { background:#fca5a5; }
 
-    /* ========================= ADJUNTAR ARCHIVOS ========================= */
+    /* ── ADJUNTAR ARCHIVOS ── */
     .upload-zone {
       border:2px dashed #c7d2fe; border-radius:14px; padding:28px 20px;
       text-align:center; background:#f5f7ff; cursor:pointer;
@@ -92,7 +84,7 @@
     .upload-zone .hint { font-size:12px; color:#94a3b8; margin-top:6px; }
 
     .file-preview-list { display:grid; gap:10px; margin-top:14px; }
-    .file-preview-item { display:flex; align-items:center; gap:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 14px; font-size:13px; color:#334155; transition: all 0.2s; }
+    .file-preview-item { display:flex; align-items:center; gap:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 14px; font-size:13px; color:#334155; }
     .file-preview-item .file-icon { font-size:22px; flex-shrink:0; }
     .file-preview-item .file-info { flex:1; overflow:hidden; }
     .file-preview-item .file-name { font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -107,9 +99,53 @@
     .uploaded-files-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
     .uploaded-file-link { display:inline-flex; align-items:center; gap:6px; background:#ede9fe; color:#5b21b6; border-radius:20px; padding:5px 12px; font-size:12px; font-weight:600; text-decoration:none; transition:background 0.2s; }
     .uploaded-file-link:hover { background:#ddd6fe; }
-
     .ticket-attachments { margin-top:12px; padding-top:10px; border-top:1px dashed #e2e8f0; }
     .ticket-attachments p { font-size:12px; font-weight:600; color:#94a3b8; margin-bottom:6px; }
+
+    /* ── PERFIL ── */
+    .perfil-banner {
+      background: linear-gradient(135deg, #4e54c8, #8b5cf6);
+      border-radius: 20px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      box-shadow: 0 12px 35px rgba(78,84,200,0.25);
+    }
+    .perfil-avatar {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; font-weight: 800; flex-shrink: 0;
+      border: 3px solid rgba(255,255,255,0.4);
+      letter-spacing: -1px;
+    }
+    .perfil-info { flex: 1; }
+    .perfil-nombre { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .perfil-depto  {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.2); border-radius: 20px;
+      padding: 4px 14px; font-size: 13px; font-weight: 600;
+    }
+    .perfil-stats {
+      display: flex; gap: 16px; flex-wrap: wrap; margin-top: 14px;
+    }
+    .perfil-stat {
+      background: rgba(255,255,255,0.15); border-radius: 12px;
+      padding: 10px 18px; text-align: center; min-width: 80px;
+    }
+    .perfil-stat .ps-num { font-size: 24px; font-weight: 800; line-height: 1; }
+    .perfil-stat .ps-lbl { font-size: 10px; opacity: 0.8; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    @media (max-width:600px) {
+      .modal-content { padding:25px; }
+      .card-ayuda { padding:20px 15px; }
+      .perfil-banner { padding: 20px; gap: 16px; }
+      .perfil-nombre { font-size: 18px; }
+    }
   </style>
 </head>
 <body>
@@ -123,11 +159,40 @@
   </nav>
 
   <div class="container">
+
+    <!-- ══ PERFIL ══ -->
+    <div class="perfil-banner" id="perfilBanner">
+      <div class="perfil-avatar" id="perfilAvatar">--</div>
+      <div class="perfil-info">
+        <div class="perfil-nombre" id="perfilNombre">Cargando...</div>
+        <div class="perfil-depto">🏢 <span id="perfilDepto">—</span></div>
+        <div class="perfil-stats">
+          <div class="perfil-stat">
+            <div class="ps-num" id="ps-total">—</div>
+            <div class="ps-lbl">Total</div>
+          </div>
+          <div class="perfil-stat">
+            <div class="ps-num" id="ps-pend">—</div>
+            <div class="ps-lbl">Pendientes</div>
+          </div>
+          <div class="perfil-stat">
+            <div class="ps-num" id="ps-proc">—</div>
+            <div class="ps-lbl">En Proceso</div>
+          </div>
+          <div class="perfil-stat">
+            <div class="ps-num" id="ps-res">—</div>
+            <div class="ps-lbl">Resueltos</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ FORMULARIO NUEVO TICKET ══ -->
     <div class="card">
       <h3>Crear nuevo ticket</h3>
 
-      <!-- Campos ocultos para EmailJS -->
       <form id="ticketForm">
+        <!-- Campos ocultos para EmailJS -->
         <input type="hidden" name="ticket_id">
         <input type="hidden" name="ticket_usuario">
         <input type="hidden" name="ticket_departamento">
@@ -135,57 +200,40 @@
         <input type="hidden" name="ticket_descripcion">
         <input type="hidden" name="ticket_fecha">
 
-        <input  type="text" id="titulo"      placeholder="Título del problema">
+        <input type="text" id="titulo"      placeholder="Título del problema">
         <textarea           id="descripcion" placeholder="Describe tu problema..."></textarea>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-          <select id="depto">
-            <option value="">-- Departamento --</option>
-            <option value="Recursos Humanos">Recursos Humanos</option>
-            <option value="Contabilidad">Contabilidad</option>
-            <option value="Showroom 1">Showroom 1</option>
-            <option value="Showroom 2">Showroom 2</option>
-            <option value="Facturación">Facturación</option>
-            <option value="Tesorería">Tesorería</option>
-            <option value="Mercadeo">Mercadeo</option>
-            <option value="Credito y cobros">Credito y cobros</option>
-            <option value="Recepción">Recepción</option>
-            <option value="CM LV2">CM LV2</option>
-            <option value="La70 LV">La70 LV</option>
-            <option value="La70 SD">La70 SD</option>
-            <option value="CM SD">CM SD</option>
-            <option value="La70 SFM">La70 SFM</option>
-            <option value="CM SFM">CM SFM</option>
-            <option value="CM MOCA">CM MOCA</option>
-            <option value="CM BONAO">CM BONAO</option>
-            <option value="CM STGO">CM STGO</option>
-            <option value="LA70 STGO">LA70 STGO</option>
-          </select>
+        <!-- Solo queda el select de asignación; el departamento viene del perfil -->
+        <select id="asignadoA" style="margin-top:10px;">
+          <option value="Sin asignar">-- Asignar a --</option>
+          <option value="Xavier">Xavier Rosario</option>
+          <option value="Juan">Juan Francisco Jimenez</option>
+          <option value="AYanna">Yanna Martínez</option>
+          <option value="AJoel">Joel Holguin</option>
+        </select>
 
-          <select id="asignadoA">
-            <option value="Sin asignar">-- Asignar a --</option>
-            <option value="Xavier">Xavier Rosario</option>
-            <option value="Juan">Juan Francisco Jimenez</option>
-            <option value="Joel">Joel Holguin</option>
-            <option value="Yanna">Yanna Martínez</option>
-          </select>
+        <!-- Info de departamento (solo lectura) -->
+        <div style="
+          margin-top:12px; padding:10px 16px;
+          background:#f0f4ff; border:1px solid #c7d2fe; border-radius:10px;
+          font-size:13px; color:#4338ca; display:flex; align-items:center; gap:8px;
+        ">
+          🏢 <strong>Departamento:</strong>&nbsp;<span id="deptoDisplay">—</span>
+          <span style="margin-left:auto; font-size:11px; color:#94a3b8;">Se asigna automáticamente</span>
         </div>
 
-        <!-- ZONA DE ADJUNTOS -->
+        <!-- Zona de adjuntos -->
         <div style="margin-top:18px;">
           <label style="font-size:14px; font-weight:600; color:#374151; display:block; margin-bottom:6px;">
             📎 Adjuntar archivos <span style="font-weight:400; color:#94a3b8;">(opcional)</span>
           </label>
-
           <div class="upload-zone" id="uploadZone">
             <input type="file" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip">
             <span class="upload-icon">☁️</span>
             <p><strong>Haz clic para seleccionar</strong> o arrastra archivos aquí</p>
             <p class="hint">Imágenes, PDF, Word, Excel, ZIP — máx. 10 MB por archivo</p>
           </div>
-
           <div class="file-preview-list" id="filePreviewList"></div>
-
           <div class="upload-progress-bar" id="uploadProgressBar">
             <div class="upload-progress-fill" id="uploadProgressFill"></div>
           </div>
@@ -205,7 +253,6 @@
     <div class="modal-content">
       <h2 style="text-align:center; margin-bottom:20px;">📞 Ayuda Rápida IT</h2>
       <p style="text-align:center; margin-bottom:20px;">Contacta a nuestros técnicos disponibles:</p>
-
       <div class="card-container">
         <div class="card-ayuda">
           <img src="https://ui-avatars.com/api/?name=Yanna+Martinez&background=0D8ABC&color=fff" alt="Yanna">
@@ -233,19 +280,49 @@
           <p>📟 Flota: (809) 722-1076</p>
         </div>
       </div>
-
       <div class="modal-buttons">
         <button class="btn-cerrar" onclick="cerrarAyuda()">Cerrar</button>
       </div>
     </div>
   </div>
 
-  <!-- js.js va PRIMERO, sin ningún script inline que redefina crearTicket -->
   <script src="JS/js.js"></script>
 
   <script>
-    /* ── Conectar la zona de arrastre a las funciones de js.js ── */
-    (function () {
+    // ── Inicializar perfil desde localStorage ──
+    (function() {
+      const nombre = localStorage.getItem("usuario") || "Usuario";
+      const depto  = localStorage.getItem("depto")   || "Sin departamento";
+
+      document.getElementById("perfilNombre").textContent = nombre;
+      document.getElementById("perfilDepto").textContent  = depto;
+      document.getElementById("deptoDisplay").textContent = depto;
+
+      const initials = nombre.split(" ").map(p => p[0]).join("").substring(0, 2).toUpperCase();
+      document.getElementById("perfilAvatar").textContent = initials;
+    })();
+
+    // ── Cargar stats del perfil después de cargar tickets ──
+    function actualizarStatsPerfilDesdeAPI() {
+      const usuario = localStorage.getItem("usuario");
+      const API     = "https://api.sheetbest.com/sheets/5b2f2a41-ad46-4a89-8cc2-9f768b9870af";
+      fetch(API)
+        .then(r => r.json())
+        .then(data => {
+          const mis  = data.filter(t => t.usuario === usuario);
+          document.getElementById("ps-total").textContent = mis.length;
+          document.getElementById("ps-pend").textContent  = mis.filter(t => t.estado === "Pendiente").length;
+          document.getElementById("ps-proc").textContent  = mis.filter(t => t.estado === "En Proceso").length;
+          document.getElementById("ps-res").textContent   = mis.filter(t => t.estado === "Resuelto").length;
+        })
+        .catch(() => {});
+    }
+
+    // Llamar al cargar
+    actualizarStatsPerfilDesdeAPI();
+
+    // ── Drag & drop ──
+    (function() {
       const fileInput  = document.getElementById("fileInput");
       const uploadZone = document.getElementById("uploadZone");
 
@@ -254,17 +331,16 @@
       uploadZone.addEventListener("drop", e => {
         e.preventDefault();
         uploadZone.classList.remove("dragover");
-        agregarArchivos(e.dataTransfer.files);   // función de js.js
+        agregarArchivos(e.dataTransfer.files);
       });
-
       fileInput.addEventListener("change", () => {
-        agregarArchivos(fileInput.files);         // función de js.js
+        agregarArchivos(fileInput.files);
         fileInput.value = "";
       });
     })();
 
-    /* ── Cerrar modal al hacer clic fuera ── */
-    window.addEventListener("click", function (e) {
+    // ── Cerrar modal al hacer clic fuera ──
+    window.addEventListener("click", function(e) {
       const modal = document.getElementById("ayudaModal");
       if (e.target === modal) modal.classList.remove("show");
     });
