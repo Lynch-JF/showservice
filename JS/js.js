@@ -26,7 +26,7 @@ const ROUTES = {
   tecnico:    "Asistencia.html",
   admin:      "Admin.html",
   usuario:    "Dashboard.html",
-  superadmin: "SuperUsuario.html"  // ← ASÍ
+  superadmin: "SuperUsuario.html"
 };
 
 // ======================
@@ -77,11 +77,9 @@ async function fetchUsersFromSheet() {
 // LOGIN
 // ======================
 async function login() {
-  // Soporta tanto id="username" como id="usuario" en el HTML
   const userEl   = document.getElementById("username") || document.getElementById("usuario");
   const passEl   = document.getElementById("password") || document.getElementById("contrasena");
   const errorEl  = document.getElementById("login-error");
-  // Soporta tanto clase btn-ingresar como id btn-login
   const btnLogin = document.getElementById("btn-login") || document.querySelector(".btn-ingresar");
 
   const userInput = userEl ? userEl.value.trim() : "";
@@ -98,18 +96,15 @@ async function login() {
   try {
     const hashIngresado = await sha256(passInput);
 
-    // 1. Intentar con caché
     let users     = getCachedUsers();
     let usedCache = !!users;
     if (!users) users = await fetchUsersFromSheet();
 
-    // 2. Buscar coincidencia
     let encontrado = users.find(u =>
       (u.NombreUsuario || "").toLowerCase() === userInput.toLowerCase() &&
       (u.Contraseña    || "")               === hashIngresado
     );
 
-    // 3. Si no encontró en caché, refrescar y reintentar
     if (!encontrado && usedCache) {
       console.log("[Auth] No encontrado en caché, refrescando...");
       users      = await fetchUsersFromSheet();
@@ -120,14 +115,16 @@ async function login() {
     }
 
     if (encontrado) {
-      // Superadmin: solo Juan
       let rolFinal = encontrado.Rol;
       if ((encontrado.NombreUsuario || "").toLowerCase() === "juan") {
         rolFinal = "superadmin";
       }
 
-      localStorage.setItem("usuario", encontrado.NombreUsuario);
-      localStorage.setItem("rol",     rolFinal);
+      // ── GUARDAR SESIÓN incluyendo Departamento ──
+      localStorage.setItem("usuario",    encontrado.NombreUsuario);
+      localStorage.setItem("rol",        rolFinal);
+      localStorage.setItem("depto",      encontrado.Departamento || "");
+
       window.location.href = ROUTES[rolFinal] || "Dashboard.html";
     } else {
       if (errorEl) errorEl.textContent = "Usuario o contraseña incorrectos.";
@@ -136,7 +133,7 @@ async function login() {
   } catch (err) {
     console.error("[Auth] Error en login:", err);
 
-    // Fallback: caché de emergencia (aunque esté expirado)
+    // Fallback: caché de emergencia
     try {
       const emergencia = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
       if (emergencia) {
@@ -153,6 +150,7 @@ async function login() {
           }
           localStorage.setItem("usuario", encontrado.NombreUsuario);
           localStorage.setItem("rol",     rolFinal);
+          localStorage.setItem("depto",   encontrado.Departamento || "");
           window.location.href = ROUTES[rolFinal] || "Dashboard.html";
           return;
         }
@@ -172,6 +170,7 @@ async function login() {
 function logout() {
   localStorage.removeItem("usuario");
   localStorage.removeItem("rol");
+  localStorage.removeItem("depto");
   window.location.href = "index.html";
 }
 
@@ -185,7 +184,6 @@ function protegerPagina(rolRequerido) {
   }
 }
 
-// Protección para múltiples roles permitidos
 function protegerPaginaRoles(...rolesPermitidos) {
   const rol = localStorage.getItem("rol");
   if (!rol || !rolesPermitidos.includes(rol)) {
@@ -340,16 +338,17 @@ async function subirArchivosACloudinary() {
 
 // ======================
 // CREAR TICKET
+// — depto se lee del localStorage, sin <select>
 // ======================
 async function crearTicket() {
   const titulo      = document.getElementById("titulo").value.trim();
   const descripcion = document.getElementById("descripcion").value.trim();
-  const depto       = document.getElementById("depto").value;
   const asignadoA   = document.getElementById("asignadoA").value || "Sin asignar";
   const usuario     = localStorage.getItem("usuario") || "Usuario";
+  const depto       = localStorage.getItem("depto")   || "Sin departamento";
 
-  if (!titulo || !descripcion || !depto) {
-    alert("Por favor completa todos los campos obligatorios.");
+  if (!titulo || !descripcion) {
+    alert("Por favor completa el título y la descripción.");
     return;
   }
 
@@ -391,7 +390,6 @@ async function crearTicket() {
 
     document.getElementById("titulo").value      = "";
     document.getElementById("descripcion").value = "";
-    document.getElementById("depto").value       = "";
     document.getElementById("asignadoA").value   = "Sin asignar";
     archivosSeleccionados = [];
     archivosSubidos       = [];
@@ -580,28 +578,22 @@ function mostrarTickets() {
             </div>`;
         }
 
-     const div = document.createElement("div");
-div.className = "ticket-item";
-div.innerHTML = `
-  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
-    <h4 style="margin:0;"><span style="color:#4e54c8;">[${t.depto || ""}]</span> ${t.titulo}</h4>
-    <span style="
-      font-family: monospace;
-      font-size: 11px;
-      font-weight: 700;
-      background: #ede9fe;
-      color: #5b21b6;
-      padding: 3px 10px;
-      border-radius: 20px;
-      letter-spacing: 0.5px;
-      white-space: nowrap;
-    "># ${t.id || "—"}</span>
-  </div>
-  <p>${t.descripcion}</p>
-  <p><strong>Departamento:</strong> ${t.depto || ""}</p>
-  <p><strong>Fecha:</strong> ${t.fecha || ""}</p>
-  ${asignadoBadge}
-  <span class="ticket-status ${statusClass}">${t.estado}</span>
+        const div = document.createElement("div");
+        div.className = "ticket-item";
+        div.innerHTML = `
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+            <h4 style="margin:0;"><span style="color:#4e54c8;">[${t.depto || ""}]</span> ${t.titulo}</h4>
+            <span style="
+              font-family: monospace; font-size: 11px; font-weight: 700;
+              background: #ede9fe; color: #5b21b6; padding: 3px 10px;
+              border-radius: 20px; letter-spacing: 0.5px; white-space: nowrap;
+            "># ${t.id || "—"}</span>
+          </div>
+          <p>${t.descripcion}</p>
+          <p><strong>Departamento:</strong> ${t.depto || ""}</p>
+          <p><strong>Fecha:</strong> ${t.fecha || ""}</p>
+          ${asignadoBadge}
+          <span class="ticket-status ${statusClass}">${t.estado}</span>
           ${resolucionHtml}
           ${adjuntosHtml}
           <br>
@@ -891,7 +883,7 @@ function esHoyLatina(fechaStr) {
 // ======================
 // MODAL AYUDA
 // ======================
-function abrirAyuda() { document.getElementById("ayudaModal").classList.add("show"); }
+function abrirAyuda()  { document.getElementById("ayudaModal").classList.add("show"); }
 function cerrarAyuda() { document.getElementById("ayudaModal").classList.remove("show"); }
 
 // ======================
@@ -899,8 +891,8 @@ function cerrarAyuda() { document.getElementById("ayudaModal").classList.remove(
 // ======================
 (function iniciarAutoRefresh() {
   const rol = localStorage.getItem("rol");
-  if      (rol === "usuario")                    setInterval(() => mostrarTickets(),      30000);
-  else if (rol === "tecnico")                    setInterval(() => mostrarTodosTickets(), 30000);
+  if      (rol === "usuario")                       setInterval(() => mostrarTickets(),      30000);
+  else if (rol === "tecnico")                       setInterval(() => mostrarTodosTickets(), 30000);
   else if (rol === "admin" || rol === "superadmin") setInterval(() => mostrarTicketsAdmin(), 60000);
 })();
 
