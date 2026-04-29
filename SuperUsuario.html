@@ -2,96 +2,50 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
-<link rel="icon" type="image/png" href="IMG/2.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SuperAdmin — Panel de Control</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
   :root {
-    --bg: #0a0a0f;
-    --surface: #111118;
-    --surface2: #18181f;
-    --surface3: #202028;
-    --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.12);
-    --accent: #7c6fff;
-    --accent2: #4fc3ff;
-    --accent3: #ff6b6b;
-    --success: #3be38e;
-    --warning: #ffd166;
-    --text: #f0f0f8;
-    --muted: #7070a0;
-    --muted2: #4a4a6a;
-    --font: 'Syne', sans-serif;
-    --mono: 'DM Mono', monospace;
-    --radius: 10px;
-    --radius2: 16px;
+    --bg: #0a0a0f; --surface: #111118; --surface2: #18181f; --surface3: #202028;
+    --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+    --accent: #7c6fff; --accent2: #4fc3ff; --accent3: #ff6b6b;
+    --success: #3be38e; --warning: #ffd166;
+    --text: #f0f0f8; --muted: #7070a0; --muted2: #4a4a6a;
+    --font: 'Syne', sans-serif; --mono: 'DM Mono', monospace;
+    --radius: 10px; --radius2: 16px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; overflow-x: hidden; }
 
   /* ─── SIDEBAR ─── */
-  .sidebar {
-    position: fixed; top: 0; left: 0; width: 220px; height: 100vh;
-    background: var(--surface); border-right: 1px solid var(--border);
-    display: flex; flex-direction: column; z-index: 100;
-  }
+  .sidebar { position: fixed; top: 0; left: 0; width: 220px; height: 100vh; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 100; }
   .sidebar-logo { padding: 28px 20px 20px; border-bottom: 1px solid var(--border); }
-  .logo-badge {
-    display: inline-block; background: var(--accent); color: #fff;
-    font-size: 9px; font-weight: 700; letter-spacing: 2px;
-    padding: 3px 8px; border-radius: 4px; margin-bottom: 8px; text-transform: uppercase;
-  }
+  .logo-badge { display: inline-block; background: var(--accent); color: #fff; font-size: 9px; font-weight: 700; letter-spacing: 2px; padding: 3px 8px; border-radius: 4px; margin-bottom: 8px; text-transform: uppercase; }
   .sidebar-logo h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; }
   .sidebar-logo p  { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: var(--mono); }
   .nav-section { padding: 16px 12px 8px; font-size: 9px; letter-spacing: 2px; color: var(--muted2); text-transform: uppercase; }
-  .nav-item {
-    margin: 2px 8px; padding: 10px 14px; border-radius: var(--radius);
-    display: flex; align-items: center; gap: 10px; cursor: pointer;
-    font-size: 13px; font-weight: 600; color: var(--muted);
-    transition: all 0.15s; border: 1px solid transparent; user-select: none;
-  }
+  .nav-item { margin: 2px 8px; padding: 10px 14px; border-radius: var(--radius); display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--muted); transition: all 0.15s; border: 1px solid transparent; user-select: none; }
   .nav-item:hover { background: var(--surface2); color: var(--text); }
   .nav-item.active { background: rgba(124,111,255,0.15); color: var(--accent); border-color: rgba(124,111,255,0.25); }
   .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
-  .nav-badge {
-    margin-left: auto; background: var(--accent); color: #fff;
-    font-size: 9px; font-weight: 700; padding: 2px 7px;
-    border-radius: 20px; font-family: var(--mono); min-width: 20px; text-align: center;
-  }
+  .nav-badge { margin-left: auto; background: var(--accent); color: #fff; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 20px; font-family: var(--mono); min-width: 20px; text-align: center; }
   .nav-badge.yellow { background: var(--warning); color: #1a1000; }
   .nav-badge.green  { background: var(--success);  color: #0a0f0a; }
   .sidebar-footer { margin-top: auto; padding: 16px; border-top: 1px solid var(--border); }
   .user-pill { display: flex; align-items: center; gap: 10px; background: var(--surface2); border-radius: var(--radius); padding: 10px 12px; }
-  .user-avatar {
-    width: 32px; height: 32px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
-  }
+  .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
   .user-info p:first-child { font-size: 13px; font-weight: 600; }
   .user-info p:last-child  { font-size: 10px; color: var(--accent); font-family: var(--mono); }
-  .btn-logout {
-    margin-top: 8px; width: 100%; padding: 8px; border: 1px solid var(--border2);
-    background: transparent; color: var(--muted); border-radius: var(--radius);
-    font-family: var(--font); font-size: 12px; cursor: pointer; transition: all 0.15s;
-  }
+  .btn-logout { margin-top: 8px; width: 100%; padding: 8px; border: 1px solid var(--border2); background: transparent; color: var(--muted); border-radius: var(--radius); font-family: var(--font); font-size: 12px; cursor: pointer; transition: all 0.15s; }
   .btn-logout:hover { background: rgba(255,107,107,0.15); color: var(--accent3); border-color: rgba(255,107,107,0.3); }
 
   /* ─── MAIN ─── */
   .main { margin-left: 220px; min-height: 100vh; }
-  .topbar {
-    padding: 20px 32px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    background: var(--surface); position: sticky; top: 0; z-index: 50;
-  }
+  .topbar { padding: 20px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface); position: sticky; top: 0; z-index: 50; }
   .topbar h2  { font-size: 22px; font-weight: 800; }
   .topbar-sub { font-size: 12px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
-  .status-dot {
-    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
-    background: var(--success); margin-right: 6px;
-    box-shadow: 0 0 8px var(--success); animation: pulse 2s infinite;
-  }
+  .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--success); margin-right: 6px; box-shadow: 0 0 8px var(--success); animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
   /* ─── VIEWS ─── */
@@ -109,11 +63,11 @@
   .stat-card.users::before    { background: var(--accent3); }
   .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; font-family: var(--mono); }
   .stat-value { font-size: 32px; font-weight: 800; margin-top: 6px; letter-spacing: -1px; }
-  .stat-card.total   .stat-value { color: var(--accent); }
-  .stat-card.pending .stat-value { color: var(--warning); }
-  .stat-card.process .stat-value { color: var(--accent2); }
-  .stat-card.resolved .stat-value{ color: var(--success); }
-  .stat-card.users   .stat-value { color: var(--accent3); }
+  .stat-card.total    .stat-value { color: var(--accent); }
+  .stat-card.pending  .stat-value { color: var(--warning); }
+  .stat-card.process  .stat-value { color: var(--accent2); }
+  .stat-card.resolved .stat-value { color: var(--success); }
+  .stat-card.users    .stat-value { color: var(--accent3); }
 
   /* ─── SECTION HEADER ─── */
   .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
@@ -122,38 +76,28 @@
 
   /* ─── FILTERS ─── */
   .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-  .filter-btn {
-    padding: 6px 14px; border-radius: 20px; font-family: var(--font); font-size: 12px; font-weight: 600;
-    border: 1px solid var(--border2); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s;
-  }
+  .filter-btn { padding: 6px 14px; border-radius: 20px; font-family: var(--font); font-size: 12px; font-weight: 600; border: 1px solid var(--border2); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
   .filter-btn:hover { color: var(--text); border-color: var(--accent); }
   .filter-btn.active           { background: var(--accent);  color: #fff; border-color: var(--accent); }
   .filter-btn.proceso.active   { background: var(--accent2); border-color: var(--accent2); }
   .filter-btn.resuelto.active  { background: var(--success); border-color: var(--success); color: #0a0f0a; }
   .filter-btn.pendiente.active { background: var(--warning); border-color: var(--warning); color: #1a1000; }
-  .search-input {
-    flex: 1; min-width: 200px; padding: 7px 14px; border-radius: 20px;
-    background: var(--surface2); border: 1px solid var(--border2); color: var(--text);
-    font-family: var(--font); font-size: 12px; outline: none;
-  }
+  .search-input { flex: 1; min-width: 200px; padding: 7px 14px; border-radius: 20px; background: var(--surface2); border: 1px solid var(--border2); color: var(--text); font-family: var(--font); font-size: 12px; outline: none; }
   .search-input::placeholder { color: var(--muted2); }
   .search-input:focus { border-color: var(--accent); }
 
   /* ─── TICKET GRID ─── */
   .tickets-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(340px,1fr)); gap: 16px; }
-  .ticket-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2);
-    padding: 18px 20px; transition: all 0.2s; position: relative;
-  }
+  .ticket-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); padding: 18px 20px; transition: all 0.2s; position: relative; }
   .ticket-card:hover { border-color: var(--border2); transform: translateY(-2px); }
   .ticket-card.trabajar { border-color: rgba(255,209,102,0.25); }
   .ticket-card.trabajar:hover { border-color: rgba(255,209,102,0.5); }
-  .ticket-top    { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
-  .ticket-id     { font-family: var(--mono); font-size: 10px; color: var(--muted); }
-  .ticket-title  { font-size: 14px; font-weight: 700; line-height: 1.4; margin-bottom: 6px; }
-  .ticket-desc   { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .ticket-meta   { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-  .badge         { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 20px; font-family: var(--mono); }
+  .ticket-top   { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .ticket-id    { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+  .ticket-title { font-size: 14px; font-weight: 700; line-height: 1.4; margin-bottom: 6px; }
+  .ticket-desc  { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .ticket-meta  { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .badge { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 20px; font-family: var(--mono); }
   .badge-depto     { background: rgba(124,111,255,0.15); color: var(--accent);  border: 1px solid rgba(124,111,255,0.25); }
   .badge-pendiente { background: rgba(255,209,102,0.15); color: var(--warning); border: 1px solid rgba(255,209,102,0.25); }
   .badge-proceso   { background: rgba(79,195,255,0.15);  color: var(--accent2); border: 1px solid rgba(79,195,255,0.25); }
@@ -163,30 +107,18 @@
   .ticket-asignado { font-size: 11px; color: var(--muted); }
   .ticket-asignado span { color: var(--text); font-weight: 600; }
   .ticket-fecha    { font-size: 10px; font-family: var(--mono); color: var(--muted2); margin-top: 4px; }
-  .resolucion-box  {
-    margin-top: 10px; padding: 10px 12px; background: rgba(59,227,142,0.07);
-    border-radius: var(--radius); border-left: 3px solid var(--success);
-    font-size: 11px; color: #a0f0cc; line-height: 1.6;
-  }
-  .adjuntos-box p { color: var(--muted2); margin-bottom: 4px; font-size: 11px; margin-top: 10px; }
-  .adjunto-link { color: var(--accent2); text-decoration: none; font-family: var(--mono); font-size: 10px; display: inline-block; margin-right: 8px; }
+  .resolucion-box  { margin-top: 10px; padding: 10px 12px; background: rgba(59,227,142,0.07); border-radius: var(--radius); border-left: 3px solid var(--success); font-size: 11px; color: #a0f0cc; line-height: 1.6; }
+  .adjuntos-box p  { color: var(--muted2); margin-bottom: 4px; font-size: 11px; margin-top: 10px; }
+  .adjunto-link    { color: var(--accent2); text-decoration: none; font-family: var(--mono); font-size: 10px; display: inline-block; margin-right: 8px; }
   .adjunto-link:hover { text-decoration: underline; }
   .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 13px; }
   .empty-icon  { font-size: 40px; margin-bottom: 12px; }
 
   /* ─── BOTONES ACCIÓN TICKET ─── */
   .ticket-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
-  .btn-proceso {
-    padding: 7px 14px; border-radius: var(--radius); font-family: var(--font); font-size: 12px; font-weight: 700;
-    background: rgba(79,195,255,0.15); color: var(--accent2);
-    border: 1px solid rgba(79,195,255,0.3); cursor: pointer; transition: all 0.15s;
-  }
-  .btn-proceso:hover { background: rgba(79,195,255,0.3); transform: translateY(-1px); }
-  .btn-resuelto {
-    padding: 7px 14px; border-radius: var(--radius); font-family: var(--font); font-size: 12px; font-weight: 700;
-    background: rgba(59,227,142,0.15); color: var(--success);
-    border: 1px solid rgba(59,227,142,0.3); cursor: pointer; transition: all 0.15s;
-  }
+  .btn-proceso  { padding: 7px 14px; border-radius: var(--radius); font-family: var(--font); font-size: 12px; font-weight: 700; background: rgba(79,195,255,0.15); color: var(--accent2); border: 1px solid rgba(79,195,255,0.3); cursor: pointer; transition: all 0.15s; }
+  .btn-proceso:hover  { background: rgba(79,195,255,0.3); transform: translateY(-1px); }
+  .btn-resuelto { padding: 7px 14px; border-radius: var(--radius); font-family: var(--font); font-size: 12px; font-weight: 700; background: rgba(59,227,142,0.15); color: var(--success); border: 1px solid rgba(59,227,142,0.3); cursor: pointer; transition: all 0.15s; }
   .btn-resuelto:hover { background: rgba(59,227,142,0.3); transform: translateY(-1px); }
 
   /* ─── MIS TICKETS STATS ─── */
@@ -194,10 +126,10 @@
   .mis-stat { flex:1; min-width:100px; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius2); text-align:center; }
   .mis-stat .num { font-size: 26px; font-weight: 800; }
   .mis-stat .lbl { font-size: 10px; color: var(--muted); font-family: var(--mono); text-transform: uppercase; margin-top: 2px; }
-  .mis-stat.pend  .num { color: var(--warning); }
-  .mis-stat.proc  .num { color: var(--accent2); }
-  .mis-stat.res   .num { color: var(--success); }
-  .mis-stat.total2 .num{ color: var(--accent); }
+  .mis-stat.pend   .num { color: var(--warning); }
+  .mis-stat.proc   .num { color: var(--accent2); }
+  .mis-stat.res    .num { color: var(--success); }
+  .mis-stat.total2 .num { color: var(--accent); }
 
   /* ─── USERS ─── */
   .stats-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -218,7 +150,7 @@
   .btn-danger:hover { background: rgba(255,107,107,0.3); }
   .btn-edit { padding: 6px 12px; border-radius: 6px; font-family: var(--font); font-size: 11px; font-weight: 600; background: rgba(124,111,255,0.15); color: var(--accent); border: 1px solid rgba(124,111,255,0.25); cursor: pointer; transition: all 0.15s; }
   .btn-edit:hover { background: rgba(124,111,255,0.3); }
-  .table-wrapper { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); overflow: hidden; }
+  .table-wrapper { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); overflow: hidden; overflow-x: auto; }
   .users-table { width: 100%; border-collapse: collapse; }
   .users-table th { text-align: left; padding: 10px 16px; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); border-bottom: 1px solid var(--border); font-family: var(--mono); background: var(--surface); }
   .users-table td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: middle; }
@@ -230,7 +162,8 @@
   .role-badge.usuario    { background: rgba(59,227,142,0.15); color: var(--success); border: 1px solid rgba(59,227,142,0.25); }
   .role-badge.superadmin { background: rgba(255,107,107,0.2); color: var(--accent3); border: 1px solid rgba(255,107,107,0.3); }
   .actions-row { display: flex; gap: 6px; }
-  .hash-cell { font-family: var(--mono); font-size: 10px; color: var(--muted); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hash-cell { font-family: var(--mono); font-size: 10px; color: var(--muted); max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .depto-cell { font-size: 12px; color: var(--accent2); font-family: var(--mono); }
   .loading-row td { text-align: center; padding: 40px; color: var(--muted); font-family: var(--mono); font-size: 12px; }
   .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -238,7 +171,7 @@
   /* ─── MODAL ─── */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 200; }
   .modal-overlay.open { display: flex; }
-  .modal { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius2); padding: 32px; width: 100%; max-width: 460px; animation: slideUp 0.2s ease; }
+  .modal { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius2); padding: 32px; width: 100%; max-width: 480px; animation: slideUp 0.2s ease; max-height: 90vh; overflow-y: auto; }
   @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
   .modal h3 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
   .modal-subtitle { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
@@ -293,34 +226,16 @@
     <p>Sistema de Tickets v2</p>
   </div>
   <p class="nav-section">Vistas</p>
-  <div class="nav-item active" id="nav-dashboard"   onclick="switchView('dashboard')">
-    <span class="nav-icon">📊</span> Dashboard
-  </div>
-  <div class="nav-item" id="nav-tickets"    onclick="switchView('tickets')">
-    <span class="nav-icon">🎫</span> Todos los Tickets
-    <span class="nav-badge" id="nb-tickets">0</span>
-  </div>
-  <div class="nav-item" id="nav-trabajar"   onclick="switchView('trabajar')">
-    <span class="nav-icon">🔧</span> Tickets a Trabajar
-    <span class="nav-badge yellow" id="nb-trabajar">0</span>
-  </div>
-  <div class="nav-item" id="nav-resueltos"  onclick="switchView('resueltos')">
-    <span class="nav-icon">✅</span> Mis Resueltos
-    <span class="nav-badge green" id="nb-resueltos">0</span>
-  </div>
-  <div class="nav-item" id="nav-mistickets" onclick="switchView('mistickets')">
-    <span class="nav-icon">📌</span> Mis Tickets
-  </div>
-  <div class="nav-item" id="nav-usuarios"   onclick="switchView('usuarios')">
-    <span class="nav-icon">👥</span> Usuarios
-  </div>
+  <div class="nav-item active" id="nav-dashboard"   onclick="switchView('dashboard')"><span class="nav-icon">📊</span> Dashboard</div>
+  <div class="nav-item" id="nav-tickets"    onclick="switchView('tickets')"><span class="nav-icon">🎫</span> Todos los Tickets<span class="nav-badge" id="nb-tickets">0</span></div>
+  <div class="nav-item" id="nav-trabajar"   onclick="switchView('trabajar')"><span class="nav-icon">🔧</span> Tickets a Trabajar<span class="nav-badge yellow" id="nb-trabajar">0</span></div>
+  <div class="nav-item" id="nav-resueltos"  onclick="switchView('resueltos')"><span class="nav-icon">✅</span> Mis Resueltos<span class="nav-badge green" id="nb-resueltos">0</span></div>
+  <div class="nav-item" id="nav-mistickets" onclick="switchView('mistickets')"><span class="nav-icon">📌</span> Mis Tickets</div>
+  <div class="nav-item" id="nav-usuarios"   onclick="switchView('usuarios')"><span class="nav-icon">👥</span> Usuarios</div>
   <div class="sidebar-footer">
     <div class="user-pill">
       <div class="user-avatar" id="saAvatar">JF</div>
-      <div class="user-info">
-        <p id="saName">Juan</p>
-        <p>superadmin</p>
-      </div>
+      <div class="user-info"><p id="saName">Juan</p><p>superadmin</p></div>
     </div>
     <button class="btn-logout" onclick="saLogout()">Cerrar sesión</button>
   </div>
@@ -346,14 +261,8 @@
       <div class="stat-card users">  <div class="stat-label">Mis Tickets</div> <div class="stat-value" id="st-mis">—</div></div>
     </div>
     <div class="dash-grid">
-      <div class="dash-card">
-        <div class="dash-card-title">Distribución por departamento</div>
-        <div id="deptChart"></div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-card-title">Tickets recientes</div>
-        <div id="recentTickets"></div>
-      </div>
+      <div class="dash-card"><div class="dash-card-title">Distribución por departamento</div><div id="deptChart"></div></div>
+      <div class="dash-card"><div class="dash-card-title">Tickets recientes</div><div id="recentTickets"></div></div>
     </div>
   </div>
 
@@ -443,14 +352,22 @@
     <div class="users-toolbar">
       <button class="btn-primary" onclick="abrirCrearUsuario()">+ Nuevo Usuario</button>
       <button class="btn-migrate" onclick="abrirMigracion()">⬆ Migrar JS → Sheet</button>
-      <input  class="search-input" id="userSearch" style="max-width:260px" placeholder="Buscar usuario o rol..." oninput="filtrarTabla()"/>
+      <input  class="search-input" id="userSearch" style="max-width:260px" placeholder="Buscar usuario, rol o depto..." oninput="filtrarTabla()"/>
       <button class="btn-primary" style="background:var(--surface2);border:1px solid var(--border2);color:var(--muted)" onclick="cargarUsuariosSheet()">↻ Refrescar</button>
     </div>
     <div class="table-wrapper">
       <table class="users-table">
-        <thead><tr><th>Usuario</th><th>SHA-256 Hash</th><th>Rol</th><th>Acciones</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>SHA-256 Hash</th>
+            <th>Rol</th>
+            <th>Departamento</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
         <tbody id="usersSheetBody">
-          <tr class="loading-row"><td colspan="4"><span class="spinner"></span>Cargando usuarios desde Sheet...</td></tr>
+          <tr class="loading-row"><td colspan="5"><span class="spinner"></span>Cargando usuarios desde Sheet...</td></tr>
         </tbody>
       </table>
     </div>
@@ -477,6 +394,40 @@
         <option value="usuario">usuario</option>
         <option value="tecnico">tecnico</option>
         <option value="admin">admin</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Departamento</label>
+      <select id="fDepto">
+        <option value="">-- Sin departamento --</option>
+        <option value="Recursos Humanos">Recursos Humanos</option>
+        <option value="Contabilidad">Contabilidad</option>
+        <option value="Showroom 1">Showroom 1</option>
+        <option value="Showroom 2">Showroom 2</option>
+        <option value="Facturación">Facturación</option>
+        <option value="Tesorería">Tesorería</option>
+        <option value="Mercadeo">Mercadeo</option>
+        <option value="Logistica">Logistica</option>
+        <option value="Credito y cobros">Credito y cobros</option>
+        <option value="Recepción">Recepción</option>
+        <option value="CM LV2">CM LV2</option>
+        <option value="La70 LV">La70 LV</option>
+        <option value="La70 SD">La70 SD</option>
+        <option value="CM SD">CM SD</option>
+        <option value="La70 SFM">La70 SFM</option>
+        <option value="CM SFM">CM SFM</option>
+        <option value="CM MOCA">CM MOCA</option>
+        <option value="CM BONAO">CM BONAO</option>
+        <option value="CM STGO">CM STGO</option>
+        <option value="LA70 STGO">LA70 STGO</option>
+        <option value="CM LV1">CM LV1</option>
+        <option value="La70 SFM1">La70 SFM1</option>
+        <option value="CM SFM1">CM SFM1</option>
+        <option value="La70 SFM2">La70 SFM2</option>
+        <option value="CM SFM2">CM SFM2</option>
+        <option value="LOGISTICA">LOGISTICA</option>
+        <option value="CxC">CxC</option>
+        <option value="RRHH">RRHH</option>
       </select>
     </div>
     <div class="modal-actions">
@@ -534,14 +485,11 @@
 
 <script>
 // ════════════════════════════════════════════════════════
-// VERIFICACIÓN — usa localStorage del login principal
+// VERIFICACIÓN
 // ════════════════════════════════════════════════════════
 (function() {
   const rol = localStorage.getItem("rol");
-  if (rol !== "superadmin") {
-    window.location.href = "index.html";
-    return;
-  }
+  if (rol !== "superadmin") { window.location.href = "index.html"; return; }
   const nombre = localStorage.getItem("usuario") || "Juan";
   document.getElementById("saName").textContent   = nombre;
   document.getElementById("saAvatar").textContent = nombre.substring(0,2).toUpperCase();
@@ -550,6 +498,7 @@
 function saLogout() {
   localStorage.removeItem("usuario");
   localStorage.removeItem("rol");
+  localStorage.removeItem("depto");
   window.location.href = "index.html";
 }
 
@@ -561,47 +510,47 @@ const API_USERS   = "https://api.sheetbest.com/sheets/6784d1e5-1e26-4605-9c19-32
 const MI_USUARIO  = localStorage.getItem("usuario") || "Juan";
 
 const USUARIOS_HARDCODED = [
-  { username: "Juan",      password: "12340094", rol: "tecnico" },
-  { username: "Xavier",    password: "1234",     rol: "tecnico" },
-  { username: "michel",    password: "1234",     rol: "usuario" },
-  { username: "Doralina",  password: "gm1234",   rol: "usuario" },
-  { username: "Michel",    password: "1234",     rol: "usuario" },
-  { username: "Pamela",    password: "1234",     rol: "usuario" },
-  { username: "Eliana",    password: "1234",     rol: "usuario" },
-  { username: "Anabell",   password: "1234",     rol: "usuario" },
-  { username: "Maitte",    password: "1234",     rol: "usuario" },
-  { username: "Hilda",     password: "1234",     rol: "usuario" },
-  { username: "Chantal",   password: "1234",     rol: "usuario" },
-  { username: "Carla",     password: "1234",     rol: "usuario" },
-  { username: "Clara",     password: "1234",     rol: "usuario" },
-  { username: "Francisca", password: "1234",     rol: "usuario" },
-  { username: "Miladys",   password: "1234",     rol: "usuario" },
-  { username: "Jasnaya",   password: "1234",     rol: "usuario" },
-  { username: "Enelson",   password: "1234",     rol: "usuario" },
-  { username: "Alexandra", password: "LA701234", rol: "usuario" },
-  { username: "Ricarda",   password: "1234",     rol: "usuario" },
-  { username: "Eduard",    password: "1234",     rol: "usuario" },
-  { username: "Enmanuel",  password: "1234",     rol: "usuario" },
-  { username: "Francis",   password: "1234",     rol: "usuario" },
-  { username: "Edgar",     password: "1234",     rol: "usuario" },
-  { username: "Merlyn",    password: "1234",     rol: "usuario" },
-  { username: "Elaine",    password: "1234",     rol: "usuario" },
-  { username: "Nathaly",   password: "La701234", rol: "usuario" },
-  { username: "Esmerkin",  password: "CM1234",   rol: "usuario" },
-  { username: "Joel",      password: "GM1234",   rol: "admin"   },
-  { username: "Yanna",     password: "GM1234",   rol: "admin"   }
+  { username: "Juan",      password: "12340094", rol: "tecnico",    depto: "Logistica"        },
+  { username: "Xavier",    password: "1234",     rol: "tecnico",    depto: "Logistica"        },
+  { username: "michel",    password: "1234",     rol: "usuario",    depto: "CxC"              },
+  { username: "Doralina",  password: "gm1234",   rol: "usuario",    depto: "RRHH"             },
+  { username: "Michel",    password: "1234",     rol: "usuario",    depto: "CxC"              },
+  { username: "Pamela",    password: "1234",     rol: "usuario",    depto: "Mercadeo"         },
+  { username: "Eliana",    password: "1234",     rol: "usuario",    depto: "Tesorería"        },
+  { username: "Anabell",   password: "1234",     rol: "usuario",    depto: "RRHH"             },
+  { username: "Maitte",    password: "1234",     rol: "usuario",    depto: "RRHH"             },
+  { username: "Hilda",     password: "1234",     rol: "usuario",    depto: "Contabilidad"     },
+  { username: "Chantal",   password: "1234",     rol: "usuario",    depto: "Tesorería"        },
+  { username: "Carla",     password: "1234",     rol: "usuario",    depto: "Mercadeo"         },
+  { username: "Clara",     password: "1234",     rol: "usuario",    depto: "Facturación"      },
+  { username: "Francisca", password: "1234",     rol: "usuario",    depto: "Recepción"        },
+  { username: "Miladys",   password: "1234",     rol: "usuario",    depto: "Mercadeo"         },
+  { username: "Jasnaya",   password: "1234",     rol: "usuario",    depto: "CM LV2"           },
+  { username: "Enelson",   password: "1234",     rol: "usuario",    depto: "CM LV1"           },
+  { username: "Alexandra", password: "LA701234", rol: "usuario",    depto: "La70 SD"          },
+  { username: "Ricarda",   password: "1234",     rol: "usuario",    depto: "CM SD"            },
+  { username: "Eduard",    password: "1234",     rol: "usuario",    depto: "La70 STGO"        },
+  { username: "Enmanuel",  password: "1234",     rol: "usuario",    depto: "CM STGO"          },
+  { username: "Francis",   password: "1234",     rol: "usuario",    depto: "CM MOCA"          },
+  { username: "Edgar",     password: "1234",     rol: "usuario",    depto: "CM BONAO"         },
+  { username: "Merlyn",    password: "1234",     rol: "usuario",    depto: "La70 SFM"         },
+  { username: "Elaine",    password: "1234",     rol: "usuario",    depto: "CM SFM"           },
+  { username: "Nathaly",   password: "La701234", rol: "usuario",    depto: "CM LV1"           },
+  { username: "Esmerkin",  password: "CM1234",   rol: "usuario",    depto: "CM SD"            },
+  { username: "Joel",      password: "GM1234",   rol: "admin",      depto: "Logistica"        },
+  { username: "Yanna",     password: "GM1234",   rol: "admin",      depto: "Logistica"        }
 ];
 
 // ════════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════════
-let allTickets    = [];
-let currentFilter = "todos";
-let misFilter     = "todos";
-let trabajarFilter= "todos";
-let sheetUsers    = [];
-let editingRowNum = null;
-let hashDebounce  = null;
+let allTickets     = [];
+let currentFilter  = "todos";
+let misFilter      = "todos";
+let trabajarFilter = "todos";
+let sheetUsers     = [];
+let editingRowNum  = null;
+let hashDebounce   = null;
 let ticketResolverId = null;
 
 // ════════════════════════════════════════════════════════
@@ -625,77 +574,59 @@ function recargarTodo() {
     .then(r => r.json())
     .then(data => {
       allTickets = Array.isArray(data) ? data : [];
-      renderDashboard();
-      renderTickets();
-      renderTrabajar();
-      renderMisResueltos();
-      renderMisTickets();
-      actualizarNavBadges();
+      renderDashboard(); renderTickets(); renderTrabajar();
+      renderMisResueltos(); renderMisTickets(); actualizarNavBadges();
       fillLoadBar("loadBar", 100);
     })
-    .catch(err => {
-      showToast("Error al cargar tickets", "error");
-      fillLoadBar("loadBar", 100);
-    });
+    .catch(() => { showToast("Error al cargar tickets", "error"); fillLoadBar("loadBar", 100); });
 }
 
-function animateLoad(id) {
-  const b = document.getElementById(id); if (!b) return;
-  b.style.width = "0%"; setTimeout(() => b.style.width = "70%", 100);
-}
-function fillLoadBar(id, pct) {
-  const b = document.getElementById(id); if (!b) return;
-  b.style.width = pct + "%"; setTimeout(() => b.style.width = "0%", 800);
-}
+function animateLoad(id) { const b=document.getElementById(id); if(!b)return; b.style.width="0%"; setTimeout(()=>b.style.width="70%",100); }
+function fillLoadBar(id,pct) { const b=document.getElementById(id); if(!b)return; b.style.width=pct+"%"; setTimeout(()=>b.style.width="0%",800); }
 
 // ════════════════════════════════════════════════════════
 // NAVEGACIÓN
 // ════════════════════════════════════════════════════════
-const VIEW_TITLES = {
-  dashboard: "Dashboard", tickets: "Todos los Tickets",
-  trabajar: "Tickets a Trabajar", resueltos: "Mis Tickets Resueltos",
-  mistickets: "Mis Tickets", usuarios: "Gestión de Usuarios"
-};
+const VIEW_TITLES = { dashboard:"Dashboard", tickets:"Todos los Tickets", trabajar:"Tickets a Trabajar", resueltos:"Mis Tickets Resueltos", mistickets:"Mis Tickets", usuarios:"Gestión de Usuarios" };
 
 function switchView(v) {
-  document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
-  document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
-  document.getElementById("view-" + v).classList.add("active");
-  document.getElementById("nav-" + v).classList.add("active");
-  document.getElementById("viewTitle").textContent = VIEW_TITLES[v] || v;
+  document.querySelectorAll(".view").forEach(el=>el.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(el=>el.classList.remove("active"));
+  document.getElementById("view-"+v).classList.add("active");
+  document.getElementById("nav-"+v).classList.add("active");
+  document.getElementById("viewTitle").textContent = VIEW_TITLES[v]||v;
 }
 
 function actualizarNavBadges() {
-  const misTodos    = allTickets.filter(t => (t.asignado||"").toLowerCase() === MI_USUARIO.toLowerCase());
-  const trabajar    = misTodos.filter(t => t.estado !== "Resuelto");
-  const misResueltos= misTodos.filter(t => t.estado === "Resuelto");
+  const misTodos    = allTickets.filter(t=>(t.asignado||"").toLowerCase()===MI_USUARIO.toLowerCase());
+  const trabajar    = misTodos.filter(t=>t.estado!=="Resuelto");
+  const misResueltos= misTodos.filter(t=>t.estado==="Resuelto");
   document.getElementById("nb-tickets").textContent   = allTickets.length;
   document.getElementById("nb-trabajar").textContent  = trabajar.length;
   document.getElementById("nb-resueltos").textContent = misResueltos.length;
-  document.getElementById("nb-trabajar").style.display  = trabajar.length > 0 ? "" : "none";
-  document.getElementById("nb-resueltos").style.display = misResueltos.length > 0 ? "" : "none";
+  document.getElementById("nb-trabajar").style.display  = trabajar.length>0 ? "":"none";
+  document.getElementById("nb-resueltos").style.display = misResueltos.length>0 ? "":"none";
 }
 
 // ════════════════════════════════════════════════════════
 // DASHBOARD
 // ════════════════════════════════════════════════════════
 function renderDashboard() {
-  const total = allTickets.length;
-  const pend  = allTickets.filter(t => t.estado === "Pendiente").length;
-  const proc  = allTickets.filter(t => t.estado === "En Proceso").length;
-  const res   = allTickets.filter(t => t.estado === "Resuelto").length;
-  const mis   = allTickets.filter(t => (t.asignado||"").toLowerCase() === MI_USUARIO.toLowerCase()).length;
-  document.getElementById("st-total").textContent = total;
-  document.getElementById("st-pend").textContent  = pend;
-  document.getElementById("st-proc").textContent  = proc;
-  document.getElementById("st-res").textContent   = res;
-  document.getElementById("st-mis").textContent   = mis;
+  const total=allTickets.length, pend=allTickets.filter(t=>t.estado==="Pendiente").length,
+        proc=allTickets.filter(t=>t.estado==="En Proceso").length,
+        res=allTickets.filter(t=>t.estado==="Resuelto").length,
+        mis=allTickets.filter(t=>(t.asignado||"").toLowerCase()===MI_USUARIO.toLowerCase()).length;
+  document.getElementById("st-total").textContent=total;
+  document.getElementById("st-pend").textContent=pend;
+  document.getElementById("st-proc").textContent=proc;
+  document.getElementById("st-res").textContent=res;
+  document.getElementById("st-mis").textContent=mis;
 
-  const deptos = {};
-  allTickets.forEach(t => { const d = t.depto||"N/A"; deptos[d]=(deptos[d]||0)+1; });
-  const sorted = Object.entries(deptos).sort((a,b)=>b[1]-a[1]);
-  const maxVal = sorted[0]?.[1] || 1;
-  document.getElementById("deptChart").innerHTML = sorted.map(([d,n]) => `
+  const deptos={};
+  allTickets.forEach(t=>{const d=t.depto||"N/A";deptos[d]=(deptos[d]||0)+1;});
+  const sorted=Object.entries(deptos).sort((a,b)=>b[1]-a[1]);
+  const maxVal=sorted[0]?.[1]||1;
+  document.getElementById("deptChart").innerHTML=sorted.map(([d,n])=>`
     <div style="margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
         <span>${d}</span><span style="font-family:var(--mono);color:var(--accent)">${n}</span>
@@ -703,309 +634,176 @@ function renderDashboard() {
       <div style="background:var(--surface3);border-radius:4px;height:6px;overflow:hidden">
         <div style="height:100%;width:${Math.round(n/maxVal*100)}%;background:var(--accent);border-radius:4px;transition:width 0.6s"></div>
       </div>
-    </div>`).join("") || "<p style='color:var(--muted);font-size:12px'>Sin datos</p>";
+    </div>`).join("")||"<p style='color:var(--muted);font-size:12px'>Sin datos</p>";
 
-  document.getElementById("recentTickets").innerHTML = allTickets.slice(-5).reverse().map(t => {
-    const ec = t.estado==="Resuelto"?"badge-resuelto":t.estado==="En Proceso"?"badge-proceso":"badge-pendiente";
+  document.getElementById("recentTickets").innerHTML=allTickets.slice(-5).reverse().map(t=>{
+    const ec=t.estado==="Resuelto"?"badge-resuelto":t.estado==="En Proceso"?"badge-proceso":"badge-pendiente";
     return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
-      <div>
-        <div style="font-size:12px;font-weight:600">${t.titulo||""}</div>
-        <div style="font-size:10px;color:var(--muted);font-family:var(--mono)">${t.usuario||""}</div>
-      </div>
-      <span class="badge ${ec}">${t.estado||""}</span>
-    </div>`;
-  }).join("") || "<p style='color:var(--muted);font-size:12px;padding:8px 0'>Sin tickets recientes</p>";
+      <div><div style="font-size:12px;font-weight:600">${t.titulo||""}</div>
+      <div style="font-size:10px;color:var(--muted);font-family:var(--mono)">${t.usuario||""}</div></div>
+      <span class="badge ${ec}">${t.estado||""}</span></div>`;
+  }).join("")||"<p style='color:var(--muted);font-size:12px;padding:8px 0'>Sin tickets recientes</p>";
 }
 
 // ════════════════════════════════════════════════════════
 // TODOS LOS TICKETS
 // ════════════════════════════════════════════════════════
-function setFilter(f, btn) {
-  currentFilter = f;
-  document.querySelectorAll("#ticketFilters .filter-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  renderTickets();
-}
-function filtrarTickets() { renderTickets(); }
-function renderTickets() {
-  const grid   = document.getElementById("ticketsGrid");
-  const search = (document.getElementById("searchInput")?.value||"").toLowerCase();
-  const filtered = allTickets.filter(t => {
-    const matchF = currentFilter==="todos" || t.estado===currentFilter;
-    const matchS = !search || (t.titulo||"").toLowerCase().includes(search) ||
-      (t.usuario||"").toLowerCase().includes(search) || (t.depto||"").toLowerCase().includes(search) ||
-      (t.descripcion||"").toLowerCase().includes(search);
-    return matchF && matchS;
+function setFilter(f,btn){currentFilter=f;document.querySelectorAll("#ticketFilters .filter-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderTickets();}
+function filtrarTickets(){renderTickets();}
+function renderTickets(){
+  const grid=document.getElementById("ticketsGrid");
+  const search=(document.getElementById("searchInput")?.value||"").toLowerCase();
+  const filtered=allTickets.filter(t=>{
+    const matchF=currentFilter==="todos"||t.estado===currentFilter;
+    const matchS=!search||(t.titulo||"").toLowerCase().includes(search)||(t.usuario||"").toLowerCase().includes(search)||(t.depto||"").toLowerCase().includes(search)||(t.descripcion||"").toLowerCase().includes(search);
+    return matchF&&matchS;
   });
-  document.getElementById("ticketCount").textContent = filtered.length + " ticket" + (filtered.length!==1?"s":"");
-  grid.innerHTML = "";
-  if (filtered.length===0) { grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🎫</div><p>No hay tickets con ese filtro.</p></div>`; return; }
-  filtered.slice().reverse().forEach(t => grid.appendChild(buildCard(t)));
+  document.getElementById("ticketCount").textContent=filtered.length+" ticket"+(filtered.length!==1?"s":"");
+  grid.innerHTML="";
+  if(filtered.length===0){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🎫</div><p>No hay tickets con ese filtro.</p></div>`;return;}
+  filtered.slice().reverse().forEach(t=>grid.appendChild(buildCard(t)));
 }
 
 // ════════════════════════════════════════════════════════
 // TICKETS A TRABAJAR
 // ════════════════════════════════════════════════════════
-function setTrabajarFilter(f, btn) {
-  trabajarFilter = f;
-  document.querySelectorAll("#trabajarFilters .filter-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  renderTrabajar();
-}
-function renderTrabajar() {
-  const grid   = document.getElementById("trabajarGrid");
-  const search = (document.getElementById("trabajarSearch")?.value||"").toLowerCase();
-  let filtered = allTickets.filter(t =>
-    (t.asignado||"").toLowerCase() === MI_USUARIO.toLowerCase() && t.estado !== "Resuelto"
-  );
-  if (trabajarFilter !== "todos") filtered = filtered.filter(t => t.estado === trabajarFilter);
-  if (search) filtered = filtered.filter(t =>
-    (t.titulo||"").toLowerCase().includes(search) || (t.depto||"").toLowerCase().includes(search) ||
-    (t.descripcion||"").toLowerCase().includes(search)
-  );
-  document.getElementById("trabajarCount").textContent = filtered.length + " ticket" + (filtered.length!==1?"s":"");
-  grid.innerHTML = "";
-  if (filtered.length===0) {
-    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🎉</div><p>${
-      allTickets.filter(t=>(t.asignado||"").toLowerCase()===MI_USUARIO.toLowerCase()&&t.estado!=="Resuelto").length===0
-      ? "¡No tienes tickets pendientes! Todo al día." : "Sin tickets con ese filtro."
-    }</p></div>`; return;
-  }
-  filtered.slice().reverse().forEach(t => grid.appendChild(buildTrabajarCard(t)));
+function setTrabajarFilter(f,btn){trabajarFilter=f;document.querySelectorAll("#trabajarFilters .filter-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderTrabajar();}
+function renderTrabajar(){
+  const grid=document.getElementById("trabajarGrid");
+  const search=(document.getElementById("trabajarSearch")?.value||"").toLowerCase();
+  let filtered=allTickets.filter(t=>(t.asignado||"").toLowerCase()===MI_USUARIO.toLowerCase()&&t.estado!=="Resuelto");
+  if(trabajarFilter!=="todos")filtered=filtered.filter(t=>t.estado===trabajarFilter);
+  if(search)filtered=filtered.filter(t=>(t.titulo||"").toLowerCase().includes(search)||(t.depto||"").toLowerCase().includes(search)||(t.descripcion||"").toLowerCase().includes(search));
+  document.getElementById("trabajarCount").textContent=filtered.length+" ticket"+(filtered.length!==1?"s":"");
+  grid.innerHTML="";
+  if(filtered.length===0){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🎉</div><p>${allTickets.filter(t=>(t.asignado||"").toLowerCase()===MI_USUARIO.toLowerCase()&&t.estado!=="Resuelto").length===0?"¡No tienes tickets pendientes! Todo al día.":"Sin tickets con ese filtro."}</p></div>`;return;}
+  filtered.slice().reverse().forEach(t=>grid.appendChild(buildTrabajarCard(t)));
 }
 
-function buildTrabajarCard(t) {
-  const ec = t.estado==="En Proceso" ? "badge-proceso" : "badge-pendiente";
-  let adjuntosHtml = "";
-  if (t.adjuntos && t.adjuntos.trim()) {
-    const urls = t.adjuntos.split(",").map(u=>u.trim()).filter(Boolean);
-    adjuntosHtml = `<div class="adjuntos-box"><p>📎 Adjuntos</p>${
-      urls.map(u=>`<a class="adjunto-link" href="${u}" target="_blank" rel="noopener">${decodeURIComponent(u.split("/").pop().split("?")[0])}</a>`).join("")
-    }</div>`;
-  }
-
-  // Botones según estado
-  let botones = "";
-  if (t.estado === "Pendiente") {
-    botones = `
-      <button class="btn-proceso"  onclick="cambiarEstadoTicket('${encodeURIComponent(t.id)}','En Proceso')">🔧 En Proceso</button>
-      <button class="btn-resuelto" onclick="abrirResolucionModal('${encodeURIComponent(t.id)}')">✅ Resuelto</button>
-    `;
-  } else if (t.estado === "En Proceso") {
-    botones = `
-      <button class="btn-resuelto" onclick="abrirResolucionModal('${encodeURIComponent(t.id)}')">✅ Resuelto</button>
-    `;
-  }
-
-  const div = document.createElement("div");
-  div.className = "ticket-card trabajar";
-  div.innerHTML = `
-    <div class="ticket-top">
-      <div>
-        <div class="ticket-id">${t.id||""}</div>
-        <div class="ticket-title">${t.titulo||""}</div>
-      </div>
-      <span class="badge ${ec}">${t.estado||""}</span>
-    </div>
-    <div class="ticket-desc">${t.descripcion||""}</div>
-    <div class="ticket-meta">
-      <span class="badge badge-depto">${t.depto||""}</span>
-      <span class="badge badge-usuario">🙍 ${t.usuario||""}</span>
-    </div>
-    <hr class="ticket-divider"/>
-    <div class="ticket-fecha">📅 ${t.fecha||""}</div>
-    ${adjuntosHtml}
-    <div class="ticket-actions">${botones}</div>
-  `;
+function buildTrabajarCard(t){
+  const ec=t.estado==="En Proceso"?"badge-proceso":"badge-pendiente";
+  let adjH="";
+  if(t.adjuntos&&t.adjuntos.trim()){const urls=t.adjuntos.split(",").map(u=>u.trim()).filter(Boolean);adjH=`<div class="adjuntos-box"><p>📎 Adjuntos</p>${urls.map(u=>`<a class="adjunto-link" href="${u}" target="_blank">${decodeURIComponent(u.split("/").pop().split("?")[0])}</a>`).join("")}</div>`;}
+  let botones="";
+  if(t.estado==="Pendiente")botones=`<button class="btn-proceso" onclick="cambiarEstadoTicket('${encodeURIComponent(t.id)}','En Proceso')">🔧 En Proceso</button><button class="btn-resuelto" onclick="abrirResolucionModal('${encodeURIComponent(t.id)}')">✅ Resuelto</button>`;
+  else if(t.estado==="En Proceso")botones=`<button class="btn-resuelto" onclick="abrirResolucionModal('${encodeURIComponent(t.id)}')">✅ Resuelto</button>`;
+  const div=document.createElement("div");div.className="ticket-card trabajar";
+  div.innerHTML=`<div class="ticket-top"><div><div class="ticket-id">${t.id||""}</div><div class="ticket-title">${t.titulo||""}</div></div><span class="badge ${ec}">${t.estado||""}</span></div><div class="ticket-desc">${t.descripcion||""}</div><div class="ticket-meta"><span class="badge badge-depto">${t.depto||""}</span><span class="badge badge-usuario">🙍 ${t.usuario||""}</span></div><hr class="ticket-divider"/><div class="ticket-fecha">📅 ${t.fecha||""}</div>${adjH}<div class="ticket-actions">${botones}</div>`;
   return div;
 }
 
 // ════════════════════════════════════════════════════════
 // MIS TICKETS RESUELTOS
 // ════════════════════════════════════════════════════════
-function renderMisResueltos() {
-  const grid   = document.getElementById("resueltosGrid");
-  const search = (document.getElementById("resueltosSearch")?.value||"").toLowerCase();
-  let filtered = allTickets.filter(t =>
-    (t.asignado||"").toLowerCase() === MI_USUARIO.toLowerCase() && t.estado === "Resuelto"
-  );
-  if (search) filtered = filtered.filter(t =>
-    (t.titulo||"").toLowerCase().includes(search) || (t.depto||"").toLowerCase().includes(search) ||
-    (t.descripcion||"").toLowerCase().includes(search)
-  );
-  document.getElementById("resueltosCount").textContent = filtered.length + " ticket" + (filtered.length!==1?"s":"");
-  grid.innerHTML = "";
-  if (filtered.length===0) {
-    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📋</div><p>Aún no has resuelto tickets.</p></div>`; return;
-  }
-  filtered.slice().reverse().forEach(t => {
-    const div = buildCard(t);
-    grid.appendChild(div);
-  });
+function renderMisResueltos(){
+  const grid=document.getElementById("resueltosGrid");
+  const search=(document.getElementById("resueltosSearch")?.value||"").toLowerCase();
+  let filtered=allTickets.filter(t=>(t.asignado||"").toLowerCase()===MI_USUARIO.toLowerCase()&&t.estado==="Resuelto");
+  if(search)filtered=filtered.filter(t=>(t.titulo||"").toLowerCase().includes(search)||(t.depto||"").toLowerCase().includes(search)||(t.descripcion||"").toLowerCase().includes(search));
+  document.getElementById("resueltosCount").textContent=filtered.length+" ticket"+(filtered.length!==1?"s":"");
+  grid.innerHTML="";
+  if(filtered.length===0){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📋</div><p>Aún no has resuelto tickets.</p></div>`;return;}
+  filtered.slice().reverse().forEach(t=>grid.appendChild(buildCard(t)));
 }
 
 // ════════════════════════════════════════════════════════
 // MIS TICKETS (todos)
 // ════════════════════════════════════════════════════════
-function setMisFilter(f, btn) {
-  misFilter = f;
-  document.querySelectorAll("#misFilters .filter-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  renderMisTickets();
-}
-function filtrarMisTickets() { renderMisTickets(); }
-function renderMisTickets() {
-  const mis    = allTickets.filter(t => (t.asignado||"").toLowerCase()===MI_USUARIO.toLowerCase());
-  const search = (document.getElementById("misSearch")?.value||"").toLowerCase();
-  document.getElementById("mis-total").textContent = mis.length;
-  document.getElementById("mis-pend").textContent  = mis.filter(t=>t.estado==="Pendiente").length;
-  document.getElementById("mis-proc").textContent  = mis.filter(t=>t.estado==="En Proceso").length;
-  document.getElementById("mis-res").textContent   = mis.filter(t=>t.estado==="Resuelto").length;
-  let filtered = mis.filter(t => misFilter==="todos" || t.estado===misFilter);
-  if (search) filtered = filtered.filter(t =>
-    (t.titulo||"").toLowerCase().includes(search)||(t.depto||"").toLowerCase().includes(search)||
-    (t.descripcion||"").toLowerCase().includes(search)
-  );
-  document.getElementById("misCount").textContent = filtered.length+" ticket"+(filtered.length!==1?"s":"");
-  const grid = document.getElementById("misGrid");
-  grid.innerHTML = "";
-  if (filtered.length===0) {
-    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📌</div><p>${mis.length===0?"No tienes tickets asignados.":"Sin tickets con ese filtro."}</p></div>`; return;
-  }
-  filtered.slice().reverse().forEach(t => grid.appendChild(buildCard(t)));
+function setMisFilter(f,btn){misFilter=f;document.querySelectorAll("#misFilters .filter-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderMisTickets();}
+function filtrarMisTickets(){renderMisTickets();}
+function renderMisTickets(){
+  const mis=allTickets.filter(t=>(t.asignado||"").toLowerCase()===MI_USUARIO.toLowerCase());
+  const search=(document.getElementById("misSearch")?.value||"").toLowerCase();
+  document.getElementById("mis-total").textContent=mis.length;
+  document.getElementById("mis-pend").textContent=mis.filter(t=>t.estado==="Pendiente").length;
+  document.getElementById("mis-proc").textContent=mis.filter(t=>t.estado==="En Proceso").length;
+  document.getElementById("mis-res").textContent=mis.filter(t=>t.estado==="Resuelto").length;
+  let filtered=mis.filter(t=>misFilter==="todos"||t.estado===misFilter);
+  if(search)filtered=filtered.filter(t=>(t.titulo||"").toLowerCase().includes(search)||(t.depto||"").toLowerCase().includes(search)||(t.descripcion||"").toLowerCase().includes(search));
+  document.getElementById("misCount").textContent=filtered.length+" ticket"+(filtered.length!==1?"s":"");
+  const grid=document.getElementById("misGrid");grid.innerHTML="";
+  if(filtered.length===0){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📌</div><p>${mis.length===0?"No tienes tickets asignados.":"Sin tickets con ese filtro."}</p></div>`;return;}
+  filtered.slice().reverse().forEach(t=>grid.appendChild(buildCard(t)));
 }
 
 // ════════════════════════════════════════════════════════
 // BUILD CARD GENÉRICA
 // ════════════════════════════════════════════════════════
-function buildCard(t) {
-  const ec = t.estado==="Resuelto"?"badge-resuelto":t.estado==="En Proceso"?"badge-proceso":"badge-pendiente";
-  let adjuntosHtml = "";
-  if (t.adjuntos && t.adjuntos.trim()) {
-    const urls = t.adjuntos.split(",").map(u=>u.trim()).filter(Boolean);
-    adjuntosHtml = `<div class="adjuntos-box"><p>📎 Adjuntos</p>${
-      urls.map(u=>`<a class="adjunto-link" href="${u}" target="_blank" rel="noopener">${decodeURIComponent(u.split("/").pop().split("?")[0])}</a>`).join("")
-    }</div>`;
-  }
-  let resHtml = "";
-  if (t.estado==="Resuelto" && t.resolucion) {
-    resHtml = `<div class="resolucion-box">✅ ${t.resolucion}<br><small>Participantes: ${t.participantes||"N/A"} — ${t.fecha_resuelto||""}</small></div>`;
-  }
-  const div = document.createElement("div");
-  div.className = "ticket-card";
-  div.innerHTML = `
-    <div class="ticket-top">
-      <div><div class="ticket-id">${t.id||""}</div><div class="ticket-title">${t.titulo||""}</div></div>
-      <span class="badge ${ec}">${t.estado||""}</span>
-    </div>
-    <div class="ticket-desc">${t.descripcion||""}</div>
-    <div class="ticket-meta">
-      <span class="badge badge-depto">${t.depto||""}</span>
-      <span class="badge badge-usuario">👤 ${t.usuario||""}</span>
-    </div>
-    <hr class="ticket-divider"/>
-    <div class="ticket-asignado">Asignado a: <span>${t.asignado||"Sin asignar"}</span></div>
-    <div class="ticket-fecha">📅 ${t.fecha||""}</div>
-    ${adjuntosHtml}
-    ${resHtml}
-  `;
+function buildCard(t){
+  const ec=t.estado==="Resuelto"?"badge-resuelto":t.estado==="En Proceso"?"badge-proceso":"badge-pendiente";
+  let adjH="";
+  if(t.adjuntos&&t.adjuntos.trim()){const urls=t.adjuntos.split(",").map(u=>u.trim()).filter(Boolean);adjH=`<div class="adjuntos-box"><p>📎 Adjuntos</p>${urls.map(u=>`<a class="adjunto-link" href="${u}" target="_blank">${decodeURIComponent(u.split("/").pop().split("?")[0])}</a>`).join("")}</div>`;}
+  let resH="";
+  if(t.estado==="Resuelto"&&t.resolucion)resH=`<div class="resolucion-box">✅ ${t.resolucion}<br><small>Participantes: ${t.participantes||"N/A"} — ${t.fecha_resuelto||""}</small></div>`;
+  const div=document.createElement("div");div.className="ticket-card";
+  div.innerHTML=`<div class="ticket-top"><div><div class="ticket-id">${t.id||""}</div><div class="ticket-title">${t.titulo||""}</div></div><span class="badge ${ec}">${t.estado||""}</span></div><div class="ticket-desc">${t.descripcion||""}</div><div class="ticket-meta"><span class="badge badge-depto">${t.depto||""}</span><span class="badge badge-usuario">👤 ${t.usuario||""}</span></div><hr class="ticket-divider"/><div class="ticket-asignado">Asignado a: <span>${t.asignado||"Sin asignar"}</span></div><div class="ticket-fecha">📅 ${t.fecha||""}</div>${adjH}${resH}`;
   return div;
 }
 
 // ════════════════════════════════════════════════════════
 // CAMBIAR ESTADO
 // ════════════════════════════════════════════════════════
-async function cambiarEstadoTicket(idEnc, nuevoEstado) {
-  const id = decodeURIComponent(idEnc);
-  try {
-    const res = await fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`, {
-      method: "PATCH", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ estado: nuevoEstado })
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    showToast(`✓ Ticket marcado como "${nuevoEstado}"`, "success");
+async function cambiarEstadoTicket(idEnc,nuevoEstado){
+  const id=decodeURIComponent(idEnc);
+  try{
+    const res=await fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({estado:nuevoEstado})});
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    showToast(`✓ Ticket marcado como "${nuevoEstado}"`,"success");
     await recargarTodo();
-  } catch(err) {
-    showToast("Error al cambiar estado", "error");
-  }
+  }catch(err){showToast("Error al cambiar estado","error");}
 }
 
 // ════════════════════════════════════════════════════════
 // MODAL RESOLUCIÓN
 // ════════════════════════════════════════════════════════
-function abrirResolucionModal(idEnc) {
-  ticketResolverId = decodeURIComponent(idEnc);
-  document.getElementById("detalleResolucion").value = "";
-  document.getElementById("participantesResolucion").value = MI_USUARIO;
+function abrirResolucionModal(idEnc){
+  ticketResolverId=decodeURIComponent(idEnc);
+  document.getElementById("detalleResolucion").value="";
+  document.getElementById("participantesResolucion").value=MI_USUARIO;
   document.getElementById("resolucionModal").classList.add("open");
 }
-function cerrarResolucionModal() {
-  document.getElementById("resolucionModal").classList.remove("open");
-  ticketResolverId = null;
-}
-async function confirmarResolucion() {
-  const detalle       = document.getElementById("detalleResolucion").value.trim();
-  const participantes = document.getElementById("participantesResolucion").value.trim();
-  if (!detalle) { showToast("Escribe el detalle de resolución", "error"); return; }
-  try {
-    const res = await fetch(`${API_TICKETS}/id/${encodeURIComponent(ticketResolverId)}`, {
-      method: "PATCH", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        estado: "Resuelto", resolucion: detalle,
-        participantes: participantes,
-        fecha_resuelto: new Date().toLocaleString("es-DO")
-      })
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    showToast("✅ Ticket marcado como resuelto", "success");
-    cerrarResolucionModal();
-    await recargarTodo();
-  } catch(err) {
-    showToast("Error al resolver ticket", "error");
-  }
+function cerrarResolucionModal(){document.getElementById("resolucionModal").classList.remove("open");ticketResolverId=null;}
+async function confirmarResolucion(){
+  const detalle=document.getElementById("detalleResolucion").value.trim();
+  const participantes=document.getElementById("participantesResolucion").value.trim();
+  if(!detalle){showToast("Escribe el detalle de resolución","error");return;}
+  try{
+    const res=await fetch(`${API_TICKETS}/id/${encodeURIComponent(ticketResolverId)}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({estado:"Resuelto",resolucion:detalle,participantes,fecha_resuelto:new Date().toLocaleString("es-DO")})});
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    showToast("✅ Ticket marcado como resuelto","success");
+    cerrarResolucionModal(); await recargarTodo();
+  }catch(err){showToast("Error al resolver ticket","error");}
 }
 
 // ════════════════════════════════════════════════════════
 // USUARIOS — SHEET
 // ════════════════════════════════════════════════════════
-async function sha256(text) {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+async function sha256(text){const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(text));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");}
+
+async function cargarUsuariosSheet(){
+  const tbody=document.getElementById("usersSheetBody");
+  tbody.innerHTML=`<tr class="loading-row"><td colspan="5"><span class="spinner"></span>Cargando...</td></tr>`;
+  try{
+    const res=await fetch(API_USERS);if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    const data=await res.json();sheetUsers=Array.isArray(data)?data:[];
+    filtrarTabla();actualizarStatsPills();
+  }catch(err){document.getElementById("usersSheetBody").innerHTML=`<tr class="loading-row"><td colspan="5" style="color:var(--accent3)">⚠ Error al cargar usuarios.</td></tr>`;}
 }
 
-async function cargarUsuariosSheet() {
-  const tbody = document.getElementById("usersSheetBody");
-  tbody.innerHTML = `<tr class="loading-row"><td colspan="4"><span class="spinner"></span>Cargando...</td></tr>`;
-  try {
-    const res  = await fetch(API_USERS);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    sheetUsers = Array.isArray(data) ? data : [];
-    filtrarTabla();
-    actualizarStatsPills();
-  } catch(err) {
-    document.getElementById("usersSheetBody").innerHTML =
-      `<tr class="loading-row"><td colspan="4" style="color:var(--accent3)">⚠ Error al cargar usuarios.</td></tr>`;
-  }
-}
-
-function filtrarTabla() {
-  const search   = (document.getElementById("userSearch")?.value||"").toLowerCase();
-  const tbody    = document.getElementById("usersSheetBody");
-  const filtered = sheetUsers.filter(u =>
-    (u.NombreUsuario||"").toLowerCase().includes(search) || (u.Rol||"").toLowerCase().includes(search)
-  );
-  if (filtered.length===0) {
-    tbody.innerHTML=`<tr class="loading-row"><td colspan="4" style="color:var(--muted)">Sin usuarios${search?" con ese filtro":""}.</td></tr>`; return;
-  }
-  tbody.innerHTML = filtered.map(u => {
-    const rol=  (u.Rol||"usuario").toLowerCase();
-    const hash= (u.Contraseña||"").substring(0,20)+"…";
-    const ri=   sheetUsers.indexOf(u);
+function filtrarTabla(){
+  const search=(document.getElementById("userSearch")?.value||"").toLowerCase();
+  const tbody=document.getElementById("usersSheetBody");
+  const filtered=sheetUsers.filter(u=>(u.NombreUsuario||"").toLowerCase().includes(search)||(u.Rol||"").toLowerCase().includes(search)||(u.Departamento||"").toLowerCase().includes(search));
+  if(filtered.length===0){tbody.innerHTML=`<tr class="loading-row"><td colspan="5" style="color:var(--muted)">Sin usuarios${search?" con ese filtro":""}.</td></tr>`;return;}
+  tbody.innerHTML=filtered.map(u=>{
+    const rol=(u.Rol||"usuario").toLowerCase();
+    const hash=(u.Contraseña||"").substring(0,18)+"…";
+    const ri=sheetUsers.indexOf(u);
     return `<tr>
       <td><strong>${u.NombreUsuario||"—"}</strong></td>
       <td class="hash-cell" title="${u.Contraseña||""}">${hash}</td>
       <td><span class="role-badge ${rol}">${rol}</span></td>
+      <td class="depto-cell">${u.Departamento||"—"}</td>
       <td><div class="actions-row">
         <button class="btn-edit"   onclick="abrirEditarUsuario(${ri})">✏ Editar</button>
         <button class="btn-danger" onclick="eliminarUsuarioSheet(${ri})">✕ Eliminar</button>
@@ -1014,35 +812,35 @@ function filtrarTabla() {
   }).join("");
 }
 
-function actualizarStatsPills() {
-  document.getElementById("stat-total").textContent = sheetUsers.length;
-  document.getElementById("stat-tech").textContent  = sheetUsers.filter(u=>u.Rol==="tecnico").length;
-  document.getElementById("stat-user").textContent  = sheetUsers.filter(u=>u.Rol==="usuario").length;
-  document.getElementById("stat-adm").textContent   = sheetUsers.filter(u=>u.Rol==="admin").length;
+function actualizarStatsPills(){
+  document.getElementById("stat-total").textContent=sheetUsers.length;
+  document.getElementById("stat-tech").textContent=sheetUsers.filter(u=>u.Rol==="tecnico").length;
+  document.getElementById("stat-user").textContent=sheetUsers.filter(u=>u.Rol==="usuario").length;
+  document.getElementById("stat-adm").textContent=sheetUsers.filter(u=>u.Rol==="admin").length;
 }
 
-function previewHash() {
+function previewHash(){
   clearTimeout(hashDebounce);
-  const el=document.getElementById("hashPreview"), val=document.getElementById("fPassword").value;
-  if (!val) { el.textContent="El hash aparecerá aquí..."; el.className="field-hint"; return; }
+  const el=document.getElementById("hashPreview"),val=document.getElementById("fPassword").value;
+  if(!val){el.textContent="El hash aparecerá aquí...";el.className="field-hint";return;}
   el.textContent="Calculando...";
-  hashDebounce=setTimeout(async()=>{ const h=await sha256(val); el.textContent=h.substring(0,32)+"…"; el.className="field-hint hashed"; },300);
+  hashDebounce=setTimeout(async()=>{const h=await sha256(val);el.textContent=h.substring(0,32)+"…";el.className="field-hint hashed";},300);
 }
 
-function abrirCrearUsuario() {
+function abrirCrearUsuario(){
   editingRowNum=null;
   document.getElementById("modalTitle").textContent="Nuevo Usuario";
   document.getElementById("modalSubtitle").textContent="La contraseña se hashea con SHA-256.";
   document.getElementById("passLabel").textContent="Contraseña";
-  document.getElementById("fUsername").value=""; document.getElementById("fPassword").value="";
-  document.getElementById("fRol").value="usuario";
+  document.getElementById("fUsername").value="";document.getElementById("fPassword").value="";
+  document.getElementById("fRol").value="usuario";document.getElementById("fDepto").value="";
   document.getElementById("hashPreview").textContent="El hash aparecerá aquí...";
   document.getElementById("hashPreview").className="field-hint";
   document.getElementById("userModal").classList.add("open");
 }
 
-function abrirEditarUsuario(idx) {
-  const u=sheetUsers[idx]; if(!u) return;
+function abrirEditarUsuario(idx){
+  const u=sheetUsers[idx];if(!u)return;
   editingRowNum=idx;
   document.getElementById("modalTitle").textContent="Editar Usuario";
   document.getElementById("modalSubtitle").textContent="Deja la contraseña en blanco para conservar el hash actual.";
@@ -1050,57 +848,56 @@ function abrirEditarUsuario(idx) {
   document.getElementById("fUsername").value=u.NombreUsuario||"";
   document.getElementById("fPassword").value="";
   document.getElementById("fRol").value=u.Rol||"usuario";
+  document.getElementById("fDepto").value=u.Departamento||"";
   document.getElementById("hashPreview").textContent="Hash actual: "+(u.Contraseña||"").substring(0,24)+"…";
   document.getElementById("hashPreview").className="field-hint hashed";
   document.getElementById("userModal").classList.add("open");
 }
 
-async function guardarUsuarioSheet() {
+async function guardarUsuarioSheet(){
   const username=document.getElementById("fUsername").value.trim();
   const password=document.getElementById("fPassword").value.trim();
   const rol=document.getElementById("fRol").value;
+  const depto=document.getElementById("fDepto").value;
   const btn=document.getElementById("btnGuardar");
-  if (!username) { showToast("El nombre es obligatorio","error"); return; }
-  if (editingRowNum===null && !password) { showToast("La contraseña es obligatoria","error"); return; }
-  if (editingRowNum===null) {
-    const existe=sheetUsers.some(u=>(u.NombreUsuario||"").toLowerCase()===username.toLowerCase());
-    if(existe){showToast("El usuario ya existe","error");return;}
-  }
-  btn.disabled=true; btn.textContent="Guardando...";
-  try {
+  if(!username){showToast("El nombre es obligatorio","error");return;}
+  if(editingRowNum===null&&!password){showToast("La contraseña es obligatoria","error");return;}
+  if(editingRowNum===null){const existe=sheetUsers.some(u=>(u.NombreUsuario||"").toLowerCase()===username.toLowerCase());if(existe){showToast("El usuario ya existe","error");return;}}
+  btn.disabled=true;btn.textContent="Guardando...";
+  try{
     const hf=password?await sha256(password):(sheetUsers[editingRowNum]?.Contraseña||"");
-    const payload={NombreUsuario:username,Contraseña:hf,Rol:rol};
-    if (editingRowNum===null) {
+    const payload={NombreUsuario:username,Contraseña:hf,Rol:rol,Departamento:depto};
+    if(editingRowNum===null){
       const res=await fetch(API_USERS,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      if(!res.ok)throw new Error(`HTTP ${res.status}`);
       showToast("✓ Usuario creado","success");
-    } else {
+    }else{
       const enc=encodeURIComponent(sheetUsers[editingRowNum].NombreUsuario);
       const res=await fetch(`${API_USERS}/NombreUsuario/${enc}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      if(!res.ok)throw new Error(`HTTP ${res.status}`);
       showToast("✓ Usuario actualizado","success");
     }
-    cerrarModal(); await cargarUsuariosSheet();
-  } catch(err) { showToast("Error: "+err.message,"error"); }
-  finally { btn.disabled=false; btn.textContent="Guardar"; }
+    cerrarModal();await cargarUsuariosSheet();
+  }catch(err){showToast("Error: "+err.message,"error");}
+  finally{btn.disabled=false;btn.textContent="Guardar";}
 }
 
-async function eliminarUsuarioSheet(idx) {
-  const u=sheetUsers[idx]; if(!u) return;
-  if(!confirm(`¿Eliminar a "${u.NombreUsuario}"?`)) return;
-  try {
+async function eliminarUsuarioSheet(idx){
+  const u=sheetUsers[idx];if(!u)return;
+  if(!confirm(`¿Eliminar a "${u.NombreUsuario}"?`))return;
+  try{
     const res=await fetch(`${API_USERS}/NombreUsuario/${encodeURIComponent(u.NombreUsuario)}`,{method:"DELETE"});
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    showToast("✓ Usuario eliminado","success"); await cargarUsuariosSheet();
-  } catch(err) { showToast("Error: "+err.message,"error"); }
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    showToast("✓ Usuario eliminado","success");await cargarUsuariosSheet();
+  }catch(err){showToast("Error: "+err.message,"error");}
 }
 
-function cerrarModal() { document.getElementById("userModal").classList.remove("open"); editingRowNum=null; }
+function cerrarModal(){document.getElementById("userModal").classList.remove("open");editingRowNum=null;}
 
 // ════════════════════════════════════════════════════════
-// MIGRACIÓN
+// MIGRACIÓN — ahora incluye Departamento
 // ════════════════════════════════════════════════════════
-function abrirMigracion() {
+function abrirMigracion(){
   const existentes=sheetUsers.map(u=>(u.NombreUsuario||"").toLowerCase());
   const pendientes=USUARIOS_HARDCODED.filter(u=>!existentes.includes(u.username.toLowerCase()));
   document.getElementById("migratePreview").textContent=`${pendientes.length} usuarios por migrar (${USUARIOS_HARDCODED.length-pendientes.length} ya existen)`;
@@ -1111,16 +908,16 @@ function abrirMigracion() {
   document.getElementById("btnStartMigrate").disabled=false;
   document.getElementById("migrateModal").classList.add("open");
 }
-function cerrarMigracion() { document.getElementById("migrateModal").classList.remove("open"); }
+function cerrarMigracion(){document.getElementById("migrateModal").classList.remove("open");}
 
-async function ejecutarMigracion() {
+async function ejecutarMigracion(){
   const existentes=sheetUsers.map(u=>(u.NombreUsuario||"").toLowerCase());
   const pendientes=USUARIOS_HARDCODED.filter(u=>!existentes.includes(u.username.toLowerCase()));
   if(pendientes.length===0){showToast("Todos ya están en el Sheet","warning");cerrarMigracion();return;}
   const btnStart=document.getElementById("btnStartMigrate");
   const fill=document.getElementById("migrateFill"),label=document.getElementById("migrateLabel"),log=document.getElementById("migrateLog");
-  btnStart.disabled=true; document.getElementById("btnCancelMigrate").textContent="Cerrar";
-  document.getElementById("migrateProgress").classList.add("show"); log.innerHTML="";
+  btnStart.disabled=true;document.getElementById("btnCancelMigrate").textContent="Cerrar";
+  document.getElementById("migrateProgress").classList.add("show");log.innerHTML="";
   let ok=0,fail=0;
   for(let i=0;i<pendientes.length;i++){
     const u=pendientes[i];
@@ -1128,14 +925,14 @@ async function ejecutarMigracion() {
     fill.style.width=Math.round((i/pendientes.length)*100)+"%";
     try{
       const hash=await sha256(u.password);
-      const res=await fetch(API_USERS,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({NombreUsuario:u.username,Contraseña:hash,Rol:u.rol})});
-      if(!res.ok) throw new Error(`HTTP ${res.status}`);
-      ok++; log.innerHTML+=`<div style="color:var(--success)">✓ ${u.username} (${u.rol})</div>`;
-    }catch(err){fail++; log.innerHTML+=`<div style="color:var(--accent3)">✗ ${u.username} — ${err.message}</div>`;}
+      const res=await fetch(API_USERS,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({NombreUsuario:u.username,Contraseña:hash,Rol:u.rol,Departamento:u.depto||""})});
+      if(!res.ok)throw new Error(`HTTP ${res.status}`);
+      ok++;log.innerHTML+=`<div style="color:var(--success)">✓ ${u.username} (${u.rol} — ${u.depto||""})</div>`;
+    }catch(err){fail++;log.innerHTML+=`<div style="color:var(--accent3)">✗ ${u.username} — ${err.message}</div>`;}
     log.scrollTop=log.scrollHeight;
     await new Promise(r=>setTimeout(r,250));
   }
-  fill.style.width="100%"; label.textContent=`Completado: ${ok} OK, ${fail} errores.`;
+  fill.style.width="100%";label.textContent=`Completado: ${ok} OK, ${fail} errores.`;
   showToast(`${ok} usuarios migrados`,fail?"warning":"success");
   await cargarUsuariosSheet();
 }
@@ -1143,16 +940,13 @@ async function ejecutarMigracion() {
 // ════════════════════════════════════════════════════════
 // TOAST
 // ════════════════════════════════════════════════════════
-function showToast(msg,type="success") {
+function showToast(msg,type="success"){
   const t=document.getElementById("toast");
   t.textContent=(type==="success"?"✓ ":type==="error"?"⚠ ":"ℹ ")+msg;
   t.className="toast "+type+" show";
   setTimeout(()=>t.classList.remove("show"),3500);
 }
 
-// ════════════════════════════════════════════════════════
-// BOOT
-// ════════════════════════════════════════════════════════
 iniciar();
 </script>
 </body>
