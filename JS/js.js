@@ -1,46 +1,12 @@
-const usuarios = {
-  tecnico: [
-    { username: "Juan",   password: "12340094", rol: "tecnico" },
-    { username: "Xavier", password: "1234",     rol: "tecnico" }
-  ],
-  usuario: [
-    { username: "michel",     password: "1234",     rol: "usuario" },
-    { username: "Doralina",   password: "gm1234",   rol: "usuario" },
-    { username: "Michel",     password: "1234",     rol: "usuario" },
-    { username: "Pamela",     password: "1234",     rol: "usuario" },
-    { username: "Eliana",     password: "1234",     rol: "usuario" },
-    { username: "Anabell",    password: "1234",     rol: "usuario" },
-    { username: "Maitte",     password: "1234",     rol: "usuario" },
-    { username: "Hilda",      password: "1234",     rol: "usuario" },
-    { username: "Luisa",    password: "1234",     rol: "usuario" },
-    { username: "Carla",      password: "1234",     rol: "usuario" },
-    { username: "Clara",      password: "1234",     rol: "usuario" },
-    { username: "Francisca",  password: "1234",     rol: "usuario" },
-    { username: "Miladys",    password: "1234",     rol: "usuario" },
-    { username: "Jasnaya",    password: "1234",     rol: "usuario" },
-    { username: "Enelson",    password: "1234",     rol: "usuario" },
-    { username: "Alexandra",  password: "LA701234", rol: "usuario" },
-    { username: "Ricarda",    password: "1234",     rol: "usuario" },
-    { username: "Eduard",     password: "1234",     rol: "usuario" },
-    { username: "Enmanuel",   password: "1234",     rol: "usuario" },
-    { username: "Francis",    password: "1234",     rol: "usuario" },
-    { username: "Edgar",      password: "1234",     rol: "usuario" },
-    { username: "Merlyn",     password: "1234",     rol: "usuario" },
-    { username: "Elaine",     password: "1234",     rol: "usuario" },
-    { username: "Nathaly",     password: "La701234",     rol: "usuario" },
-    { username: "Esmerkin",   password: "CM1234",   rol: "usuario" }
-  ],
-  // ── ADMIN ─────────────────────────────────────────────
-  admin: [
-    { username: "Joel",  password: "GM1234", rol: "admin" },
-    { username: "Yanna", password: "GM1234", rol: "admin" }
-  ]
-};
-
 // ======================
-// API SheetBest
+// API SheetBest — TICKETS
 // ======================
 const API_URL = "https://api.sheetbest.com/sheets/5b2f2a41-ad46-4a89-8cc2-9f768b9870af";
+
+// ======================
+// API SheetBest — USUARIOS
+// ======================
+const USERS_SHEET_API = "https://api.sheetbest.com/sheets/6784d1e5-1e26-4605-9c19-329eb2b6ea12";
 
 // ======================
 // CLOUDINARY CONFIG
@@ -49,45 +15,203 @@ const CLOUDINARY_CLOUD_NAME    = "dy50psi1g";
 const CLOUDINARY_UPLOAD_PRESET = "tickets_preset";
 
 // ======================
-// ESTADO DE ARCHIVOS
+// CACHÉ DE USUARIOS
 // ======================
-let archivosSeleccionados = [];
-let archivosSubidos       = [];
+const CACHE_KEY    = "tickets_users_cache";
+const CACHE_TS_KEY = "tickets_users_cache_ts";
+const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutos
+
+// Rutas por rol
+const ROUTES = {
+  tecnico:    "Asistencia.html",
+  admin:      "Admin.html",
+  usuario:    "Dashboard.html",
+  superadmin: "SuperUsuario.html"  // ← ASÍ
+};
 
 // ======================
-// LOGIN
-// CORREGIDO: La comparación de username es case-insensitive para mayor
-// comodidad. La contraseña se compara tal cual (case-sensitive).
+// SHA-256 (Web Crypto API)
 // ======================
-function login() {
-  const user  = document.getElementById("username").value.trim();
-  const pass  = document.getElementById("password").value;
-  const error = document.getElementById("login-error");
+async function sha256(text) {
+  const encoder = new TextEncoder();
+  const data    = encoder.encode(text);
+  const buf     = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(buf))
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 
-  const todos      = [...usuarios.tecnico, ...usuarios.usuario, ...usuarios.admin];
-  const encontrado = todos.find(
-    u => u.username.toLowerCase() === user.toLowerCase() && u.password === pass
-  );
-
-  if (encontrado) {
-    // Guardamos el username EXACTO del array (canónico), no el que escribió el usuario.
-    // Esto garantiza que las comparaciones de asignación siempre coincidan.
-    localStorage.setItem("usuario", encontrado.username);
-    localStorage.setItem("rol",     encontrado.rol);
-
-    if      (encontrado.rol === "tecnico") window.location.href = "Asistencia.html";
-    else if (encontrado.rol === "admin")   window.location.href = "Admin.html";
-    else                                   window.location.href = "Dashboard.html";
-  } else {
-    error.textContent = "Usuario o contraseña incorrectos.";
+// ======================
+// CACHÉ — helpers
+// ======================
+function getCachedUsers() {
+  try {
+    const ts = parseInt(localStorage.getItem(CACHE_TS_KEY) || "0", 10);
+    if (Date.now() - ts > CACHE_TTL_MS) return null;
+    const raw = localStorage.getItem(CACHE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
   }
 }
 
+function setCachedUsers(users) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(users));
+    localStorage.setItem(CACHE_TS_KEY, Date.now().toString());
+  } catch (e) {
+    console.warn("No se pudo guardar caché:", e);
+  }
+}
+
+async function fetchUsersFromSheet() {
+  const res = await fetch(USERS_SHEET_API);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  const users = Array.isArray(data) ? data : [];
+  setCachedUsers(users);
+  return users;
+}
+
+// ======================
+// LOGIN
+// ======================
+async function login() {
+  // Soporta tanto id="username" como id="usuario" en el HTML
+  const userEl   = document.getElementById("username") || document.getElementById("usuario");
+  const passEl   = document.getElementById("password") || document.getElementById("contrasena");
+  const errorEl  = document.getElementById("login-error");
+  // Soporta tanto clase btn-ingresar como id btn-login
+  const btnLogin = document.getElementById("btn-login") || document.querySelector(".btn-ingresar");
+
+  const userInput = userEl ? userEl.value.trim() : "";
+  const passInput = passEl ? passEl.value : "";
+
+  if (!userInput || !passInput) {
+    if (errorEl) errorEl.textContent = "Completa usuario y contraseña.";
+    return;
+  }
+
+  if (btnLogin) { btnLogin.disabled = true; btnLogin.textContent = "Verificando..."; }
+  if (errorEl)  errorEl.textContent = "";
+
+  try {
+    const hashIngresado = await sha256(passInput);
+
+    // 1. Intentar con caché
+    let users     = getCachedUsers();
+    let usedCache = !!users;
+    if (!users) users = await fetchUsersFromSheet();
+
+    // 2. Buscar coincidencia
+    let encontrado = users.find(u =>
+      (u.NombreUsuario || "").toLowerCase() === userInput.toLowerCase() &&
+      (u.Contraseña    || "")               === hashIngresado
+    );
+
+    // 3. Si no encontró en caché, refrescar y reintentar
+    if (!encontrado && usedCache) {
+      console.log("[Auth] No encontrado en caché, refrescando...");
+      users      = await fetchUsersFromSheet();
+      encontrado = users.find(u =>
+        (u.NombreUsuario || "").toLowerCase() === userInput.toLowerCase() &&
+        (u.Contraseña    || "")               === hashIngresado
+      );
+    }
+
+    if (encontrado) {
+      // Superadmin: solo Juan
+      let rolFinal = encontrado.Rol;
+      if ((encontrado.NombreUsuario || "").toLowerCase() === "juan") {
+        rolFinal = "superadmin";
+      }
+
+      localStorage.setItem("usuario", encontrado.NombreUsuario);
+      localStorage.setItem("rol",     rolFinal);
+      window.location.href = ROUTES[rolFinal] || "Dashboard.html";
+    } else {
+      if (errorEl) errorEl.textContent = "Usuario o contraseña incorrectos.";
+    }
+
+  } catch (err) {
+    console.error("[Auth] Error en login:", err);
+
+    // Fallback: caché de emergencia (aunque esté expirado)
+    try {
+      const emergencia = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
+      if (emergencia) {
+        console.warn("[Auth] Sin red — usando caché de emergencia");
+        const hashIngresado = await sha256(passInput);
+        const encontrado    = emergencia.find(u =>
+          (u.NombreUsuario || "").toLowerCase() === userInput.toLowerCase() &&
+          (u.Contraseña    || "")               === hashIngresado
+        );
+        if (encontrado) {
+          let rolFinal = encontrado.Rol;
+          if ((encontrado.NombreUsuario || "").toLowerCase() === "juan") {
+            rolFinal = "superadmin";
+          }
+          localStorage.setItem("usuario", encontrado.NombreUsuario);
+          localStorage.setItem("rol",     rolFinal);
+          window.location.href = ROUTES[rolFinal] || "Dashboard.html";
+          return;
+        }
+      }
+    } catch { /* ignorar */ }
+
+    if (errorEl) errorEl.textContent = "Error de conexión. Inténtalo de nuevo.";
+
+  } finally {
+    if (btnLogin) { btnLogin.disabled = false; btnLogin.textContent = "Ingresar"; }
+  }
+}
+
+// ======================
+// LOGOUT
+// ======================
 function logout() {
   localStorage.removeItem("usuario");
   localStorage.removeItem("rol");
   window.location.href = "index.html";
 }
+
+// ======================
+// PROTECCIÓN DE PÁGINAS
+// ======================
+function protegerPagina(rolRequerido) {
+  const rol = localStorage.getItem("rol");
+  if (!rol || rol !== rolRequerido) {
+    window.location.href = "index.html";
+  }
+}
+
+// Protección para múltiples roles permitidos
+function protegerPaginaRoles(...rolesPermitidos) {
+  const rol = localStorage.getItem("rol");
+  if (!rol || !rolesPermitidos.includes(rol)) {
+    window.location.href = "index.html";
+  }
+}
+
+// ======================
+// ENTER en campos de login
+// ======================
+document.addEventListener("DOMContentLoaded", () => {
+  const passEl = document.getElementById("password") || document.getElementById("contrasena");
+  if (passEl) passEl.addEventListener("keydown", e => {
+    if (e.key === "Enter") login();
+  });
+  const userEl = document.getElementById("username") || document.getElementById("usuario");
+  if (userEl) userEl.addEventListener("keydown", e => {
+    if (e.key === "Enter") login();
+  });
+});
+
+// ======================
+// ESTADO DE ARCHIVOS
+// ======================
+let archivosSeleccionados = [];
+let archivosSubidos       = [];
 
 // ======================
 // GENERAR ID
@@ -206,9 +330,9 @@ async function subirArchivosACloudinary() {
   if (progressFill) progressFill.style.width = "100%";
 
   setTimeout(() => {
-    if (progressBar)  { progressBar.style.display  = "none"; }
-    if (statusLabel)  { statusLabel.style.display   = "none"; }
-    if (progressFill) { progressFill.style.width    = "0%";   }
+    if (progressBar)  progressBar.style.display  = "none";
+    if (statusLabel)  statusLabel.style.display   = "none";
+    if (progressFill) progressFill.style.width    = "0%";
   }, 3000);
 
   return resultados;
@@ -236,23 +360,22 @@ async function crearTicket() {
   if (btnEnviar) btnEnviar.textContent = "Enviando ticket...";
 
   const ticketId    = "TK-" + Date.now();
-  // CORREGIDO: Usar siempre "es-DO" para garantizar formato consistente
   const fecha       = new Date().toLocaleString("es-DO");
   const adjuntosStr = archivosSubidos.map(a => a.url).join(", ");
 
   const nuevoTicket = {
-    id:            ticketId,
-    titulo:        titulo,
-    descripcion:   descripcion,
-    depto:         depto,
-    asignado:      asignadoA,
-    estado:        "Pendiente",
-    usuario:       usuario,
-    fecha:         fecha,
-    adjuntos:      adjuntosStr,
-    resolucion:    "",
-    participantes: "",
-    fecha_resuelto:""
+    id:             ticketId,
+    titulo:         titulo,
+    descripcion:    descripcion,
+    depto:          depto,
+    asignado:       asignadoA,
+    estado:         "Pendiente",
+    usuario:        usuario,
+    fecha:          fecha,
+    adjuntos:       adjuntosStr,
+    resolucion:     "",
+    participantes:  "",
+    fecha_resuelto: ""
   };
 
   try {
@@ -292,14 +415,14 @@ function enviarCorreoTicket(ticket, adjuntosUrls = []) {
   const form = document.getElementById("ticketForm");
   if (!form) { console.warn("⚠️ ticketForm no encontrado"); return; }
 
-  form.querySelector('[name="ticket_id"]').value           = ticket.id           || "";
-  form.querySelector('[name="ticket_usuario"]').value      = ticket.usuario       || "";
-  form.querySelector('[name="ticket_departamento"]').value = ticket.depto         || "";
-  form.querySelector('[name="ticket_titulo"]').value       = ticket.titulo        || "";
+  form.querySelector('[name="ticket_id"]').value           = ticket.id          || "";
+  form.querySelector('[name="ticket_usuario"]').value      = ticket.usuario      || "";
+  form.querySelector('[name="ticket_departamento"]').value = ticket.depto        || "";
+  form.querySelector('[name="ticket_titulo"]').value       = ticket.titulo       || "";
   form.querySelector('[name="ticket_descripcion"]').value  =
     ticket.descripcion +
     (adjuntosUrls.length ? "\n\n📎 Adjuntos:\n" + adjuntosUrls.join("\n") : "");
-  form.querySelector('[name="ticket_fecha"]').value        = ticket.fecha         || "";
+  form.querySelector('[name="ticket_fecha"]').value        = ticket.fecha        || "";
 
   const asignadoInput = form.querySelector('[name="ticket_asignado"]');
   if (asignadoInput) asignadoInput.value = ticket.asignado || "Sin asignar";
@@ -311,17 +434,10 @@ function enviarCorreoTicket(ticket, adjuntosUrls = []) {
 
 // ======================
 // HELPER — construir card de ticket
-// esAdmin: true              → muestra botón 🔁 Reasignar
-// mostrarBotonesAdmin: true  → muestra botones de acción en "Mis Asignados"
-//   · Pendiente  → 🔧 En Proceso + ✅ Resuelto
-//   · En Proceso → solo ✅ Resuelto
-// Escribe data-fecha-resuelto en cards resueltas para que
-// el filtro del Admin pueda leer la fecha sin reparsear HTML.
 // ======================
 function _buildTicketCard(t, opciones = {}) {
   const { mostrarBotones = false, esAdmin = false, mostrarBotonesAdmin = false } = opciones;
 
-  // Mapa de username canónico → nombre completo para mostrar
   const nombresCompletos = {
     "Xavier": "Xavier Rosario",
     "Juan":   "Juan Francisco Jiménez",
@@ -357,18 +473,15 @@ function _buildTicketCard(t, opciones = {}) {
       </div>`;
   }
 
-  // ── Botones de acción ─────────────────────────────────
   let botonesAccion = "";
 
   if (t.estado !== "Resuelto") {
     if (mostrarBotones) {
-      // Vista técnico: siempre ambos botones (lógica original)
       botonesAccion = `
         <button class="btn-proceso"  onclick="cambiarEstado('${encodeURIComponent(t.id)}', 'En Proceso')">🔧 En Proceso</button>
         <button class="btn-resuelto" onclick="marcarResuelto('${encodeURIComponent(t.id)}')">✅ Resuelto</button>
       `;
     } else if (mostrarBotonesAdmin) {
-      // Vista admin "Mis Asignados": botones según estado
       if (t.estado === "Pendiente") {
         botonesAccion = `
           <button class="btn-proceso"  onclick="cambiarEstadoAdmin('${encodeURIComponent(t.id)}', 'En Proceso')">🔧 En Proceso</button>
@@ -382,18 +495,13 @@ function _buildTicketCard(t, opciones = {}) {
     }
   }
 
-  // Botón reasignar — solo visible para admin
   const btnReasignar = esAdmin ? `
     <button class="btn-reasignar" onclick="abrirReasignar('${encodeURIComponent(t.id)}')">🔁 Reasignar</button>
   ` : "";
 
   const div = document.createElement("div");
   div.className = "ticket-card";
-
-  // Guardar fecha_resuelto en dataset para que el filtro del Admin la lea
-  if (t.fecha_resuelto) {
-    div.dataset.fechaResuelto = t.fecha_resuelto;
-  }
+  if (t.fecha_resuelto) div.dataset.fechaResuelto = t.fecha_resuelto;
 
   div.innerHTML = `
     <div class="depto-tag">[${t.depto || ""}]</div>
@@ -510,8 +618,6 @@ function eliminarTicket(id) {
 
 // ======================
 // MOSTRAR TICKETS TÉCNICO
-// CORREGIDO: La comparación usa toLowerCase() en ambos lados para ser
-// insensible a mayúsculas, igual que el login.
 // ======================
 function mostrarTodosTickets() {
   const pendientes = document.getElementById("pendientes");
@@ -543,7 +649,6 @@ function mostrarTodosTickets() {
         }
       });
 
-      // Mensajes vacíos
       if (pendientes.innerHTML.trim() === "")
         pendientes.innerHTML = "<p style='color:#94a3b8; text-align:center;'>Sin tickets pendientes.</p>";
       if (enProceso.innerHTML.trim() === "")
@@ -554,10 +659,6 @@ function mostrarTodosTickets() {
 
 // ======================
 // MOSTRAR TICKETS ADMIN
-// Ve TODOS los tickets. Los resueltos van al slider horizontal
-// con data-fecha-resuelto para que el filtro del HTML los maneje.
-// CORREGIDO: La comparación de "mis asignados" usa toLowerCase() para
-// ser consistente con los usernames canónicos del array de usuarios.
 // ======================
 function mostrarTicketsAdmin() {
   const pendientes   = document.getElementById("pendientes");
@@ -584,12 +685,9 @@ function mostrarTicketsAdmin() {
           enProceso.appendChild(_buildTicketCard(t, { mostrarBotones: false, esAdmin: true }));
           cntProceso++;
         } else if (t.estado === "Resuelto") {
-          // Agregar todos los resueltos; el filtro del HTML se encargará de mostrar/ocultar
           resueltos.appendChild(_buildTicketCard(t, { mostrarBotones: false, esAdmin: true }));
         }
 
-        // Sección mis asignados (solo activos)
-        // CORREGIDO: Comparación case-insensitive + botones de acción habilitados
         if (
           misAsignados &&
           t.asignado &&
@@ -602,13 +700,11 @@ function mostrarTicketsAdmin() {
         }
       });
 
-      // Actualizar contadores de stats (resueltos lo maneja el filtro)
       const el = id => document.getElementById(id);
-      if (el("statsTotal"))      el("statsTotal").textContent      = data.length;
-      if (el("statsPendientes")) el("statsPendientes").textContent  = cntPendientes;
-      if (el("statsEnProceso"))  el("statsEnProceso").textContent   = cntProceso;
+      if (el("statsTotal"))      el("statsTotal").textContent     = data.length;
+      if (el("statsPendientes")) el("statsPendientes").textContent = cntPendientes;
+      if (el("statsEnProceso"))  el("statsEnProceso").textContent  = cntProceso;
 
-      // Mensajes vacíos pendientes / proceso
       if (misAsignados && misAsignados.innerHTML.trim() === "")
         misAsignados.innerHTML = "<p style='color:#94a3b8; text-align:center;'>No tienes tickets asignados activos.</p>";
       if (pendientes.innerHTML.trim() === "")
@@ -616,7 +712,6 @@ function mostrarTicketsAdmin() {
       if (enProceso.innerHTML.trim() === "")
         enProceso.innerHTML    = "<p style='color:#94a3b8; text-align:center;'>Ningún ticket en proceso.</p>";
 
-      // Aplicar filtro de resueltos (por defecto: mes en curso)
       if (typeof aplicarFiltroResueltos === "function") {
         aplicarFiltroResueltos();
       }
@@ -628,7 +723,7 @@ function mostrarTicketsAdmin() {
 }
 
 // ======================
-// CAMBIAR ESTADO (PATCH) — Técnico
+// CAMBIAR ESTADO — Técnico
 // ======================
 function cambiarEstado(id, nuevoEstado) {
   fetch(`${API_URL}/id/${encodeURIComponent(id)}`, {
@@ -642,8 +737,7 @@ function cambiarEstado(id, nuevoEstado) {
 }
 
 // ======================
-// CAMBIAR ESTADO (PATCH) — Admin
-// Igual que cambiarEstado pero refresca la vista de admin.
+// CAMBIAR ESTADO — Admin
 // ======================
 function cambiarEstadoAdmin(id, nuevoEstado) {
   fetch(`${API_URL}/id/${encodeURIComponent(id)}`, {
@@ -684,8 +778,6 @@ function guardarResolucion() {
     estado:         "Resuelto",
     participantes:  participantes,
     resolucion:     detalle,
-    // CORREGIDO: Siempre usar "es-DO" para garantizar formato consistente
-    // con el parseo en aplicarFiltroResueltos() de Admin.html
     fecha_resuelto: new Date().toLocaleString("es-DO")
   };
 
@@ -698,32 +790,25 @@ function guardarResolucion() {
   .then(() => {
     alert("✅ Ticket marcado como resuelto");
     cerrarModal();
-    // Refrescar la vista correcta según el rol activo
     const rol = localStorage.getItem("rol");
-    if (rol === "admin")   mostrarTicketsAdmin();
-    else                   mostrarTodosTickets();
+    if (rol === "admin" || rol === "superadmin") mostrarTicketsAdmin();
+    else                                          mostrarTodosTickets();
     mostrarTickets();
   })
   .catch(err => console.error("Error:", err));
 }
 
 // ======================
-// MODAL REASIGNAR TICKET (ADMIN)
-// CORREGIDO: Los valores en TECNICOS_DISPONIBLES ahora usan los mismos
-// usernames canónicos del array de login (cortos, sin apellido completo).
-// La función _buildTicketCard ya se encarga de mostrar el nombre completo.
-// Esto garantiza que la comparación en mostrarTodosTickets() y
-// mostrarTicketsAdmin() funcione correctamente.
+// MODAL REASIGNAR (ADMIN)
 // ======================
 const TECNICOS_DISPONIBLES = [
   "Sin asignar",
-  "Juan",    // → Juan Francisco Jiménez (se muestra en badge)
-  "Joel",    // → Joel Holguin
-  "Yanna",   // → Yanna Martínez
-  "Xavier"   // → Xavier Rosario
+  "Juan",
+  "Joel",
+  "Yanna",
+  "Xavier"
 ];
 
-// Mapa para mostrar nombre completo en el select del modal
 const NOMBRES_COMPLETOS_TECNICOS = {
   "Juan":   "Juan Francisco Jiménez",
   "Joel":   "Joel Holguin",
@@ -798,19 +883,12 @@ function cerrarAyuda() { document.getElementById("ayudaModal").classList.remove(
 
 // ======================
 // AUTO REFRESH
-// ─ Usuario / Técnico : cada 30 segundos
-// ─ Admin             : cada 1 hora (3 600 000 ms)
 // ======================
 (function iniciarAutoRefresh() {
   const rol = localStorage.getItem("rol");
-
-  if (rol === "usuario") {
-    setInterval(() => mostrarTickets(), 30000);
-  } else if (rol === "tecnico") {
-    setInterval(() => mostrarTodosTickets(), 30000);
-  } else if (rol === "admin") {
-    setInterval(() => mostrarTicketsAdmin(), 3600000);
-  }
+  if      (rol === "usuario")                    setInterval(() => mostrarTickets(),      30000);
+  else if (rol === "tecnico")                    setInterval(() => mostrarTodosTickets(), 30000);
+  else if (rol === "admin" || rol === "superadmin") setInterval(() => mostrarTicketsAdmin(), 60000);
 })();
 
 // ======================
@@ -818,7 +896,7 @@ function cerrarAyuda() { document.getElementById("ayudaModal").classList.remove(
 // ======================
 window.onload = function () {
   const rol = localStorage.getItem("rol");
-  if      (rol === "usuario")  mostrarTickets();
-  else if (rol === "tecnico")  mostrarTodosTickets();
-  else if (rol === "admin")    mostrarTicketsAdmin();
+  if      (rol === "usuario")                       mostrarTickets();
+  else if (rol === "tecnico")                       mostrarTodosTickets();
+  else if (rol === "admin" || rol === "superadmin") mostrarTicketsAdmin();
 };
