@@ -580,15 +580,28 @@ function mostrarTickets() {
             </div>`;
         }
 
-        const div = document.createElement("div");
-        div.className = "ticket-item";
-        div.innerHTML = `
-          <h4><span style="color:#4e54c8;">[${t.depto || ""}]</span> ${t.titulo}</h4>
-          <p>${t.descripcion}</p>
-          <p><strong>Departamento:</strong> ${t.depto || ""}</p>
-          <p><strong>Fecha:</strong> ${t.fecha || ""}</p>
-          ${asignadoBadge}
-          <span class="ticket-status ${statusClass}">${t.estado}</span>
+     const div = document.createElement("div");
+div.className = "ticket-item";
+div.innerHTML = `
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+    <h4 style="margin:0;"><span style="color:#4e54c8;">[${t.depto || ""}]</span> ${t.titulo}</h4>
+    <span style="
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: 700;
+      background: #ede9fe;
+      color: #5b21b6;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    "># ${t.id || "—"}</span>
+  </div>
+  <p>${t.descripcion}</p>
+  <p><strong>Departamento:</strong> ${t.depto || ""}</p>
+  <p><strong>Fecha:</strong> ${t.fecha || ""}</p>
+  ${asignadoBadge}
+  <span class="ticket-status ${statusClass}">${t.estado}</span>
           ${resolucionHtml}
           ${adjuntosHtml}
           <br>
