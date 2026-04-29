@@ -1,390 +1,811 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta charset="UTF-8">
-  <title>Panel de Asistencia</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel Técnico</title>
   <link rel="icon" type="image/png" href="IMG/2.ico">
-  <link rel="stylesheet" href="CSS/css.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0d0d14;
+      --surface: #13131d;
+      --surface2: #1a1a27;
+      --surface3: #21212f;
+      --border: rgba(255,255,255,0.06);
+      --border2: rgba(255,255,255,0.11);
+      --accent: #7c6fff;
+      --accent2: #4fc3ff;
+      --success: #3be38e;
+      --warning: #ffd166;
+      --danger: #ff6b6b;
+      --text: #eeeef8;
+      --muted: #7070a0;
+      --muted2: #4a4a6a;
+      --font: 'Plus Jakarta Sans', sans-serif;
+      --mono: 'DM Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+    .layout { display: flex; min-height: 100vh; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 210px; flex-shrink: 0; background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: sticky; top: 0; height: 100vh;
+    }
+    .sb-logo { padding: 22px 16px 16px; border-bottom: 1px solid var(--border); }
+    .sb-logo .badge {
+      background: var(--accent); color: #fff; font-size: 9px; font-weight: 700;
+      letter-spacing: 2px; padding: 2px 8px; border-radius: 4px;
+      text-transform: uppercase; display: inline-block; margin-bottom: 7px;
+    }
+    .sb-logo h1 { font-size: 18px; font-weight: 800; line-height: 1.2; }
+    .sb-logo p  { font-size: 10px; color: var(--muted); font-family: var(--mono); margin-top: 3px; }
+    .nav-section { padding: 14px 12px 6px; font-size: 9px; letter-spacing: 2px; color: var(--muted2); text-transform: uppercase; }
+    .nav-item {
+      margin: 2px 8px; padding: 9px 12px; border-radius: 8px;
+      display: flex; align-items: center; gap: 9px; cursor: pointer;
+      font-size: 12px; font-weight: 600; color: var(--muted);
+      transition: all 0.15s; border: 1px solid transparent; user-select: none;
+    }
+    .nav-item:hover { background: var(--surface2); color: var(--text); }
+    .nav-item.active { background: rgba(124,111,255,0.15); color: var(--accent); border-color: rgba(124,111,255,0.2); }
+    .nav-icon { font-size: 14px; flex-shrink: 0; }
+    .sb-footer { margin-top: auto; padding: 12px; border-top: 1px solid var(--border); }
+    .user-pill {
+      display: flex; align-items: center; gap: 9px;
+      background: var(--surface2); border-radius: 8px; padding: 8px 10px; margin-bottom: 8px;
+    }
+    .user-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0; color: #fff;
+    }
+    .user-info p:first-child { font-size: 12px; font-weight: 600; }
+    .user-info p:last-child  { font-size: 10px; color: var(--accent); font-family: var(--mono); }
+    .btn-logout {
+      width: 100%; padding: 7px; background: transparent;
+      border: 1px solid var(--border2); color: var(--muted);
+      border-radius: 8px; font-family: var(--font); font-size: 11px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-logout:hover { background: rgba(255,107,107,0.12); color: var(--danger); border-color: rgba(255,107,107,0.3); }
+
+    /* ── MAIN ── */
+    .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .topbar {
+      padding: 16px 26px; border-bottom: 1px solid var(--border);
+      background: var(--surface); display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 50;
+    }
+    .topbar h2 { font-size: 19px; font-weight: 800; }
+    .topbar-sub { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
+    .dot {
+      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--success); margin-right: 5px;
+      box-shadow: 0 0 7px var(--success); animation: blink 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .btn-refresh {
+      padding: 6px 15px; background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--muted); border-radius: 8px; font-family: var(--font); font-size: 11px;
+      font-weight: 600; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-refresh:hover { color: var(--text); border-color: var(--accent); }
+
+    /* ── VIEWS ── */
+    .view { display: none; padding: 22px 26px; }
+    .view.active { display: block; }
+
+    /* ── STATS ROW ── */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; margin-bottom: 22px; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 13px;
+      padding: 15px 17px; position: relative; overflow: hidden;
+    }
+    .stat-card::before {
+      content:''; position:absolute; top:0; left:0; right:0;
+      height:3px; border-radius:3px 3px 0 0;
+    }
+    .stat-card.c1::before { background: var(--accent); }
+    .stat-card.c2::before { background: var(--warning); }
+    .stat-card.c3::before { background: var(--accent2); }
+    .stat-card.c4::before { background: var(--success); }
+    .stat-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; font-family: var(--mono); }
+    .stat-value { font-size: 30px; font-weight: 800; margin-top: 5px; letter-spacing: -1px; }
+    .stat-card.c1 .stat-value { color: var(--accent); }
+    .stat-card.c2 .stat-value { color: var(--warning); }
+    .stat-card.c3 .stat-value { color: var(--accent2); }
+    .stat-card.c4 .stat-value { color: var(--success); }
+
+    /* ── DASH GRID ── */
+    .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .dash-card { background: var(--surface); border: 1px solid var(--border); border-radius: 13px; padding: 17px 19px; }
+    .dash-card-title { font-size: 13px; font-weight: 700; margin-bottom: 14px; }
+
+    /* ── DEPT BARS ── */
+    .dept-row { margin-bottom: 13px; }
+    .dept-meta { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; align-items: center; }
+    .dept-name { color: var(--text); font-weight: 600; }
+    .dept-stats { color: var(--muted); font-family: var(--mono); display: flex; gap: 10px; font-size: 10px; }
+    .dept-bar-bg { background: var(--surface3); border-radius: 4px; height: 6px; overflow: hidden; }
+    .dept-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.8s ease; }
+
+    /* ── RECENT LIST ── */
+    .recent-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+    }
+    .recent-item:last-child { border-bottom: none; }
+    .recent-title { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+    .recent-meta  { font-size: 10px; color: var(--muted); font-family: var(--mono); }
+
+    /* ── KANBAN ── */
+    .kanban-cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .kanban-col  { display: flex; flex-direction: column; }
+    .col-header  {
+      padding: 10px 14px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px 10px 0 0; display: flex; align-items: center; justify-content: space-between;
+    }
+    .col-title { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+    .col-count  {
+      font-family: var(--mono); font-size: 10px; background: var(--surface3);
+      border: 1px solid var(--border2); padding: 2px 8px; border-radius: 20px; color: var(--muted);
+    }
+    .ticket-list {
+      background: var(--surface2); border: 1px solid var(--border); border-top: none;
+      border-radius: 0 0 10px 10px; padding: 10px;
+      display: flex; flex-direction: column; gap: 8px; min-height: 80px;
+    }
+
+    /* ── TICKET CARD ── */
+    .tcard {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 13px 14px; transition: all 0.2s;
+    }
+    .tcard:hover { border-color: var(--border2); transform: translateY(-1px); }
+    .tcard-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+    .tcard-id    { font-family: var(--mono); font-size: 9px; color: var(--muted2); margin-bottom: 2px; }
+    .tcard-title { font-size: 13px; font-weight: 700; line-height: 1.3; }
+    .tcard-desc  { font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .tcard-meta  { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+    .badge { font-size: 9px; font-weight: 600; padding: 2px 8px; border-radius: 20px; font-family: var(--mono); }
+    .badge-pend { background: rgba(255,209,102,0.12); color: var(--warning); border: 1px solid rgba(255,209,102,0.2); }
+    .badge-proc { background: rgba(79,195,255,0.12);  color: var(--accent2); border: 1px solid rgba(79,195,255,0.2); }
+    .badge-res  { background: rgba(59,227,142,0.12);  color: var(--success); border: 1px solid rgba(59,227,142,0.2); }
+    .badge-dept { background: rgba(124,111,255,0.12); color: var(--accent);  border: 1px solid rgba(124,111,255,0.2); }
+    .badge-user { background: var(--surface3); color: var(--muted); border: 1px solid var(--border); }
+    .tcard-footer { font-size: 10px; color: var(--muted2); font-family: var(--mono); }
+    .tcard-actions { display: flex; gap: 6px; margin-top: 9px; flex-wrap: wrap; }
+    .btn-proc {
+      padding: 5px 11px; background: rgba(79,195,255,0.12); color: var(--accent2);
+      border: 1px solid rgba(79,195,255,0.25); border-radius: 6px;
+      font-family: var(--font); font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-proc:hover { background: rgba(79,195,255,0.25); }
+    .btn-res {
+      padding: 5px 11px; background: rgba(59,227,142,0.12); color: var(--success);
+      border: 1px solid rgba(59,227,142,0.25); border-radius: 6px;
+      font-family: var(--font); font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-res:hover { background: rgba(59,227,142,0.25); }
+
+    .empty-state { text-align: center; padding: 28px 10px; color: var(--muted2); font-size: 12px; }
+
+    /* ── SEARCH / FILTERS ── */
+    .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+    .search-box {
+      flex: 1; min-width: 180px; padding: 6px 13px; border-radius: 20px;
+      background: var(--surface2); border: 1px solid var(--border2); color: var(--text);
+      font-family: var(--font); font-size: 11px; outline: none;
+    }
+    .search-box::placeholder { color: var(--muted2); }
+    .search-box:focus { border-color: var(--accent); }
+
+    /* ── RESUELTOS GRID ── */
+    .section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .section-ttl { font-size: 13px; font-weight: 700; }
+    .section-cnt {
+      font-size: 10px; font-family: var(--mono); color: var(--muted);
+      background: var(--surface2); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border);
+    }
+    .res-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+    .res-card {
+      background: var(--surface); border: 1px solid rgba(59,227,142,0.12); border-radius: 10px;
+      padding: 14px 16px; transition: all 0.2s;
+    }
+    .res-card:hover { transform: translateY(-2px); border-color: rgba(59,227,142,0.25); }
+    .res-box {
+      margin-top: 9px; padding: 9px 11px;
+      background: rgba(59,227,142,0.06); border-radius: 6px;
+      border-left: 3px solid var(--success); font-size: 11px; color: #a0f0cc; line-height: 1.5;
+    }
+
+    /* ── ADJUNTOS ── */
+    .adj-link {
+      display: inline-block; color: var(--accent2); text-decoration: none;
+      font-family: var(--mono); font-size: 10px; margin-right: 8px; margin-top: 5px;
+    }
+    .adj-link:hover { text-decoration: underline; }
+
+    /* ── MODAL ── */
+    .overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(5px); display: none; align-items: center;
+      justify-content: center; z-index: 999;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border2); border-radius: 14px;
+      padding: 26px; width: 90%; max-width: 450px; animation: slideUp 0.2s ease;
+    }
+    @keyframes slideUp { from{transform:translateY(16px);opacity:0} to{transform:translateY(0);opacity:1} }
+    .modal h3 { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+    .modal-sub {
+      font-size: 11px; color: var(--muted); font-family: var(--mono);
+      margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border);
+    }
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--muted); margin-bottom: 5px; font-family: var(--mono);
+    }
+    .form-group textarea {
+      width: 100%; padding: 9px 12px; background: var(--surface2);
+      border: 1px solid var(--border2); border-radius: 8px; color: var(--text);
+      font-family: var(--font); font-size: 12px; outline: none; resize: none; min-height: 90px;
+    }
+    .form-group textarea:focus { border-color: var(--accent); }
+    .form-group input {
+      width: 100%; padding: 9px 12px; background: var(--surface2);
+      border: 1px solid var(--border2); border-radius: 8px; color: var(--text);
+      font-family: var(--font); font-size: 12px; outline: none;
+    }
+    .form-group input:focus { border-color: var(--accent); }
+    .modal-actions {
+      display: flex; gap: 8px; justify-content: flex-end;
+      margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border);
+    }
+    .btn-cancel {
+      padding: 8px 16px; border-radius: 8px; font-family: var(--font); font-size: 12px;
+      font-weight: 600; background: transparent; color: var(--muted);
+      border: 1px solid var(--border2); cursor: pointer; transition: all 0.15s;
+    }
+    .btn-cancel:hover { color: var(--text); }
+    .btn-save {
+      padding: 8px 16px; border-radius: 8px; font-family: var(--font); font-size: 12px;
+      font-weight: 700; background: var(--success); color: #0a1a12; border: none; cursor: pointer;
+    }
+    .btn-save:hover { opacity: 0.88; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 22px; right: 22px; background: var(--surface2);
+      border: 1px solid var(--border2); border-radius: 8px; padding: 10px 16px;
+      font-size: 12px; font-weight: 600; z-index: 1000; opacity: 0;
+      transform: translateY(8px); transition: all 0.25s; pointer-events: none; max-width: 280px;
+    }
+    .toast.show    { opacity: 1; transform: translateY(0); }
+    .toast.success { border-left: 3px solid var(--success); }
+    .toast.error   { border-left: 3px solid var(--danger); }
+
+    /* ── MODAL AYUDA ── */
+    .card-container { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .card-ayuda {
+      background: var(--surface2); border-radius: 14px; padding: 18px 14px;
+      text-align: center; border: 1px solid var(--border); cursor: default;
+      width: 160px; transition: all 0.3s;
+    }
+    .card-ayuda:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 12px 28px rgba(0,0,0,0.35); }
+    .card-ayuda img { width: 70px; height: 70px; border-radius: 50%; margin-bottom: 9px; object-fit: cover; border: 2px solid var(--border2); }
+    .card-ayuda h4 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+    .card-ayuda p  { font-size: 11px; color: var(--muted); margin: 2px 0; }
+    .help-modal { max-width: 660px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .dash-grid  { grid-template-columns: 1fr; }
+      .kanban-cols { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .sidebar { width: 60px; }
+      .sb-logo h1, .sb-logo p, .sb-logo .badge, .nav-item span:not(.nav-icon), .user-info, .btn-logout { display: none; }
+      .nav-item { justify-content: center; padding: 10px; }
+      .user-pill { justify-content: center; }
+      .main { padding: 0; }
+      .view { padding: 14px; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
 </head>
 <body>
 
-  <nav class="navbar">
-    <h2>Panel Técnico</h2>
-    <div style="display:flex; gap:10px;">
-      <button class="user-btn" id="userBtn">
-        👤 <span id="userNameTop"></span>
-      </button>
-      <button onclick="abrirAyuda()">Ayuda rápida</button>
-      <button onclick="logout()">Cerrar Sesión</button>
+<div class="layout">
+
+  <!-- ════ SIDEBAR ════ -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <span class="badge">Técnico</span>
+      <h1>Panel<br>Asistencia</h1>
+      <p>Helpdesk v2</p>
     </div>
-  </nav>
-
-  <!-- ================== MODAL AYUDA ================== -->
-  <div id="ayudaModal" class="modal">
-    <div class="modal-content">
-      <h2 style="text-align:center; margin-bottom: 20px;">📞 Ayuda Rápida IT</h2>
-      <p style="text-align:center; margin-bottom: 20px;">Contacta a nuestros técnicos disponibles:</p>
-
-      <div class="card-container">
-        <div class="card-ayuda">
-          <img src="https://ui-avatars.com/api/?name=Yanna+Martinez&background=0D8ABC&color=fff" alt="Yanna">
-          <h4>YANNA MARTINEZ</h4>
-          <p>📧 y.martinez@grupomichel.com</p>
-          <p>📟 Flota: (809) 390-5286</p>
-        </div>
-
-        <div class="card-ayuda">
-          <img src="https://ui-avatars.com/api/?name=Joel+Holguin&background=F39C12&color=fff" alt="Joel">
-          <h4>Joel Holguin</h4>
-          <p>📧 j.holguin@grupomichel.com</p>
-          <p>📟 Flota: (809) 722-2874</p>
-        </div>
-
-        <div class="card-ayuda">
-          <img src="https://ui-avatars.com/api/?name=Xavier+Rosario&background=E74C3C&color=fff" alt="Xavier">
-          <h4>Xavier Rosario</h4>
-          <p>📧 x.rosario@grupomichel.com</p>
-          <p>📟 Flota: (000) 000-0000</p>
-        </div>
-
-        <div class="card-ayuda">
-          <img src="https://ui-avatars.com/api/?name=JuanFrancisco&background=27AE60&color=fff" alt="Juan Francisco">
-          <h4>Juan F. Jimenez</h4>
-          <p>📧 dptoIT@grupomichel.com</p>
-          <p>📱 (809) 931-3720</p>
-          <p>📟 Flota: (809) 722-1076</p>
+    <p class="nav-section">Vistas</p>
+    <div class="nav-item active" id="nav-dashboard" onclick="switchView('dashboard')">
+      <span class="nav-icon">📊</span><span>Dashboard</span>
+    </div>
+    <div class="nav-item" id="nav-tickets" onclick="switchView('tickets')">
+      <span class="nav-icon">🔧</span><span>Mis Tickets</span>
+    </div>
+    <div class="nav-item" id="nav-resueltos" onclick="switchView('resueltos')">
+      <span class="nav-icon">✅</span><span>Resueltos</span>
+    </div>
+    <div class="nav-item" id="nav-ayuda" onclick="abrirAyuda()">
+      <span class="nav-icon">📞</span><span>Ayuda rápida</span>
+    </div>
+    <div class="sb-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="sbAvatar">--</div>
+        <div class="user-info">
+          <p id="sbName">Técnico</p>
+          <p>panel técnico</p>
         </div>
       </div>
+      <button class="btn-logout" onclick="doLogout()">Cerrar sesión</button>
+    </div>
+  </aside>
 
-      <div style="text-align:center; margin-top:20px;">
-        <button class="btn btn-cancelar" onclick="cerrarAyuda()">Cerrar</button>
+  <!-- ════ MAIN ════ -->
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h2 id="viewTitle">Dashboard</h2>
+        <div class="topbar-sub"><span class="dot"></span>En línea — <span id="clockEl"></span></div>
       </div>
+      <button class="btn-refresh" onclick="recargar()">↻ Actualizar</button>
+    </div>
+
+    <!-- ── DASHBOARD ── -->
+    <div id="view-dashboard" class="view active">
+      <div class="stats-row">
+        <div class="stat-card c1"><div class="stat-label">Total asignados</div><div class="stat-value" id="st-total">—</div></div>
+        <div class="stat-card c2"><div class="stat-label">Pendientes</div>    <div class="stat-value" id="st-pend">—</div></div>
+        <div class="stat-card c3"><div class="stat-label">En proceso</div>    <div class="stat-value" id="st-proc">—</div></div>
+        <div class="stat-card c4"><div class="stat-label">Resueltos</div>     <div class="stat-value" id="st-res">—</div></div>
+      </div>
+      <div class="dash-grid">
+        <div class="dash-card">
+          <div class="dash-card-title">Cobertura por departamento</div>
+          <div id="deptChart"></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-title">Tickets recientes</div>
+          <div id="recentList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MIS TICKETS (Kanban) ── -->
+    <div id="view-tickets" class="view">
+      <div class="filters">
+        <input class="search-box" id="srchTickets" placeholder="Buscar en mis tickets..." oninput="renderKanban()"/>
+      </div>
+      <div class="kanban-cols" id="kanbanGrid"></div>
+    </div>
+
+    <!-- ── RESUELTOS ── -->
+    <div id="view-resueltos" class="view">
+      <div class="filters">
+        <input class="search-box" id="srchRes" placeholder="Buscar en resueltos..." oninput="renderResueltos()"/>
+      </div>
+      <div class="section-hdr">
+        <span class="section-ttl">Tickets resueltos por mí</span>
+        <span class="section-cnt" id="resCount">0 tickets</span>
+      </div>
+      <div class="res-grid" id="resGrid"></div>
+    </div>
+  </main>
+</div>
+
+<!-- ════ MODAL RESOLUCIÓN ════ -->
+<div class="overlay" id="resModal">
+  <div class="modal">
+    <h3>✅ Marcar como resuelto</h3>
+    <p class="modal-sub">Describe cómo se solucionó el problema.</p>
+    <div class="form-group">
+      <label>Detalle de resolución</label>
+      <textarea id="resDetalle" placeholder="¿Qué se hizo para resolver el problema?"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Participantes</label>
+      <input type="text" id="resParticipantes" placeholder="Ej: Juan, Xavier"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeResModal()">Cancelar</button>
+      <button class="btn-save"   onclick="confirmarResolucion()">Guardar y cerrar ticket</button>
     </div>
   </div>
+</div>
 
-  <!-- ================== COLUMNAS KANBAN ================== -->
-  <div class="container grid-3">
-    <div>
-      <h3>⏳ Pendientes</h3>
-      <div id="pendientes" class="ticket-column"></div>
-    </div>
-    <div>
-      <h3>🔧 En Proceso</h3>
-      <div id="enProceso" class="ticket-column"></div>
-    </div>
-    <div>
-      <h3>✅ Resueltos hoy</h3>
-      <div id="resueltos" class="ticket-column"></div>
-    </div>
-  </div>
-
-  <!-- ================== MODAL RESOLUCIÓN ================== -->
-  <div id="resueltoModal" class="modal">
-    <div class="modal-content">
-      <h2>Detalles de resolución</h2>
-
-      <p>👥 ¿Con quién realizaste la tarea?</p>
-      <div class="checkbox-group">
-        <label><input type="checkbox" value="Juan Francisco" class="participante"> Juan Francisco</label>
-        <label><input type="checkbox" value="Hptronics"      class="participante"> Hptronics</label>
-        <label><input type="checkbox" value="Yanna"          class="participante"> Yanna Martinez</label>
-        <label><input type="checkbox" value="Joel"           class="participante"> Joel Holguin</label>
-        <label><input type="checkbox" value="Xavier"         class="participante"> Xavier Rosario</label>
-        <label><input type="checkbox" value="Soporte externo" class="participante"> Soporte externo</label>
+<!-- ════ MODAL AYUDA ════ -->
+<div class="overlay" id="ayudaModal">
+  <div class="modal help-modal">
+    <h3>📞 Ayuda Rápida IT</h3>
+    <p class="modal-sub">Contacta a nuestros técnicos disponibles</p>
+    <div class="card-container">
+      <div class="card-ayuda">
+        <img src="https://ui-avatars.com/api/?name=Yanna+Martinez&background=0D8ABC&color=fff" alt="Yanna">
+        <h4>Yanna Martinez</h4>
+        <p>📧 y.martinez@grupomichel.com</p>
+        <p>📟 (809) 390-5286</p>
       </div>
-
-      <p>📝 Explica cómo se resolvió:</p>
-      <textarea id="detalleResolucion" rows="4" placeholder="Describe la solución aplicada..."></textarea>
-
-      <div class="modal-buttons">
-        <button class="btn btn-guardar"   onclick="guardarResolucion()">💾 Guardar</button>
-        <button class="btn btn-cancelar"  onclick="cerrarModal()">❌ Cancelar</button>
+      <div class="card-ayuda">
+        <img src="https://ui-avatars.com/api/?name=Joel+Holguin&background=F39C12&color=fff" alt="Joel">
+        <h4>Joel Holguin</h4>
+        <p>📧 j.holguin@grupomichel.com</p>
+        <p>📟 (809) 722-2874</p>
+      </div>
+      <div class="card-ayuda">
+        <img src="https://ui-avatars.com/api/?name=Xavier+Rosario&background=E74C3C&color=fff" alt="Xavier">
+        <h4>Xavier Rosario</h4>
+        <p>📧 x.rosario@grupomichel.com</p>
+        <p>📟 (000) 000-0000</p>
+      </div>
+      <div class="card-ayuda">
+        <img src="https://ui-avatars.com/api/?name=JuanFrancisco&background=27AE60&color=fff" alt="Juan Francisco">
+        <h4>Juan F. Jimenez</h4>
+        <p>📧 dptoIT@grupomichel.com</p>
+        <p>📱 (809) 931-3720</p>
+        <p>📟 (809) 722-1076</p>
       </div>
     </div>
+    <div class="modal-actions" style="justify-content:center; margin-top:20px; border-top:none; padding-top:0;">
+      <button class="btn-cancel" onclick="cerrarAyuda()">Cerrar</button>
+    </div>
   </div>
+</div>
 
-  <style>
-    /* ================== MODAL ================== */
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(3px);
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
+<div class="toast" id="toastEl"></div>
+
+<script>
+  // ════════════════════════════════════
+  // CONFIG — ajusta tu API aquí
+  // ════════════════════════════════════
+  const API_TICKETS = "https://api.sheetbest.com/sheets/5b2f2a41-ad46-4a89-8cc2-9f768b9870af";
+  const MI_USER     = localStorage.getItem("usuario") || "Juan";
+
+  // ════════════════════════════════════
+  // STATE
+  // ════════════════════════════════════
+  let allTickets       = [];
+  let pendingResolveId = null;
+
+  // ════════════════════════════════════
+  // INIT
+  // ════════════════════════════════════
+  (function init() {
+    const nombre = MI_USER;
+    document.getElementById("sbName").textContent   = nombre;
+    document.getElementById("sbAvatar").textContent = nombre.substring(0, 2).toUpperCase();
+    updateClock();
+    setInterval(updateClock, 1000);
+    recargar();
+    setInterval(recargar, 60000);
+  })();
+
+  function updateClock() {
+    document.getElementById("clockEl").textContent = new Date().toLocaleString("es-DO");
+  }
+
+  function doLogout() {
+    localStorage.removeItem("usuario");
+    localStorage.removeItem("rol");
+    window.location.href = "index.html";
+  }
+
+  // ════════════════════════════════════
+  // CARGAR TICKETS
+  // ════════════════════════════════════
+  async function recargar() {
+    try {
+      const r    = await fetch(API_TICKETS);
+      const data = await r.json();
+      allTickets = Array.isArray(data) ? data : [];
+      renderDashboard();
+      renderKanban();
+      renderResueltos();
+    } catch (e) {
+      showToast("Error al cargar tickets", "error");
     }
+  }
 
-    .modal.show { display: flex; }
+  // ════════════════════════════════════
+  // NAVEGACIÓN
+  // ════════════════════════════════════
+  const VIEW_TITLES = {
+    dashboard: "Dashboard",
+    tickets:   "Mis Tickets",
+    resueltos: "Mis Tickets Resueltos"
+  };
 
-    .modal-content {
-      background: #fff;
-      padding: 25px;
-      border-radius: 15px;
-      max-width: 520px;
-      width: 90%;
-      box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
-      animation: fadeIn 0.3s ease-in-out;
-      font-family: Arial, sans-serif;
-      color: #333;
-    }
+  function switchView(v) {
+    document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
+    document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+    document.getElementById("view-" + v).classList.add("active");
+    document.getElementById("nav-" + v).classList.add("active");
+    document.getElementById("viewTitle").textContent = VIEW_TITLES[v] || v;
+  }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.9); }
-      to   { opacity: 1; transform: scale(1);   }
-    }
+  // ════════════════════════════════════
+  // DASHBOARD
+  // ════════════════════════════════════
+  function renderDashboard() {
+    const mis  = allTickets.filter(t => (t.asignado || "").toLowerCase() === MI_USER.toLowerCase());
+    const pend = mis.filter(t => t.estado === "Pendiente").length;
+    const proc = mis.filter(t => t.estado === "En Proceso").length;
+    const res  = mis.filter(t => t.estado === "Resuelto").length;
 
-    /* ================== CHECKBOXES ================== */
-    .checkbox-group {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-bottom: 15px;
-    }
+    document.getElementById("st-total").textContent = mis.length;
+    document.getElementById("st-pend").textContent  = pend;
+    document.getElementById("st-proc").textContent  = proc;
+    document.getElementById("st-res").textContent   = res;
 
-    .checkbox-group label { font-size: 14px; color: #444; }
-
-    textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #bbb;
-      border-radius: 8px;
-      resize: none;
-      font-size: 14px;
-      margin-bottom: 15px;
-      font-family: inherit;
-      box-sizing: border-box;
-    }
-
-    /* ================== BOTONES ================== */
-    .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; }
-
-    .btn {
-      padding: 10px 18px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 14px;
-      transition: background 0.2s;
-    }
-
-    .btn-guardar  { background: #28a745; color: white; }
-    .btn-guardar:hover  { background: #218838; }
-    .btn-cancelar { background: #dc3545; color: white; }
-    .btn-cancelar:hover { background: #b02a37; }
-
-    /* ================== CARDS AYUDA ================== */
-    .card-container {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .card-ayuda {
-      background: #f9fafb;
-      border-radius: 18px;
-      padding: 20px 15px;
-      text-align: center;
-      transition: all 0.3s ease;
-      border: 1px solid #e5e7eb;
-      cursor: default;
-      width: 180px;
-    }
-
-    .card-ayuda:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.12);
-      border-color: #4e54c8;
-    }
-
-    .card-ayuda img {
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      margin-bottom: 10px;
-      object-fit: cover;
-      border: 3px solid #e5e7eb;
-    }
-
-    .card-ayuda h4 { font-weight: 600; margin-bottom: 6px; color: #1e293b; font-size: 14px; }
-    .card-ayuda p  { font-size: 12px; color: #64748b; margin: 2px 0; }
-
-    /* ================== BADGE ASIGNADO ================== */
-    .badge-asignado {
-      display: inline-block;
-      background: #ede9fe;
-      color: #5b21b6;
-      border-radius: 20px;
-      padding: 3px 10px;
-      font-size: 11px;
-      font-weight: 600;
-      margin: 5px 0 4px;
-    }
-
-    .badge-sin-asignar {
-      display: inline-block;
-      background: #fef3c7;
-      color: #92400e;
-      border-radius: 20px;
-      padding: 3px 10px;
-      font-size: 11px;
-      font-weight: 600;
-      margin: 5px 0 4px;
-    }
-
-    /* ================== TICKET CARD ================== */
-    .ticket-card {
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 16px 18px;
-      margin-bottom: 14px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.07);
-      border: 1px solid #e5e7eb;
-      transition: all 0.25s ease;
-      font-size: 13px;
-      color: #334155;
-    }
-
-    .ticket-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.11);
-    }
-
-    .ticket-card strong { color: #4e54c8; }
-
-    .ticket-card .depto-tag {
-      font-weight: 700;
-      color: #4e54c8;
-    }
-
-    .ticket-card .titulo {
-      font-size: 15px;
-      font-weight: 600;
-      color: #1e293b;
-      margin: 4px 0;
-    }
-
-    .ticket-card .descripcion {
-      color: #64748b;
-      margin: 4px 0 8px;
-      font-size: 13px;
-    }
-
-    .ticket-card .fecha {
-      font-size: 11px;
-      color: #94a3b8;
-    }
-
-    .ticket-card .usuario-tag {
-      font-size: 12px;
-      color: #475569;
-    }
-
-    /* Botones acción */
-    .btn-proceso, .btn-resuelto {
-      padding: 7px 13px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      margin-top: 10px;
-      margin-right: 6px;
-      transition: all 0.2s ease;
-    }
-
-    .btn-proceso  { background: #fef3c7; color: #92400e; }
-    .btn-proceso:hover  { background: #fde68a; }
-    .btn-resuelto { background: #d1fae5; color: #065f46; }
-    .btn-resuelto:hover { background: #a7f3d0; }
-
-    /* Caja resolución */
-    .resolucion-box {
-      margin-top: 10px;
-      padding: 10px;
-      background: #f0fdf4;
-      border-radius: 8px;
-      border-left: 4px solid #10b981;
-      font-size: 12px;
-      color: #374151;
-    }
-
-    /* ================== ARCHIVO LINKS ================== */
-    .uploaded-file-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: #ede9fe;
-      color: #5b21b6;
-      border-radius: 20px;
-      padding: 4px 10px;
-      font-size: 11px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: background 0.2s;
-    }
-    .uploaded-file-link:hover { background: #ddd6fe; }
-
-    /* ================== USER BTN ================== */
-    .user-btn {
-      background: #1f2a6d;
-      color: #fff;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: 500;
-    }
-
-    .user-btn:hover { background: #2f3fa3; }
-
-    /* ================== RESPONSIVE ================== */
-    @media (max-width: 900px) {
-      .container.grid-3 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .container.grid-3 { grid-template-columns: 1fr; }
-
-      .navbar { flex-direction: column; align-items: stretch; text-align: center; }
-      .navbar button { width: 100%; }
-
-      .modal-content { max-width: 95%; padding: 15px; }
-      .card-container { flex-direction: column; align-items: center; }
-      .card-ayuda { width: 90%; }
-      .checkbox-group { grid-template-columns: 1fr; }
-      textarea { font-size: 16px; }
-    }
-  </style>
-
-  <script src="JS/js.js"></script>
-  <script>
-    // Mostrar nombre del técnico en el navbar
-    document.getElementById("userNameTop").textContent = localStorage.getItem("usuario") || "";
-
-    function abrirAyuda() {
-      document.getElementById("ayudaModal").classList.add("show");
-    }
-
-    function cerrarAyuda() {
-      document.getElementById("ayudaModal").classList.remove("show");
-    }
-
-    // Cerrar modales al hacer clic fuera
-    window.addEventListener("click", function(e) {
-      const ayuda    = document.getElementById("ayudaModal");
-      const resuelto = document.getElementById("resueltoModal");
-
-      if (e.target === ayuda)    ayuda.classList.remove("show");
-      if (e.target === resuelto) resuelto.classList.remove("show");
+    // Cobertura por departamento
+    const deptos = {};
+    mis.forEach(t => {
+      const d = t.depto || "N/A";
+      if (!deptos[d]) deptos[d] = { total: 0, res: 0 };
+      deptos[d].total++;
+      if (t.estado === "Resuelto") deptos[d].res++;
     });
-  </script>
+    const sorted  = Object.entries(deptos).sort((a, b) => b[1].total - a[1].total);
+    const maxTotal = sorted[0]?.[1].total || 1;
+
+    document.getElementById("deptChart").innerHTML = sorted.length === 0
+      ? `<p style="color:var(--muted);font-size:12px">Sin datos de departamento</p>`
+      : sorted.map(([d, s]) => {
+          const pct  = Math.round((s.res / s.total) * 100);
+          const barW = Math.round((s.total / maxTotal) * 100);
+          return `<div class="dept-row">
+            <div class="dept-meta">
+              <span class="dept-name">${d}</span>
+              <span class="dept-stats">
+                <span style="color:var(--success)">${s.res} resueltos</span>
+                <span>${s.total} total</span>
+                <span style="color:var(--accent);font-weight:700">${pct}%</span>
+              </span>
+            </div>
+            <div class="dept-bar-bg">
+              <div class="dept-bar-fill" style="width:${barW}%"></div>
+            </div>
+          </div>`;
+        }).join("");
+
+    // Tickets recientes
+    const recientes = [...mis].slice(-6).reverse();
+    document.getElementById("recentList").innerHTML = recientes.length === 0
+      ? `<p style="color:var(--muted);font-size:12px">Sin tickets recientes</p>`
+      : recientes.map(t => {
+          const ec = t.estado === "Resuelto" ? "badge-res"
+                   : t.estado === "En Proceso" ? "badge-proc" : "badge-pend";
+          return `<div class="recent-item">
+            <div>
+              <div class="recent-title">${t.titulo || "—"}</div>
+              <div class="recent-meta">${t.depto || ""} · ${t.usuario || ""}</div>
+            </div>
+            <span class="badge ${ec}">${t.estado || ""}</span>
+          </div>`;
+        }).join("");
+  }
+
+  // ════════════════════════════════════
+  // KANBAN — PENDIENTES + EN PROCESO
+  // ════════════════════════════════════
+  function renderKanban() {
+    const q   = (document.getElementById("srchTickets")?.value || "").toLowerCase();
+    const mis = allTickets.filter(t =>
+      (t.asignado || "").toLowerCase() === MI_USER.toLowerCase() && t.estado !== "Resuelto"
+    );
+    const pendList = mis.filter(t => t.estado === "Pendiente").filter(t => !q || matchSearch(t, q));
+    const procList = mis.filter(t => t.estado === "En Proceso").filter(t => !q || matchSearch(t, q));
+
+    document.getElementById("kanbanGrid").innerHTML = `
+      <div class="kanban-col">
+        <div class="col-header">
+          <div class="col-title" style="color:var(--warning)">⏳ Pendientes</div>
+          <span class="col-count">${pendList.length}</span>
+        </div>
+        <div class="ticket-list">
+          ${pendList.length === 0
+            ? `<div class="empty-state">Sin pendientes 🎉</div>`
+            : pendList.map(t => buildTicketCard(t, true)).join("")
+          }
+        </div>
+      </div>
+      <div class="kanban-col">
+        <div class="col-header">
+          <div class="col-title" style="color:var(--accent2)">🔧 En proceso</div>
+          <span class="col-count">${procList.length}</span>
+        </div>
+        <div class="ticket-list">
+          ${procList.length === 0
+            ? `<div class="empty-state">Sin tickets en proceso</div>`
+            : procList.map(t => buildTicketCard(t, false)).join("")
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  function buildTicketCard(t, isPend) {
+    const ec = isPend ? "badge-pend" : "badge-proc";
+    const adjuntosHtml = buildAdjuntos(t.adjuntos);
+    const botones = isPend
+      ? `<button class="btn-proc" onclick="cambiarEstado('${esc(t.id)}','En Proceso')">🔧 En proceso</button>
+         <button class="btn-res"  onclick="abrirResModal('${esc(t.id)}')">✅ Resuelto</button>`
+      : `<button class="btn-res"  onclick="abrirResModal('${esc(t.id)}')">✅ Marcar resuelto</button>`;
+    return `<div class="tcard">
+      <div class="tcard-top">
+        <div>
+          <div class="tcard-id">${t.id || ""}</div>
+          <div class="tcard-title">${t.titulo || ""}</div>
+        </div>
+        <span class="badge ${ec}">${t.estado || ""}</span>
+      </div>
+      <div class="tcard-desc">${t.descripcion || ""}</div>
+      <div class="tcard-meta">
+        <span class="badge badge-dept">${t.depto || ""}</span>
+        <span class="badge badge-user">👤 ${t.usuario || ""}</span>
+      </div>
+      ${adjuntosHtml}
+      <div class="tcard-footer">📅 ${t.fecha || ""}</div>
+      <div class="tcard-actions">${botones}</div>
+    </div>`;
+  }
+
+  // ════════════════════════════════════
+  // RESUELTOS
+  // ════════════════════════════════════
+  function renderResueltos() {
+    const q   = (document.getElementById("srchRes")?.value || "").toLowerCase();
+    const mis = allTickets
+      .filter(t => (t.asignado || "").toLowerCase() === MI_USER.toLowerCase() && t.estado === "Resuelto")
+      .filter(t => !q || matchSearch(t, q));
+
+    document.getElementById("resCount").textContent = mis.length + " ticket" + (mis.length !== 1 ? "s" : "");
+    const grid = document.getElementById("resGrid");
+
+    if (mis.length === 0) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">Aún no has resuelto tickets.</div>`;
+      return;
+    }
+
+    grid.innerHTML = [...mis].reverse().map(t => `
+      <div class="res-card">
+        <div class="tcard-id">${t.id || ""}</div>
+        <div class="tcard-title" style="margin-bottom:7px">${t.titulo || ""}</div>
+        <div class="tcard-meta">
+          <span class="badge badge-dept">${t.depto || ""}</span>
+          <span class="badge badge-user">👤 ${t.usuario || ""}</span>
+          <span class="badge badge-res">✓ Resuelto</span>
+        </div>
+        ${t.resolucion
+          ? `<div class="res-box">${t.resolucion}
+               <br><small style="opacity:.65">Participantes: ${t.participantes || "N/A"} · ${t.fecha_resuelto || ""}</small>
+             </div>`
+          : ""}
+        ${buildAdjuntos(t.adjuntos)}
+        <div class="tcard-footer" style="margin-top:8px">📅 ${t.fecha || ""}</div>
+      </div>
+    `).join("");
+  }
+
+  // ════════════════════════════════════
+  // CAMBIAR ESTADO
+  // ════════════════════════════════════
+  async function cambiarEstado(idEnc, nuevoEstado) {
+    const id = decodeURIComponent(idEnc);
+    try {
+      const r = await fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ estado: nuevoEstado })
+      });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      showToast(`Ticket → "${nuevoEstado}"`, "success");
+      await recargar();
+    } catch (e) {
+      showToast("Error al actualizar estado", "error");
+    }
+  }
+
+  // ════════════════════════════════════
+  // MODAL RESOLUCIÓN
+  // ════════════════════════════════════
+  function abrirResModal(idEnc) {
+    pendingResolveId = decodeURIComponent(idEnc);
+    document.getElementById("resDetalle").value        = "";
+    document.getElementById("resParticipantes").value  = MI_USER;
+    document.getElementById("resModal").classList.add("open");
+  }
+
+  function closeResModal() {
+    document.getElementById("resModal").classList.remove("open");
+    pendingResolveId = null;
+  }
+
+  async function confirmarResolucion() {
+    const detalle = document.getElementById("resDetalle").value.trim();
+    const partic  = document.getElementById("resParticipantes").value.trim();
+    if (!detalle) { showToast("Escribe el detalle de resolución", "error"); return; }
+    try {
+      const r = await fetch(`${API_TICKETS}/id/${encodeURIComponent(pendingResolveId)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          estado:         "Resuelto",
+          resolucion:     detalle,
+          participantes:  partic,
+          fecha_resuelto: new Date().toLocaleString("es-DO")
+        })
+      });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      showToast("Ticket resuelto correctamente", "success");
+      closeResModal();
+      await recargar();
+    } catch (e) {
+      showToast("Error al resolver ticket", "error");
+    }
+  }
+
+  // ════════════════════════════════════
+  // MODAL AYUDA
+  // ════════════════════════════════════
+  function abrirAyuda()  { document.getElementById("ayudaModal").classList.add("open"); }
+  function cerrarAyuda() { document.getElementById("ayudaModal").classList.remove("open"); }
+
+  // ════════════════════════════════════
+  // UTILS
+  // ════════════════════════════════════
+  function matchSearch(t, q) {
+    return (t.titulo      || "").toLowerCase().includes(q) ||
+           (t.depto       || "").toLowerCase().includes(q) ||
+           (t.descripcion || "").toLowerCase().includes(q) ||
+           (t.usuario     || "").toLowerCase().includes(q);
+  }
+
+  function buildAdjuntos(adjStr) {
+    if (!adjStr || !adjStr.trim()) return "";
+    const urls = adjStr.split(",").map(u => u.trim()).filter(Boolean);
+    const links = urls.map(u =>
+      `<a class="adj-link" href="${u}" target="_blank" rel="noopener">📎 ${decodeURIComponent(u.split("/").pop().split("?")[0])}</a>`
+    ).join("");
+    return `<div style="margin-top:6px">${links}</div>`;
+  }
+
+  function esc(s)  { return encodeURIComponent(s || ""); }
+
+  function showToast(msg, type = "success") {
+    const el = document.getElementById("toastEl");
+    el.textContent = (type === "success" ? "✓ " : "⚠ ") + msg;
+    el.className   = "toast " + type + " show";
+    setTimeout(() => el.classList.remove("show"), 3200);
+  }
+
+  // Cerrar modales al click fuera
+  ["resModal", "ayudaModal"].forEach(id => {
+    document.getElementById(id).addEventListener("click", function(e) {
+      if (e.target === this) {
+        this.classList.remove("open");
+        if (id === "resModal") pendingResolveId = null;
+      }
+    });
+  });
+</script>
 </body>
 </html>
