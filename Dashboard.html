@@ -124,7 +124,22 @@
       letter-spacing: -1px;
     }
     .perfil-info { flex: 1; }
-    .perfil-nombre { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+
+    /* ── SALUDO — línea pequeña arriba, nombre grande abajo ── */
+    .perfil-saludo {
+      font-size: 13px;
+      font-weight: 400;
+      opacity: 0.85;
+      margin-bottom: 2px;
+      letter-spacing: 0.2px;
+    }
+    .perfil-nombre {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
     .perfil-depto  {
       display: inline-flex; align-items: center; gap: 6px;
       background: rgba(255,255,255,0.2); border-radius: 20px;
@@ -164,7 +179,9 @@
     <div class="perfil-banner" id="perfilBanner">
       <div class="perfil-avatar" id="perfilAvatar">--</div>
       <div class="perfil-info">
-        <div class="perfil-nombre" id="perfilNombre">Cargando...</div>
+        <!-- Saludo separado del nombre -->
+        <div class="perfil-saludo" id="perfilSaludo">Cargando...</div>
+        <div class="perfil-nombre" id="perfilNombre"></div>
         <div class="perfil-depto">🏢 <span id="perfilDepto">—</span></div>
         <div class="perfil-stats">
           <div class="perfil-stat">
@@ -203,7 +220,6 @@
         <input type="text" id="titulo"      placeholder="Título del problema">
         <textarea           id="descripcion" placeholder="Describe tu problema..."></textarea>
 
-        <!-- Solo queda el select de asignación; el departamento viene del perfil -->
         <select id="asignadoA" style="margin-top:10px;">
           <option value="Sin asignar">-- Asignar a --</option>
           <option value="Xavier">Xavier Rosario</option>
@@ -289,27 +305,44 @@
   <script src="JS/js.js"></script>
 
   <script>
-    // ── Inicializar perfil desde localStorage ──
+    // ── Inicializar perfil con saludo según hora ──
     (function() {
-      const nombre = localStorage.getItem("usuario") || "Usuario";
-      const depto  = localStorage.getItem("depto")   || "Sin departamento";
+      const nombreCompleto = localStorage.getItem("nombreCompleto")
+                          || localStorage.getItem("usuario")
+                          || "Usuario";
+      const depto = localStorage.getItem("depto") || "Sin departamento";
 
-      document.getElementById("perfilNombre").textContent = nombre;
-      document.getElementById("perfilDepto").textContent  = depto;
-      document.getElementById("deptoDisplay").textContent = depto;
+      // Saludo según hora del día
+      const hora = new Date().getHours();
+      let saludo, emoji;
+      if      (hora >= 5  && hora < 12) { saludo = "¡Buenos días";   emoji = "☀️";  }
+      else if (hora >= 12 && hora < 19) { saludo = "¡Buenas tardes"; emoji = "🌤️"; }
+      else                              { saludo = "¡Buenas noches"; emoji = "🌙";  }
 
-      const initials = nombre.split(" ").map(p => p[0]).join("").substring(0, 2).toUpperCase();
+      // Saludo en línea separada, nombre completo abajo
+      document.getElementById("perfilSaludo").textContent = `${saludo},`;
+      document.getElementById("perfilNombre").textContent  = `${nombreCompleto}! ${emoji}`;
+      document.getElementById("perfilDepto").textContent   = depto;
+      document.getElementById("deptoDisplay").textContent  = depto;
+
+      // Avatar con iniciales del nombre completo
+      const initials = nombreCompleto
+        .split(" ")
+        .map(p => p[0])
+        .join("")
+        .substring(0, 2)
+        .toUpperCase();
       document.getElementById("perfilAvatar").textContent = initials;
     })();
 
-    // ── Cargar stats del perfil después de cargar tickets ──
+    // ── Cargar stats desde la API ──
     function actualizarStatsPerfilDesdeAPI() {
       const usuario = localStorage.getItem("usuario");
       const API     = "https://api.sheetbest.com/sheets/5b2f2a41-ad46-4a89-8cc2-9f768b9870af";
       fetch(API)
         .then(r => r.json())
         .then(data => {
-          const mis  = data.filter(t => t.usuario === usuario);
+          const mis = data.filter(t => t.usuario === usuario);
           document.getElementById("ps-total").textContent = mis.length;
           document.getElementById("ps-pend").textContent  = mis.filter(t => t.estado === "Pendiente").length;
           document.getElementById("ps-proc").textContent  = mis.filter(t => t.estado === "En Proceso").length;
@@ -317,8 +350,6 @@
         })
         .catch(() => {});
     }
-
-    // Llamar al cargar
     actualizarStatsPerfilDesdeAPI();
 
     // ── Drag & drop ──
