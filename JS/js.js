@@ -120,10 +120,11 @@ async function login() {
         rolFinal = "superadmin";
       }
 
-      // ── GUARDAR SESIÓN incluyendo Departamento ──
-      localStorage.setItem("usuario",    encontrado.NombreUsuario);
-      localStorage.setItem("rol",        rolFinal);
-      localStorage.setItem("depto",      encontrado.Departamento || "");
+      // ── GUARDAR SESIÓN incluyendo Departamento y Nombre Completo ──
+      localStorage.setItem("usuario",        encontrado.NombreUsuario);
+      localStorage.setItem("rol",            rolFinal);
+      localStorage.setItem("depto",          encontrado.Departamento   || "");
+      localStorage.setItem("nombreCompleto", encontrado.NombreCompleto || encontrado.NombreUsuario);
 
       window.location.href = ROUTES[rolFinal] || "Dashboard.html";
     } else {
@@ -148,9 +149,10 @@ async function login() {
           if ((encontrado.NombreUsuario || "").toLowerCase() === "juan") {
             rolFinal = "superadmin";
           }
-          localStorage.setItem("usuario", encontrado.NombreUsuario);
-          localStorage.setItem("rol",     rolFinal);
-          localStorage.setItem("depto",   encontrado.Departamento || "");
+          localStorage.setItem("usuario",        encontrado.NombreUsuario);
+          localStorage.setItem("rol",            rolFinal);
+          localStorage.setItem("depto",          encontrado.Departamento   || "");
+          localStorage.setItem("nombreCompleto", encontrado.NombreCompleto || encontrado.NombreUsuario);
           window.location.href = ROUTES[rolFinal] || "Dashboard.html";
           return;
         }
@@ -171,6 +173,7 @@ function logout() {
   localStorage.removeItem("usuario");
   localStorage.removeItem("rol");
   localStorage.removeItem("depto");
+  localStorage.removeItem("nombreCompleto");
   window.location.href = "index.html";
 }
 
