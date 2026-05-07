@@ -1,415 +1,863 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Panel Técnico</title>
-  <link rel="icon" type="image/png" href="IMG/2.ico">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --bg: #0d0d14;
-      --surface: #13131d;
-      --surface2: #1a1a27;
-      --surface3: #21212f;
-      --border: rgba(255,255,255,0.06);
-      --border2: rgba(255,255,255,0.11);
-      --accent: #7c6fff;
-      --accent2: #4fc3ff;
-      --success: #3be38e;
-      --warning: #ffd166;
-      --danger: #ff6b6b;
-      --text: #eeeef8;
-      --muted: #7070a0;
-      --muted2: #4a4a6a;
-      --font: 'Plus Jakarta Sans', sans-serif;
-      --mono: 'DM Mono', monospace;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Panel Técnico</title>
+<link rel="icon" type="image/png" href="IMG/2.ico">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d0d14; --surface: #13131d; --surface2: #1a1a27; --surface3: #21212f;
+    --border: rgba(255,255,255,0.06); --border2: rgba(255,255,255,0.11);
+    --accent: #7c6fff; --accent2: #4fc3ff; --success: #3be38e;
+    --warning: #ffd166; --danger: #ff6b6b;
+    --text: #eeeef8; --muted: #7070a0; --muted2: #4a4a6a;
+    --font: 'Plus Jakarta Sans', sans-serif; --mono: 'DM Mono', monospace;
+    --radius: 10px; --radius2: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  .layout { display: flex; min-height: 100vh; }
 
-    .layout { display: flex; min-height: 100vh; }
+  /* ── SIDEBAR ── */
+  .sidebar { width: 210px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+  .sb-logo { padding: 22px 16px 16px; border-bottom: 1px solid var(--border); }
+  .sb-logo .badge { background: var(--accent); color: #fff; font-size: 9px; font-weight: 700; letter-spacing: 2px; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; display: inline-block; margin-bottom: 7px; }
+  .sb-logo h1 { font-size: 18px; font-weight: 800; line-height: 1.2; }
+  .sb-logo p  { font-size: 10px; color: var(--muted); font-family: var(--mono); margin-top: 3px; }
+  .nav-section { padding: 14px 12px 6px; font-size: 9px; letter-spacing: 2px; color: var(--muted2); text-transform: uppercase; }
+  .nav-item { margin: 2px 8px; padding: 9px 12px; border-radius: 8px; display: flex; align-items: center; gap: 9px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--muted); transition: all 0.15s; border: 1px solid transparent; user-select: none; }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(124,111,255,0.15); color: var(--accent); border-color: rgba(124,111,255,0.2); }
+  .nav-icon { font-size: 14px; flex-shrink: 0; }
+  .sb-footer { margin-top: auto; padding: 12px; border-top: 1px solid var(--border); }
+  .user-pill { display: flex; align-items: center; gap: 9px; background: var(--surface2); border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; }
+  .user-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; color: #fff; }
+  .user-info p:first-child { font-size: 12px; font-weight: 600; }
+  .user-info p:last-child  { font-size: 10px; color: var(--accent); font-family: var(--mono); }
+  .btn-logout { width: 100%; padding: 7px; background: transparent; border: 1px solid var(--border2); color: var(--muted); border-radius: 8px; font-family: var(--font); font-size: 11px; cursor: pointer; transition: all 0.15s; }
+  .btn-logout:hover { background: rgba(255,107,107,0.12); color: var(--danger); border-color: rgba(255,107,107,0.3); }
 
-    /* ── SIDEBAR ── */
-    .sidebar {
-      width: 210px; flex-shrink: 0; background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex; flex-direction: column;
-      position: sticky; top: 0; height: 100vh;
-    }
-    .sb-logo { padding: 22px 16px 16px; border-bottom: 1px solid var(--border); }
-    .sb-logo .badge {
-      background: var(--accent); color: #fff; font-size: 9px; font-weight: 700;
-      letter-spacing: 2px; padding: 2px 8px; border-radius: 4px;
-      text-transform: uppercase; display: inline-block; margin-bottom: 7px;
-    }
-    .sb-logo h1 { font-size: 18px; font-weight: 800; line-height: 1.2; }
-    .sb-logo p  { font-size: 10px; color: var(--muted); font-family: var(--mono); margin-top: 3px; }
-    .nav-section { padding: 14px 12px 6px; font-size: 9px; letter-spacing: 2px; color: var(--muted2); text-transform: uppercase; }
-    .nav-item {
-      margin: 2px 8px; padding: 9px 12px; border-radius: 8px;
-      display: flex; align-items: center; gap: 9px; cursor: pointer;
-      font-size: 12px; font-weight: 600; color: var(--muted);
-      transition: all 0.15s; border: 1px solid transparent; user-select: none;
-    }
-    .nav-item:hover { background: var(--surface2); color: var(--text); }
-    .nav-item.active { background: rgba(124,111,255,0.15); color: var(--accent); border-color: rgba(124,111,255,0.2); }
-    .nav-icon { font-size: 14px; flex-shrink: 0; }
-    .sb-footer { margin-top: auto; padding: 12px; border-top: 1px solid var(--border); }
-    .user-pill {
-      display: flex; align-items: center; gap: 9px;
-      background: var(--surface2); border-radius: 8px; padding: 8px 10px; margin-bottom: 8px;
-    }
-    .user-avatar {
-      width: 30px; height: 30px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 700; flex-shrink: 0; color: #fff;
-    }
-    .user-info p:first-child { font-size: 12px; font-weight: 600; }
-    .user-info p:last-child  { font-size: 10px; color: var(--accent); font-family: var(--mono); }
-    .btn-logout {
-      width: 100%; padding: 7px; background: transparent;
-      border: 1px solid var(--border2); color: var(--muted);
-      border-radius: 8px; font-family: var(--font); font-size: 11px;
-      cursor: pointer; transition: all 0.15s;
-    }
-    .btn-logout:hover { background: rgba(255,107,107,0.12); color: var(--danger); border-color: rgba(255,107,107,0.3); }
+  /* ── MAIN ── */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .topbar { padding: 16px 26px; border-bottom: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+  .topbar h2 { font-size: 19px; font-weight: 800; }
+  .topbar-sub { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
+  .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--success); margin-right: 5px; box-shadow: 0 0 7px var(--success); animation: blink 2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .btn-refresh { padding: 6px 15px; background: var(--surface2); border: 1px solid var(--border2); color: var(--muted); border-radius: 8px; font-family: var(--font); font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .btn-refresh:hover { color: var(--text); border-color: var(--accent); }
 
-    /* ── MAIN ── */
-    .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-    .topbar {
-      padding: 16px 26px; border-bottom: 1px solid var(--border);
-      background: var(--surface); display: flex; align-items: center;
-      justify-content: space-between; position: sticky; top: 0; z-index: 50;
-    }
-    .topbar h2 { font-size: 19px; font-weight: 800; }
-    .topbar-sub { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
-    .dot {
-      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-      background: var(--success); margin-right: 5px;
-      box-shadow: 0 0 7px var(--success); animation: blink 2s infinite;
-    }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
-    .btn-refresh {
-      padding: 6px 15px; background: var(--surface2); border: 1px solid var(--border2);
-      color: var(--muted); border-radius: 8px; font-family: var(--font); font-size: 11px;
-      font-weight: 600; cursor: pointer; transition: all 0.15s;
-    }
-    .btn-refresh:hover { color: var(--text); border-color: var(--accent); }
+  /* ── VIEWS ── */
+  .view { display: none; padding: 22px 26px; }
+  .view.active { display: block; }
 
-    /* ── VIEWS ── */
-    .view { display: none; padding: 22px 26px; }
-    .view.active { display: block; }
+  /* ── STATS ROW ── */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; margin-bottom: 22px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); padding: 15px 17px; position: relative; overflow: hidden; }
+  .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:3px 3px 0 0; }
+  .stat-card.c1::before { background: var(--accent); }
+  .stat-card.c2::before { background: var(--warning); }
+  .stat-card.c3::before { background: var(--accent2); }
+  .stat-card.c4::before { background: var(--success); }
+  .stat-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; font-family: var(--mono); }
+  .stat-value { font-size: 30px; font-weight: 800; margin-top: 5px; letter-spacing: -1px; }
+  .stat-card.c1 .stat-value { color: var(--accent); }
+  .stat-card.c2 .stat-value { color: var(--warning); }
+  .stat-card.c3 .stat-value { color: var(--accent2); }
+  .stat-card.c4 .stat-value { color: var(--success); }
 
-    /* ── STATS ROW ── */
-    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; margin-bottom: 22px; }
-    .stat-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 13px;
-      padding: 15px 17px; position: relative; overflow: hidden;
-    }
-    .stat-card::before {
-      content:''; position:absolute; top:0; left:0; right:0;
-      height:3px; border-radius:3px 3px 0 0;
-    }
-    .stat-card.c1::before { background: var(--accent); }
-    .stat-card.c2::before { background: var(--warning); }
-    .stat-card.c3::before { background: var(--accent2); }
-    .stat-card.c4::before { background: var(--success); }
-    .stat-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; font-family: var(--mono); }
-    .stat-value { font-size: 30px; font-weight: 800; margin-top: 5px; letter-spacing: -1px; }
-    .stat-card.c1 .stat-value { color: var(--accent); }
-    .stat-card.c2 .stat-value { color: var(--warning); }
-    .stat-card.c3 .stat-value { color: var(--accent2); }
-    .stat-card.c4 .stat-value { color: var(--success); }
+  /* ── DASH GRID ── */
+  .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .dash-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); padding: 17px 19px; }
+  .dash-card-title { font-size: 13px; font-weight: 700; margin-bottom: 14px; }
 
-    /* ── DASH GRID ── */
-    .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .dash-card { background: var(--surface); border: 1px solid var(--border); border-radius: 13px; padding: 17px 19px; }
-    .dash-card-title { font-size: 13px; font-weight: 700; margin-bottom: 14px; }
+  /* ── DEPT BARS ── */
+  .dept-row { margin-bottom: 13px; }
+  .dept-meta { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; align-items: center; }
+  .dept-name { color: var(--text); font-weight: 600; }
+  .dept-stats { color: var(--muted); font-family: var(--mono); display: flex; gap: 10px; font-size: 10px; }
+  .dept-bar-bg { background: var(--surface3); border-radius: 4px; height: 6px; overflow: hidden; }
+  .dept-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.8s ease; }
 
-    /* ── DEPT BARS ── */
-    .dept-row { margin-bottom: 13px; }
-    .dept-meta { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; align-items: center; }
-    .dept-name { color: var(--text); font-weight: 600; }
-    .dept-stats { color: var(--muted); font-family: var(--mono); display: flex; gap: 10px; font-size: 10px; }
-    .dept-bar-bg { background: var(--surface3); border-radius: 4px; height: 6px; overflow: hidden; }
-    .dept-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.8s ease; }
+  /* ── RECENT LIST ── */
+  .recent-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .recent-item:last-child { border-bottom: none; }
+  .recent-title { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+  .recent-meta  { font-size: 10px; color: var(--muted); font-family: var(--mono); }
 
-    /* ── RECENT LIST ── */
-    .recent-item {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 8px 0; border-bottom: 1px solid var(--border);
-    }
-    .recent-item:last-child { border-bottom: none; }
-    .recent-title { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
-    .recent-meta  { font-size: 10px; color: var(--muted); font-family: var(--mono); }
+  /* ── KANBAN ── */
+  .kanban-cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .kanban-col  { display: flex; flex-direction: column; }
+  .col-header  { padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px 10px 0 0; display: flex; align-items: center; justify-content: space-between; }
+  .col-title { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+  .col-count  { font-family: var(--mono); font-size: 10px; background: var(--surface3); border: 1px solid var(--border2); padding: 2px 8px; border-radius: 20px; color: var(--muted); }
+  .ticket-list { background: var(--surface2); border: 1px solid var(--border); border-top: none; border-radius: 0 0 10px 10px; padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 80px; }
 
-    /* ── KANBAN ── */
-    .kanban-cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-    .kanban-col  { display: flex; flex-direction: column; }
-    .col-header  {
-      padding: 10px 14px; background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px 10px 0 0; display: flex; align-items: center; justify-content: space-between;
-    }
-    .col-title { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-    .col-count  {
-      font-family: var(--mono); font-size: 10px; background: var(--surface3);
-      border: 1px solid var(--border2); padding: 2px 8px; border-radius: 20px; color: var(--muted);
-    }
-    .ticket-list {
-      background: var(--surface2); border: 1px solid var(--border); border-top: none;
-      border-radius: 0 0 10px 10px; padding: 10px;
-      display: flex; flex-direction: column; gap: 8px; min-height: 80px;
-    }
+  /* ── TICKET CARD ── */
+  .tcard { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 13px 14px; transition: all 0.2s; }
+  .tcard:hover { border-color: var(--border2); transform: translateY(-1px); }
+  .tcard-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+  .tcard-id    { font-family: var(--mono); font-size: 9px; color: var(--muted2); margin-bottom: 2px; }
+  .tcard-title { font-size: 13px; font-weight: 700; line-height: 1.3; }
+  .tcard-desc  { font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .tcard-meta  { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+  .badge { font-size: 9px; font-weight: 600; padding: 2px 8px; border-radius: 20px; font-family: var(--mono); }
+  .badge-pend { background: rgba(255,209,102,0.12); color: var(--warning); border: 1px solid rgba(255,209,102,0.2); }
+  .badge-proc { background: rgba(79,195,255,0.12);  color: var(--accent2); border: 1px solid rgba(79,195,255,0.2); }
+  .badge-res  { background: rgba(59,227,142,0.12);  color: var(--success); border: 1px solid rgba(59,227,142,0.2); }
+  .badge-dept { background: rgba(124,111,255,0.12); color: var(--accent);  border: 1px solid rgba(124,111,255,0.2); }
+  .badge-user { background: var(--surface3); color: var(--muted); border: 1px solid var(--border); }
+  .tcard-footer { font-size: 10px; color: var(--muted2); font-family: var(--mono); }
+  .tcard-actions { display: flex; gap: 6px; margin-top: 9px; flex-wrap: wrap; }
+  .btn-proc { padding: 5px 11px; background: rgba(79,195,255,0.12); color: var(--accent2); border: 1px solid rgba(79,195,255,0.25); border-radius: 6px; font-family: var(--font); font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+  .btn-proc:hover { background: rgba(79,195,255,0.25); }
+  .btn-res  { padding: 5px 11px; background: rgba(59,227,142,0.12); color: var(--success); border: 1px solid rgba(59,227,142,0.25); border-radius: 6px; font-family: var(--font); font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+  .btn-res:hover { background: rgba(59,227,142,0.25); }
+  .empty-state { text-align: center; padding: 28px 10px; color: var(--muted2); font-size: 12px; }
 
-    /* ── TICKET CARD ── */
-    .tcard {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
-      padding: 13px 14px; transition: all 0.2s;
-    }
-    .tcard:hover { border-color: var(--border2); transform: translateY(-1px); }
-    .tcard-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
-    .tcard-id    { font-family: var(--mono); font-size: 9px; color: var(--muted2); margin-bottom: 2px; }
-    .tcard-title { font-size: 13px; font-weight: 700; line-height: 1.3; }
-    .tcard-desc  { font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .tcard-meta  { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
-    .badge { font-size: 9px; font-weight: 600; padding: 2px 8px; border-radius: 20px; font-family: var(--mono); }
-    .badge-pend { background: rgba(255,209,102,0.12); color: var(--warning); border: 1px solid rgba(255,209,102,0.2); }
-    .badge-proc { background: rgba(79,195,255,0.12);  color: var(--accent2); border: 1px solid rgba(79,195,255,0.2); }
-    .badge-res  { background: rgba(59,227,142,0.12);  color: var(--success); border: 1px solid rgba(59,227,142,0.2); }
-    .badge-dept { background: rgba(124,111,255,0.12); color: var(--accent);  border: 1px solid rgba(124,111,255,0.2); }
-    .badge-user { background: var(--surface3); color: var(--muted); border: 1px solid var(--border); }
-    .tcard-footer { font-size: 10px; color: var(--muted2); font-family: var(--mono); }
-    .tcard-actions { display: flex; gap: 6px; margin-top: 9px; flex-wrap: wrap; }
-    .btn-proc {
-      padding: 5px 11px; background: rgba(79,195,255,0.12); color: var(--accent2);
-      border: 1px solid rgba(79,195,255,0.25); border-radius: 6px;
-      font-family: var(--font); font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.15s;
-    }
-    .btn-proc:hover { background: rgba(79,195,255,0.25); }
-    .btn-res {
-      padding: 5px 11px; background: rgba(59,227,142,0.12); color: var(--success);
-      border: 1px solid rgba(59,227,142,0.25); border-radius: 6px;
-      font-family: var(--font); font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.15s;
-    }
-    .btn-res:hover { background: rgba(59,227,142,0.25); }
+  /* ── SEARCH / FILTERS ── */
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+  .search-box { flex: 1; min-width: 180px; padding: 6px 13px; border-radius: 20px; background: var(--surface2); border: 1px solid var(--border2); color: var(--text); font-family: var(--font); font-size: 11px; outline: none; }
+  .search-box::placeholder { color: var(--muted2); }
+  .search-box:focus { border-color: var(--accent); }
 
-    .empty-state { text-align: center; padding: 28px 10px; color: var(--muted2); font-size: 12px; }
+  /* ── FILTRO TIENDA ── */
+  .tienda-filter-wrap {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: 20px; padding: 5px 14px 5px 10px;
+  }
+  .tienda-filter-wrap span { font-size: 10px; color: var(--muted); font-family: var(--mono); white-space: nowrap; }
+  .tienda-select {
+    background: transparent; border: none; color: var(--text);
+    font-family: var(--mono); font-size: 11px; outline: none; cursor: pointer;
+    max-width: 180px;
+  }
+  .tienda-select option { background: var(--surface2); }
 
-    /* ── SEARCH / FILTERS ── */
-    .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
-    .search-box {
-      flex: 1; min-width: 180px; padding: 6px 13px; border-radius: 20px;
-      background: var(--surface2); border: 1px solid var(--border2); color: var(--text);
-      font-family: var(--font); font-size: 11px; outline: none;
-    }
-    .search-box::placeholder { color: var(--muted2); }
-    .search-box:focus { border-color: var(--accent); }
+  /* ── Chip de tienda activa ── */
+  .filter-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(124,111,255,0.15); color: var(--accent);
+    border: 1px solid rgba(124,111,255,0.3); border-radius: 20px;
+    padding: 3px 10px; font-size: 10px; font-family: var(--mono); font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .filter-chip:hover { background: rgba(124,111,255,0.28); }
+  .filter-chip .chip-x { font-size: 12px; line-height: 1; opacity: 0.7; }
 
-    /* ── RESUELTOS GRID ── */
-    .section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-    .section-ttl { font-size: 13px; font-weight: 700; }
-    .section-cnt {
-      font-size: 10px; font-family: var(--mono); color: var(--muted);
-      background: var(--surface2); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border);
-    }
-    .res-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
-    .res-card {
-      background: var(--surface); border: 1px solid rgba(59,227,142,0.12); border-radius: 10px;
-      padding: 14px 16px; transition: all 0.2s;
-    }
-    .res-card:hover { transform: translateY(-2px); border-color: rgba(59,227,142,0.25); }
-    .res-box {
-      margin-top: 9px; padding: 9px 11px;
-      background: rgba(59,227,142,0.06); border-radius: 6px;
-      border-left: 3px solid var(--success); font-size: 11px; color: #a0f0cc; line-height: 1.5;
-    }
+  /* ── RESUELTOS GRID ── */
+  .section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .section-ttl { font-size: 13px; font-weight: 700; }
+  .section-cnt { font-size: 10px; font-family: var(--mono); color: var(--muted); background: var(--surface2); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); }
+  .res-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .res-card { background: var(--surface); border: 1px solid rgba(59,227,142,0.12); border-radius: 10px; padding: 14px 16px; transition: all 0.2s; }
+  .res-card:hover { transform: translateY(-2px); border-color: rgba(59,227,142,0.25); }
+  .res-box { margin-top: 9px; padding: 9px 11px; background: rgba(59,227,142,0.06); border-radius: 6px; border-left: 3px solid var(--success); font-size: 11px; color: #a0f0cc; line-height: 1.5; }
+  .adj-link { display: inline-block; color: var(--accent2); text-decoration: none; font-family: var(--mono); font-size: 10px; margin-right: 8px; margin-top: 5px; }
+  .adj-link:hover { text-decoration: underline; }
 
-    /* ── ADJUNTOS ── */
-    .adj-link {
-      display: inline-block; color: var(--accent2); text-decoration: none;
-      font-family: var(--mono); font-size: 10px; margin-right: 8px; margin-top: 5px;
-    }
-    .adj-link:hover { text-decoration: underline; }
+  /* ════════════════════════════════════
+     ESTILOS — MÓDULO REPORTES TÉCNICO
+  ════════════════════════════════════ */
+  .rep-month-bar { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); padding: 5px; }
+  .rep-month-btn { flex: 1; min-width: 55px; padding: 7px 8px; border-radius: 8px; border: none; background: transparent; color: var(--muted); font-family: var(--font); font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s; white-space: nowrap; text-align: center; }
+  .rep-month-btn:hover { background: var(--surface2); color: var(--text); }
+  .rep-month-btn.active { background: var(--accent); color: #fff; box-shadow: 0 2px 10px rgba(124,111,255,0.35); }
+  .rep-info-banner { display: flex; align-items: center; gap: 10px; padding: 9px 14px; margin-bottom: 18px; background: rgba(79,195,255,0.07); border: 1px solid rgba(79,195,255,0.2); border-radius: 8px; font-size: 11px; color: var(--accent2); }
+  .rep-info-banner strong { color: var(--text); }
 
-    /* ── MODAL ── */
-    .overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(5px); display: none; align-items: center;
-      justify-content: center; z-index: 999;
-    }
-    .overlay.open { display: flex; }
-    .modal {
-      background: var(--surface); border: 1px solid var(--border2); border-radius: 14px;
-      padding: 26px; width: 90%; max-width: 450px; animation: slideUp 0.2s ease;
-    }
-    @keyframes slideUp { from{transform:translateY(16px);opacity:0} to{transform:translateY(0);opacity:1} }
-    .modal h3 { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
-    .modal-sub {
-      font-size: 11px; color: var(--muted); font-family: var(--mono);
-      margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border);
-    }
-    .form-group { margin-bottom: 14px; }
-    .form-group label {
-      display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
-      color: var(--muted); margin-bottom: 5px; font-family: var(--mono);
-    }
-    .form-group textarea {
-      width: 100%; padding: 9px 12px; background: var(--surface2);
-      border: 1px solid var(--border2); border-radius: 8px; color: var(--text);
-      font-family: var(--font); font-size: 12px; outline: none; resize: none; min-height: 90px;
-    }
-    .form-group textarea:focus { border-color: var(--accent); }
-    .form-group input {
-      width: 100%; padding: 9px 12px; background: var(--surface2);
-      border: 1px solid var(--border2); border-radius: 8px; color: var(--text);
-      font-family: var(--font); font-size: 12px; outline: none;
-    }
-    .form-group input:focus { border-color: var(--accent); }
-    .modal-actions {
-      display: flex; gap: 8px; justify-content: flex-end;
-      margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border);
-    }
-    .btn-cancel {
-      padding: 8px 16px; border-radius: 8px; font-family: var(--font); font-size: 12px;
-      font-weight: 600; background: transparent; color: var(--muted);
-      border: 1px solid var(--border2); cursor: pointer; transition: all 0.15s;
-    }
-    .btn-cancel:hover { color: var(--text); }
-    .btn-save {
-      padding: 8px 16px; border-radius: 8px; font-family: var(--font); font-size: 12px;
-      font-weight: 700; background: var(--success); color: #0a1a12; border: none; cursor: pointer;
-    }
-    .btn-save:hover { opacity: 0.88; }
+  .rep-kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
+  .rep-kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); padding: 15px 17px; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; }
+  .rep-kpi::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 3px 3px 0 0; }
+  .rep-kpi.total::before    { background: var(--accent); }
+  .rep-kpi.pending::before  { background: var(--warning); }
+  .rep-kpi.process::before  { background: var(--accent2); }
+  .rep-kpi.resolved::before { background: var(--success); }
+  .rep-kpi-left .lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); font-family: var(--mono); margin-bottom: 6px; }
+  .rep-kpi-left .val { font-size: 30px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
+  .rep-kpi.total    .val { color: var(--accent); }
+  .rep-kpi.pending  .val { color: var(--warning); }
+  .rep-kpi.process  .val { color: var(--accent2); }
+  .rep-kpi.resolved .val { color: var(--success); }
+  .rep-kpi-left .pct { font-size: 10px; font-family: var(--mono); color: var(--muted); margin-top: 3px; }
+  .rep-kpi-icon { font-size: 28px; opacity: 0.25; }
 
-    /* ── TOAST ── */
-    .toast {
-      position: fixed; bottom: 22px; right: 22px; background: var(--surface2);
-      border: 1px solid var(--border2); border-radius: 8px; padding: 10px 16px;
-      font-size: 12px; font-weight: 600; z-index: 1000; opacity: 0;
-      transform: translateY(8px); transition: all 0.25s; pointer-events: none; max-width: 280px;
-    }
-    .toast.show    { opacity: 1; transform: translateY(0); }
-    .toast.success { border-left: 3px solid var(--success); }
-    .toast.error   { border-left: 3px solid var(--danger); }
+  .rep-main-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 14px; margin-bottom: 18px; align-items: start; }
 
-    /* ── MODAL AYUDA ── */
-    .card-container { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-    .card-ayuda {
-      background: var(--surface2); border-radius: 14px; padding: 18px 14px;
-      text-align: center; border: 1px solid var(--border); cursor: default;
-      width: 160px; transition: all 0.3s;
-    }
-    .card-ayuda:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 12px 28px rgba(0,0,0,0.35); }
-    .card-ayuda img { width: 70px; height: 70px; border-radius: 50%; margin-bottom: 9px; object-fit: cover; border: 2px solid var(--border2); }
-    .card-ayuda h4 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
-    .card-ayuda p  { font-size: 11px; color: var(--muted); margin: 2px 0; }
-    .help-modal { max-width: 660px; }
+  .rep-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); padding: 17px 18px; }
+  .rep-card-title { font-size: 12px; font-weight: 700; margin-bottom: 14px; color: var(--text); }
+  .rep-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 900px) {
-      .stats-row { grid-template-columns: repeat(2, 1fr); }
-      .dash-grid  { grid-template-columns: 1fr; }
-      .kanban-cols { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 640px) {
-      .sidebar { width: 60px; }
-      .sb-logo h1, .sb-logo p, .sb-logo .badge, .nav-item span:not(.nav-icon), .user-info, .btn-logout { display: none; }
-      .nav-item { justify-content: center; padding: 10px; }
-      .user-pill { justify-content: center; }
-      .main { padding: 0; }
-      .view { padding: 14px; }
-      .stats-row { grid-template-columns: 1fr 1fr; }
-    }
-  </style>
+  .dep-table { width: 100%; border-collapse: collapse; }
+  .dep-table th { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted2); font-family: var(--mono); padding: 0 0 7px; text-align: left; border-bottom: 1px solid var(--border); }
+  .dep-table th:last-child { text-align: right; }
+  .dep-table td { padding: 7px 0; font-size: 11px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .dep-table tr:last-child td { border-bottom: none; }
+  .dep-table .dep-name { font-weight: 600; font-size: 10px; }
+  .dep-table .dep-bar-cell { width: 70px; padding: 7px 8px; }
+  .dep-bar-wrap { height: 4px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
+  .dep-bar-fill { height: 100%; border-radius: 3px; transition: width 0.7s cubic-bezier(.4,0,.2,1); }
+  .dep-table .dep-resuelto { font-family: var(--mono); font-size: 10px; text-align: center; }
+  .dep-table .dep-pct { font-family: var(--mono); font-size: 10px; font-weight: 700; text-align: right; color: var(--accent); }
+  .dep-total-row td { font-weight: 700; font-size: 11px; padding-top: 9px; border-top: 1px solid var(--border2); border-bottom: none; }
+
+  .chart-canvas-wrap { position: relative; height: 160px; margin-bottom: 10px; }
+
+  .chart-legend-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+  .chart-legend-table th { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted2); font-family: var(--mono); padding: 3px 5px; text-align: left; border-bottom: 1px solid var(--border); }
+  .chart-legend-table td { font-size: 9px; font-family: var(--mono); padding: 5px 5px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .chart-legend-table tr:last-child td { border-bottom: none; }
+  .legend-color-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+  .legend-total-row td { font-weight: 700; border-top: 1px solid var(--border2); }
+
+  .rep-ticket-list { display: flex; flex-direction: column; gap: 6px; }
+  .rep-ticket-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 8px 10px; background: var(--surface2); border-radius: 8px; border: 1px solid var(--border); transition: border-color 0.15s; }
+  .rep-ticket-item:hover { border-color: var(--border2); }
+  .rep-ticket-left { flex: 1; min-width: 0; }
+  .rep-ticket-titulo { font-size: 11px; font-weight: 600; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+  .rep-ticket-meta { font-size: 9px; color: var(--muted); font-family: var(--mono); }
+  .rep-ticket-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
+  .rep-ticket-fecha { font-size: 9px; font-family: var(--mono); color: var(--muted2); }
+  .badge-sm { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 20px; font-family: var(--mono); white-space: nowrap; }
+  .badge-sm.res  { background: rgba(59,227,142,0.15); color: var(--success); border: 1px solid rgba(59,227,142,0.3); }
+  .badge-sm.pend { background: rgba(255,209,102,0.15); color: var(--warning); border: 1px solid rgba(255,209,102,0.3); }
+  .badge-sm.proc { background: rgba(79,195,255,0.15);  color: var(--accent2); border: 1px solid rgba(79,195,255,0.3); }
+
+  .rep-action-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .btn-rep-primary { padding: 9px 18px; border-radius: 8px; font-family: var(--font); font-size: 12px; font-weight: 700; background: var(--accent); color: #fff; border: none; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+  .btn-rep-primary:hover { background: #6a5ee0; transform: translateY(-1px); }
+  .btn-rep-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-rep-export { padding: 9px 18px; border-radius: 8px; font-family: var(--font); font-size: 12px; font-weight: 700; background: rgba(59,227,142,0.15); color: var(--success); border: 1px solid rgba(59,227,142,0.3); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+  .btn-rep-export:hover { background: rgba(59,227,142,0.3); }
+  .btn-rep-sec { padding: 9px 18px; border-radius: 8px; font-family: var(--font); font-size: 12px; font-weight: 700; background: transparent; color: var(--muted); border: 1px solid var(--border2); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+  .btn-rep-sec:hover { color: var(--text); border-color: var(--accent); }
+
+  .rep-cierre-banner { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); padding: 15px 20px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .rep-cierre-icon { width: 38px; height: 38px; border-radius: 50%; background: rgba(124,111,255,0.15); border: 1px solid rgba(124,111,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .rep-cierre-info { flex: 1; min-width: 180px; }
+  .rep-cierre-info p:first-child { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .rep-cierre-info p:last-child  { font-size: 10px; color: var(--muted); font-family: var(--mono); }
+  .rep-cierre-meta { display: flex; gap: 16px; flex-wrap: wrap; }
+  .rep-cierre-stat { text-align: center; }
+  .rep-cierre-stat .lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-family: var(--mono); margin-bottom: 2px; }
+  .rep-cierre-stat .val { font-size: 16px; font-weight: 800; color: var(--accent); }
+  .rep-cierre-stat .val.green  { color: var(--success); }
+  .rep-cierre-stat .val.yellow { color: var(--warning); }
+
+  /* ════════════════════════════════════
+     RENDIMIENTO INDIVIDUAL TÉCNICO
+  ════════════════════════════════════ */
+  .perf-section-title {
+    font-size: 13px; font-weight: 800; margin: 22px 0 14px;
+    display: flex; align-items: center; gap: 10px; color: var(--text);
+  }
+  .perf-section-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--border2);
+  }
+  .perf-hero {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2);
+    padding: 18px 20px; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    position: relative; overflow: hidden;
+  }
+  .perf-hero::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--success));
+    border-radius: 3px 3px 0 0;
+  }
+  .perf-hero-avatar {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0;
+    border: 2px solid rgba(124,111,255,0.4);
+  }
+  .perf-hero-info { flex: 1; min-width: 140px; }
+  .perf-hero-info h3 { font-size: 16px; font-weight: 800; margin-bottom: 2px; }
+  .perf-hero-info p { font-size: 10px; color: var(--muted); font-family: var(--mono); }
+  .perf-hero-kpis { display: flex; gap: 20px; flex-wrap: wrap; }
+  .perf-hero-kpi { text-align: center; }
+  .perf-hero-kpi .phk-val { font-size: 26px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
+  .perf-hero-kpi .phk-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); font-family: var(--mono); margin-top: 3px; }
+  .perf-hero-kpi .phk-val.purple { color: var(--accent); }
+  .perf-hero-kpi .phk-val.green  { color: var(--success); }
+  .perf-hero-kpi .phk-val.yellow { color: var(--warning); }
+  .perf-hero-kpi .phk-val.blue   { color: var(--accent2); }
+
+  .perf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .perf-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); padding: 15px 17px; }
+  .perf-card-title { font-size: 11px; font-weight: 700; margin-bottom: 12px; color: var(--text); font-family: var(--mono); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Barra de resolución grande */
+  .perf-res-bar-wrap { position: relative; height: 10px; background: var(--surface3); border-radius: 6px; overflow: hidden; margin-bottom: 6px; }
+  .perf-res-bar-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--success), #6dffc0); transition: width 0.9s cubic-bezier(.4,0,.2,1); }
+  .perf-res-label { display: flex; justify-content: space-between; font-size: 10px; font-family: var(--mono); color: var(--muted); }
+  .perf-res-pct { font-size: 28px; font-weight: 800; color: var(--success); letter-spacing: -1px; margin-bottom: 4px; }
+
+  /* Streak / racha */
+  .perf-streak-box { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255,209,102,0.07); border: 1px solid rgba(255,209,102,0.18); border-radius: 8px; }
+  .perf-streak-num { font-size: 28px; font-weight: 800; color: var(--warning); letter-spacing: -1px; }
+  .perf-streak-info p:first-child { font-size: 12px; font-weight: 700; }
+  .perf-streak-info p:last-child  { font-size: 10px; color: var(--muted); font-family: var(--mono); }
+
+  /* Top deptos */
+  .perf-depto-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--border); }
+  .perf-depto-row:last-child { border-bottom: none; }
+  .perf-depto-rank { font-size: 10px; font-family: var(--mono); color: var(--muted2); width: 14px; flex-shrink: 0; }
+  .perf-depto-name { flex: 1; font-size: 11px; font-weight: 600; }
+  .perf-depto-bar { width: 50px; height: 4px; background: var(--surface3); border-radius: 2px; overflow: hidden; }
+  .perf-depto-bar-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+  .perf-depto-count { font-size: 10px; font-family: var(--mono); color: var(--muted); min-width: 22px; text-align: right; }
+
+  /* Velocidad / tiempos */
+  .perf-speed-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 11px; }
+  .perf-speed-item:last-child { border-bottom: none; }
+  .perf-speed-label { color: var(--muted); font-family: var(--mono); font-size: 10px; }
+  .perf-speed-val { font-weight: 700; color: var(--accent2); font-family: var(--mono); }
+
+  /* Acumulado histórico */
+  .perf-hist-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .perf-hist-kpi { background: var(--surface2); border-radius: 8px; padding: 12px; border: 1px solid var(--border); text-align: center; }
+  .perf-hist-kpi .val { font-size: 22px; font-weight: 800; letter-spacing: -1px; }
+  .perf-hist-kpi .lbl { font-size: 9px; color: var(--muted); font-family: var(--mono); text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+  .perf-hist-kpi .val.acc  { color: var(--accent); }
+  .perf-hist-kpi .val.green{ color: var(--success); }
+  .perf-hist-kpi .val.blue { color: var(--accent2); }
+
+  /* ════════════════════════════════════
+     CONFIGURACIÓN
+  ════════════════════════════════════ */
+  .config-profile-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2);
+    padding: 18px 20px; display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
+    position: relative; overflow: hidden;
+  }
+  .config-profile-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .config-avatar-big {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0;
+  }
+  .config-profile-info p:first-child { font-size: 16px; font-weight: 800; }
+  .config-profile-info p:nth-child(2) { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
+  .config-profile-info p:nth-child(3) { font-size: 10px; color: var(--accent); font-family: var(--mono); margin-top: 4px; }
+
+  .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .config-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); padding: 18px 20px; }
+  .config-card-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .config-card-desc { font-size: 10px; color: var(--muted); font-family: var(--mono); margin-bottom: 16px; }
+
+  .config-field { margin-bottom: 14px; }
+  .config-field label { display: block; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 5px; font-family: var(--mono); }
+  .config-field input, .config-field select {
+    width: 100%; padding: 8px 12px; background: var(--surface2);
+    border: 1px solid var(--border2); border-radius: 8px; color: var(--text);
+    font-family: var(--font); font-size: 12px; outline: none; transition: border-color 0.15s;
+  }
+  .config-field input:focus, .config-field select:focus { border-color: var(--accent); }
+  .config-field input[readonly] { opacity: 0.5; cursor: not-allowed; }
+  .config-field select option { background: var(--surface2); }
+
+  .config-toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .config-toggle-row:last-child { border-bottom: none; }
+  .config-toggle-info p:first-child { font-size: 12px; font-weight: 600; }
+  .config-toggle-info p:last-child  { font-size: 10px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
+  .toggle-switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: var(--surface3); border-radius: 22px; transition: 0.3s; border: 1px solid var(--border2); }
+  .toggle-slider::before { content: ''; position: absolute; height: 16px; width: 16px; left: 2px; bottom: 2px; background: var(--muted); border-radius: 50%; transition: 0.3s; }
+  .toggle-switch input:checked + .toggle-slider { background: rgba(124,111,255,0.3); border-color: var(--accent); }
+  .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); background: var(--accent); }
+
+  .config-info-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 11px; }
+  .config-info-row:last-child { border-bottom: none; }
+  .config-info-row span:first-child { color: var(--muted); font-family: var(--mono); font-size: 10px; }
+  .config-info-row span:last-child { font-weight: 600; }
+
+  .config-divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+  .config-actions { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .btn-config-save { padding: 8px 18px; border-radius: 8px; font-family: var(--font); font-size: 12px; font-weight: 700; background: var(--accent); color: #fff; border: none; cursor: pointer; transition: all 0.15s; }
+  .btn-config-save:hover { background: #6a5ee0; }
+  .btn-config-danger { padding: 8px 18px; border-radius: 8px; font-family: var(--font); font-size: 12px; font-weight: 700; background: rgba(255,107,107,0.12); color: var(--danger); border: 1px solid rgba(255,107,107,0.25); cursor: pointer; transition: all 0.15s; }
+  .btn-config-danger:hover { background: rgba(255,107,107,0.25); }
+
+  /* ── HISTORIAL CIERRES ── */
+  .hist-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 300; }
+  .hist-overlay.open { display: flex; }
+  .hist-panel { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius2); width: 100%; max-width: 680px; max-height: 85vh; display: flex; flex-direction: column; animation: slideUp 0.2s ease; }
+  .hist-header { padding: 20px 22px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .hist-header h3 { font-size: 17px; font-weight: 800; }
+  .hist-header p  { font-size: 10px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
+  .btn-close { width: 30px; height: 30px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .btn-close:hover { color: var(--text); }
+  .hist-body { flex: 1; overflow-y: auto; padding: 14px 22px; }
+  .hist-empty { text-align: center; padding: 36px; color: var(--muted); font-size: 12px; font-family: var(--mono); }
+  .hist-item { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.15s; }
+  .hist-item:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .hist-item-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .hist-item-title { font-size: 13px; font-weight: 700; }
+  .hist-item-fecha { font-size: 9px; font-family: var(--mono); color: var(--muted); }
+  .hist-item-stats { display: flex; gap: 14px; flex-wrap: wrap; }
+  .hist-mini-stat { font-size: 10px; font-family: var(--mono); }
+  .hist-mini-stat .lbl { color: var(--muted); }
+  .hist-mini-stat .val { font-weight: 700; }
+  .hist-mini-stat .val.g { color: var(--success); }
+  .hist-mini-stat .val.y { color: var(--warning); }
+  .hist-mini-stat .val.b { color: var(--accent2); }
+  .hist-mini-stat .val.p { color: var(--accent); }
+  .hist-footer { padding: 12px 22px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
+
+  .rep-empty { text-align: center; padding: 36px 16px; color: var(--muted); font-size: 12px; font-family: var(--mono); }
+  .rep-empty-icon { font-size: 30px; margin-bottom: 10px; }
+
+  /* ── MODAL ── */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 999; }
+  .overlay.open { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border2); border-radius: 14px; padding: 26px; width: 90%; max-width: 450px; animation: slideUp 0.2s ease; }
+  @keyframes slideUp { from{transform:translateY(16px);opacity:0} to{transform:translateY(0);opacity:1} }
+  .modal h3 { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+  .modal-sub { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 5px; font-family: var(--mono); }
+  .form-group textarea { width: 100%; padding: 9px 12px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-family: var(--font); font-size: 12px; outline: none; resize: none; min-height: 90px; }
+  .form-group textarea:focus { border-color: var(--accent); }
+  .form-group input { width: 100%; padding: 9px 12px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-family: var(--font); font-size: 12px; outline: none; }
+  .form-group input:focus { border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .btn-cancel { padding: 8px 16px; border-radius: 8px; font-family: var(--font); font-size: 12px; font-weight: 600; background: transparent; color: var(--muted); border: 1px solid var(--border2); cursor: pointer; transition: all 0.15s; }
+  .btn-cancel:hover { color: var(--text); }
+  .btn-save { padding: 8px 16px; border-radius: 8px; font-family: var(--font); font-size: 12px; font-weight: 700; background: var(--success); color: #0a1a12; border: none; cursor: pointer; }
+  .btn-save:hover { opacity: 0.88; }
+
+  /* ── AYUDA MODAL ── */
+  .card-container { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .card-ayuda { background: var(--surface2); border-radius: 14px; padding: 18px 14px; text-align: center; border: 1px solid var(--border); width: 160px; transition: all 0.3s; }
+  .card-ayuda:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 12px 28px rgba(0,0,0,0.35); }
+  .card-ayuda img { width: 70px; height: 70px; border-radius: 50%; margin-bottom: 9px; object-fit: cover; border: 2px solid var(--border2); }
+  .card-ayuda h4 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+  .card-ayuda p  { font-size: 11px; color: var(--muted); margin: 2px 0; }
+  .help-modal { max-width: 660px; }
+
+  /* ── TOAST ── */
+  .toast { position: fixed; bottom: 22px; right: 22px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; padding: 10px 16px; font-size: 12px; font-weight: 600; z-index: 1000; opacity: 0; transform: translateY(8px); transition: all 0.25s; pointer-events: none; max-width: 300px; }
+  .toast.show    { opacity: 1; transform: translateY(0); }
+  .toast.success { border-left: 3px solid var(--success); }
+  .toast.error   { border-left: 3px solid var(--danger); }
+  .toast.warning { border-left: 3px solid var(--warning); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .dash-grid  { grid-template-columns: 1fr; }
+    .kanban-cols { grid-template-columns: 1fr; }
+    .rep-kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .rep-main-grid { grid-template-columns: 1fr; }
+    .perf-grid { grid-template-columns: 1fr; }
+    .config-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .sidebar { width: 60px; }
+    .sb-logo h1, .sb-logo p, .sb-logo .badge, .nav-item span:not(.nav-icon), .user-info, .btn-logout { display: none; }
+    .nav-item { justify-content: center; padding: 10px; }
+    .user-pill { justify-content: center; }
+    .view { padding: 14px; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .rep-kpi-row { grid-template-columns: 1fr 1fr; }
+    .perf-hist-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
 </head>
 <body>
-
 <div class="layout">
 
-  <!-- ════ SIDEBAR ════ -->
-  <aside class="sidebar">
-    <div class="sb-logo">
-      <span class="badge">Técnico</span>
-      <h1>Panel<br>Asistencia</h1>
-      <p>Helpdesk v2</p>
+<!-- ════ SIDEBAR ════ -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <span class="badge">Técnico</span>
+    <h1>Panel<br>Asistencia</h1>
+    <p>Helpdesk v2</p>
+  </div>
+  <p class="nav-section">Vistas</p>
+  <div class="nav-item active" id="nav-dashboard"  onclick="switchView('dashboard')"><span class="nav-icon">📊</span><span>Dashboard</span></div>
+  <div class="nav-item"        id="nav-tickets"    onclick="switchView('tickets')"><span class="nav-icon">🔧</span><span>Mis Tickets</span></div>
+  <div class="nav-item"        id="nav-resueltos"  onclick="switchView('resueltos')"><span class="nav-icon">✅</span><span>Resueltos</span></div>
+  <div class="nav-item"        id="nav-reportes"   onclick="switchView('reportes'); if(!repInited){initReportes();repInited=true;}"><span class="nav-icon">📈</span><span>Reportes</span></div>
+  <div class="nav-item"        id="nav-config"     onclick="switchView('config'); renderConfigView()"><span class="nav-icon">⚙️</span><span>Configuración</span></div>
+  <div class="nav-item"        id="nav-ayuda"      onclick="abrirAyuda()"><span class="nav-icon">📞</span><span>Ayuda rápida</span></div>
+  <div class="sb-footer">
+    <div class="user-pill">
+      <div class="user-avatar" id="sbAvatar">--</div>
+      <div class="user-info"><p id="sbName">Técnico</p><p>panel técnico</p></div>
     </div>
-    <p class="nav-section">Vistas</p>
-    <div class="nav-item active" id="nav-dashboard" onclick="switchView('dashboard')">
-      <span class="nav-icon">📊</span><span>Dashboard</span>
+    <button class="btn-logout" onclick="doLogout()">Cerrar sesión</button>
+  </div>
+</aside>
+
+<!-- ════ MAIN ════ -->
+<main class="main">
+  <div class="topbar">
+    <div>
+      <h2 id="viewTitle">Dashboard</h2>
+      <div class="topbar-sub"><span class="dot"></span>En línea — <span id="clockEl"></span></div>
     </div>
-    <div class="nav-item" id="nav-tickets" onclick="switchView('tickets')">
-      <span class="nav-icon">🔧</span><span>Mis Tickets</span>
+    <button class="btn-refresh" onclick="recargar()">↻ Actualizar</button>
+  </div>
+
+  <!-- ── DASHBOARD ── -->
+  <div id="view-dashboard" class="view active">
+    <div class="stats-row">
+      <div class="stat-card c1"><div class="stat-label">Total mis tickets</div><div class="stat-value" id="st-total">—</div></div>
+      <div class="stat-card c2"><div class="stat-label">Pendientes</div>    <div class="stat-value" id="st-pend">—</div></div>
+      <div class="stat-card c3"><div class="stat-label">En proceso</div>    <div class="stat-value" id="st-proc">—</div></div>
+      <div class="stat-card c4"><div class="stat-label">Resueltos</div>     <div class="stat-value" id="st-res">—</div></div>
     </div>
-    <div class="nav-item" id="nav-resueltos" onclick="switchView('resueltos')">
-      <span class="nav-icon">✅</span><span>Resueltos</span>
+    <div class="dash-grid">
+      <div class="dash-card"><div class="dash-card-title">Mis tickets por departamento</div><div id="deptChart"></div></div>
+      <div class="dash-card"><div class="dash-card-title">Mis tickets recientes</div><div id="recentList"></div></div>
     </div>
-    <div class="nav-item" id="nav-ayuda" onclick="abrirAyuda()">
-      <span class="nav-icon">📞</span><span>Ayuda rápida</span>
+  </div>
+
+  <!-- ── MIS TICKETS (Kanban) ── -->
+  <div id="view-tickets" class="view">
+    <div class="filters">
+      <input class="search-box" id="srchTickets" placeholder="Buscar en mis tickets..." oninput="renderKanban()"/>
+      <div class="tienda-filter-wrap">
+        <span>🏪 Tienda:</span>
+        <select class="tienda-select" id="tiendaFilter" onchange="renderKanban()">
+          <option value="">Todas</option>
+        </select>
+      </div>
+      <span class="filter-chip" id="tiendaChip" style="display:none" onclick="limpiarTiendaFilter()">
+        <span id="tiendaChipLabel">—</span>
+        <span class="chip-x">✕</span>
+      </span>
     </div>
-    <div class="sb-footer">
-      <div class="user-pill">
-        <div class="user-avatar" id="sbAvatar">--</div>
-        <div class="user-info">
-          <p id="sbName">Técnico</p>
-          <p>panel técnico</p>
+    <div class="kanban-cols" id="kanbanGrid"></div>
+  </div>
+
+  <!-- ── RESUELTOS ── -->
+  <div id="view-resueltos" class="view">
+    <div class="filters">
+      <input class="search-box" id="srchRes" placeholder="Buscar en mis resueltos..." oninput="renderResueltos()"/>
+      <div class="tienda-filter-wrap">
+        <span>🏪 Tienda:</span>
+        <select class="tienda-select" id="tiendaFilterRes" onchange="renderResueltos()">
+          <option value="">Todas</option>
+        </select>
+      </div>
+    </div>
+    <div class="section-hdr">
+      <span class="section-ttl">Mis tickets resueltos</span>
+      <span class="section-cnt" id="resCount">0 tickets</span>
+    </div>
+    <div class="res-grid" id="resGrid"></div>
+  </div>
+
+  <!-- ════ VISTA REPORTES TÉCNICO ════ -->
+  <div id="view-reportes" class="view">
+
+    <div class="rep-month-bar">
+      <button class="rep-month-btn" data-m="0"  onclick="repSelMes(0,this)">Ene</button>
+      <button class="rep-month-btn" data-m="1"  onclick="repSelMes(1,this)">Feb</button>
+      <button class="rep-month-btn" data-m="2"  onclick="repSelMes(2,this)">Mar</button>
+      <button class="rep-month-btn" data-m="3"  onclick="repSelMes(3,this)">Abr</button>
+      <button class="rep-month-btn" data-m="4"  onclick="repSelMes(4,this)">May</button>
+      <button class="rep-month-btn" data-m="5"  onclick="repSelMes(5,this)">Jun</button>
+      <button class="rep-month-btn" data-m="6"  onclick="repSelMes(6,this)">Jul</button>
+      <button class="rep-month-btn" data-m="7"  onclick="repSelMes(7,this)">Ago</button>
+      <button class="rep-month-btn" data-m="8"  onclick="repSelMes(8,this)">Sep</button>
+      <button class="rep-month-btn" data-m="9"  onclick="repSelMes(9,this)">Oct</button>
+      <button class="rep-month-btn" data-m="10" onclick="repSelMes(10,this)">Nov</button>
+      <button class="rep-month-btn" data-m="11" onclick="repSelMes(11,this)">Dic</button>
+      <button class="btn-rep-sec" onclick="repAbrirHistorial()" style="flex:0;white-space:nowrap;font-size:10px;padding:5px 12px;">
+        🗓 Historial
+      </button>
+    </div>
+
+    <div class="rep-info-banner">
+      <span>ℹ️</span>
+      <span>Mostrando mis tickets de <strong id="repBannerMes">—</strong>. Solo se contabilizan los tickets asignados a ti.</span>
+    </div>
+
+    <div class="rep-kpi-row">
+      <div class="rep-kpi total">
+        <div class="rep-kpi-left"><div class="lbl">Mis Tickets</div><div class="val" id="repTotal">—</div><div class="pct" id="repTotalPct">—</div></div>
+        <div class="rep-kpi-icon">🎫</div>
+      </div>
+      <div class="rep-kpi pending">
+        <div class="rep-kpi-left"><div class="lbl">Pendientes</div><div class="val" id="repPend">—</div><div class="pct" id="repPendPct">—</div></div>
+        <div class="rep-kpi-icon">⏳</div>
+      </div>
+      <div class="rep-kpi process">
+        <div class="rep-kpi-left"><div class="lbl">En Proceso</div><div class="val" id="repProc">—</div><div class="pct" id="repProcPct">—</div></div>
+        <div class="rep-kpi-icon">🔄</div>
+      </div>
+      <div class="rep-kpi resolved">
+        <div class="rep-kpi-left"><div class="lbl">Resueltos</div><div class="val" id="repRes">—</div><div class="pct" id="repResPct">—</div></div>
+        <div class="rep-kpi-icon">✅</div>
+      </div>
+    </div>
+
+    <div class="rep-main-grid">
+      <div class="rep-card">
+        <div class="rep-card-title">Cobertura por departamento</div>
+        <table class="dep-table">
+          <thead>
+            <tr>
+              <th>Departamento</th>
+              <th style="text-align:center">Res / Total</th>
+              <th class="dep-bar-cell"></th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody id="repDepTable">
+            <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:18px;font-size:10px;font-family:var(--mono)">Sin datos</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="rep-card">
+          <div class="rep-card-title">Distribución por departamento</div>
+          <div class="chart-canvas-wrap">
+            <canvas id="repTechBarChart"></canvas>
+          </div>
+          <table class="chart-legend-table">
+            <thead><tr><th>Departamento</th><th style="text-align:center">Tickets</th><th style="text-align:center">%</th></tr></thead>
+            <tbody id="repLegendBody"></tbody>
+          </table>
+        </div>
+
+        <div class="rep-card">
+          <div class="rep-card-header">
+            <div class="rep-card-title" style="margin:0">Tickets recientes <span id="repMesLabel" style="font-size:10px;color:var(--muted);font-family:var(--mono);font-weight:400"></span></div>
+          </div>
+          <div class="rep-ticket-list" id="repRecentList">
+            <div class="rep-empty"><div class="rep-empty-icon">📋</div>Sin tickets</div>
+          </div>
         </div>
       </div>
-      <button class="btn-logout" onclick="doLogout()">Cerrar sesión</button>
-    </div>
-  </aside>
-
-  <!-- ════ MAIN ════ -->
-  <main class="main">
-    <div class="topbar">
-      <div>
-        <h2 id="viewTitle">Dashboard</h2>
-        <div class="topbar-sub"><span class="dot"></span>En línea — <span id="clockEl"></span></div>
-      </div>
-      <button class="btn-refresh" onclick="recargar()">↻ Actualizar</button>
     </div>
 
-    <!-- ── DASHBOARD ── -->
-    <div id="view-dashboard" class="view active">
-      <div class="stats-row">
-        <div class="stat-card c1"><div class="stat-label">Total asignados</div><div class="stat-value" id="st-total">—</div></div>
-        <div class="stat-card c2"><div class="stat-label">Pendientes</div>    <div class="stat-value" id="st-pend">—</div></div>
-        <div class="stat-card c3"><div class="stat-label">En proceso</div>    <div class="stat-value" id="st-proc">—</div></div>
-        <div class="stat-card c4"><div class="stat-label">Resueltos</div>     <div class="stat-value" id="st-res">—</div></div>
+    <!-- ═══ RENDIMIENTO INDIVIDUAL ═══ -->
+    <div class="perf-section-title">👨‍💻 Mi Rendimiento Individual</div>
+
+    <!-- Hero card -->
+    <div class="perf-hero">
+      <div class="perf-hero-avatar" id="perfAvatar">—</div>
+      <div class="perf-hero-info">
+        <h3 id="perfNombre">—</h3>
+        <p id="perfSubtitle">Técnico de soporte — <span id="perfMesLabel">—</span></p>
       </div>
-      <div class="dash-grid">
-        <div class="dash-card">
-          <div class="dash-card-title">Cobertura por departamento</div>
-          <div id="deptChart"></div>
+      <div class="perf-hero-kpis">
+        <div class="perf-hero-kpi">
+          <div class="phk-val purple" id="perfHeroTotal">—</div>
+          <div class="phk-lbl">Asignados</div>
         </div>
-        <div class="dash-card">
-          <div class="dash-card-title">Tickets recientes</div>
-          <div id="recentList"></div>
+        <div class="perf-hero-kpi">
+          <div class="phk-val green" id="perfHeroRes">—</div>
+          <div class="phk-lbl">Resueltos</div>
+        </div>
+        <div class="perf-hero-kpi">
+          <div class="phk-val yellow" id="perfHeroPend">—</div>
+          <div class="phk-lbl">Pendientes</div>
+        </div>
+        <div class="perf-hero-kpi">
+          <div class="phk-val blue" id="perfHeroProc">—</div>
+          <div class="phk-lbl">En proceso</div>
         </div>
       </div>
     </div>
 
-    <!-- ── MIS TICKETS (Kanban) ── -->
-    <div id="view-tickets" class="view">
-      <div class="filters">
-        <input class="search-box" id="srchTickets" placeholder="Buscar en mis tickets..." oninput="renderKanban()"/>
+    <div class="perf-grid">
+      <!-- Tasa de resolución -->
+      <div class="perf-card">
+        <div class="perf-card-title">📊 Tasa de resolución del mes</div>
+        <div class="perf-res-pct" id="perfResPct">0%</div>
+        <div class="perf-res-bar-wrap">
+          <div class="perf-res-bar-fill" id="perfResBar" style="width:0%"></div>
+        </div>
+        <div class="perf-res-label">
+          <span>0%</span><span>100%</span>
+        </div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+          <div class="perf-card-title" style="margin-bottom:10px">🏆 Top departamentos atendidos</div>
+          <div id="perfTopDeptos"><span style="color:var(--muted2);font-size:11px;font-family:var(--mono)">Sin datos este mes</span></div>
+        </div>
       </div>
-      <div class="kanban-cols" id="kanbanGrid"></div>
+
+      <!-- Histórico acumulado -->
+      <div class="perf-card">
+        <div class="perf-card-title">📅 Acumulado histórico (todos los meses)</div>
+        <div class="perf-hist-grid" id="perfHistGrid" style="margin-bottom:14px">
+          <div class="perf-hist-kpi"><div class="val acc" id="perfAccTotal">—</div><div class="lbl">Total tickets</div></div>
+          <div class="perf-hist-kpi"><div class="val green" id="perfAccRes">—</div><div class="lbl">Resueltos</div></div>
+          <div class="perf-hist-kpi"><div class="val blue" id="perfAccPct">—</div><div class="lbl">% Resolución</div></div>
+        </div>
+        <div style="padding-top:14px;border-top:1px solid var(--border);">
+          <div class="perf-card-title" style="margin-bottom:10px">📈 Actividad por mes (últimos 6 meses)</div>
+          <div id="perfMonthActivity"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- ── RESUELTOS ── -->
-    <div id="view-resueltos" class="view">
-      <div class="filters">
-        <input class="search-box" id="srchRes" placeholder="Buscar en resueltos..." oninput="renderResueltos()"/>
-      </div>
-      <div class="section-hdr">
-        <span class="section-ttl">Tickets resueltos por mí</span>
-        <span class="section-cnt" id="resCount">0 tickets</span>
-      </div>
-      <div class="res-grid" id="resGrid"></div>
+    <!-- ════ acciones ════ -->
+    <div class="rep-action-row">
+      <button class="btn-rep-primary" id="repBtnCierre" onclick="repCerrarMes()">
+        📦 Guardar cierre mensual
+      </button>
+      <button class="btn-rep-export" onclick="repExportarPDF()">
+        🖨️ Exportar / Imprimir
+      </button>
+      <button class="btn-rep-sec" onclick="repRecargar()">
+        ↻ Actualizar
+      </button>
     </div>
-  </main>
+
+    <div class="rep-cierre-banner">
+      <div class="rep-cierre-icon">📅</div>
+      <div class="rep-cierre-info">
+        <p>Información del cierre mensual</p>
+        <p id="repCierreDesc">Cierre de mis tickets del período seleccionado.</p>
+      </div>
+      <div class="rep-cierre-meta">
+        <div class="rep-cierre-stat"><div class="lbl">Último día</div><div class="val" id="repCierreFecha" style="font-size:12px;margin-top:3px">—</div></div>
+        <div class="rep-cierre-stat"><div class="lbl">Mis tickets</div><div class="val" id="repCierreTotal">—</div></div>
+        <div class="rep-cierre-stat"><div class="lbl">Deptos.</div><div class="val yellow" id="repCierreDeptos">—</div></div>
+        <div class="rep-cierre-stat"><div class="lbl">Guardado</div><div class="val green" id="repCierreGuardado">—</div></div>
+      </div>
+    </div>
+
+  </div><!-- /view-reportes -->
+
+  <!-- ════ CONFIGURACIÓN ════ -->
+  <div id="view-config" class="view">
+
+    <div class="config-profile-card">
+      <div class="config-avatar-big" id="cfgAvatarBig">--</div>
+      <div class="config-profile-info">
+        <p id="cfgNombreCompleto">—</p>
+        <p id="cfgUsername">@—</p>
+        <p id="cfgDepto">—</p>
+      </div>
+    </div>
+
+    <div class="config-grid">
+
+      <!-- ── Perfil ── -->
+      <div class="config-card">
+        <div class="config-card-title">👤 Mi perfil</div>
+        <div class="config-card-desc">Información de tu cuenta de técnico</div>
+
+        <div class="config-field">
+          <label>Nombre de usuario</label>
+          <input type="text" id="cfgFieldUsername" readonly/>
+        </div>
+        <div class="config-field">
+          <label>Nombre completo</label>
+          <input type="text" id="cfgFieldNombre" placeholder="Tu nombre completo"/>
+        </div>
+        <div class="config-field">
+          <label>Nueva contraseña</label>
+          <input type="password" id="cfgFieldPass" placeholder="Dejar en blanco para no cambiar"/>
+        </div>
+        <div class="config-field">
+          <label>Confirmar contraseña</label>
+          <input type="password" id="cfgFieldPass2" placeholder="Repite la nueva contraseña"/>
+        </div>
+        <div class="config-actions">
+          <button class="btn-config-save" onclick="guardarPerfil()">Guardar cambios</button>
+        </div>
+      </div>
+
+      <!-- ── Sistema ── -->
+      <div class="config-card">
+        <div class="config-card-title">⚙️ Sistema</div>
+        <div class="config-card-desc">Ajustes del panel técnico</div>
+
+        <div class="config-toggle-row">
+          <div class="config-toggle-info">
+            <p>Auto-actualización</p>
+            <p>Refresca tickets automáticamente cada 60s</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="cfgAutoRefresh" checked onchange="aplicarAutoRefresh()"/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="config-toggle-row">
+          <div class="config-toggle-info">
+            <p>Notificaciones toast</p>
+            <p>Muestra mensajes de confirmación en pantalla</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="cfgToasts" checked/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="config-toggle-row">
+          <div class="config-toggle-info">
+            <p>Mostrar IDs en tarjetas</p>
+            <p>Visualiza el ID del ticket en cada tarjeta</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="cfgShowIds" checked/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="config-divider"></div>
+        <div class="config-card-title" style="font-size:12px;margin-bottom:12px;">ℹ️ Información del sistema</div>
+        <div class="config-info-row"><span>Versión</span><span>v2.0 — Panel Técnico</span></div>
+        <div class="config-info-row"><span>API Tickets</span><span style="color:var(--success)">✓ Conectada</span></div>
+        <div class="config-info-row"><span>Última sync</span><span id="cfgLastSync">—</span></div>
+        <div class="config-info-row"><span>Mis tickets cargados</span><span id="cfgTotalTickets">—</span></div>
+        <div class="config-info-row"><span>Resueltos totales</span><span id="cfgTotalResueltos" style="color:var(--success)">—</span></div>
+      </div>
+
+      <!-- ── Sesión ── -->
+      <div class="config-card" style="grid-column: 1 / -1;">
+        <div class="config-card-title">🔐 Sesión y cuenta</div>
+        <div class="config-card-desc">Gestiona tu sesión activa</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;">
+          <div style="flex:1;min-width:180px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Técnico activo</div>
+            <div style="font-size:14px;font-weight:700;" id="cfgSesionNombre">—</div>
+            <div style="font-size:10px;color:var(--accent);font-family:var(--mono);margin-top:3px" id="cfgSesionRol">—</div>
+          </div>
+          <div style="flex:1;min-width:180px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Estado del panel</div>
+            <div style="font-size:13px;font-weight:700;color:var(--success)">🟢 Activo y en línea</div>
+            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:3px" id="cfgSesionTiempo">—</div>
+          </div>
+          <div style="flex:1;min-width:180px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Cierres guardados</div>
+            <div style="font-size:22px;font-weight:800;color:var(--accent)" id="cfgCierresGuardados">—</div>
+            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:3px">reportes mensuales</div>
+          </div>
+        </div>
+        <div class="config-actions">
+          <button class="btn-config-danger" onclick="if(confirm('¿Limpiar todos los cierres guardados?')){localStorage.removeItem(REP_STORAGE_KEY);renderConfigView();showToast('Cierres eliminados','success');}">🗑 Limpiar cierres guardados</button>
+          <button class="btn-config-save" onclick="recargar();showToast('Tickets actualizados','success');">↻ Forzar actualización</button>
+          <button class="btn-config-danger" onclick="doLogout()">⎋ Cerrar sesión</button>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /view-config -->
+
+</main>
 </div>
 
 <!-- ════ MODAL RESOLUCIÓN ════ -->
@@ -464,348 +912,1101 @@
         <p>📟 (809) 722-1076</p>
       </div>
     </div>
-    <div class="modal-actions" style="justify-content:center; margin-top:20px; border-top:none; padding-top:0;">
+    <div class="modal-actions" style="justify-content:center;margin-top:20px;border-top:none;padding-top:0;">
       <button class="btn-cancel" onclick="cerrarAyuda()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL HISTORIAL DE CIERRES ════ -->
+<div class="hist-overlay" id="histOverlay">
+  <div class="hist-panel">
+    <div class="hist-header">
+      <div>
+        <h3>🗓 Historial de Cierres</h3>
+        <p>Mis cierres mensuales guardados. Clic para ver detalle.</p>
+      </div>
+      <button class="btn-close" onclick="repCerrarHistorial()">✕</button>
+    </div>
+    <div class="hist-body" id="histBody">
+      <div class="hist-empty">No hay cierres guardados aún.</div>
+    </div>
+    <div class="hist-footer">
+      <button class="btn-rep-sec" onclick="repCerrarHistorial()">Cerrar</button>
     </div>
   </div>
 </div>
 
 <div class="toast" id="toastEl"></div>
 
+<script src="JS/js.js"></script>
 <script>
-  // ════════════════════════════════════
-  // CONFIG — ajusta tu API aquí
-  // ════════════════════════════════════
-  const API_TICKETS = "https://api.sheetbest.com/sheets/5b2f2a41-ad46-4a89-8cc2-9f768b9870af";
-  const MI_USER     = localStorage.getItem("usuario") || "Juan";
+// ════════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════════
+const API_TICKETS = "https://api.sheetbest.com/sheets/5b2f2a41-ad46-4a89-8cc2-9f768b9870af";
+const API_USERS   = "https://api.sheetbest.com/sheets/6784d1e5-1e26-4605-9c19-329eb2b6ea12";
 
-  // ════════════════════════════════════
-  // STATE
-  // ════════════════════════════════════
-  let allTickets       = [];
-  let pendingResolveId = null;
+const MI_USER = localStorage.getItem("usuario") || "Xavier";
+const REP_STORAGE_KEY = "gmtickets_tech_cierres_" + MI_USER.toLowerCase();
 
-  // ════════════════════════════════════
-  // INIT
-  // ════════════════════════════════════
-  (function init() {
-    const nombre = MI_USER;
-    document.getElementById("sbName").textContent   = nombre;
-    document.getElementById("sbAvatar").textContent = nombre.substring(0, 2).toUpperCase();
-    updateClock();
-    setInterval(updateClock, 1000);
-    recargar();
-    setInterval(recargar, 60000);
-  })();
+const DEP_COLORS = [
+  "#7c6fff","#4fc3ff","#3be38e","#ffd166","#ff6b6b",
+  "#f78c6c","#c792ea","#89ddff","#addb67","#ff5370",
+  "#82aaff","#ffcb6b","#c3e88d","#e9c46a","#f4a261"
+];
 
-  function updateClock() {
-    document.getElementById("clockEl").textContent = new Date().toLocaleString("es-DO");
-  }
+const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 
-  function doLogout() {
-    localStorage.removeItem("usuario");
-    localStorage.removeItem("rol");
+// ════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════
+let allTickets       = [];
+let misTickets       = [];
+let pendingResolveId = null;
+let autoRefreshTimer = null;
+
+// Reportes
+let repInited    = false;
+let repMes       = new Date().getMonth();
+let repAnio      = new Date().getFullYear();
+let repBarChart  = null;
+
+// ════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════
+(function init() {
+  const rol = localStorage.getItem("rol");
+  if (!rol || (rol !== "tecnico" && rol !== "superadmin" && rol !== "admin")) {
     window.location.href = "index.html";
+    return;
   }
 
-  // ════════════════════════════════════
-  // CARGAR TICKETS
-  // ════════════════════════════════════
-  async function recargar() {
-    try {
-      const r    = await fetch(API_TICKETS);
-      const data = await r.json();
-      allTickets = Array.isArray(data) ? data : [];
-      renderDashboard();
-      renderKanban();
-      renderResueltos();
-    } catch (e) {
-      showToast("Error al cargar tickets", "error");
-    }
+  const nombreCompleto = localStorage.getItem("nombreCompleto") || MI_USER;
+  document.getElementById("sbName").textContent   = nombreCompleto;
+  document.getElementById("sbAvatar").textContent = nombreCompleto.substring(0,2).toUpperCase();
+
+  updateClock();
+  setInterval(updateClock, 1000);
+  recargar();
+  iniciarAutoRefresh();
+})();
+
+function updateClock() {
+  document.getElementById("clockEl").textContent = new Date().toLocaleString("es-DO");
+}
+
+function doLogout() {
+  localStorage.removeItem("usuario");
+  localStorage.removeItem("rol");
+  localStorage.removeItem("nombreCompleto");
+  localStorage.removeItem("depto");
+  window.location.href = "index.html";
+}
+
+function iniciarAutoRefresh() {
+  if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+  const chk = document.getElementById("cfgAutoRefresh");
+  if (!chk || chk.checked) {
+    autoRefreshTimer = setInterval(recargar, 60000);
   }
+}
 
-  // ════════════════════════════════════
-  // NAVEGACIÓN
-  // ════════════════════════════════════
-  const VIEW_TITLES = {
-    dashboard: "Dashboard",
-    tickets:   "Mis Tickets",
-    resueltos: "Mis Tickets Resueltos"
-  };
-
-  function switchView(v) {
-    document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
-    document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
-    document.getElementById("view-" + v).classList.add("active");
-    document.getElementById("nav-" + v).classList.add("active");
-    document.getElementById("viewTitle").textContent = VIEW_TITLES[v] || v;
+function aplicarAutoRefresh() {
+  if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
+  const chk = document.getElementById("cfgAutoRefresh");
+  if (chk && chk.checked) {
+    autoRefreshTimer = setInterval(recargar, 60000);
+    showToast("Auto-actualización activada", "success");
+  } else {
+    showToast("Auto-actualización desactivada", "warning");
   }
+}
 
-  // ════════════════════════════════════
-  // DASHBOARD
-  // ════════════════════════════════════
-  function renderDashboard() {
-    const mis  = allTickets.filter(t => (t.asignado || "").toLowerCase() === MI_USER.toLowerCase());
-    const pend = mis.filter(t => t.estado === "Pendiente").length;
-    const proc = mis.filter(t => t.estado === "En Proceso").length;
-    const res  = mis.filter(t => t.estado === "Resuelto").length;
+// ════════════════════════════════════════════════════════
+// CARGAR TICKETS
+// ════════════════════════════════════════════════════════
+async function recargar() {
+  try {
+    const r    = await fetch(API_TICKETS);
+    const data = await r.json();
+    allTickets = Array.isArray(data) ? data : [];
 
-    document.getElementById("st-total").textContent = mis.length;
-    document.getElementById("st-pend").textContent  = pend;
-    document.getElementById("st-proc").textContent  = proc;
-    document.getElementById("st-res").textContent   = res;
-
-    // Cobertura por departamento
-    const deptos = {};
-    mis.forEach(t => {
-      const d = t.depto || "N/A";
-      if (!deptos[d]) deptos[d] = { total: 0, res: 0 };
-      deptos[d].total++;
-      if (t.estado === "Resuelto") deptos[d].res++;
-    });
-    const sorted  = Object.entries(deptos).sort((a, b) => b[1].total - a[1].total);
-    const maxTotal = sorted[0]?.[1].total || 1;
-
-    document.getElementById("deptChart").innerHTML = sorted.length === 0
-      ? `<p style="color:var(--muted);font-size:12px">Sin datos de departamento</p>`
-      : sorted.map(([d, s]) => {
-          const pct  = Math.round((s.res / s.total) * 100);
-          const barW = Math.round((s.total / maxTotal) * 100);
-          return `<div class="dept-row">
-            <div class="dept-meta">
-              <span class="dept-name">${d}</span>
-              <span class="dept-stats">
-                <span style="color:var(--success)">${s.res} resueltos</span>
-                <span>${s.total} total</span>
-                <span style="color:var(--accent);font-weight:700">${pct}%</span>
-              </span>
-            </div>
-            <div class="dept-bar-bg">
-              <div class="dept-bar-fill" style="width:${barW}%"></div>
-            </div>
-          </div>`;
-        }).join("");
-
-    // Tickets recientes
-    const recientes = [...mis].slice(-6).reverse();
-    document.getElementById("recentList").innerHTML = recientes.length === 0
-      ? `<p style="color:var(--muted);font-size:12px">Sin tickets recientes</p>`
-      : recientes.map(t => {
-          const ec = t.estado === "Resuelto" ? "badge-res"
-                   : t.estado === "En Proceso" ? "badge-proc" : "badge-pend";
-          return `<div class="recent-item">
-            <div>
-              <div class="recent-title">${t.titulo || "—"}</div>
-              <div class="recent-meta">${t.depto || ""} · ${t.usuario || ""}</div>
-            </div>
-            <span class="badge ${ec}">${t.estado || ""}</span>
-          </div>`;
-        }).join("");
-  }
-
-  // ════════════════════════════════════
-  // KANBAN — PENDIENTES + EN PROCESO
-  // ════════════════════════════════════
-  function renderKanban() {
-    const q   = (document.getElementById("srchTickets")?.value || "").toLowerCase();
-    const mis = allTickets.filter(t =>
-      (t.asignado || "").toLowerCase() === MI_USER.toLowerCase() && t.estado !== "Resuelto"
+    misTickets = allTickets.filter(t =>
+      (t.asignado || "").toLowerCase() === MI_USER.toLowerCase()
     );
-    const pendList = mis.filter(t => t.estado === "Pendiente").filter(t => !q || matchSearch(t, q));
-    const procList = mis.filter(t => t.estado === "En Proceso").filter(t => !q || matchSearch(t, q));
 
-    document.getElementById("kanbanGrid").innerHTML = `
-      <div class="kanban-col">
-        <div class="col-header">
-          <div class="col-title" style="color:var(--warning)">⏳ Pendientes</div>
-          <span class="col-count">${pendList.length}</span>
-        </div>
-        <div class="ticket-list">
-          ${pendList.length === 0
-            ? `<div class="empty-state">Sin pendientes 🎉</div>`
-            : pendList.map(t => buildTicketCard(t, true)).join("")
-          }
-        </div>
+    poblarSelectsTienda();
+    renderDashboard();
+    renderKanban();
+    renderResueltos();
+    if (repInited) renderReportes();
+
+    // actualizar sync en config si está visible
+    const syncEl = document.getElementById("cfgLastSync");
+    if (syncEl) syncEl.textContent = new Date().toLocaleTimeString("es-DO");
+    const ttEl = document.getElementById("cfgTotalTickets");
+    if (ttEl) ttEl.textContent = misTickets.length;
+    const trEl = document.getElementById("cfgTotalResueltos");
+    if (trEl) trEl.textContent = misTickets.filter(t => t.estado === "Resuelto").length;
+  } catch (e) {
+    showToast("Error al cargar tickets", "error");
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// SELECTS TIENDA
+// ════════════════════════════════════════════════════════
+function poblarSelectsTienda() {
+  const deptos = [...new Set(misTickets.map(t => (t.depto || "").trim()).filter(Boolean))].sort();
+  ["tiendaFilter","tiendaFilterRes"].forEach(selId => {
+    const sel = document.getElementById(selId);
+    if (!sel) return;
+    const valorActual = sel.value;
+    sel.innerHTML = `<option value="">Todas</option>`;
+    deptos.forEach(d => {
+      const opt = document.createElement("option");
+      opt.value = d; opt.textContent = d;
+      if (d === valorActual) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+function limpiarTiendaFilter() {
+  const sel = document.getElementById("tiendaFilter");
+  if (sel) sel.value = "";
+  renderKanban();
+}
+
+// ════════════════════════════════════════════════════════
+// NAVEGACIÓN
+// ════════════════════════════════════════════════════════
+const VIEW_TITLES = {
+  dashboard: "Mi Dashboard",
+  tickets:   "Mis Tickets",
+  resueltos: "Mis Tickets Resueltos",
+  reportes:  "Mis Reportes Mensuales",
+  config:    "Configuración"
+};
+
+function switchView(v) {
+  document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+  document.getElementById("view-" + v).classList.add("active");
+  const navEl = document.getElementById("nav-" + v);
+  if (navEl) navEl.classList.add("active");
+  document.getElementById("viewTitle").textContent = VIEW_TITLES[v] || v;
+}
+
+// ════════════════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════════════════
+function renderDashboard() {
+  const mis  = misTickets;
+  const pend = mis.filter(t => t.estado === "Pendiente").length;
+  const proc = mis.filter(t => t.estado === "En Proceso").length;
+  const res  = mis.filter(t => t.estado === "Resuelto").length;
+
+  document.getElementById("st-total").textContent = mis.length;
+  document.getElementById("st-pend").textContent  = pend;
+  document.getElementById("st-proc").textContent  = proc;
+  document.getElementById("st-res").textContent   = res;
+
+  const deptos = {};
+  mis.forEach(t => {
+    const d = t.depto || "N/A";
+    if (!deptos[d]) deptos[d] = { total: 0, res: 0 };
+    deptos[d].total++;
+    if (t.estado === "Resuelto") deptos[d].res++;
+  });
+  const sorted   = Object.entries(deptos).sort((a, b) => b[1].total - a[1].total);
+  const maxTotal = sorted[0]?.[1].total || 1;
+
+  document.getElementById("deptChart").innerHTML = sorted.length === 0
+    ? `<p style="color:var(--muted);font-size:12px">Sin datos de departamento</p>`
+    : sorted.map(([d, s]) => {
+        const pct  = Math.round((s.res / s.total) * 100);
+        const barW = Math.round((s.total / maxTotal) * 100);
+        return `<div class="dept-row">
+          <div class="dept-meta">
+            <span class="dept-name">${d}</span>
+            <span class="dept-stats">
+              <span style="color:var(--success)">${s.res} res.</span>
+              <span>${s.total} total</span>
+              <span style="color:var(--accent);font-weight:700">${pct}%</span>
+            </span>
+          </div>
+          <div class="dept-bar-bg">
+            <div class="dept-bar-fill" style="width:${barW}%"></div>
+          </div>
+        </div>`;
+      }).join("");
+
+  const recientes = [...mis].slice(-6).reverse();
+  document.getElementById("recentList").innerHTML = recientes.length === 0
+    ? `<p style="color:var(--muted);font-size:12px">Sin tickets recientes</p>`
+    : recientes.map(t => {
+        const ec = t.estado === "Resuelto" ? "badge-res" : t.estado === "En Proceso" ? "badge-proc" : "badge-pend";
+        return `<div class="recent-item">
+          <div>
+            <div class="recent-title">${t.titulo || "—"}</div>
+            <div class="recent-meta">${t.depto || ""} · ${t.usuario || ""}</div>
+          </div>
+          <span class="badge ${ec}">${t.estado || ""}</span>
+        </div>`;
+      }).join("");
+}
+
+// ════════════════════════════════════════════════════════
+// KANBAN
+// ════════════════════════════════════════════════════════
+function renderKanban() {
+  const q        = (document.getElementById("srchTickets")?.value || "").toLowerCase();
+  const tienda   = (document.getElementById("tiendaFilter")?.value || "").trim();
+
+  const chip = document.getElementById("tiendaChip");
+  const chipLabel = document.getElementById("tiendaChipLabel");
+  if (tienda) { chip.style.display = "inline-flex"; chipLabel.textContent = tienda; }
+  else { chip.style.display = "none"; }
+
+  const activos = misTickets.filter(t => t.estado !== "Resuelto");
+  const aplicarFiltros = list =>
+    list.filter(t => {
+      const matchQ = !q || matchSearch(t, q);
+      const matchT = !tienda || (t.depto || "").trim().toLowerCase() === tienda.toLowerCase();
+      return matchQ && matchT;
+    });
+
+  const pendList = aplicarFiltros(activos.filter(t => t.estado === "Pendiente"));
+  const procList = aplicarFiltros(activos.filter(t => t.estado === "En Proceso"));
+  const tiendaLabel = tienda ? ` <span style="font-size:9px;color:var(--muted);font-family:var(--mono)">· ${tienda}</span>` : "";
+
+  document.getElementById("kanbanGrid").innerHTML = `
+    <div class="kanban-col">
+      <div class="col-header">
+        <div class="col-title" style="color:var(--warning)">⏳ Pendientes${tiendaLabel}</div>
+        <span class="col-count">${pendList.length}</span>
       </div>
-      <div class="kanban-col">
-        <div class="col-header">
-          <div class="col-title" style="color:var(--accent2)">🔧 En proceso</div>
-          <span class="col-count">${procList.length}</span>
-        </div>
-        <div class="ticket-list">
-          ${procList.length === 0
-            ? `<div class="empty-state">Sin tickets en proceso</div>`
-            : procList.map(t => buildTicketCard(t, false)).join("")
-          }
-        </div>
+      <div class="ticket-list">
+        ${pendList.length === 0
+          ? `<div class="empty-state">Sin pendientes 🎉</div>`
+          : pendList.map(t => buildTicketCard(t, true)).join("")}
       </div>
-    `;
+    </div>
+    <div class="kanban-col">
+      <div class="col-header">
+        <div class="col-title" style="color:var(--accent2)">🔧 En proceso${tiendaLabel}</div>
+        <span class="col-count">${procList.length}</span>
+      </div>
+      <div class="ticket-list">
+        ${procList.length === 0
+          ? `<div class="empty-state">Sin tickets en proceso</div>`
+          : procList.map(t => buildTicketCard(t, false)).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function buildTicketCard(t, isPend) {
+  const ec = isPend ? "badge-pend" : "badge-proc";
+  const adjuntosHtml = buildAdjuntos(t.adjuntos);
+  const botones = isPend
+    ? `<button class="btn-proc" onclick="cambiarEstado('${esc(t.id)}','En Proceso')">🔧 En proceso</button>
+       <button class="btn-res"  onclick="abrirResModal('${esc(t.id)}')">✅ Resuelto</button>`
+    : `<button class="btn-res"  onclick="abrirResModal('${esc(t.id)}')">✅ Marcar resuelto</button>`;
+  return `<div class="tcard">
+    <div class="tcard-top">
+      <div><div class="tcard-id">${t.id || ""}</div><div class="tcard-title">${t.titulo || ""}</div></div>
+      <span class="badge ${ec}">${t.estado || ""}</span>
+    </div>
+    <div class="tcard-desc">${t.descripcion || ""}</div>
+    <div class="tcard-meta">
+      <span class="badge badge-dept">${t.depto || ""}</span>
+      <span class="badge badge-user">👤 ${t.usuario || ""}</span>
+    </div>
+    ${adjuntosHtml}
+    <div class="tcard-footer">📅 ${t.fecha || ""}</div>
+    <div class="tcard-actions">${botones}</div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════════════
+// RESUELTOS
+// ════════════════════════════════════════════════════════
+function renderResueltos() {
+  const q      = (document.getElementById("srchRes")?.value || "").toLowerCase();
+  const tienda = (document.getElementById("tiendaFilterRes")?.value || "").trim();
+
+  let lista = misTickets.filter(t => t.estado === "Resuelto");
+  if (tienda) lista = lista.filter(t => (t.depto || "").trim().toLowerCase() === tienda.toLowerCase());
+  if (q)      lista = lista.filter(t => matchSearch(t, q));
+
+  document.getElementById("resCount").textContent = lista.length + " ticket" + (lista.length !== 1 ? "s" : "");
+  const grid = document.getElementById("resGrid");
+
+  if (lista.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">Aún no hay resueltos${tienda ? " en esa tienda" : ""}.</div>`;
+    return;
   }
 
-  function buildTicketCard(t, isPend) {
-    const ec = isPend ? "badge-pend" : "badge-proc";
-    const adjuntosHtml = buildAdjuntos(t.adjuntos);
-    const botones = isPend
-      ? `<button class="btn-proc" onclick="cambiarEstado('${esc(t.id)}','En Proceso')">🔧 En proceso</button>
-         <button class="btn-res"  onclick="abrirResModal('${esc(t.id)}')">✅ Resuelto</button>`
-      : `<button class="btn-res"  onclick="abrirResModal('${esc(t.id)}')">✅ Marcar resuelto</button>`;
-    return `<div class="tcard">
-      <div class="tcard-top">
-        <div>
-          <div class="tcard-id">${t.id || ""}</div>
-          <div class="tcard-title">${t.titulo || ""}</div>
-        </div>
-        <span class="badge ${ec}">${t.estado || ""}</span>
-      </div>
-      <div class="tcard-desc">${t.descripcion || ""}</div>
+  grid.innerHTML = [...lista].reverse().map(t => `
+    <div class="res-card">
+      <div class="tcard-id">${t.id || ""}</div>
+      <div class="tcard-title" style="margin-bottom:7px">${t.titulo || ""}</div>
       <div class="tcard-meta">
         <span class="badge badge-dept">${t.depto || ""}</span>
         <span class="badge badge-user">👤 ${t.usuario || ""}</span>
+        <span class="badge badge-res">✓ Resuelto</span>
       </div>
-      ${adjuntosHtml}
-      <div class="tcard-footer">📅 ${t.fecha || ""}</div>
-      <div class="tcard-actions">${botones}</div>
-    </div>`;
-  }
+      ${t.resolucion
+        ? `<div class="res-box">${t.resolucion}
+             <br><small style="opacity:.65">Participantes: ${t.participantes || "N/A"} · ${t.fecha_resuelto || ""}</small>
+           </div>`
+        : ""}
+      ${buildAdjuntos(t.adjuntos)}
+      <div class="tcard-footer" style="margin-top:8px">📅 ${t.fecha || ""}</div>
+    </div>
+  `).join("");
+}
 
-  // ════════════════════════════════════
-  // RESUELTOS
-  // ════════════════════════════════════
-  function renderResueltos() {
-    const q   = (document.getElementById("srchRes")?.value || "").toLowerCase();
-    const mis = allTickets
-      .filter(t => (t.asignado || "").toLowerCase() === MI_USER.toLowerCase() && t.estado === "Resuelto")
-      .filter(t => !q || matchSearch(t, q));
-
-    document.getElementById("resCount").textContent = mis.length + " ticket" + (mis.length !== 1 ? "s" : "");
-    const grid = document.getElementById("resGrid");
-
-    if (mis.length === 0) {
-      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">Aún no has resuelto tickets.</div>`;
-      return;
-    }
-
-    grid.innerHTML = [...mis].reverse().map(t => `
-      <div class="res-card">
-        <div class="tcard-id">${t.id || ""}</div>
-        <div class="tcard-title" style="margin-bottom:7px">${t.titulo || ""}</div>
-        <div class="tcard-meta">
-          <span class="badge badge-dept">${t.depto || ""}</span>
-          <span class="badge badge-user">👤 ${t.usuario || ""}</span>
-          <span class="badge badge-res">✓ Resuelto</span>
-        </div>
-        ${t.resolucion
-          ? `<div class="res-box">${t.resolucion}
-               <br><small style="opacity:.65">Participantes: ${t.participantes || "N/A"} · ${t.fecha_resuelto || ""}</small>
-             </div>`
-          : ""}
-        ${buildAdjuntos(t.adjuntos)}
-        <div class="tcard-footer" style="margin-top:8px">📅 ${t.fecha || ""}</div>
-      </div>
-    `).join("");
-  }
-
-  // ════════════════════════════════════
-  // CAMBIAR ESTADO
-  // ════════════════════════════════════
-  async function cambiarEstado(idEnc, nuevoEstado) {
-    const id = decodeURIComponent(idEnc);
-    try {
-      const r = await fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ estado: nuevoEstado })
-      });
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      showToast(`Ticket → "${nuevoEstado}"`, "success");
-      await recargar();
-    } catch (e) {
-      showToast("Error al actualizar estado", "error");
-    }
-  }
-
-  // ════════════════════════════════════
-  // MODAL RESOLUCIÓN
-  // ════════════════════════════════════
-  function abrirResModal(idEnc) {
-    pendingResolveId = decodeURIComponent(idEnc);
-    document.getElementById("resDetalle").value        = "";
-    document.getElementById("resParticipantes").value  = MI_USER;
-    document.getElementById("resModal").classList.add("open");
-  }
-
-  function closeResModal() {
-    document.getElementById("resModal").classList.remove("open");
-    pendingResolveId = null;
-  }
-
-  async function confirmarResolucion() {
-    const detalle = document.getElementById("resDetalle").value.trim();
-    const partic  = document.getElementById("resParticipantes").value.trim();
-    if (!detalle) { showToast("Escribe el detalle de resolución", "error"); return; }
-    try {
-      const r = await fetch(`${API_TICKETS}/id/${encodeURIComponent(pendingResolveId)}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          estado:         "Resuelto",
-          resolucion:     detalle,
-          participantes:  partic,
-          fecha_resuelto: new Date().toLocaleString("es-DO")
-        })
-      });
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      showToast("Ticket resuelto correctamente", "success");
-      closeResModal();
-      await recargar();
-    } catch (e) {
-      showToast("Error al resolver ticket", "error");
-    }
-  }
-
-  // ════════════════════════════════════
-  // MODAL AYUDA
-  // ════════════════════════════════════
-  function abrirAyuda()  { document.getElementById("ayudaModal").classList.add("open"); }
-  function cerrarAyuda() { document.getElementById("ayudaModal").classList.remove("open"); }
-
-  // ════════════════════════════════════
-  // UTILS
-  // ════════════════════════════════════
-  function matchSearch(t, q) {
-    return (t.titulo      || "").toLowerCase().includes(q) ||
-           (t.depto       || "").toLowerCase().includes(q) ||
-           (t.descripcion || "").toLowerCase().includes(q) ||
-           (t.usuario     || "").toLowerCase().includes(q);
-  }
-
-  function buildAdjuntos(adjStr) {
-    if (!adjStr || !adjStr.trim()) return "";
-    const urls = adjStr.split(",").map(u => u.trim()).filter(Boolean);
-    const links = urls.map(u =>
-      `<a class="adj-link" href="${u}" target="_blank" rel="noopener">📎 ${decodeURIComponent(u.split("/").pop().split("?")[0])}</a>`
-    ).join("");
-    return `<div style="margin-top:6px">${links}</div>`;
-  }
-
-  function esc(s)  { return encodeURIComponent(s || ""); }
-
-  function showToast(msg, type = "success") {
-    const el = document.getElementById("toastEl");
-    el.textContent = (type === "success" ? "✓ " : "⚠ ") + msg;
-    el.className   = "toast " + type + " show";
-    setTimeout(() => el.classList.remove("show"), 3200);
-  }
-
-  // Cerrar modales al click fuera
-  ["resModal", "ayudaModal"].forEach(id => {
-    document.getElementById(id).addEventListener("click", function(e) {
-      if (e.target === this) {
-        this.classList.remove("open");
-        if (id === "resModal") pendingResolveId = null;
-      }
+// ════════════════════════════════════════════════════════
+// CAMBIAR ESTADO
+// ════════════════════════════════════════════════════════
+async function cambiarEstado(idEnc, nuevoEstado) {
+  const id = decodeURIComponent(idEnc);
+  try {
+    const r = await fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ estado: nuevoEstado })
     });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    showToast(`Ticket → "${nuevoEstado}"`, "success");
+    await recargar();
+  } catch (e) {
+    showToast("Error al actualizar estado", "error");
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// MODAL RESOLUCIÓN
+// ════════════════════════════════════════════════════════
+function abrirResModal(idEnc) {
+  pendingResolveId = decodeURIComponent(idEnc);
+  document.getElementById("resDetalle").value       = "";
+  document.getElementById("resParticipantes").value = MI_USER;
+  document.getElementById("resModal").classList.add("open");
+}
+
+function closeResModal() {
+  document.getElementById("resModal").classList.remove("open");
+  pendingResolveId = null;
+}
+
+async function confirmarResolucion() {
+  const detalle = document.getElementById("resDetalle").value.trim();
+  const partic  = document.getElementById("resParticipantes").value.trim();
+  if (!detalle) { showToast("Escribe el detalle de resolución", "error"); return; }
+  try {
+    const r = await fetch(`${API_TICKETS}/id/${encodeURIComponent(pendingResolveId)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        estado:         "Resuelto",
+        resolucion:     detalle,
+        participantes:  partic,
+        fecha_resuelto: new Date().toLocaleString("es-DO")
+      })
+    });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    showToast("Ticket resuelto correctamente", "success");
+    closeResModal();
+    await recargar();
+  } catch (e) {
+    showToast("Error al resolver ticket", "error");
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// AYUDA
+// ════════════════════════════════════════════════════════
+function abrirAyuda()  { document.getElementById("ayudaModal").classList.add("open"); }
+function cerrarAyuda() { document.getElementById("ayudaModal").classList.remove("open"); }
+
+// ════════════════════════════════════════════════════════
+// REPORTES
+// ════════════════════════════════════════════════════════
+function initReportes() {
+  document.querySelectorAll(".rep-month-btn").forEach(b => b.classList.remove("active"));
+  const btn = document.querySelector(`.rep-month-btn[data-m="${repMes}"]`);
+  if (btn) btn.classList.add("active");
+  renderReportes();
+}
+
+async function repRecargar() {
+  try {
+    const r = await fetch(API_TICKETS);
+    allTickets = await r.json();
+    if (!Array.isArray(allTickets)) allTickets = [];
+    misTickets = allTickets.filter(t =>
+      (t.asignado || "").toLowerCase() === MI_USER.toLowerCase()
+    );
+    renderReportes();
+    showToast("Datos actualizados", "success");
+  } catch { showToast("Error al cargar datos", "error"); }
+}
+
+function repSelMes(m, btn) {
+  repMes = m;
+  document.querySelectorAll(".rep-month-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  renderReportes();
+}
+
+function parseFechaRep(fechaStr) {
+  if (!fechaStr) return null;
+  try {
+    const parte = fechaStr.split(",")[0].trim();
+    const [d, m, y] = parte.split("/");
+    return new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+  } catch { return null; }
+}
+
+function repTicketDelMes(t, mes, anio) {
+  const f = parseFechaRep(t.fecha);
+  if (!f) return false;
+  return f.getMonth() === mes && f.getFullYear() === anio;
+}
+
+function renderReportes() {
+  const mes    = repMes;
+  const anio   = repAnio;
+  const nombre = MESES[mes];
+
+  const tickets = misTickets.filter(t => repTicketDelMes(t, mes, anio));
+  const total = tickets.length;
+  const pend  = tickets.filter(t => t.estado === "Pendiente").length;
+  const proc  = tickets.filter(t => t.estado === "En Proceso").length;
+  const res   = tickets.filter(t => t.estado === "Resuelto").length;
+
+  document.getElementById("repBannerMes").textContent = `${nombre} ${anio}`;
+  document.getElementById("repMesLabel").textContent  = `(${nombre} ${anio})`;
+
+  document.getElementById("repTotal").textContent    = total;
+  document.getElementById("repPend").textContent     = pend;
+  document.getElementById("repProc").textContent     = proc;
+  document.getElementById("repRes").textContent      = res;
+  document.getElementById("repTotalPct").textContent = "100% del total";
+  document.getElementById("repPendPct").textContent  = total ? Math.round(pend/total*100)+"% del total" : "0%";
+  document.getElementById("repProcPct").textContent  = total ? Math.round(proc/total*100)+"% del total" : "0%";
+  document.getElementById("repResPct").textContent   = total ? Math.round(res/total*100)+"% del total"  : "0%";
+
+  // Tabla por departamento
+  const deptoMap = {};
+  tickets.forEach(t => {
+    const d = (t.depto || "Sin depto").trim();
+    if (!deptoMap[d]) deptoMap[d] = { total: 0, res: 0 };
+    deptoMap[d].total++;
+    if (t.estado === "Resuelto") deptoMap[d].res++;
   });
+  const deptos = Object.entries(deptoMap).sort((a, b) => b[1].total - a[1].total);
+
+  const tbody = document.getElementById("repDepTable");
+  if (deptos.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px;font-size:10px;font-family:var(--mono)">Sin mis tickets en ${nombre} ${anio}</td></tr>`;
+  } else {
+    const maxT = deptos[0]?.[1].total || 1;
+    tbody.innerHTML = deptos.map(([d, info], idx) => {
+      const pct   = total ? Math.round(info.total / total * 100) : 0;
+      const color = DEP_COLORS[idx % DEP_COLORS.length];
+      const barW  = Math.round(info.total / maxT * 100);
+      return `<tr>
+        <td class="dep-name">${d}</td>
+        <td class="dep-resuelto">${info.res} / ${info.total}</td>
+        <td class="dep-bar-cell"><div class="dep-bar-wrap"><div class="dep-bar-fill" style="width:${barW}%;background:${color}"></div></div></td>
+        <td class="dep-pct">${pct}%</td>
+      </tr>`;
+    }).join("") + `<tr class="dep-total-row">
+      <td>Total</td>
+      <td style="text-align:center;font-family:var(--mono)">${res} / ${total}</td>
+      <td></td>
+      <td style="text-align:right;font-family:var(--mono);font-weight:700;color:var(--accent)">100%</td>
+    </tr>`;
+  }
+
+  repRenderBarChart(deptos, total);
+
+  // Leyenda
+  const legendBody = document.getElementById("repLegendBody");
+  if (deptos.length === 0) {
+    legendBody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:10px;font-family:var(--mono);font-size:9px">Sin datos</td></tr>`;
+  } else {
+    legendBody.innerHTML = deptos.map(([d, info], idx) => {
+      const pct   = total ? Math.round(info.total / total * 100) : 0;
+      const color = DEP_COLORS[idx % DEP_COLORS.length];
+      return `<tr>
+        <td><span class="legend-color-dot" style="background:${color}"></span>${d}</td>
+        <td style="text-align:center">${info.total}</td>
+        <td style="text-align:center;font-weight:700;color:${color}">${pct}%</td>
+      </tr>`;
+    }).join("") + `<tr class="legend-total-row">
+      <td><strong>Total</strong></td>
+      <td style="text-align:center"><strong>${total}</strong></td>
+      <td style="text-align:center"><strong>100%</strong></td>
+    </tr>`;
+  }
+
+  // Tickets recientes
+  const list = document.getElementById("repRecentList");
+  const recientes = tickets.slice().reverse().slice(0, 5);
+  if (recientes.length === 0) {
+    list.innerHTML = `<div class="rep-empty"><div class="rep-empty-icon">📋</div>Sin mis tickets en este mes</div>`;
+  } else {
+    list.innerHTML = recientes.map(t => {
+      const ecCls = t.estado === "Resuelto" ? "res" : t.estado === "En Proceso" ? "proc" : "pend";
+      const fecha = (t.fecha || "").split(",")[0] || "—";
+      return `<div class="rep-ticket-item">
+        <div class="rep-ticket-left">
+          <div class="rep-ticket-titulo">${t.titulo || "Sin título"}</div>
+          <div class="rep-ticket-meta">${t.depto || "—"} • ${t.usuario || "—"}</div>
+        </div>
+        <div class="rep-ticket-right">
+          <span class="badge-sm ${ecCls}">${t.estado || "—"}</span>
+          <span class="rep-ticket-fecha">${fecha}</span>
+        </div>
+      </div>`;
+    }).join("");
+  }
+
+  // ── RENDIMIENTO INDIVIDUAL ──
+  renderRendimientoIndividual(tickets, mes, anio, total, pend, proc, res, deptos);
+
+  // Banner cierre
+  const fechaCierre    = new Date(anio, mes + 1, 0).toLocaleDateString("es-DO");
+  const cierreGuardado = repGetCierreGuardado(mes, anio);
+
+  document.getElementById("repCierreDesc").textContent =
+    `Mis tickets de ${nombre} ${anio}. Asignados a ${MI_USER}.`;
+  document.getElementById("repCierreFecha").textContent    = fechaCierre;
+  document.getElementById("repCierreTotal").textContent    = total;
+  document.getElementById("repCierreDeptos").textContent   = deptos.length;
+  document.getElementById("repCierreGuardado").textContent = cierreGuardado ? "Sí ✓" : "No";
+
+  const btnC = document.getElementById("repBtnCierre");
+  if (cierreGuardado) {
+    btnC.innerHTML = "✅ Cierre ya guardado";
+    btnC.style.background = "rgba(59,227,142,0.2)";
+    btnC.style.color = "var(--success)";
+    btnC.style.border = "1px solid rgba(59,227,142,0.4)";
+    btnC.onclick = () => { if (confirm("¿Regenerar el cierre? Se sobreescribirá.")) repCerrarMes(); };
+  } else {
+    btnC.innerHTML = "📦 Guardar cierre mensual";
+    btnC.style.background = "";
+    btnC.style.color = "";
+    btnC.style.border = "";
+    btnC.onclick = repCerrarMes;
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// RENDIMIENTO INDIVIDUAL
+// ════════════════════════════════════════════════════════
+function renderRendimientoIndividual(tickets, mes, anio, total, pend, proc, res, deptos) {
+  const nombre = MESES[mes];
+  const nombreCompleto = localStorage.getItem("nombreCompleto") || MI_USER;
+  const initials = nombreCompleto.substring(0, 2).toUpperCase();
+
+  // Helper para no romper si el elemento no existe
+  function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+
+  // Hero
+  setText("perfAvatar",    initials);
+  setText("perfNombre",    nombreCompleto);
+  setText("perfHeroTotal", total);
+  setText("perfHeroRes",   res);
+  setText("perfHeroPend",  pend);
+  setText("perfHeroProc",  proc);
+
+  // ── BUG FIX: perfSubtitle contiene un <span id="perfMesLabel"> anidado.
+  // Usar .textContent en el padre destruye ese span antes de que podamos
+  // actualizar perfMesLabel. Hay que actualizar los dos elementos por separado.
+  const subtitleEl = document.getElementById("perfSubtitle");
+  if (subtitleEl) {
+    // Reconstruye el contenido sin destruir el span interno
+    subtitleEl.innerHTML = `Técnico de soporte — <span id="perfMesLabel">${nombre} ${anio}</span>`;
+  }
+  // perfMesLabel ya fue seteado arriba vía innerHTML; no hace falta buscarlo de nuevo.
+
+  // Tasa de resolución
+  const pctRes = total ? Math.round(res / total * 100) : 0;
+  setText("perfResPct", pctRes + "%");
+  const barEl = document.getElementById("perfResBar");
+  if (barEl) barEl.style.width = pctRes + "%";
+
+  // Top deptos del mes
+  const topDeptos = deptos.slice(0, 5);
+  const maxD = topDeptos[0]?.[1].total || 1;
+  const topDeptosEl = document.getElementById("perfTopDeptos");
+  if (topDeptosEl) {
+    if (topDeptos.length === 0) {
+      topDeptosEl.innerHTML = `<span style="color:var(--muted2);font-size:11px;font-family:var(--mono)">Sin datos este mes</span>`;
+    } else {
+      topDeptosEl.innerHTML = topDeptos.map(([d, info], idx) => `
+        <div class="perf-depto-row">
+          <div class="perf-depto-rank">${idx + 1}</div>
+          <div class="perf-depto-name">${d}</div>
+          <div class="perf-depto-bar">
+            <div class="perf-depto-bar-fill" style="width:${Math.round(info.total / maxD * 100)}%;background:${DEP_COLORS[idx % DEP_COLORS.length]}"></div>
+          </div>
+          <div class="perf-depto-count">${info.total}</div>
+        </div>
+      `).join("");
+    }
+  }
+
+  // Acumulado histórico
+  const accTotal = misTickets.length;
+  const accRes   = misTickets.filter(t => t.estado === "Resuelto").length;
+  const accPct   = accTotal ? Math.round(accRes / accTotal * 100) : 0;
+  setText("perfAccTotal", accTotal);
+  setText("perfAccRes",   accRes);
+  setText("perfAccPct",   accPct + "%");
+
+  // Actividad últimos 6 meses
+  renderActividadMeses(mes, anio);
+}
+
+function renderActividadMeses(mesActual, anioActual) {
+  const ultimos6 = [];
+  for (let i = 5; i >= 0; i--) {
+    let m = mesActual - i;
+    let a = anioActual;
+    if (m < 0) { m += 12; a -= 1; }
+    const tkMes = misTickets.filter(t => repTicketDelMes(t, m, a));
+    const resMes = tkMes.filter(t => t.estado === "Resuelto").length;
+    ultimos6.push({ mes: MESES[m].substring(0,3), total: tkMes.length, res: resMes });
+  }
+
+  const maxVal = Math.max(...ultimos6.map(x => x.total), 1);
+  const el = document.getElementById("perfMonthActivity");
+  el.innerHTML = `
+    <div style="display:flex;align-items:flex-end;gap:6px;height:60px;">
+      ${ultimos6.map((x, idx) => {
+        const h = Math.round((x.total / maxVal) * 50) || 2;
+        const isActive = idx === 5;
+        const color = isActive ? "var(--accent)" : "var(--surface3)";
+        const textColor = isActive ? "var(--accent)" : "var(--muted2)";
+        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="font-size:9px;font-family:var(--mono);color:${textColor};font-weight:${isActive?'700':'400'}">${x.total}</div>
+          <div style="width:100%;height:${h}px;background:${color};border-radius:3px 3px 0 0;transition:height 0.5s ease;min-height:2px;position:relative;">
+            ${x.res > 0 ? `<div style="position:absolute;bottom:0;left:0;right:0;height:${Math.round(x.res/Math.max(x.total,1)*h)}px;background:var(--success);border-radius:3px 3px 0 0;opacity:0.7"></div>` : ''}
+          </div>
+          <div style="font-size:8px;font-family:var(--mono);color:${textColor}">${x.mes}</div>
+        </div>`;
+      }).join("")}
+    </div>
+    <div style="display:flex;gap:12px;margin-top:8px;font-size:9px;font-family:var(--mono);color:var(--muted)">
+      <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--accent);margin-right:4px;vertical-align:middle"></span>Asignados</span>
+      <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--success);margin-right:4px;vertical-align:middle"></span>Resueltos</span>
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════════════════
+// GRÁFICA BAR CHART
+// ════════════════════════════════════════════════════════
+function repRenderBarChart(deptos, total) {
+  const ctx = document.getElementById("repTechBarChart").getContext("2d");
+  if (repBarChart) { repBarChart.destroy(); repBarChart = null; }
+  if (deptos.length === 0) { ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height); return; }
+
+  const labels = deptos.map(([d]) => d.length > 7 ? d.substring(0,7)+"…" : d);
+  const vals   = deptos.map(([,i]) => i.total);
+  const colors = deptos.map((_, idx) => DEP_COLORS[idx % DEP_COLORS.length]);
+  const pcts   = deptos.map(([,i]) => total ? Math.round(i.total/total*100) : 0);
+
+  repBarChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        data: vals,
+        backgroundColor: colors.map(c => c + "CC"),
+        borderColor: colors,
+        borderWidth: 2,
+        borderRadius: 5,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: "#1a1a27",
+          borderColor: "rgba(255,255,255,0.1)",
+          borderWidth: 1,
+          callbacks: { label: ctx => ` ${ctx.raw} tickets — ${pcts[ctx.dataIndex]}% del total` }
+        }
+      },
+      scales: {
+        x: { grid: { color: "rgba(255,255,255,0.04)" }, ticks: { color: "#7070a0", font: { family: "'DM Mono',monospace", size: 8 } } },
+        y: { grid: { color: "rgba(255,255,255,0.04)" }, ticks: { color: "#7070a0", font: { family: "'DM Mono',monospace", size: 8 }, stepSize: 1 }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════════
+// CIERRES localStorage
+// ════════════════════════════════════════════════════════
+function repGetCierres()           { try { const r=localStorage.getItem(REP_STORAGE_KEY); return r?JSON.parse(r):[]; } catch { return []; } }
+function repSaveCierres(c)         { localStorage.setItem(REP_STORAGE_KEY, JSON.stringify(c)); }
+function repGetCierreGuardado(m,a) { return repGetCierres().find(c=>c.mes===m&&c.anio===a)||null; }
+
+function repCerrarMes() {
+  const mes  = repMes, anio = repAnio;
+  const tickets = misTickets.filter(t => repTicketDelMes(t, mes, anio));
+  const total = tickets.length;
+  if (total === 0) { showToast(`No tienes tickets en ${MESES[mes]} ${anio}`, "warning"); return; }
+  if (!confirm(`¿Guardar el cierre de ${MESES[mes]} ${anio}?\n\nSe guardarán ${total} tickets.`)) return;
+
+  const deptoMap = {};
+  tickets.forEach(t => {
+    const d = (t.depto||"Sin depto").trim();
+    if (!deptoMap[d]) deptoMap[d] = { total:0, res:0, pend:0, proc:0 };
+    deptoMap[d].total++;
+    if (t.estado==="Resuelto")   deptoMap[d].res++;
+    if (t.estado==="Pendiente")  deptoMap[d].pend++;
+    if (t.estado==="En Proceso") deptoMap[d].proc++;
+  });
+
+  let chartImg = null;
+  try { chartImg = document.getElementById("repTechBarChart").toDataURL("image/png"); } catch {}
+
+  const cierre = {
+    mes, anio,
+    tecnico: MI_USER,
+    nombreMes: MESES[mes],
+    fechaGenerado: new Date().toLocaleString("es-DO"),
+    total,
+    pendientes: tickets.filter(t=>t.estado==="Pendiente").length,
+    proceso:    tickets.filter(t=>t.estado==="En Proceso").length,
+    resueltos:  tickets.filter(t=>t.estado==="Resuelto").length,
+    departamentos: deptoMap, chartImg,
+    tickets: tickets.map(t=>({id:t.id,titulo:t.titulo,depto:t.depto,estado:t.estado,usuario:t.usuario,fecha:t.fecha,resolucion:t.resolucion}))
+  };
+
+  const cierres = repGetCierres().filter(c=>!(c.mes===mes&&c.anio===anio));
+  cierres.push(cierre);
+  cierres.sort((a,b)=>a.anio!==b.anio?b.anio-a.anio:b.mes-a.mes);
+  repSaveCierres(cierres);
+  showToast(`✅ Cierre de ${MESES[mes]} ${anio} guardado`, "success");
+  renderReportes();
+}
+
+function repAbrirHistorial() {
+  const cierres = repGetCierres();
+  const body    = document.getElementById("histBody");
+  if (cierres.length === 0) {
+    body.innerHTML = `<div class="hist-empty">📭 No hay cierres guardados aún.<br>Genera tu primer cierre desde Reportes.</div>`;
+  } else {
+    body.innerHTML = cierres.map((c, idx) => {
+      const deps   = Object.keys(c.departamentos||{}).length;
+      const pctRes = c.total ? Math.round(c.resueltos/c.total*100) : 0;
+      return `<div class="hist-item" onclick="repVerDetalleCierre(${idx})">
+        <div class="hist-item-header">
+          <div class="hist-item-title">📅 ${c.nombreMes} ${c.anio}</div>
+          <div class="hist-item-fecha">Generado: ${c.fechaGenerado}</div>
+        </div>
+        <div class="hist-item-stats">
+          <div class="hist-mini-stat"><span class="lbl">Tickets: </span><span class="val p">${c.total}</span></div>
+          <div class="hist-mini-stat"><span class="lbl">Resueltos: </span><span class="val g">${c.resueltos} (${pctRes}%)</span></div>
+          <div class="hist-mini-stat"><span class="lbl">Pendientes: </span><span class="val y">${c.pendientes}</span></div>
+          <div class="hist-mini-stat"><span class="lbl">En proceso: </span><span class="val b">${c.proceso}</span></div>
+          <div class="hist-mini-stat"><span class="lbl">Deptos.: </span><span class="val p">${deps}</span></div>
+        </div>
+      </div>`;
+    }).join("");
+  }
+  document.getElementById("histOverlay").classList.add("open");
+}
+
+function repCerrarHistorial() { document.getElementById("histOverlay").classList.remove("open"); }
+
+function repVerDetalleCierre(idx) {
+  const cierre = repGetCierres()[idx]; if (!cierre) return;
+  repCerrarHistorial();
+  repMes = cierre.mes; repAnio = cierre.anio;
+  document.querySelectorAll(".rep-month-btn").forEach(b=>b.classList.remove("active"));
+  const btn = document.querySelector(`.rep-month-btn[data-m="${cierre.mes}"]`);
+  if (btn) btn.classList.add("active");
+  renderReportes();
+}
+
+// ════════════════════════════════════════════════════════
+// EXPORTAR PDF
+// ════════════════════════════════════════════════════════
+function repExportarPDF() {
+  const mes    = repMes, anio = repAnio, nombre = MESES[mes];
+  const tickets = misTickets.filter(t => repTicketDelMes(t, mes, anio));
+  const total = tickets.length;
+  const pend  = tickets.filter(t=>t.estado==="Pendiente").length;
+  const proc  = tickets.filter(t=>t.estado==="En Proceso").length;
+  const res   = tickets.filter(t=>t.estado==="Resuelto").length;
+  const pctRes = total ? Math.round(res/total*100) : 0;
+  const nombreCompleto = localStorage.getItem("nombreCompleto") || MI_USER;
+
+  const deptoMap = {};
+  tickets.forEach(t=>{const d=(t.depto||"Sin depto").trim();if(!deptoMap[d])deptoMap[d]={total:0,res:0};deptoMap[d].total++;if(t.estado==="Resuelto")deptoMap[d].res++;});
+  const deptos = Object.entries(deptoMap).sort((a,b)=>b[1].total-a[1].total);
+
+  // Acumulado
+  const accTotal = misTickets.length;
+  const accRes   = misTickets.filter(t=>t.estado==="Resuelto").length;
+  const accPct   = accTotal ? Math.round(accRes/accTotal*100) : 0;
+
+  let chartSrc = "";
+  try { chartSrc = document.getElementById("repTechBarChart").toDataURL("image/png"); } catch {}
+
+  const depRows = deptos.map(([d,info],idx)=>{
+    const pct=total?Math.round(info.total/total*100):0;
+    const color=DEP_COLORS[idx%DEP_COLORS.length];
+    return `<tr><td style="padding:6px 10px;font-size:12px;border-bottom:1px solid #eee">${d}</td><td style="padding:6px 10px;font-size:12px;text-align:center;border-bottom:1px solid #eee">${info.res} / ${info.total}</td><td style="padding:6px 10px;font-size:12px;text-align:right;font-weight:700;color:${color};border-bottom:1px solid #eee">${pct}%</td></tr>`;
+  }).join("");
+
+  const ticketRows = tickets.slice().reverse().slice(0,12).map(t=>{
+    const ecColor=t.estado==="Resuelto"?"#1a9060":t.estado==="En Proceso"?"#1a7fa0":"#c97700";
+    return `<tr><td style="padding:5px 10px;font-size:11px;border-bottom:1px solid #eee">${t.titulo||"—"}</td><td style="padding:5px 10px;font-size:11px;border-bottom:1px solid #eee">${t.depto||"—"}</td><td style="padding:5px 10px;font-size:11px;border-bottom:1px solid #eee">${t.usuario||"—"}</td><td style="padding:5px 10px;font-size:11px;border-bottom:1px solid #eee">${(t.fecha||"").split(",")[0]}</td><td style="padding:5px 10px;font-size:11px;border-bottom:1px solid #eee;font-weight:700;color:${ecColor}">${t.estado||"—"}</td></tr>`;
+  }).join("");
+
+  const pw = window.open("","_blank","width=900,height=700");
+  pw.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/>
+  <title>Informe Técnico — ${nombreCompleto} — ${nombre} ${anio}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#111;padding:40px}
+    @page{margin:20mm}
+    .hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;padding-bottom:18px;border-bottom:3px solid #7c6fff}
+    .badge{display:inline-block;background:#7c6fff;color:#fff;font-size:9px;font-weight:700;letter-spacing:2px;padding:2px 8px;border-radius:4px;margin-bottom:6px;text-transform:uppercase}
+    h1{font-size:24px;font-weight:800;letter-spacing:-1px}
+    .sub{font-size:12px;color:#555;margin-top:3px;font-family:'DM Mono',monospace}
+    .meta{text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:#777}
+    .meta p{margin-bottom:3px}
+    .tech-pill{display:inline-block;background:#f0eeff;color:#5b4fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid #d4ccff;margin-top:4px}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+    .kpi{padding:13px 15px;border-radius:9px;border:1px solid #eee;background:#fafafa}
+    .kpi .lbl{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:#888;font-family:'DM Mono',monospace;margin-bottom:5px}
+    .kpi .val{font-size:28px;font-weight:800;letter-spacing:-1px}
+    .kpi .pct{font-size:10px;font-family:'DM Mono',monospace;color:#888;margin-top:2px}
+    .kpi.t{border-top:3px solid #5b4fff}.kpi.t .val{color:#5b4fff}
+    .kpi.p{border-top:3px solid #c97700}.kpi.p .val{color:#c97700}
+    .kpi.e{border-top:3px solid #1a7fa0}.kpi.e .val{color:#1a7fa0}
+    .kpi.r{border-top:3px solid #1a9060}.kpi.r .val{color:#1a9060}
+    .perf-box{border:1px solid #e8e8f0;border-radius:10px;padding:18px;margin-bottom:24px;background:#fafbff;border-top:3px solid #7c6fff}
+    .perf-box h3{font-size:14px;font-weight:700;margin-bottom:12px;color:#333}
+    .perf-row{display:flex;gap:16px;flex-wrap:wrap}
+    .perf-kpi{text-align:center;background:#fff;border:1px solid #eee;border-radius:8px;padding:12px 16px;flex:1;min-width:80px}
+    .perf-kpi .v{font-size:22px;font-weight:800}
+    .perf-kpi .l{font-size:9px;text-transform:uppercase;color:#888;font-family:'DM Mono',monospace;margin-top:2px}
+    .perf-kpi .v.g{color:#1a9060}.perf-kpi .v.p{color:#7c6fff}.perf-kpi .v.b{color:#1a7fa0}
+    .perf-bar-wrap{height:8px;background:#eee;border-radius:4px;overflow:hidden;margin:10px 0 4px}
+    .perf-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#1a9060,#3be38e)}
+    .sec{font-size:14px;font-weight:700;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid #eee}
+    .blk{margin-bottom:24px;break-inside:avoid}
+    .two{display:grid;grid-template-columns:1fr 1.5fr;gap:18px;margin-bottom:24px}
+    table{width:100%;border-collapse:collapse}
+    th{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#888;font-family:'DM Mono',monospace;padding:5px 10px;text-align:left;border-bottom:2px solid #eee}
+    img{max-width:100%;border-radius:8px;border:1px solid #eee;display:block;margin:0 auto}
+    .ftr{margin-top:28px;padding-top:14px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:#aaa}
+  </style></head><body>
+  <div class="hdr">
+    <div>
+      <span class="badge">GM Tickets TI</span>
+      <h1>Informe Mensual Técnico</h1>
+      <div class="sub">${nombre} ${anio}</div>
+      <div class="tech-pill">👤 ${nombreCompleto}</div>
+    </div>
+    <div class="meta">
+      <p><strong>Técnico:</strong> ${nombreCompleto}</p>
+      <p><strong>Generado:</strong> ${new Date().toLocaleString("es-DO")}</p>
+      <p><strong>Sistema:</strong> GM Tickets TI v2</p>
+    </div>
+  </div>
+  <div class="kpis">
+    <div class="kpi t"><div class="lbl">Mis Tickets</div><div class="val">${total}</div><div class="pct">100%</div></div>
+    <div class="kpi p"><div class="lbl">Pendientes</div><div class="val">${pend}</div><div class="pct">${total?Math.round(pend/total*100):0}%</div></div>
+    <div class="kpi e"><div class="lbl">En Proceso</div><div class="val">${proc}</div><div class="pct">${total?Math.round(proc/total*100):0}%</div></div>
+    <div class="kpi r"><div class="lbl">Resueltos</div><div class="val">${res}</div><div class="pct">${pctRes}%</div></div>
+  </div>
+  <div class="perf-box">
+    <h3>📊 Mi Rendimiento Individual — ${nombre} ${anio}</h3>
+    <div class="perf-row">
+      <div class="perf-kpi"><div class="v g">${pctRes}%</div><div class="l">Tasa resolución</div></div>
+      <div class="perf-kpi"><div class="v p">${deptos.length}</div><div class="l">Deptos. atendidos</div></div>
+      <div class="perf-kpi"><div class="v b">${accTotal}</div><div class="l">Total histórico</div></div>
+      <div class="perf-kpi"><div class="v g">${accRes}</div><div class="l">Resueltos histórico</div></div>
+      <div class="perf-kpi"><div class="v p">${accPct}%</div><div class="l">% Hist. resolución</div></div>
+    </div>
+    <div class="perf-bar-wrap"><div class="perf-bar-fill" style="width:${pctRes}%"></div></div>
+    <p style="font-size:10px;color:#888;font-family:'DM Mono',monospace">Barra de resolución del mes: ${res} de ${total} tickets resueltos (${pctRes}%)</p>
+  </div>
+  <div class="two">
+    <div class="blk">
+      <div class="sec">Cobertura por departamento</div>
+      <table><thead><tr><th>Departamento</th><th style="text-align:center">Res/Total</th><th style="text-align:right">%</th></tr></thead>
+      <tbody>
+        ${depRows}
+        <tr><td style="padding:7px 10px;font-size:12px;font-weight:700">Total</td><td style="padding:7px 10px;font-size:12px;text-align:center;font-weight:700">${res}/${total}</td><td style="padding:7px 10px;font-size:12px;text-align:right;font-weight:700;color:#5b4fff">100%</td></tr>
+      </tbody></table>
+    </div>
+    <div class="blk">
+      <div class="sec">Distribución por departamento</div>
+      ${chartSrc ? `<img src="${chartSrc}" alt="Gráfica"/>` : "<p style='color:#aaa;font-size:12px'>Gráfica no disponible</p>"}
+    </div>
+  </div>
+  <div class="blk">
+    <div class="sec">Últimos 12 tickets del mes</div>
+    <table><thead><tr><th>Título</th><th>Departamento</th><th>Solicitante</th><th>Fecha</th><th>Estado</th></tr></thead>
+    <tbody>${ticketRows}</tbody></table>
+    ${tickets.length>12?`<p style="font-size:10px;color:#aaa;margin-top:7px;font-family:'DM Mono',monospace">… y ${tickets.length-12} ticket(s) más.</p>`:""}
+  </div>
+  <div class="ftr">
+    <span>GM Tickets TI — Informe Técnico: ${nombreCompleto}</span>
+    <span>${new Date().toLocaleString("es-DO")}</span>
+  </div>
+  <script>window.onload=()=>setTimeout(()=>window.print(),800);<\/script>
+  </body></html>`);
+  pw.document.close();
+}
+
+// ════════════════════════════════════════════════════════
+// CONFIGURACIÓN
+// ════════════════════════════════════════════════════════
+function renderConfigView() {
+  const nombreCompleto = localStorage.getItem("nombreCompleto") || MI_USER;
+  const depto          = localStorage.getItem("depto") || "Sistemas";
+  const rol            = localStorage.getItem("rol") || "tecnico";
+  const initials       = nombreCompleto.substring(0,2).toUpperCase();
+
+  // Profile card
+  document.getElementById("cfgAvatarBig").textContent    = initials;
+  document.getElementById("cfgNombreCompleto").textContent = nombreCompleto;
+  document.getElementById("cfgUsername").textContent      = "@" + MI_USER;
+  document.getElementById("cfgDepto").textContent         = depto;
+
+  // Campos
+  document.getElementById("cfgFieldUsername").value = MI_USER;
+  document.getElementById("cfgFieldNombre").value   = nombreCompleto;
+
+  // Sesión
+  document.getElementById("cfgSesionNombre").textContent = nombreCompleto;
+  document.getElementById("cfgSesionRol").textContent    = rol.toUpperCase();
+  document.getElementById("cfgSesionTiempo").textContent = new Date().toLocaleString("es-DO");
+
+  // Stats
+  const syncEl = document.getElementById("cfgLastSync");
+  if (syncEl) syncEl.textContent = new Date().toLocaleTimeString("es-DO");
+  const ttEl = document.getElementById("cfgTotalTickets");
+  if (ttEl) ttEl.textContent = misTickets.length;
+  const trEl = document.getElementById("cfgTotalResueltos");
+  if (trEl) trEl.textContent = misTickets.filter(t => t.estado === "Resuelto").length;
+
+  // Cierres guardados
+  const cierresEl = document.getElementById("cfgCierresGuardados");
+  if (cierresEl) cierresEl.textContent = repGetCierres().length;
+}
+
+async function sha256(text) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+async function guardarPerfil() {
+  const nombre = document.getElementById("cfgFieldNombre").value.trim();
+  const pass   = document.getElementById("cfgFieldPass").value;
+  const pass2  = document.getElementById("cfgFieldPass2").value;
+
+  if (!nombre) { showToast("El nombre no puede estar vacío", "error"); return; }
+  if (pass && pass !== pass2) { showToast("Las contraseñas no coinciden", "error"); return; }
+
+  // Actualizar nombre localmente
+  localStorage.setItem("nombreCompleto", nombre);
+  document.getElementById("sbName").textContent   = nombre;
+  document.getElementById("sbAvatar").textContent = nombre.substring(0,2).toUpperCase();
+  renderConfigView();
+
+  if (pass) {
+    try {
+      const hash = await sha256(pass);
+      const r = await fetch(`${API_USERS}/NombreUsuario/${encodeURIComponent(MI_USER)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ NombreCompleto: nombre, Contraseña: hash })
+      });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      document.getElementById("cfgFieldPass").value  = "";
+      document.getElementById("cfgFieldPass2").value = "";
+      showToast("Perfil y contraseña actualizados ✓", "success");
+    } catch (err) {
+      showToast("Nombre guardado localmente. Error API: " + err.message, "warning");
+    }
+  } else {
+    try {
+      await fetch(`${API_USERS}/NombreUsuario/${encodeURIComponent(MI_USER)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ NombreCompleto: nombre })
+      });
+    } catch {}
+    showToast("Nombre actualizado ✓", "success");
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════════════════
+function matchSearch(t, q) {
+  return (t.titulo||"").toLowerCase().includes(q) ||
+         (t.depto||"").toLowerCase().includes(q) ||
+         (t.descripcion||"").toLowerCase().includes(q) ||
+         (t.usuario||"").toLowerCase().includes(q);
+}
+
+function buildAdjuntos(adjStr) {
+  if (!adjStr || !adjStr.trim()) return "";
+  const urls = adjStr.split(",").map(u => u.trim()).filter(Boolean);
+  const links = urls.map(u =>
+    `<a class="adj-link" href="${u}" target="_blank" rel="noopener">📎 ${decodeURIComponent(u.split("/").pop().split("?")[0])}</a>`
+  ).join("");
+  return `<div style="margin-top:6px">${links}</div>`;
+}
+
+function esc(s) { return encodeURIComponent(s || ""); }
+
+function showToast(msg, type = "success") {
+  const chk = document.getElementById("cfgToasts");
+  if (chk && !chk.checked) return;
+  const el = document.getElementById("toastEl");
+  el.textContent = (type === "success" ? "✓ " : type === "warning" ? "ℹ " : "⚠ ") + msg;
+  el.className   = "toast " + type + " show";
+  setTimeout(() => el.classList.remove("show"), 3200);
+}
+
+// Cerrar modales al click fuera
+["resModal","ayudaModal","histOverlay"].forEach(id => {
+  document.getElementById(id).addEventListener("click", function(e) {
+    if (e.target === this) {
+      this.classList.remove("open");
+      if (id === "resModal") pendingResolveId = null;
+    }
+  });
+});
 </script>
 </body>
 </html>
