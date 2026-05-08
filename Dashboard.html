@@ -8,374 +8,1429 @@
   <link rel="stylesheet" href="CSS/css.css">
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>emailjs.init("60Wdt0a0Ejlr-BGGa");</script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    /* ── MODAL OVERLAY ── */
-    .modal {
-      position: fixed; inset: 0; display: none;
-      justify-content: center; align-items: center;
-      background: rgba(15,23,42,0.65); backdrop-filter: blur(6px);
-      z-index: 2000; padding: 20px; animation: fadeOverlay 0.3s ease;
+    /* ══════════════════════════════════════
+       VARIABLES — TEMA CLARO / OSCURO
+    ══════════════════════════════════════ */
+    :root {
+      --bg:          #f4f3ef;
+      --surface:     #ffffff;
+      --surface2:    #f9f8f5;
+      --surface3:    #f0efe9;
+      --border:      rgba(0,0,0,0.08);
+      --border2:     rgba(0,0,0,0.13);
+      --text:        #1a1a18;
+      --text2:       #5a5a52;
+      --text3:       #9a9a8e;
+      --accent:      #3d3bbd;
+      --accent2:     #6c63ff;
+      --success:     #1a8060;
+      --warning:     #a06010;
+      --danger:      #c03030;
+      --success-bg:  #e8f5ee;
+      --warning-bg:  #fef3e2;
+      --danger-bg:   #fde8e8;
+      --font:        'Sora', sans-serif;
+      --mono:        'DM Mono', monospace;
+      --radius:      10px;
+      --radius-lg:   16px;
+      --shadow:      0 2px 12px rgba(0,0,0,0.07);
+      --shadow-lg:   0 8px 30px rgba(0,0,0,0.10);
     }
-    @keyframes fadeOverlay { from{opacity:0} to{opacity:1} }
-    .modal.show { display: flex; }
 
-    .modal-content {
-      background: #ffffff; padding: 35px; border-radius: 20px;
-      width: 100%; max-width: 900px;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.25);
-      animation: modalEnter 0.35s ease; position: relative;
+    [data-theme="dark"] {
+      --bg:          #0f0f0e;
+      --surface:     #191918;
+      --surface2:    #222220;
+      --surface3:    #2c2c29;
+      --border:      rgba(255,255,255,0.07);
+      --border2:     rgba(255,255,255,0.12);
+      --text:        #eeeee8;
+      --text2:       #9a9a8e;
+      --text3:       #5a5a52;
+      --accent:      #7c78ff;
+      --accent2:     #a09bff;
+      --success:     #3be38e;
+      --warning:     #ffd166;
+      --danger:      #ff6b6b;
+      --success-bg:  rgba(59,227,142,0.10);
+      --warning-bg:  rgba(255,209,102,0.10);
+      --danger-bg:   rgba(255,107,107,0.10);
+      --shadow:      0 2px 12px rgba(0,0,0,0.3);
+      --shadow-lg:   0 8px 30px rgba(0,0,0,0.4);
     }
-    @keyframes modalEnter {
-      from { opacity:0; transform: translateY(20px) scale(0.95); }
-      to   { opacity:1; transform: translateY(0) scale(1); }
+
+    /* ══════════════════════════════════════
+       RESET & BASE
+    ══════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+      overflow-x: hidden;
     }
 
-    .card-container { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 25px; margin-top: 20px; }
-    .card-ayuda {
-      background: #f9fafb; border-radius: 18px; padding: 25px 20px;
-      text-align: center; transition: all 0.3s ease;
-      border: 1px solid #e5e7eb; cursor: default; position: relative; overflow: hidden;
+    /* ══════════════════════════════════════
+       LAYOUT
+    ══════════════════════════════════════ */
+    .layout { display: flex; min-height: 100vh; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      transition: background 0.3s, border-color 0.3s;
     }
-    .card-ayuda:hover { transform: translateY(-6px); box-shadow: 0 15px 30px rgba(0,0,0,0.12); border-color: #4e54c8; }
-    .card-ayuda img { width:95px; height:95px; border-radius:50%; margin-bottom:15px; object-fit:cover; border:3px solid #e5e7eb; transition:0.3s; }
-    .card-ayuda:hover img { transform: scale(1.05); border-color: #4e54c8; }
-    .card-ayuda h4 { font-weight:600; margin-bottom:8px; color:#1e293b; }
-    .card-ayuda p  { font-size:13px; color:#64748b; margin:3px 0; }
-    .modal-buttons { text-align:center; margin-top:30px; }
-    .btn-cerrar {
-      padding: 12px 25px; border: none; border-radius: 10px;
-      background: linear-gradient(135deg,#ef4444,#dc2626); color:white;
-      font-weight:600; cursor:pointer; transition: all 0.3s ease;
+
+    .sb-logo {
+      padding: 24px 18px 18px;
+      border-bottom: 1px solid var(--border);
     }
-    .btn-cerrar:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(239,68,68,0.3); }
-
-    /* ── LISTA DE TICKETS ── */
-    .ticket-list { display:grid; gap:20px; margin-top:20px; }
-    .ticket-item {
-      background:#ffffff; border-radius:16px; padding:20px 25px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08); border:1px solid #e5e7eb;
-      transition: all 0.3s ease;
+    .sb-logo .tag {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 6px;
     }
-    .ticket-item:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(0,0,0,0.12); }
-    .ticket-item h4 { font-size:18px; margin-bottom:8px; color:#1e293b; }
-    .ticket-status { display:inline-block; padding:5px 12px; border-radius:20px; font-size:12px; font-weight:600; margin-top:8px; }
-    .status-resuelto  { background:#d1fae5; color:#065f46; }
-    .status-proceso   { background:#fef3c7; color:#92400e; }
-    .status-pendiente { background:#fee2e2; color:#991b1b; }
-    .ticket-item p { margin:4px 0; font-size:14px; color:#475569; }
-    .resolucion-box { margin-top:15px; padding:12px; background:#f8fafc; border-radius:10px; border-left:4px solid #10b981; font-size:14px; }
-    .badge-asignado    { display:inline-block; background:#ede9fe; color:#5b21b6; border-radius:20px; padding:3px 10px; font-size:12px; font-weight:600; margin-top:6px; }
-    .badge-sin-asignar { display:inline-block; background:#fef3c7; color:#92400e; border-radius:20px; padding:3px 10px; font-size:12px; font-weight:600; margin-top:6px; }
-    .btn-delete { margin-top:10px; padding:7px 14px; background:#fee2e2; color:#991b1b; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition:all 0.2s; }
-    .btn-delete:hover { background:#fca5a5; }
-
-    /* ── ADJUNTAR ARCHIVOS ── */
-    .upload-zone {
-      border:2px dashed #c7d2fe; border-radius:14px; padding:28px 20px;
-      text-align:center; background:#f5f7ff; cursor:pointer;
-      transition: all 0.3s ease; position:relative; margin-top:16px;
+    .sb-logo h1 {
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--text);
     }
-    .upload-zone:hover, .upload-zone.dragover { border-color:#4e54c8; background:#eef0ff; box-shadow: 0 0 0 4px rgba(78,84,200,0.08); }
-    .upload-zone input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
-    .upload-icon { font-size:36px; margin-bottom:10px; display:block; }
-    .upload-zone p  { margin:0; color:#64748b; font-size:14px; }
-    .upload-zone strong { color:#4e54c8; }
-    .upload-zone .hint { font-size:12px; color:#94a3b8; margin-top:6px; }
 
-    .file-preview-list { display:grid; gap:10px; margin-top:14px; }
-    .file-preview-item { display:flex; align-items:center; gap:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 14px; font-size:13px; color:#334155; }
-    .file-preview-item .file-icon { font-size:22px; flex-shrink:0; }
-    .file-preview-item .file-info { flex:1; overflow:hidden; }
-    .file-preview-item .file-name { font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .file-preview-item .file-size { font-size:11px; color:#94a3b8; }
-    .file-preview-item .file-remove { background:none; border:none; color:#ef4444; cursor:pointer; font-size:16px; padding:0 4px; border-radius:4px; transition:background 0.2s; flex-shrink:0; }
-    .file-preview-item .file-remove:hover { background:#fee2e2; }
+    .nav-section {
+      padding: 16px 14px 5px;
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text3);
+    }
 
-    .upload-progress-bar { width:100%; height:6px; background:#e2e8f0; border-radius:99px; overflow:hidden; margin-top:8px; display:none; }
-    .upload-progress-fill { height:100%; background:linear-gradient(90deg,#4e54c8,#8b5cf6); border-radius:99px; width:0%; transition:width 0.4s ease; }
-    .upload-status { font-size:12px; margin-top:6px; color:#64748b; display:none; }
-
-    .uploaded-files-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
-    .uploaded-file-link { display:inline-flex; align-items:center; gap:6px; background:#ede9fe; color:#5b21b6; border-radius:20px; padding:5px 12px; font-size:12px; font-weight:600; text-decoration:none; transition:background 0.2s; }
-    .uploaded-file-link:hover { background:#ddd6fe; }
-    .ticket-attachments { margin-top:12px; padding-top:10px; border-top:1px dashed #e2e8f0; }
-    .ticket-attachments p { font-size:12px; font-weight:600; color:#94a3b8; margin-bottom:6px; }
-
-    /* ── PERFIL ── */
-    .perfil-banner {
-      background: linear-gradient(135deg, #4e54c8, #8b5cf6);
-      border-radius: 20px;
-      padding: 28px 32px;
-      margin-bottom: 28px;
-      color: white;
+    .nav-item {
+      margin: 2px 8px;
+      padding: 9px 12px;
+      border-radius: var(--radius);
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2);
+      transition: all 0.15s;
+      border: 1px solid transparent;
+      user-select: none;
+    }
+    .nav-item:hover { background: var(--surface2); color: var(--text); }
+    .nav-item.active {
+      background: rgba(61,59,189,0.08);
+      color: var(--accent);
+      border-color: rgba(61,59,189,0.15);
+    }
+    [data-theme="dark"] .nav-item.active {
+      background: rgba(124,120,255,0.12);
+      border-color: rgba(124,120,255,0.2);
+    }
+    .nav-icon { font-size: 15px; flex-shrink: 0; }
+
+    .sb-footer {
+      margin-top: auto;
+      padding: 14px 10px;
+      border-top: 1px solid var(--border);
+    }
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface2);
+      border-radius: var(--radius);
+      padding: 9px 11px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+    }
+    .user-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .user-info p:first-child { font-size: 12px; font-weight: 600; color: var(--text); }
+    .user-info p:last-child  { font-size: 10px; color: var(--accent); font-family: var(--mono); }
+
+    .btn-logout {
+      width: 100%;
+      padding: 7px;
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--text2);
+      border-radius: var(--radius);
+      font-family: var(--font);
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-logout:hover {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+
+    /* ── MAIN ── */
+    .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+    .topbar {
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      transition: background 0.3s;
+    }
+    .topbar h2 { font-size: 18px; font-weight: 700; color: var(--text); }
+    .topbar-sub { font-size: 11px; color: var(--text3); font-family: var(--mono); margin-top: 1px; }
+
+    /* ── VIEWS ── */
+    .view { display: none; padding: 24px 28px; }
+    .view.active { display: block; }
+
+    /* ══════════════════════════════════════
+       PERFIL BANNER
+    ══════════════════════════════════════ */
+    .perfil-banner {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      border-radius: var(--radius-lg);
+      padding: 26px 28px;
+      margin-bottom: 24px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 20px;
       flex-wrap: wrap;
-      box-shadow: 0 12px 35px rgba(78,84,200,0.25);
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .perfil-banner::before {
+      content: '';
+      position: absolute;
+      right: -30px; top: -30px;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
     }
     .perfil-avatar {
-      width: 72px; height: 72px; border-radius: 50%;
+      width: 66px; height: 66px; border-radius: 50%;
       background: rgba(255,255,255,0.2);
       display: flex; align-items: center; justify-content: center;
-      font-size: 28px; font-weight: 800; flex-shrink: 0;
-      border: 3px solid rgba(255,255,255,0.4);
-      letter-spacing: -1px;
+      font-size: 24px; font-weight: 800; flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.35);
     }
-    .perfil-info { flex: 1; }
-
-    /* ── SALUDO — línea pequeña arriba, nombre grande abajo ── */
-    .perfil-saludo {
-      font-size: 13px;
-      font-weight: 400;
-      opacity: 0.85;
-      margin-bottom: 2px;
-      letter-spacing: 0.2px;
+    .perfil-saludo  { font-size: 12px; opacity: 0.8; margin-bottom: 2px; }
+    .perfil-nombre  { font-size: 20px; font-weight: 700; margin-bottom: 6px; line-height: 1.2; }
+    .perfil-depto   {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,0.18); border-radius: 20px;
+      padding: 3px 12px; font-size: 12px; font-weight: 500;
     }
-    .perfil-nombre {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      line-height: 1.2;
-    }
-
-    .perfil-depto  {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,0.2); border-radius: 20px;
-      padding: 4px 14px; font-size: 13px; font-weight: 600;
-    }
-    .perfil-stats {
-      display: flex; gap: 16px; flex-wrap: wrap; margin-top: 14px;
-    }
+    .perfil-stats   { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
     .perfil-stat {
-      background: rgba(255,255,255,0.15); border-radius: 12px;
-      padding: 10px 18px; text-align: center; min-width: 80px;
+      background: rgba(255,255,255,0.15); border-radius: 10px;
+      padding: 9px 16px; text-align: center; min-width: 72px;
     }
-    .perfil-stat .ps-num { font-size: 24px; font-weight: 800; line-height: 1; }
-    .perfil-stat .ps-lbl { font-size: 10px; opacity: 0.8; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .perfil-stat .ps-num { font-size: 22px; font-weight: 800; line-height: 1; }
+    .perfil-stat .ps-lbl { font-size: 9px; opacity: 0.8; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px; font-family: var(--mono); }
 
-    @media (max-width:600px) {
-      .modal-content { padding:25px; }
-      .card-ayuda { padding:20px 15px; }
-      .perfil-banner { padding: 20px; gap: 16px; }
-      .perfil-nombre { font-size: 18px; }
+    /* ══════════════════════════════════════
+       SECCIÓN DE TICKETS — FORMULARIO
+    ══════════════════════════════════════ */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s, background 0.3s;
+      margin-bottom: 12px;
+    }
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 90px; }
+    select option { background: var(--surface2); color: var(--text); }
+
+    .depto-info {
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      background: rgba(61,59,189,0.06);
+      border: 1px solid rgba(61,59,189,0.15);
+      border-radius: var(--radius);
+      font-size: 12px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    [data-theme="dark"] .depto-info {
+      background: rgba(124,120,255,0.08);
+      border-color: rgba(124,120,255,0.2);
+    }
+
+    .btn-primary {
+      padding: 11px 22px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* ── Upload zone ── */
+    .upload-zone {
+      border: 2px dashed var(--border2);
+      border-radius: var(--radius-lg);
+      padding: 24px 16px;
+      text-align: center;
+      background: var(--surface2);
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      margin-bottom: 12px;
+    }
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--accent);
+      background: rgba(61,59,189,0.04);
+    }
+    .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .upload-zone p   { color: var(--text2); font-size: 13px; margin: 0; }
+    .upload-zone strong { color: var(--accent); }
+    .upload-zone .hint { font-size: 11px; color: var(--text3); margin-top: 4px; font-family: var(--mono); }
+
+    .file-preview-list { display: grid; gap: 8px; margin-bottom: 12px; }
+    .file-preview-item {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 9px 12px;
+      font-size: 12px; color: var(--text);
+    }
+    .file-preview-item .file-icon  { font-size: 20px; flex-shrink: 0; }
+    .file-preview-item .file-info  { flex: 1; overflow: hidden; }
+    .file-preview-item .file-name  { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .file-preview-item .file-size  { font-size: 10px; color: var(--text3); font-family: var(--mono); }
+    .file-preview-item .file-remove { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 15px; padding: 0 3px; flex-shrink: 0; }
+
+    .upload-progress-bar { width: 100%; height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; margin-bottom: 6px; display: none; }
+    .upload-progress-fill { height: 100%; background: var(--accent); border-radius: 99px; width: 0%; transition: width 0.4s; }
+    .upload-status { font-size: 11px; color: var(--text2); display: none; font-family: var(--mono); }
+
+    /* ══════════════════════════════════════
+       FILTROS — TABS DE ESTADO
+    ══════════════════════════════════════ */
+    .filter-bar {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      align-items: center;
+    }
+    .filter-tab {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--mono);
+      border: 1px solid var(--border2);
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-tab:hover { background: var(--surface2); color: var(--text); }
+    .filter-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .filter-tab.t-pend.active  { background: #a06010; border-color: #a06010; }
+    .filter-tab.t-proc.active  { background: #1560a0; border-color: #1560a0; }
+    .filter-tab.t-res.active   { background: #1a8060; border-color: #1a8060; }
+    [data-theme="dark"] .filter-tab.t-pend.active { background: #ffd166; color: #1a1a18; border-color: #ffd166; }
+    [data-theme="dark"] .filter-tab.t-proc.active { background: #4fc3ff; color: #1a1a18; border-color: #4fc3ff; }
+    [data-theme="dark"] .filter-tab.t-res.active  { background: #3be38e; color: #1a1a18; border-color: #3be38e; }
+
+    .filter-sep { width: 1px; height: 28px; background: var(--border2); margin: 0 4px; }
+
+    .search-input {
+      flex: 1;
+      min-width: 160px;
+      padding: 6px 13px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 11px;
+      outline: none;
+      margin-bottom: 0;
+      transition: border-color 0.15s;
+    }
+    .search-input:focus { border-color: var(--accent); }
+
+    .tecnico-select {
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 11px;
+      outline: none;
+      cursor: pointer;
+      margin-bottom: 0;
+    }
+    .tecnico-select:focus { border-color: var(--accent); }
+
+    /* ══════════════════════════════════════
+       TICKET CARDS (MIS TICKETS)
+    ══════════════════════════════════════ */
+    .tickets-grid { display: grid; gap: 14px; }
+
+    .ticket-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+      transition: all 0.2s;
+    }
+    .ticket-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--border2); }
+
+    .ticket-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .ticket-id-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text3);
+      margin-bottom: 2px;
+    }
+    .ticket-titulo {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .ticket-depto-tag {
+      font-size: 11px;
+      font-weight: 600;
+      font-family: var(--mono);
+      color: var(--accent);
+    }
+    .ticket-desc {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    .ticket-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .badge {
+      font-size: 10px;
+      font-weight: 600;
+      font-family: var(--mono);
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .badge-estado-pend  { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(160,96,16,0.2); }
+    .badge-estado-proc  { background: rgba(21,96,160,0.1); color: #1560a0; border: 1px solid rgba(21,96,160,0.2); }
+    .badge-estado-res   { background: var(--success-bg); color: var(--success); border: 1px solid rgba(26,128,96,0.2); }
+    [data-theme="dark"] .badge-estado-proc { background: rgba(79,195,255,0.12); color: #4fc3ff; border-color: rgba(79,195,255,0.25); }
+
+    .badge-asignado     { background: rgba(61,59,189,0.08); color: var(--accent); border: 1px solid rgba(61,59,189,0.15); }
+    .badge-sin-asignar  { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(160,96,16,0.2); }
+    [data-theme="dark"] .badge-asignado    { background: rgba(124,120,255,0.12); color: var(--accent); border-color: rgba(124,120,255,0.2); }
+    [data-theme="dark"] .badge-sin-asignar { background: rgba(255,209,102,0.12); color: var(--warning); }
+
+    .ticket-fecha { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+
+    .resolucion-box {
+      margin-top: 10px;
+      padding: 11px 14px;
+      background: var(--success-bg);
+      border-radius: var(--radius);
+      border-left: 3px solid var(--success);
+      font-size: 12px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .adj-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border2); }
+    .adj-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(61,59,189,0.07); color: var(--accent);
+      border-radius: 20px; padding: 4px 11px;
+      font-size: 11px; font-weight: 600; text-decoration: none;
+      transition: background 0.15s;
+    }
+    .adj-link:hover { background: rgba(61,59,189,0.14); }
+
+    .btn-delete {
+      margin-top: 10px;
+      padding: 6px 13px;
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid rgba(192,48,48,0.2);
+      border-radius: var(--radius);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-delete:hover { background: var(--danger); color: #fff; }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text3);
+      font-size: 13px;
+      font-family: var(--mono);
+    }
+    .empty-icon { font-size: 32px; margin-bottom: 10px; }
+
+    /* ══════════════════════════════════════
+       CONFIGURACIÓN
+    ══════════════════════════════════════ */
+    .config-profile-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .config-profile-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+    .config-avatar-big {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .config-profile-info p:first-child { font-size: 16px; font-weight: 700; color: var(--text); }
+    .config-profile-info p:nth-child(2) { font-size: 11px; color: var(--text3); font-family: var(--mono); margin-top: 2px; }
+    .config-profile-info p:nth-child(3) { font-size: 11px; color: var(--accent); font-family: var(--mono); margin-top: 3px; }
+
+    .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .config-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .config-card-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .config-card-desc  { font-size: 10px; color: var(--text3); font-family: var(--mono); margin-bottom: 14px; }
+
+    .config-field { margin-bottom: 13px; }
+    .config-field label {
+      display: block;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text3);
+      margin-bottom: 5px;
+      font-family: var(--mono);
+    }
+    .config-field input {
+      width: 100%;
+      padding: 9px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.15s;
+      margin-bottom: 0;
+    }
+    .config-field input:focus { border-color: var(--accent); }
+    .config-field input[readonly] { opacity: 0.45; cursor: not-allowed; }
+
+    .config-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .config-toggle-row:last-of-type { border-bottom: none; }
+    .config-toggle-info p:first-child { font-size: 12px; font-weight: 600; color: var(--text); }
+    .config-toggle-info p:last-child  { font-size: 10px; color: var(--text3); font-family: var(--mono); margin-top: 2px; }
+
+    /* Toggle switch */
+    .toggle-switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: var(--border2);
+      border-radius: 22px;
+      transition: 0.25s;
+      border: 1px solid var(--border2);
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      height: 16px; width: 16px;
+      left: 2px; bottom: 2px;
+      background: var(--text3);
+      border-radius: 50%;
+      transition: 0.25s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--accent); border-color: var(--accent); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); background: #fff; }
+
+    .config-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+    }
+    .config-info-row:last-child { border-bottom: none; }
+    .config-info-row span:first-child { color: var(--text3); font-family: var(--mono); font-size: 10px; }
+    .config-info-row span:last-child  { font-weight: 600; color: var(--text); }
+
+    .config-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+    .btn-config-save {
+      padding: 8px 18px;
+      border-radius: var(--radius);
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-config-save:hover { opacity: 0.88; }
+
+    .read-only-notice {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: var(--warning-bg);
+      border: 1px solid rgba(160,96,16,0.2);
+      border-radius: var(--radius);
+      font-size: 11px;
+      color: var(--warning);
+      font-family: var(--mono);
+    }
+
+    /* ══════════════════════════════════════
+       MODAL AYUDA
+    ══════════════════════════════════════ */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 999; padding: 20px;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      width: 100%;
+      max-width: 700px;
+      animation: slideUp 0.2s ease;
+    }
+    @keyframes slideUp { from{transform:translateY(16px);opacity:0} to{transform:translateY(0);opacity:1} }
+    .modal h3 { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .modal-sub { font-size: 11px; color: var(--text3); font-family: var(--mono); margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+
+    .card-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+    .card-ayuda {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 12px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .card-ayuda:hover { transform: translateY(-4px); border-color: var(--accent); }
+    .card-ayuda img { width: 70px; height: 70px; border-radius: 50%; margin-bottom: 10px; object-fit: cover; border: 2px solid var(--border2); }
+    .card-ayuda h4 { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .card-ayuda p  { font-size: 11px; color: var(--text2); margin: 2px 0; }
+
+    .modal-actions { display: flex; gap: 8px; justify-content: center; margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--border); }
+    .btn-cancel {
+      padding: 9px 20px;
+      border-radius: var(--radius);
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--surface2);
+      color: var(--text2);
+      border: 1px solid var(--border2);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-cancel:hover { color: var(--text); border-color: var(--text2); }
+
+    /* ══════════════════════════════════════
+       TOAST
+    ══════════════════════════════════════ */
+    .toast {
+      position: fixed;
+      bottom: 22px; right: 22px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.25s;
+      pointer-events: none;
+      max-width: 280px;
+      color: var(--text);
+    }
+    .toast.show    { opacity: 1; transform: translateY(0); }
+    .toast.success { border-left: 3px solid var(--success); }
+    .toast.error   { border-left: 3px solid var(--danger); }
+    .toast.warning { border-left: 3px solid var(--warning); }
+
+    /* ══════════════════════════════════════
+       UPLOADED LINKS
+    ══════════════════════════════════════ */
+    .uploaded-file-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(61,59,189,0.08); color: var(--accent);
+      border-radius: 20px; padding: 4px 11px;
+      font-size: 11px; font-weight: 600; text-decoration: none;
+      transition: background 0.15s; font-family: var(--mono);
+    }
+    .uploaded-file-link:hover { background: rgba(61,59,189,0.15); }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .config-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .sidebar { width: 60px; }
+      .sb-logo h1, .sb-logo .tag, .nav-item span:not(.nav-icon), .user-info, .btn-logout { display: none; }
+      .nav-item { justify-content: center; padding: 10px; }
+      .user-pill { justify-content: center; }
+      .view { padding: 14px; }
     }
   </style>
 </head>
 <body>
 
-  <nav class="navbar">
-    <h2>Mis Tickets</h2>
-    <div style="display:flex; gap:10px;">
-      <button onclick="abrirAyuda()">Ayuda rápida</button>
-      <button onclick="logout()">Cerrar Sesión</button>
+<div class="layout">
+
+  <!-- ════ SIDEBAR ════ -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <span class="tag">Usuario</span>
+      <h1>Mis<br>Tickets</h1>
     </div>
-  </nav>
+    <p class="nav-section">Navegación</p>
+    <div class="nav-item active" id="nav-inicio"     onclick="switchView('inicio')"><span class="nav-icon">🏠</span><span>Inicio</span></div>
+    <div class="nav-item"        id="nav-nuevo"      onclick="switchView('nuevo')"><span class="nav-icon">➕</span><span>Nuevo Ticket</span></div>
+    <div class="nav-item"        id="nav-mistickets" onclick="switchView('mistickets')"><span class="nav-icon">🎫</span><span>Mis Tickets</span></div>
+    <div class="nav-item"        id="nav-config"     onclick="switchView('config'); renderConfig()"><span class="nav-icon">⚙️</span><span>Configuración</span></div>
+    <div class="nav-item"        id="nav-ayuda"      onclick="abrirAyuda()"><span class="nav-icon">📞</span><span>Ayuda rápida</span></div>
+    <div class="sb-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="sbAvatar">--</div>
+        <div class="user-info">
+          <p id="sbName">Usuario</p>
+          <p>panel usuario</p>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+    </div>
+  </aside>
 
-  <div class="container">
+  <!-- ════ MAIN ════ -->
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h2 id="viewTitle">Inicio</h2>
+        <div class="topbar-sub" id="clockEl">—</div>
+      </div>
+    </div>
 
-    <!-- ══ PERFIL ══ -->
-    <div class="perfil-banner" id="perfilBanner">
-      <div class="perfil-avatar" id="perfilAvatar">--</div>
-      <div class="perfil-info">
-        <!-- Saludo separado del nombre -->
-        <div class="perfil-saludo" id="perfilSaludo">Cargando...</div>
-        <div class="perfil-nombre" id="perfilNombre"></div>
-        <div class="perfil-depto">🏢 <span id="perfilDepto">—</span></div>
-        <div class="perfil-stats">
-          <div class="perfil-stat">
-            <div class="ps-num" id="ps-total">—</div>
-            <div class="ps-lbl">Total</div>
+    <!-- ── INICIO ── -->
+    <div id="view-inicio" class="view active">
+
+      <div class="perfil-banner">
+        <div class="perfil-avatar" id="perfilAvatar">--</div>
+        <div style="flex:1">
+          <div class="perfil-saludo"  id="perfilSaludo">Cargando...</div>
+          <div class="perfil-nombre"  id="perfilNombre"></div>
+          <div class="perfil-depto">🏢 <span id="perfilDepto">—</span></div>
+          <div class="perfil-stats">
+            <div class="perfil-stat"><div class="ps-num" id="ps-total">—</div><div class="ps-lbl">Total</div></div>
+            <div class="perfil-stat"><div class="ps-num" id="ps-pend">—</div><div class="ps-lbl">Pendientes</div></div>
+            <div class="perfil-stat"><div class="ps-num" id="ps-proc">—</div><div class="ps-lbl">En Proceso</div></div>
+            <div class="perfil-stat"><div class="ps-num" id="ps-res">—</div><div class="ps-lbl">Resueltos</div></div>
           </div>
-          <div class="perfil-stat">
-            <div class="ps-num" id="ps-pend">—</div>
-            <div class="ps-lbl">Pendientes</div>
-          </div>
-          <div class="perfil-stat">
-            <div class="ps-num" id="ps-proc">—</div>
-            <div class="ps-lbl">En Proceso</div>
-          </div>
-          <div class="perfil-stat">
-            <div class="ps-num" id="ps-res">—</div>
-            <div class="ps-lbl">Resueltos</div>
-          </div>
+        </div>
+      </div>
+
+      <!-- Últimos 3 tickets -->
+      <div class="card">
+        <div class="card-title">🕐 Últimos tickets</div>
+        <div id="ultimosTickets"><p style="color:var(--text3);font-size:13px;font-family:var(--mono)">Cargando...</p></div>
+        <div style="margin-top:14px">
+          <button class="btn-primary" onclick="switchView('mistickets')">Ver todos mis tickets →</button>
         </div>
       </div>
     </div>
 
-    <!-- ══ FORMULARIO NUEVO TICKET ══ -->
-    <div class="card">
-      <h3>Crear nuevo ticket</h3>
+    <!-- ── NUEVO TICKET ── -->
+    <div id="view-nuevo" class="view">
+      <div class="card">
+        <div class="card-title">➕ Crear nuevo ticket</div>
 
-      <form id="ticketForm">
-        <!-- Campos ocultos para EmailJS -->
-        <input type="hidden" name="ticket_id">
-        <input type="hidden" name="ticket_usuario">
-        <input type="hidden" name="ticket_departamento">
-        <input type="hidden" name="ticket_titulo">
-        <input type="hidden" name="ticket_descripcion">
-        <input type="hidden" name="ticket_fecha">
+        <form id="ticketForm">
+          <input type="hidden" name="ticket_id">
+          <input type="hidden" name="ticket_usuario">
+          <input type="hidden" name="ticket_departamento">
+          <input type="hidden" name="ticket_titulo">
+          <input type="hidden" name="ticket_descripcion">
+          <input type="hidden" name="ticket_fecha">
 
-        <input type="text" id="titulo"      placeholder="Título del problema">
-        <textarea           id="descripcion" placeholder="Describe tu problema..."></textarea>
+          <input type="text" id="titulo" placeholder="Título del problema">
+          <textarea id="descripcion" placeholder="Describe tu problema con detalle..."></textarea>
 
-        <select id="asignadoA" style="margin-top:10px;">
-          <option value="Sin asignar">-- Asignar a --</option>
+          <select id="asignadoA">
+            <option value="Sin asignar">-- Asignar a técnico --</option>
+            <option value="Xavier">Xavier Rosario</option>
+            <option value="Juan">Juan Francisco Jimenez</option>
+            <option value="Yanna">Yanna Martínez</option>
+            <option value="Joel">Joel Holguin</option>
+          </select>
+
+          <div class="depto-info">
+            🏢 <strong style="margin-right:4px">Departamento:</strong>
+            <span id="deptoDisplay">—</span>
+            <span style="margin-left:auto;font-size:10px;color:var(--text3);font-family:var(--mono)">Asignado automáticamente</span>
+          </div>
+
+          <div style="margin-bottom:14px">
+            <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:8px">📎 Adjuntar archivos <span style="font-weight:400;color:var(--text3)">(opcional)</span></label>
+            <div class="upload-zone" id="uploadZone">
+              <input type="file" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip">
+              <p><strong>Haz clic</strong> o arrastra archivos aquí</p>
+              <p class="hint">Imágenes, PDF, Word, Excel, ZIP — máx. 10 MB por archivo</p>
+            </div>
+            <div class="file-preview-list" id="filePreviewList"></div>
+            <div class="upload-progress-bar" id="uploadProgressBar">
+              <div class="upload-progress-fill" id="uploadProgressFill"></div>
+            </div>
+            <div class="upload-status" id="uploadStatus"></div>
+          </div>
+
+          <button type="button" class="btn-primary" onclick="crearTicket()">Enviar Ticket</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── MIS TICKETS ── -->
+    <div id="view-mistickets" class="view">
+
+      <div class="filter-bar">
+        <!-- Tabs de estado -->
+        <button class="filter-tab active" data-estado=""          onclick="setEstadoFilter('', this)">Todos</button>
+        <button class="filter-tab t-pend" data-estado="Pendiente" onclick="setEstadoFilter('Pendiente', this)">Pendiente</button>
+        <button class="filter-tab t-proc" data-estado="En Proceso" onclick="setEstadoFilter('En Proceso', this)">En Proceso</button>
+        <button class="filter-tab t-res"  data-estado="Resuelto"  onclick="setEstadoFilter('Resuelto', this)">Resuelto</button>
+        <div class="filter-sep"></div>
+        <!-- Filtro técnico -->
+        <select class="tecnico-select" id="tecnicoFilter" onchange="renderMisTickets()">
+          <option value="">👤 Todos los técnicos</option>
           <option value="Xavier">Xavier Rosario</option>
-          <option value="Juan">Juan Francisco Jimenez</option>
-          <option value="AYanna">Yanna Martínez</option>
-          <option value="AJoel">Joel Holguin</option>
+          <option value="Juan">Juan F. Jiménez</option>
+          <option value="Yanna">Yanna Martínez</option>
+          <option value="Joel">Joel Holguin</option>
+          <option value="Sin asignar">Sin asignar</option>
         </select>
-
-        <!-- Info de departamento (solo lectura) -->
-        <div style="
-          margin-top:12px; padding:10px 16px;
-          background:#f0f4ff; border:1px solid #c7d2fe; border-radius:10px;
-          font-size:13px; color:#4338ca; display:flex; align-items:center; gap:8px;
-        ">
-          🏢 <strong>Departamento:</strong>&nbsp;<span id="deptoDisplay">—</span>
-          <span style="margin-left:auto; font-size:11px; color:#94a3b8;">Se asigna automáticamente</span>
-        </div>
-
-        <!-- Zona de adjuntos -->
-        <div style="margin-top:18px;">
-          <label style="font-size:14px; font-weight:600; color:#374151; display:block; margin-bottom:6px;">
-            📎 Adjuntar archivos <span style="font-weight:400; color:#94a3b8;">(opcional)</span>
-          </label>
-          <div class="upload-zone" id="uploadZone">
-            <input type="file" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip">
-            <span class="upload-icon">☁️</span>
-            <p><strong>Haz clic para seleccionar</strong> o arrastra archivos aquí</p>
-            <p class="hint">Imágenes, PDF, Word, Excel, ZIP — máx. 10 MB por archivo</p>
-          </div>
-          <div class="file-preview-list" id="filePreviewList"></div>
-          <div class="upload-progress-bar" id="uploadProgressBar">
-            <div class="upload-progress-fill" id="uploadProgressFill"></div>
-          </div>
-          <div class="upload-status" id="uploadStatus"></div>
-        </div>
-
-        <button type="button" onclick="crearTicket()">Enviar Ticket</button>
-      </form>
-    </div>
-
-    <h3 style="margin-top:20px;">📋 Mis Tickets</h3>
-    <div id="listaTickets" class="ticket-list"></div>
-  </div>
-
-  <!-- MODAL AYUDA -->
-  <div id="ayudaModal" class="modal">
-    <div class="modal-content">
-      <h2 style="text-align:center; margin-bottom:20px;">📞 Ayuda Rápida IT</h2>
-      <p style="text-align:center; margin-bottom:20px;">Contacta a nuestros técnicos disponibles:</p>
-      <div class="card-container">
-        <div class="card-ayuda">
-          <img src="https://ui-avatars.com/api/?name=Yanna+Martinez&background=0D8ABC&color=fff" alt="Yanna">
-          <h4>YANNA MARTINEZ</h4>
-          <p>📧 y.martinez@grupomichel.com</p>
-          <p>📟 Flota: (809) 390-5286</p>
-        </div>
-        <div class="card-ayuda">
-          <img src="https://ui-avatars.com/api/?name=Joel+Holguin&background=F39C12&color=fff" alt="Joel">
-          <h4>Joel Holguin</h4>
-          <p>📧 j.holguin@grupomichel.com</p>
-          <p>📟 Flota: (809) 722-2874</p>
-        </div>
-        <div class="card-ayuda">
-          <img src="https://ui-avatars.com/api/?name=Xavier+Rosario&background=E74C3C&color=fff" alt="Xavier">
-          <h4>Xavier Rosario</h4>
-          <p>📧 x.rosario@grupomichel.com</p>
-          <p>📟 Flota: (000) 000-0000</p>
-        </div>
-        <div class="card-ayuda">
-          <img src="https://ui-avatars.com/api/?name=JuanFrancisco&background=27AE60&color=fff" alt="Juan Francisco">
-          <h4>Juan F. Jimenez</h4>
-          <p>📧 dptoIT@grupomichel.com</p>
-          <p>📱 (809) 931-3720</p>
-          <p>📟 Flota: (809) 722-1076</p>
-        </div>
+        <!-- Búsqueda -->
+        <input class="search-input" id="srchTickets" placeholder="Buscar tickets..." oninput="renderMisTickets()">
       </div>
-      <div class="modal-buttons">
-        <button class="btn-cerrar" onclick="cerrarAyuda()">Cerrar</button>
+
+      <div class="tickets-grid" id="listaTickets">
+        <div class="empty-state"><div class="empty-icon">🎫</div>Cargando tickets...</div>
       </div>
     </div>
+
+    <!-- ── CONFIGURACIÓN ── -->
+    <div id="view-config" class="view">
+
+      <div class="config-profile-card">
+        <div class="config-avatar-big" id="cfgAvatar">--</div>
+        <div class="config-profile-info">
+          <p id="cfgNombreCompleto">—</p>
+          <p id="cfgUsername">@—</p>
+          <p id="cfgDepto">—</p>
+        </div>
+      </div>
+
+      <div class="config-grid">
+
+        <!-- Perfil -->
+        <div class="config-card">
+          <div class="config-card-title">👤 Mi perfil</div>
+          <div class="config-card-desc">Solo puedes editar tu nombre completo</div>
+
+          <div class="config-field">
+            <label>Nombre de usuario</label>
+            <input type="text" id="cfgFieldUsername" readonly>
+          </div>
+          <div class="config-field">
+            <label>Nombre completo</label>
+            <input type="text" id="cfgFieldNombre" placeholder="Tu nombre completo">
+          </div>
+          <div class="config-field">
+            <label>Departamento</label>
+            <input type="text" id="cfgFieldDepto" readonly>
+          </div>
+          <div class="config-field">
+            <label>Rol</label>
+            <input type="text" id="cfgFieldRol" readonly>
+          </div>
+
+          <div class="read-only-notice">
+            ⚠️ El usuario, departamento y rol solo pueden ser modificados por un administrador.
+          </div>
+
+          <div class="config-actions">
+            <button class="btn-config-save" onclick="guardarNombre()">Guardar nombre</button>
+          </div>
+        </div>
+
+        <!-- Apariencia y sistema -->
+        <div class="config-card">
+          <div class="config-card-title">🎨 Apariencia y sistema</div>
+          <div class="config-card-desc">Personaliza tu experiencia</div>
+
+          <div class="config-toggle-row">
+            <div class="config-toggle-info">
+              <p>Modo oscuro</p>
+              <p>Cambia entre tema claro y oscuro</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="cfgDarkMode" onchange="toggleDarkMode(this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="config-toggle-row">
+            <div class="config-toggle-info">
+              <p>Notificaciones toast</p>
+              <p>Mensajes de confirmación en pantalla</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="cfgToasts" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+            <div class="config-card-title" style="font-size:11px;margin-bottom:10px">ℹ️ Información</div>
+            <div class="config-info-row"><span>Versión</span><span>v2.0</span></div>
+            <div class="config-info-row"><span>Rol</span><span id="cfgInfoRol">—</span></div>
+            <div class="config-info-row"><span>Mis tickets</span><span id="cfgInfoTotal">—</span></div>
+            <div class="config-info-row"><span>Resueltos</span><span id="cfgInfoRes" style="color:var(--success)">—</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ════ MODAL AYUDA ════ -->
+<div class="overlay" id="ayudaModal">
+  <div class="modal">
+    <h3>📞 Ayuda Rápida IT</h3>
+    <p class="modal-sub">Contacta a nuestros técnicos disponibles</p>
+    <div class="card-container">
+      <div class="card-ayuda">
+        <img src="https://ui-avatars.com/api/?name=Yanna+Martinez&background=0D8ABC&color=fff" alt="Yanna">
+        <h4>Yanna Martinez</h4>
+        <p>📧 y.martinez@grupomichel.com</p>
+        <p>📟 (809) 390-5286</p>
+      </div>
+      <div class="card-ayuda">
+        <img src="https://ui-avatars.com/api/?name=Joel+Holguin&background=F39C12&color=fff" alt="Joel">
+        <h4>Joel Holguin</h4>
+        <p>📧 j.holguin@grupomichel.com</p>
+        <p>📟 (809) 722-2874</p>
+      </div>
+      <div class="card-ayuda">
+        <img src="https://ui-avatars.com/api/?name=Xavier+Rosario&background=E74C3C&color=fff" alt="Xavier">
+        <h4>Xavier Rosario</h4>
+        <p>📧 x.rosario@grupomichel.com</p>
+        <p>📟 (000) 000-0000</p>
+      </div>
+      <div class="card-ayuda">
+        <img src="https://ui-avatars.com/api/?name=JuanFrancisco&background=27AE60&color=fff" alt="Juan Francisco">
+        <h4>Juan F. Jimenez</h4>
+        <p>📧 dptoIT@grupomichel.com</p>
+        <p>📱 (809) 931-3720</p>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="cerrarAyuda()">Cerrar</button>
+    </div>
   </div>
+</div>
 
-  <script src="JS/js.js"></script>
+<div class="toast" id="toastEl"></div>
 
-  <script>
-    // ── Inicializar perfil con saludo según hora ──
-    (function() {
-      const nombreCompleto = localStorage.getItem("nombreCompleto")
-                          || localStorage.getItem("usuario")
-                          || "Usuario";
-      const depto = localStorage.getItem("depto") || "Sin departamento";
+<script src="JS/js.js"></script>
 
-      // Saludo según hora del día
-      const hora = new Date().getHours();
-      let saludo, emoji;
-      if      (hora >= 5  && hora < 12) { saludo = "¡Buenos días";   emoji = "☀️";  }
-      else if (hora >= 12 && hora < 19) { saludo = "¡Buenas tardes"; emoji = "🌤️"; }
-      else                              { saludo = "¡Buenas noches"; emoji = "🌙";  }
+<script>
+// ════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════
+const API_TICKETS = "https://api.sheetbest.com/sheets/5b2f2a41-ad46-4a89-8cc2-9f768b9870af";
+const API_USERS   = "https://api.sheetbest.com/sheets/6784d1e5-1e26-4605-9c19-329eb2b6ea12";
 
-      // Saludo en línea separada, nombre completo abajo
-      document.getElementById("perfilSaludo").textContent = `${saludo},`;
-      document.getElementById("perfilNombre").textContent  = `${nombreCompleto}! ${emoji}`;
-      document.getElementById("perfilDepto").textContent   = depto;
-      document.getElementById("deptoDisplay").textContent  = depto;
+const VIEW_TITLES = {
+  inicio:     "Inicio",
+  nuevo:      "Nuevo Ticket",
+  mistickets: "Mis Tickets",
+  config:     "Configuración"
+};
 
-      // Avatar con iniciales del nombre completo
-      const initials = nombreCompleto
-        .split(" ")
-        .map(p => p[0])
-        .join("")
-        .substring(0, 2)
-        .toUpperCase();
-      document.getElementById("perfilAvatar").textContent = initials;
-    })();
+const NOMBRES_TEC = {
+  "Xavier": "Xavier Rosario",
+  "Juan":   "Juan Francisco Jiménez",
+  "Yanna":  "Yanna Martínez",
+  "Joel":   "Joel Holguin"
+};
 
-    // ── Cargar stats desde la API ──
-    function actualizarStatsPerfilDesdeAPI() {
-      const usuario = localStorage.getItem("usuario");
-      const API     = "https://api.sheetbest.com/sheets/5b2f2a41-ad46-4a89-8cc2-9f768b9870af";
-      fetch(API)
-        .then(r => r.json())
-        .then(data => {
-          const mis = data.filter(t => t.usuario === usuario);
-          document.getElementById("ps-total").textContent = mis.length;
-          document.getElementById("ps-pend").textContent  = mis.filter(t => t.estado === "Pendiente").length;
-          document.getElementById("ps-proc").textContent  = mis.filter(t => t.estado === "En Proceso").length;
-          document.getElementById("ps-res").textContent   = mis.filter(t => t.estado === "Resuelto").length;
-        })
-        .catch(() => {});
-    }
-    actualizarStatsPerfilDesdeAPI();
+// ════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════
+let todosTickets = [];
+let estadoFiltro = "";
 
-    // ── Drag & drop ──
-    (function() {
-      const fileInput  = document.getElementById("fileInput");
-      const uploadZone = document.getElementById("uploadZone");
+// ════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════
+(function init() {
+  const rol = localStorage.getItem("rol");
+  if (!rol || rol !== "usuario") {
+    window.location.href = "index.html";
+    return;
+  }
 
-      uploadZone.addEventListener("dragover",  e => { e.preventDefault(); uploadZone.classList.add("dragover"); });
-      uploadZone.addEventListener("dragleave", ()  => uploadZone.classList.remove("dragover"));
-      uploadZone.addEventListener("drop", e => {
-        e.preventDefault();
-        uploadZone.classList.remove("dragover");
-        agregarArchivos(e.dataTransfer.files);
-      });
-      fileInput.addEventListener("change", () => {
-        agregarArchivos(fileInput.files);
-        fileInput.value = "";
-      });
-    })();
+  // Tema guardado
+  const darkSaved = localStorage.getItem("dash_dark") === "1";
+  if (darkSaved) {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
 
-    // ── Cerrar modal al hacer clic fuera ──
-    window.addEventListener("click", function(e) {
-      const modal = document.getElementById("ayudaModal");
-      if (e.target === modal) modal.classList.remove("show");
+  const nombreCompleto = localStorage.getItem("nombreCompleto") || localStorage.getItem("usuario") || "Usuario";
+  const depto          = localStorage.getItem("depto") || "Sin departamento";
+
+  // Sidebar
+  document.getElementById("sbName").textContent   = nombreCompleto;
+  document.getElementById("sbAvatar").textContent = nombreCompleto.substring(0,2).toUpperCase();
+
+  // Banner de perfil
+  const hora = new Date().getHours();
+  let saludo;
+  if      (hora >= 5  && hora < 12) saludo = "¡Buenos días,";
+  else if (hora >= 12 && hora < 19) saludo = "¡Buenas tardes,";
+  else                               saludo = "¡Buenas noches,";
+
+  document.getElementById("perfilSaludo").textContent = saludo;
+  document.getElementById("perfilNombre").textContent  = nombreCompleto + "!";
+  document.getElementById("perfilDepto").textContent   = depto;
+  document.getElementById("deptoDisplay").textContent  = depto;
+
+  const initials = nombreCompleto.split(" ").map(p => p[0]).join("").substring(0,2).toUpperCase();
+  document.getElementById("perfilAvatar").textContent = initials;
+
+  // Clock
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  cargarTickets();
+  setInterval(cargarTickets, 30000);
+})();
+
+function updateClock() {
+  document.getElementById("clockEl").textContent = new Date().toLocaleString("es-DO");
+}
+
+// ════════════════════════════════════════════════════
+// NAVEGACIÓN
+// ════════════════════════════════════════════════════
+function switchView(v) {
+  document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+  document.getElementById("view-" + v).classList.add("active");
+  const navEl = document.getElementById("nav-" + v);
+  if (navEl) navEl.classList.add("active");
+  document.getElementById("viewTitle").textContent = VIEW_TITLES[v] || v;
+}
+
+// ════════════════════════════════════════════════════
+// CARGAR TICKETS
+// ════════════════════════════════════════════════════
+async function cargarTickets() {
+  const usuario = localStorage.getItem("usuario");
+  try {
+    const r = await fetch(API_TICKETS);
+    const data = await r.json();
+    todosTickets = Array.isArray(data) ? data.filter(t => t.usuario === usuario) : [];
+
+    // Stats del banner
+    document.getElementById("ps-total").textContent = todosTickets.length;
+    document.getElementById("ps-pend").textContent  = todosTickets.filter(t => t.estado === "Pendiente").length;
+    document.getElementById("ps-proc").textContent  = todosTickets.filter(t => t.estado === "En Proceso").length;
+    document.getElementById("ps-res").textContent   = todosTickets.filter(t => t.estado === "Resuelto").length;
+
+    renderUltimos();
+    renderMisTickets();
+
+    // Actualizar config si está visible
+    const cfgTotal = document.getElementById("cfgInfoTotal");
+    const cfgRes   = document.getElementById("cfgInfoRes");
+    if (cfgTotal) cfgTotal.textContent = todosTickets.length;
+    if (cfgRes)   cfgRes.textContent   = todosTickets.filter(t => t.estado === "Resuelto").length;
+
+  } catch(e) {
+    console.error("Error cargando tickets:", e);
+  }
+}
+
+// ════════════════════════════════════════════════════
+// ÚLTIMOS TICKETS (INICIO)
+// ════════════════════════════════════════════════════
+function renderUltimos() {
+  const cont = document.getElementById("ultimosTickets");
+  if (!cont) return;
+  const ultimos = [...todosTickets].reverse().slice(0, 3);
+  if (ultimos.length === 0) {
+    cont.innerHTML = `<div class="empty-state"><div class="empty-icon">🎫</div>Aún no tienes tickets</div>`;
+    return;
+  }
+  cont.innerHTML = ultimos.map(t => buildTicketCard(t, false)).join("");
+}
+
+// ════════════════════════════════════════════════════
+// FILTROS
+// ════════════════════════════════════════════════════
+function setEstadoFilter(estado, btn) {
+  estadoFiltro = estado;
+  document.querySelectorAll(".filter-tab").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  renderMisTickets();
+}
+
+function renderMisTickets() {
+  const cont    = document.getElementById("listaTickets");
+  if (!cont) return;
+  const q       = (document.getElementById("srchTickets")?.value || "").toLowerCase();
+  const tecnico = document.getElementById("tecnicoFilter")?.value || "";
+
+  let lista = [...todosTickets].reverse();
+
+  if (estadoFiltro) lista = lista.filter(t => t.estado === estadoFiltro);
+  if (tecnico)      lista = lista.filter(t => (t.asignado || "") === tecnico);
+  if (q)            lista = lista.filter(t =>
+    (t.titulo||"").toLowerCase().includes(q) ||
+    (t.descripcion||"").toLowerCase().includes(q) ||
+    (t.depto||"").toLowerCase().includes(q)
+  );
+
+  if (lista.length === 0) {
+    cont.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div>No hay tickets con esos filtros.</div>`;
+    return;
+  }
+  cont.innerHTML = lista.map(t => buildTicketCard(t, true)).join("");
+}
+
+// ════════════════════════════════════════════════════
+// BUILD TICKET CARD
+// ════════════════════════════════════════════════════
+function buildTicketCard(t, conBotonEliminar) {
+  const ec = t.estado === "Resuelto"   ? "badge-estado-res"  :
+             t.estado === "En Proceso" ? "badge-estado-proc" : "badge-estado-pend";
+
+  const badgeAsig = (t.asignado && t.asignado !== "Sin asignar")
+    ? `<span class="badge badge-asignado">👤 ${NOMBRES_TEC[t.asignado] || t.asignado}</span>`
+    : `<span class="badge badge-sin-asignar">⏳ Sin asignar</span>`;
+
+  const resHtml = t.resolucion ? `
+    <div class="resolucion-box">
+      ✅ <strong>Resolución:</strong> ${t.resolucion}<br>
+      <small style="opacity:.7">Participantes: ${t.participantes || "N/A"} · ${t.fecha_resuelto || "—"}</small>
+    </div>` : "";
+
+  let adjHtml = "";
+  if (t.adjuntos && t.adjuntos.trim()) {
+    const urls  = t.adjuntos.split(",").map(u => u.trim()).filter(Boolean);
+    const links = urls.map(url => {
+      const nombre = decodeURIComponent(url.split("/").pop().split("?")[0]);
+      const ext    = nombre.split(".").pop().toLowerCase();
+      return `<a class="uploaded-file-link" href="${url}" target="_blank" rel="noopener">${getFileIcon(ext)} ${nombre}</a>`;
+    }).join("");
+    adjHtml = `<div class="adj-links">${links}</div>`;
+  }
+
+  const btnDel = (conBotonEliminar && t.estado === "Pendiente")
+    ? `<button class="btn-delete" onclick="eliminarTicket('${encodeURIComponent(t.id)}')">🗑 Eliminar</button>`
+    : "";
+
+  return `
+    <div class="ticket-card">
+      <div class="ticket-card-top">
+        <div>
+          <div class="ticket-depto-tag">[${t.depto || ""}]</div>
+          <div class="ticket-titulo">${t.titulo || ""}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div class="ticket-id-tag">${t.id || ""}</div>
+          <span class="badge ${ec}">${t.estado || ""}</span>
+        </div>
+      </div>
+      <div class="ticket-desc">${t.descripcion || ""}</div>
+      <div class="ticket-meta-row">
+        ${badgeAsig}
+        <span class="ticket-fecha">📅 ${t.fecha || ""}</span>
+      </div>
+      ${resHtml}
+      ${adjHtml}
+      ${btnDel}
+    </div>`;
+}
+
+// ════════════════════════════════════════════════════
+// CREAR TICKET (usa función de js.js)
+// ════════════════════════════════════════════════════
+// Sobrescribimos mostrarTickets para que refresque la vista después de crear
+const _origMostrarTickets = typeof mostrarTickets === "function" ? mostrarTickets : null;
+function mostrarTickets() { cargarTickets(); }
+
+// ════════════════════════════════════════════════════
+// ELIMINAR TICKET
+// ════════════════════════════════════════════════════
+function eliminarTicket(idEnc) {
+  const id = decodeURIComponent(idEnc);
+  if (!confirm("¿Seguro que deseas eliminar este ticket?")) return;
+  fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`, { method: "DELETE" })
+    .then(() => { showToast("Ticket eliminado", "success"); cargarTickets(); })
+    .catch(() => showToast("Error al eliminar", "error"));
+}
+
+// ════════════════════════════════════════════════════
+// CONFIGURACIÓN
+// ════════════════════════════════════════════════════
+function renderConfig() {
+  const nombreCompleto = localStorage.getItem("nombreCompleto") || localStorage.getItem("usuario") || "—";
+  const usuario        = localStorage.getItem("usuario") || "—";
+  const depto          = localStorage.getItem("depto")   || "—";
+  const rol            = localStorage.getItem("rol")     || "—";
+  const initials       = nombreCompleto.substring(0,2).toUpperCase();
+
+  document.getElementById("cfgAvatar").textContent           = initials;
+  document.getElementById("cfgNombreCompleto").textContent   = nombreCompleto;
+  document.getElementById("cfgUsername").textContent         = "@" + usuario;
+  document.getElementById("cfgDepto").textContent            = depto;
+
+  document.getElementById("cfgFieldUsername").value = usuario;
+  document.getElementById("cfgFieldNombre").value   = nombreCompleto;
+  document.getElementById("cfgFieldDepto").value    = depto;
+  document.getElementById("cfgFieldRol").value      = rol;
+
+  document.getElementById("cfgInfoRol").textContent   = rol;
+  document.getElementById("cfgInfoTotal").textContent = todosTickets.length;
+  document.getElementById("cfgInfoRes").textContent   = todosTickets.filter(t => t.estado === "Resuelto").length;
+
+  // Sincronizar toggle dark mode
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.getElementById("cfgDarkMode").checked = dark;
+}
+
+function toggleDarkMode(on) {
+  if (on) {
+    document.documentElement.setAttribute("data-theme", "dark");
+    localStorage.setItem("dash_dark", "1");
+  } else {
+    document.documentElement.removeAttribute("data-theme");
+    localStorage.setItem("dash_dark", "0");
+  }
+  showToast(on ? "Modo oscuro activado" : "Modo claro activado", "success");
+}
+
+async function guardarNombre() {
+  const nombre = document.getElementById("cfgFieldNombre").value.trim();
+  const usuario = localStorage.getItem("usuario");
+  if (!nombre) { showToast("El nombre no puede estar vacío", "error"); return; }
+
+  localStorage.setItem("nombreCompleto", nombre);
+
+  // Actualizar UI
+  document.getElementById("sbName").textContent         = nombre;
+  document.getElementById("sbAvatar").textContent       = nombre.substring(0,2).toUpperCase();
+  document.getElementById("perfilNombre").textContent   = nombre + "!";
+  document.getElementById("perfilAvatar").textContent   = nombre.split(" ").map(p=>p[0]).join("").substring(0,2).toUpperCase();
+  renderConfig();
+
+  // Intentar actualizar en la API
+  try {
+    const r = await fetch(`${API_USERS}/NombreUsuario/${encodeURIComponent(usuario)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ NombreCompleto: nombre })
     });
-  </script>
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    showToast("Nombre actualizado ✓", "success");
+  } catch {
+    showToast("Nombre guardado localmente (error de red)", "warning");
+  }
+}
+
+// ════════════════════════════════════════════════════
+// AYUDA
+// ════════════════════════════════════════════════════
+function abrirAyuda()  { document.getElementById("ayudaModal").classList.add("open"); }
+function cerrarAyuda() { document.getElementById("ayudaModal").classList.remove("open"); }
+
+// Cerrar al click fuera
+document.getElementById("ayudaModal").addEventListener("click", function(e) {
+  if (e.target === this) this.classList.remove("open");
+});
+
+// ════════════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════════════
+function showToast(msg, type = "success") {
+  const chk = document.getElementById("cfgToasts");
+  if (chk && !chk.checked) return;
+  const el = document.getElementById("toastEl");
+  el.textContent = (type === "success" ? "✓ " : type === "warning" ? "ℹ " : "⚠ ") + msg;
+  el.className   = "toast " + type + " show";
+  setTimeout(() => el.classList.remove("show"), 3000);
+}
+
+// ════════════════════════════════════════════════════
+// DRAG & DROP (zona de upload)
+// ════════════════════════════════════════════════════
+(function() {
+  const fileInput  = document.getElementById("fileInput");
+  const uploadZone = document.getElementById("uploadZone");
+  if (!fileInput || !uploadZone) return;
+  uploadZone.addEventListener("dragover",  e => { e.preventDefault(); uploadZone.classList.add("dragover"); });
+  uploadZone.addEventListener("dragleave", ()  => uploadZone.classList.remove("dragover"));
+  uploadZone.addEventListener("drop", e => {
+    e.preventDefault();
+    uploadZone.classList.remove("dragover");
+    agregarArchivos(e.dataTransfer.files);
+  });
+  fileInput.addEventListener("change", () => {
+    agregarArchivos(fileInput.files);
+    fileInput.value = "";
+  });
+})();
+</script>
 
 </body>
 </html>
