@@ -1,7 +1,7 @@
 // ======================
 // API SheetBest — TICKETS
 // ======================
-const API_URL = "https://api.sheetbest.com/sheets/7932fd59-fe0b-4fe7-ad1d-0269ccaf4887";
+const API_URL = "https://api.sheetbest.com/sheets/49638c56-d73c-41cf-8724-5e4d2a6896e5";
 
 // ======================
 // API SheetBest — USUARIOS
