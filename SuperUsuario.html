@@ -181,9 +181,7 @@ body{background:var(--bg);color:var(--t0);font-family:var(--font);min-height:100
 .btn-detail{padding:6px 14px;border-radius:var(--r);font-family:var(--font);font-size:11px;font-weight:600;background:rgba(99,102,241,.08);color:var(--indigo2);border:1px solid rgba(99,102,241,.2);cursor:pointer;transition:all .15s var(--ease);display:flex;align-items:center;gap:5px}
 .btn-detail:hover{background:rgba(99,102,241,.18);transform:translateY(-1px)}
 
-/* ═══════════════════════════════════════════════
-   MODAL DETALLE TICKET
-═══════════════════════════════════════════════ */
+/* MODAL DETALLE TICKET */
 .detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.80);backdrop-filter:blur(14px) saturate(1.1);-webkit-backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;z-index:300;padding:20px}
 .detail-overlay.open{display:flex}
 .detail-modal{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r3);width:100%;max-width:620px;max-height:92vh;display:flex;flex-direction:column;animation:modalIn .22s var(--ease);overflow:hidden}
@@ -292,6 +290,7 @@ table.data-table tr:hover td{background:var(--s2)}
 .rt-admin{color:var(--amber);background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.25)}
 .rt-tecnico{color:var(--cyan);background:rgba(34,211,238,.08);border-color:rgba(34,211,238,.25)}
 .rt-usuario{color:var(--emerald);background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.25)}
+.rt-analista{color:#a78bfa;background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.25)}
 .loading-row td{text-align:center;padding:40px;color:var(--t2);font-family:var(--mono);font-size:11px}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--b2);border-top-color:var(--indigo);border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle}
 
@@ -379,7 +378,7 @@ table.data-table tr:hover td{background:var(--s2)}
 .chart-legend tr:last-child td{border-bottom:none}
 .legend-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:middle}
 .legend-total td{font-weight:700;border-top:1px solid var(--b2)}
-.rep-t-item{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:9px 10px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);margin-bottom:6px;transition:border-color .15s}
+.rep-t-item{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:9px 10px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);margin-bottom:6px;transition:border-color .15s;cursor:pointer}
 .rep-t-item:hover{border-color:var(--b2)}
 .rep-t-title{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
 .rep-t-meta{font-family:var(--mono);font-size:9px;color:var(--t2)}
@@ -746,13 +745,14 @@ table.data-table tr:hover td{background:var(--s2)}
     </div>
   </div>
 
-  <!-- USUARIOS -->
+  <!-- USUARIOS — FIX: id="view-usuarios" añadido, stats-pills y users-toolbar dentro de la vista -->
   <div id="view-usuarios" class="view">
     <div class="stats-pills">
       <div class="stat-pill p-tot"><strong id="stat-total">—</strong> usuarios</div>
       <div class="stat-pill p-tec"><strong id="stat-tech">—</strong> técnicos</div>
       <div class="stat-pill p-usr"><strong id="stat-user">—</strong> usuarios</div>
       <div class="stat-pill p-adm"><strong id="stat-adm">—</strong> admins</div>
+      <div class="stat-pill" style="border-color:rgba(139,92,246,.3)"><strong id="stat-analista" style="color:#a78bfa">—</strong> analistas</div>
     </div>
     <div class="users-toolbar">
       <button class="btn-primary"   onclick="abrirCrearUsuario()">+ Nuevo usuario</button>
@@ -836,12 +836,9 @@ table.data-table tr:hover td{background:var(--s2)}
   </div>
 </main>
 
-<!-- ═══════════════════════════════════════════════════════════
-     MODAL DETALLE DE TICKET
-════════════════════════════════════════════════════════════ -->
+<!-- MODAL DETALLE DE TICKET -->
 <div class="detail-overlay" id="detailOverlay" onclick="cerrarDetalle(event)">
   <div class="detail-modal" id="detailModal">
-
     <div class="dm-header">
       <div class="dm-header-content">
         <div class="dm-id" id="dm-id">—</div>
@@ -850,10 +847,7 @@ table.data-table tr:hover td{background:var(--s2)}
       </div>
       <button class="dm-close" onclick="cerrarDetalleBtn()" aria-label="Cerrar">✕</button>
     </div>
-
     <div class="dm-body">
-
-      <!-- Info grid -->
       <div class="dm-info-grid">
         <div class="dm-info-cell">
           <div class="ic-label">Reportado por</div>
@@ -872,22 +866,15 @@ table.data-table tr:hover td{background:var(--s2)}
           <div class="ic-val" id="dm-depto">—</div>
         </div>
       </div>
-
-      <!-- Descripción -->
       <div>
         <div class="dm-section-label">Descripción del problema</div>
         <div class="dm-desc" id="dm-desc">—</div>
       </div>
-
       <hr class="dm-divider"/>
-
-      <!-- Timeline -->
       <div>
         <div class="dm-section-label">Historial de actividad</div>
         <div class="dm-timeline" id="dm-timeline"></div>
       </div>
-
-      <!-- Resolución (solo si existe) -->
       <div id="dm-resolution-wrap" style="display:none">
         <hr class="dm-divider" style="margin-bottom:16px"/>
         <div class="dm-section-label">Resolución</div>
@@ -897,21 +884,15 @@ table.data-table tr:hover td{background:var(--s2)}
           <div class="res-participants" id="dm-resolution-meta">—</div>
         </div>
       </div>
-
-      <!-- Adjuntos (solo si existen) -->
       <div id="dm-att-wrap" style="display:none">
         <div class="dm-section-label">Adjuntos</div>
         <div id="dm-att-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div>
       </div>
-
     </div>
-
-    <!-- Footer con acciones -->
     <div class="dm-footer">
       <div class="dm-footer-actions" id="dm-footer-actions"></div>
       <span style="font-family:var(--mono);font-size:9px;color:var(--t3)" id="dm-footer-meta"></span>
     </div>
-
   </div>
 </div>
 
@@ -927,7 +908,12 @@ table.data-table tr:hover td{background:var(--s2)}
       <input class="form-input" type="text" id="fPassword" placeholder="Ej: 1234" autocomplete="off" oninput="previewHash()"/>
       <div class="field-hint" id="hashPreview">El hash aparecerá aquí…</div>
     </div>
-    <div class="form-group"><label class="form-label">Rol</label><select class="form-select" id="fRol"><option value="usuario">usuario</option><option value="tecnico">tecnico</option><option value="admin">admin</option></select></div>
+    <div class="form-group"><label class="form-label">Rol</label><select class="form-select" id="fRol">
+      <option value="usuario">usuario</option>
+      <option value="tecnico">tecnico</option>
+      <option value="admin">admin</option>
+      <option value="analista">analista</option>
+    </select></div>
     <div class="form-group">
       <label class="form-label">Departamento</label>
       <select class="form-select" id="fDepto">
@@ -1060,11 +1046,15 @@ const USUARIOS_HARDCODED=[
 
 // ─── STATE ────────────────────────────────────────────
 let allTickets=[],currentFilter="todos",misFilter="todos",trabajarFilter="todos";
+// FIX: urgFilterMap ahora se mantiene separado por sección correctamente
 let urgFilterMap={"urgFilterTickets":"todos","urgFilterTrabajar":"todos"};
 let sheetUsers=[],editingRowNum=null,hashDebounce=null,ticketResolverId=null;
 let repAllTickets=[],repMesActual=new Date().getMonth(),repAnioActual=new Date().getFullYear();
 let repBarChart=null,repInited=false,autoRefreshInterval=null;
+// FIX: ticketDetalleActual almacena el ticket abierto en el modal detalle
 let ticketDetalleActual=null;
+// FIX: mapa de tickets indexados por id para actualización rápida del modal
+let ticketsById={};
 
 // ─── URGENCIA AUTOMÁTICA ──────────────────────────────
 const PALABRAS_CRITICO=["urgente","urgentes","caído","caida","no funciona","bloqueado","bloqueada","crítico","crítica","apagado","apagada","no enciende","perdida de datos","no accede","virus","hackeado","sin internet","sin sistema","caída total","fuera de servicio","completamente","no hay sistema"];
@@ -1106,20 +1096,33 @@ function setUrgFilter(level,btn,containerId){
 async function marcarRecibido(idEnc){
   const id=decodeURIComponent(idEnc);
   try{
-    const res=await fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({recibido:"si",fecha_recibido:new Date().toLocaleString("es-DO")})});
+    const res=await fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`,{
+      method:"PATCH",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({recibido:"si",fecha_recibido:new Date().toLocaleString("es-DO")})
+    });
     if(!res.ok)throw new Error(`HTTP ${res.status}`);
     showToast("Ticket marcado como recibido ✓","success");
     await recargarTodo();
-    // Si el modal de detalle está abierto, refrescarlo
+    // FIX: refrescar modal detalle si está abierto para el mismo ticket
     if(ticketDetalleActual&&ticketDetalleActual.id===id){
-      const actualizado=allTickets.find(t=>t.id===id);
+      const actualizado=ticketsById[id];
       if(actualizado)abrirDetalle(actualizado);
     }
   }catch{showToast("Error al marcar como recibido","error");}
 }
 
 // ─── INIT ─────────────────────────────────────────────
-function iniciar(){updateClock();setInterval(updateClock,1000);recargarTodo();cargarUsuariosSheet();iniciarAutoRefresh();}
+function iniciar(){
+  updateClock();
+  setInterval(updateClock,1000);
+  recargarTodo();
+  // FIX: cargarUsuariosSheet solo se llama cuando la vista está lista
+  // Se llama aquí de todas formas porque el tbody existe en el DOM desde el inicio
+  cargarUsuariosSheet();
+  iniciarAutoRefresh();
+}
+
 function updateClock(){document.getElementById("nowTime").textContent=new Date().toLocaleString("es-DO");}
 
 async function recargarTodo(){
@@ -1129,6 +1132,9 @@ async function recargarTodo(){
   try{
     const data=await fetch(API_TICKETS).then(r=>r.json());
     allTickets=Array.isArray(data)?data:[];
+    // FIX: reconstruir índice por id para acceso O(1)
+    ticketsById={};
+    allTickets.forEach(t=>{if(t.id)ticketsById[t.id]=t;});
     renderDashboard();renderTickets();renderTrabajar();renderMisResueltos();renderMisTickets();actualizarNavBadges();
     if(repInited){repAllTickets=allTickets;renderReportes();}
     fillLoadBar("loadBar",100);
@@ -1137,8 +1143,10 @@ async function recargarTodo(){
   }catch{showToast("Error al cargar tickets","error");fillLoadBar("loadBar",100);}
   finally{if(btn)btn.classList.remove("spinning");}
 }
+
 function animateLoad(id){const b=document.getElementById(id);if(!b)return;b.style.width="0%";setTimeout(()=>b.style.width="70%",80);}
 function fillLoadBar(id,p){const b=document.getElementById(id);if(!b)return;b.style.width=p+"%";setTimeout(()=>b.style.width="0%",700);}
+
 function iniciarAutoRefresh(){
   if(autoRefreshInterval)clearInterval(autoRefreshInterval);
   if(document.getElementById("cfg-autorefresh")?.checked)autoRefreshInterval=setInterval(recargarTodo,60000);
@@ -1154,10 +1162,12 @@ const VIEW_TITLES={dashboard:"Dashboard",tickets:"Todos los Tickets",trabajar:"T
 function switchView(v){
   document.querySelectorAll(".view").forEach(el=>el.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(el=>el.classList.remove("active"));
-  document.getElementById("view-"+v).classList.add("active");
+  const viewEl=document.getElementById("view-"+v);
+  if(viewEl)viewEl.classList.add("active");
   const nav=document.getElementById("nav-"+v);if(nav)nav.classList.add("active");
   document.getElementById("viewTitle").textContent=VIEW_TITLES[v]||v;
 }
+
 function actualizarNavBadges(){
   const mis=allTickets.filter(t=>(t.asignado||"").toLowerCase()===MI_USUARIO.toLowerCase());
   const trab=mis.filter(t=>t.estado!=="Resuelto"),resu=mis.filter(t=>t.estado==="Resuelto");
@@ -1196,20 +1206,41 @@ function renderDashboard(){
       <div class="dept-row-top"><span class="dept-row-name">${d}</span><span class="dept-row-val">${n}</span></div>
       <div class="dept-bar-bg"><div class="dept-bar-fill" style="width:${Math.round(n/maxV*100)}%;background:${DEP_COLORS[i%DEP_COLORS.length]}"></div></div>
     </div>`).join("")||"<p style='color:var(--t2);font-size:12px'>Sin datos</p>";
+
+  // FIX: onclick usa abrirDetalleSeguro para evitar problemas con comillas en JSON inline
   document.getElementById("recentTickets").innerHTML=allTickets.slice(-5).reverse().map(t=>`
-    <div class="recent-item" style="cursor:pointer" onclick='abrirDetalle(${JSON.stringify(t).replace(/'/g,"&#39;")})'>
-      <div><div class="recent-title">${t.titulo||""}</div><div class="recent-meta">${t.usuario||""} · ${t.depto||""}</div></div>
-      <span class="badge ${t.estado==="Resuelto"?"b-res":t.estado==="En Proceso"?"b-proc":"b-pend"}">${t.estado||""}</span>
+    <div class="recent-item" style="cursor:pointer" onclick="abrirDetalleById(${JSON.stringify(t.id||"")})">
+      <div><div class="recent-title">${escHtml(t.titulo||"")}</div><div class="recent-meta">${escHtml(t.usuario||"")} · ${escHtml(t.depto||"")}</div></div>
+      <span class="badge ${t.estado==="Resuelto"?"b-res":t.estado==="En Proceso"?"b-proc":"b-pend"}">${escHtml(t.estado||"")}</span>
     </div>`).join("")||"<p style='color:var(--t2);font-size:12px;padding:8px 0'>Sin tickets recientes</p>";
 }
 
+// FIX: función auxiliar para escapar HTML en interpolaciones
+function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+// FIX: abrir detalle por id, buscando en ticketsById para evitar serialización en onclick inline
+function abrirDetalleById(id){
+  const t=ticketsById[id];
+  if(t)abrirDetalle(t);
+  else showToast("Ticket no encontrado","error");
+}
+
 // ─── TICKETS ──────────────────────────────────────────
-function setFilter(f,btn){currentFilter=f;document.querySelectorAll("#ticketFilters .f-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderTickets();}
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll("#ticketFilters .f-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  renderTickets();
+}
 function filtrarTickets(){renderTickets();}
+
 function renderTickets(){
   const grid=document.getElementById("ticketsGrid"),s=(document.getElementById("searchInput")?.value||"").toLowerCase();
   const urgLevel=urgFilterMap["urgFilterTickets"]||"todos";
-  let filtered=allTickets.filter(t=>(currentFilter==="todos"||t.estado===currentFilter)&&(!s||(t.titulo||"").toLowerCase().includes(s)||(t.usuario||"").toLowerCase().includes(s)||(t.depto||"").toLowerCase().includes(s)||(t.descripcion||"").toLowerCase().includes(s)));
+  let filtered=allTickets.filter(t=>
+    (currentFilter==="todos"||t.estado===currentFilter)&&
+    (!s||(t.titulo||"").toLowerCase().includes(s)||(t.usuario||"").toLowerCase().includes(s)||(t.depto||"").toLowerCase().includes(s)||(t.descripcion||"").toLowerCase().includes(s))
+  );
   if(urgLevel!=="todos")filtered=filtered.filter(t=>calcUrgencia(t).level===urgLevel);
   filtered=filtered.slice().sort((a,b)=>{
     const order={critico:0,alto:1,medio:2,normal:3};
@@ -1220,7 +1251,14 @@ function renderTickets(){
   if(!filtered.length){grid.innerHTML=`<div class="empty-state"><div class="empty-icon">🎫</div><p>No hay tickets con ese filtro.</p></div>`;return;}
   filtered.forEach(t=>grid.appendChild(buildCard(t)));
 }
-function setTrabajarFilter(f,btn){trabajarFilter=f;document.querySelectorAll("#trabajarFilters .f-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderTrabajar();}
+
+function setTrabajarFilter(f,btn){
+  trabajarFilter=f;
+  document.querySelectorAll("#trabajarFilters .f-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  renderTrabajar();
+}
+
 function renderTrabajar(){
   const grid=document.getElementById("trabajarGrid"),s=(document.getElementById("trabajarSearch")?.value||"").toLowerCase();
   const urgLevel=urgFilterMap["urgFilterTrabajar"]||"todos";
@@ -1234,6 +1272,7 @@ function renderTrabajar(){
   if(!f.length){grid.innerHTML=`<div class="empty-state"><div class="empty-icon">🎉</div><p>Sin tickets con ese filtro.</p></div>`;return;}
   f.forEach(t=>grid.appendChild(buildTrabajarCard(t)));
 }
+
 function renderMisResueltos(){
   const grid=document.getElementById("resueltosGrid"),s=(document.getElementById("resueltosSearch")?.value||"").toLowerCase();
   let f=allTickets.filter(t=>(t.asignado||"").toLowerCase()===MI_USUARIO.toLowerCase()&&t.estado==="Resuelto");
@@ -1243,8 +1282,15 @@ function renderMisResueltos(){
   if(!f.length){grid.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><p>Aún no has resuelto tickets.</p></div>`;return;}
   f.slice().reverse().forEach(t=>grid.appendChild(buildCard(t)));
 }
-function setMisFilter(f,btn){misFilter=f;document.querySelectorAll("#misFilters .f-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderMisTickets();}
+
+function setMisFilter(f,btn){
+  misFilter=f;
+  document.querySelectorAll("#misFilters .f-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  renderMisTickets();
+}
 function filtrarMisTickets(){renderMisTickets();}
+
 function renderMisTickets(){
   const mis=allTickets.filter(t=>(t.asignado||"").toLowerCase()===MI_USUARIO.toLowerCase()),s=(document.getElementById("misSearch")?.value||"").toLowerCase();
   document.getElementById("mis-total").textContent=mis.length;
@@ -1261,42 +1307,44 @@ function renderMisTickets(){
 }
 
 // ─── BUILD CARD ───────────────────────────────────────
+// FIX: se elimina el patrón data-ticket con JSON serializado en atributo HTML
+// Ahora se usa data-ticket-id y se busca en ticketsById al hacer click
 function buildCard(t){
   const ecCls=t.estado==="Resuelto"?"b-res":t.estado==="En Proceso"?"b-proc":"b-pend";
   const urg=calcUrgencia(t);
   let adjH="";
   if(t.adjuntos&&t.adjuntos.trim()){
     const urls=t.adjuntos.split(",").map(u=>u.trim()).filter(Boolean);
-    adjH=`<div class="t-attachments"><div class="t-att-label">📎 Adjuntos</div>${urls.map(u=>`<a class="att-link" href="${u}" target="_blank">${decodeURIComponent(u.split("/").pop().split("?")[0])}</a>`).join("")}</div>`;
+    adjH=`<div class="t-attachments"><div class="t-att-label">📎 Adjuntos</div>${urls.map(u=>`<a class="att-link" href="${escHtml(u)}" target="_blank">${escHtml(decodeURIComponent(u.split("/").pop().split("?")[0]))}</a>`).join("")}</div>`;
   }
   let resH="";
-  if(t.estado==="Resuelto"&&t.resolucion)resH=`<div class="t-resolution">✓ ${t.resolucion}<br><small style="opacity:.7">Participantes: ${t.participantes||"N/A"} — ${t.fecha_resuelto||""}</small></div>`;
-  const recH=t.recibido==="si"?`<span class="b-received">📩 Recibido por ${t.asignado||"técnico"} · ${(t.fecha_recibido||"").split(",")[0]}</span>`:"";
-  const tData=JSON.stringify(t).replace(/"/g,"&quot;");
+  if(t.estado==="Resuelto"&&t.resolucion)resH=`<div class="t-resolution">✓ ${escHtml(t.resolucion)}<br><small style="opacity:.7">Participantes: ${escHtml(t.participantes||"N/A")} — ${escHtml(t.fecha_resuelto||"")}</small></div>`;
+  const recH=t.recibido==="si"?`<span class="b-received">📩 Recibido por ${escHtml(t.asignado||"técnico")} · ${escHtml((t.fecha_recibido||"").split(",")[0])}</span>`:"";
+  const safeId=escHtml(t.id||"");
   const div=document.createElement("div");div.className="t-card";
   div.innerHTML=`
     <div class="urgency-strip ${urg.strip}"></div>
     <div class="t-top">
-      <div><div class="t-id">${t.id||""}</div><div class="t-title">${t.titulo||""}</div></div>
+      <div><div class="t-id">${safeId}</div><div class="t-title">${escHtml(t.titulo||"")}</div></div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-        <span class="badge ${ecCls}">${t.estado||""}</span>
+        <span class="badge ${ecCls}">${escHtml(t.estado||"")}</span>
         <span class="urgency-badge ${urg.cls}">${urg.label}</span>
       </div>
     </div>
-    <div class="t-desc">${t.descripcion||""}</div>
+    <div class="t-desc">${escHtml(t.descripcion||"")}</div>
     <div class="t-meta">
-      <span class="badge b-depto">${t.depto||""}</span>
-      <span class="badge b-user">👤 ${t.usuario||""}</span>
+      <span class="badge b-depto">${escHtml(t.depto||"")}</span>
+      <span class="badge b-user">👤 ${escHtml(t.usuario||"")}</span>
       ${recH}
     </div>
     <hr class="t-hr"/>
     <div class="t-bottom">
-      <div class="t-assigned">Asignado a <strong>${t.asignado||"Sin asignar"}</strong></div>
-      <div class="t-date">📅 ${(t.fecha||"").split(",")[0]||""}</div>
+      <div class="t-assigned">Asignado a <strong>${escHtml(t.asignado||"Sin asignar")}</strong></div>
+      <div class="t-date">📅 ${escHtml((t.fecha||"").split(",")[0]||"")}</div>
     </div>
     ${adjH}${resH}
     <div class="t-actions" style="margin-top:12px">
-      <button class="btn-detail" onclick='abrirDetalleDesdeCard(this)' data-ticket="${tData}">🔍 Ver detalle</button>
+      <button class="btn-detail" data-ticket-id="${safeId}" onclick="abrirDetalleById(this.dataset.ticketId)">🔍 Ver detalle</button>
     </div>`;
   return div;
 }
@@ -1309,88 +1357,77 @@ function buildTrabajarCard(t){
   let adjH="";
   if(t.adjuntos&&t.adjuntos.trim()){
     const urls=t.adjuntos.split(",").map(u=>u.trim()).filter(Boolean);
-    adjH=`<div class="t-attachments"><div class="t-att-label">📎 Adjuntos</div>${urls.map(u=>`<a class="att-link" href="${u}" target="_blank">${decodeURIComponent(u.split("/").pop().split("?")[0])}</a>`).join("")}</div>`;
+    adjH=`<div class="t-attachments"><div class="t-att-label">📎 Adjuntos</div>${urls.map(u=>`<a class="att-link" href="${escHtml(u)}" target="_blank">${escHtml(decodeURIComponent(u.split("/").pop().split("?")[0]))}</a>`).join("")}</div>`;
   }
+  const safeId=escHtml(t.id||"");
+  const encId=encodeURIComponent(t.id||"");
   let botones="";
-  if(t.estado==="Pendiente")botones=`<button class="btn-proc" onclick="cambiarEstadoTicket('${encodeURIComponent(t.id)}','En Proceso')">⚙ En Proceso</button><button class="btn-resolve" onclick="abrirResolucionModal('${encodeURIComponent(t.id)}')">✓ Resuelto</button>`;
-  else if(t.estado==="En Proceso")botones=`<button class="btn-resolve" onclick="abrirResolucionModal('${encodeURIComponent(t.id)}')">✓ Resuelto</button>`;
-  const recibirBtn=(esMio&&t.recibido!=="si")?`<button class="btn-receive" onclick="marcarRecibido('${encodeURIComponent(t.id)}')">📩 Marcar recibido</button>`:"";
-  const recH=t.recibido==="si"?`<span class="b-received">📩 Recibido · ${(t.fecha_recibido||"").split(",")[0]}</span>`:"";
-  const tData=JSON.stringify(t).replace(/"/g,"&quot;");
+  if(t.estado==="Pendiente")botones=`<button class="btn-proc" onclick="cambiarEstadoTicket('${encId}','En Proceso')">⚙ En Proceso</button><button class="btn-resolve" onclick="abrirResolucionModal('${encId}')">✓ Resuelto</button>`;
+  else if(t.estado==="En Proceso")botones=`<button class="btn-resolve" onclick="abrirResolucionModal('${encId}')">✓ Resuelto</button>`;
+  const recibirBtn=(esMio&&t.recibido!=="si")?`<button class="btn-receive" onclick="marcarRecibido('${encId}')">📩 Marcar recibido</button>`:"";
+  const recH=t.recibido==="si"?`<span class="b-received">📩 Recibido · ${escHtml((t.fecha_recibido||"").split(",")[0])}</span>`:"";
   const div=document.createElement("div");div.className="t-card trabajar";
   div.innerHTML=`
     <div class="urgency-strip ${urg.strip}"></div>
     <div class="t-top">
-      <div><div class="t-id">${t.id||""}</div><div class="t-title">${t.titulo||""}</div></div>
+      <div><div class="t-id">${safeId}</div><div class="t-title">${escHtml(t.titulo||"")}</div></div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-        <span class="badge ${ecCls}">${t.estado||""}</span>
+        <span class="badge ${ecCls}">${escHtml(t.estado||"")}</span>
         <span class="urgency-badge ${urg.cls}">${urg.label}</span>
       </div>
     </div>
-    <div class="t-desc">${t.descripcion||""}</div>
+    <div class="t-desc">${escHtml(t.descripcion||"")}</div>
     <div class="t-meta">
-      <span class="badge b-depto">${t.depto||""}</span>
-      <span class="badge b-user">👤 ${t.usuario||""}</span>
+      <span class="badge b-depto">${escHtml(t.depto||"")}</span>
+      <span class="badge b-user">👤 ${escHtml(t.usuario||"")}</span>
       ${recH}
     </div>
     <hr class="t-hr"/>
-    <div class="t-date">📅 ${(t.fecha||"").split(",")[0]||""}</div>
+    <div class="t-date">📅 ${escHtml((t.fecha||"").split(",")[0]||"")}</div>
     ${adjH}
     <div class="t-actions">
-      <button class="btn-detail" onclick='abrirDetalleDesdeCard(this)' data-ticket="${tData}">🔍 Ver detalle</button>
+      <button class="btn-detail" data-ticket-id="${safeId}" onclick="abrirDetalleById(this.dataset.ticketId)">🔍 Ver detalle</button>
       ${recibirBtn}${botones}
     </div>`;
   return div;
 }
 
 // ═══════════════════════════════════════════════════════
-// MODAL DETALLE — LÓGICA COMPLETA
+// MODAL DETALLE
 // ═══════════════════════════════════════════════════════
-
-function abrirDetalleDesdeCard(btn){
-  try{
-    const t=JSON.parse(btn.getAttribute("data-ticket").replace(/&quot;/g,'"'));
-    abrirDetalle(t);
-  }catch(e){showToast("Error al abrir detalle","error");}
-}
 
 function abrirDetalle(t){
   ticketDetalleActual=t;
   const urg=calcUrgencia(t);
   const ecCls=t.estado==="Resuelto"?"b-res":t.estado==="En Proceso"?"b-proc":"b-pend";
 
-  // Header
   document.getElementById("dm-id").textContent=t.id||"";
   document.getElementById("dm-title").textContent=t.titulo||"Sin título";
 
-  // Badges
   const badgesEl=document.getElementById("dm-badges");
   const recibidoBadge=t.recibido==="si"
     ?`<span class="badge b-received" style="font-size:10px;padding:4px 10px">📩 Recibido</span>`:"";
   badgesEl.innerHTML=`
-    <span class="badge ${ecCls}" style="font-size:10px;padding:4px 10px">${t.estado||""}</span>
+    <span class="badge ${ecCls}" style="font-size:10px;padding:4px 10px">${escHtml(t.estado||"")}</span>
     <span class="urgency-badge ${urg.cls}">${urg.label}</span>
-    <span class="badge b-depto" style="font-size:10px;padding:4px 10px">${t.depto||""}</span>
+    <span class="badge b-depto" style="font-size:10px;padding:4px 10px">${escHtml(t.depto||"")}</span>
     ${recibidoBadge}`;
 
-  // Info grid
   const initiales=s=>s?s.substring(0,2).toUpperCase():"??";
   const avatarColors=["#6366f1","#22d3ee","#10b981","#f59e0b","#f43f5e","#a78bfa"];
   const colorFor=s=>{let h=0;for(let i=0;i<(s||"").length;i++)h=(h<<5)-h+s.charCodeAt(i);return avatarColors[Math.abs(h)%avatarColors.length];};
 
   document.getElementById("dm-usuario").innerHTML=`
     <div class="dm-avatar" style="background:${colorFor(t.usuario)}">${initiales(t.usuario)}</div>
-    ${t.usuario||"—"}`;
+    ${escHtml(t.usuario||"—")}`;
   document.getElementById("dm-asignado").innerHTML=`
     <div class="dm-avatar" style="background:${colorFor(t.asignado)}">${initiales(t.asignado||"SA")}</div>
-    ${t.asignado||"Sin asignar"}`;
+    ${escHtml(t.asignado||"Sin asignar")}`;
   document.getElementById("dm-fecha").textContent=(t.fecha||"—").split(",")[0];
   document.getElementById("dm-depto").textContent=t.depto||"—";
 
-  // Descripción
   document.getElementById("dm-desc").textContent=t.descripcion||"Sin descripción.";
 
-  // Timeline
   const tlEl=document.getElementById("dm-timeline");
   const eventos=buildTimeline(t);
   tlEl.innerHTML=eventos.map((ev,i)=>`
@@ -1400,12 +1437,11 @@ function abrirDetalle(t){
         ${i<eventos.length-1?'<div class="tl-connector"></div>':""}
       </div>
       <div style="padding-bottom:${i<eventos.length-1?"14px":"0"}">
-        <div class="tl-action">${ev.accion}</div>
-        <div class="tl-date">${ev.fecha}</div>
+        <div class="tl-action">${escHtml(ev.accion)}</div>
+        <div class="tl-date">${escHtml(ev.fecha)}</div>
       </div>
     </div>`).join("");
 
-  // Resolución
   const resWrap=document.getElementById("dm-resolution-wrap");
   if(t.estado==="Resuelto"&&t.resolucion){
     resWrap.style.display="block";
@@ -1414,38 +1450,54 @@ function abrirDetalle(t){
       `Participantes: ${t.participantes||"N/A"} — ${t.fecha_resuelto||""}`;
   }else{resWrap.style.display="none";}
 
-  // Adjuntos
   const attWrap=document.getElementById("dm-att-wrap");
   const attChips=document.getElementById("dm-att-chips");
   if(t.adjuntos&&t.adjuntos.trim()){
     const urls=t.adjuntos.split(",").map(u=>u.trim()).filter(Boolean);
     attChips.innerHTML=urls.map(u=>`
-      <a class="dm-att-chip" href="${u}" target="_blank">
-        📎 ${decodeURIComponent(u.split("/").pop().split("?")[0])}
+      <a class="dm-att-chip" href="${escHtml(u)}" target="_blank">
+        📎 ${escHtml(decodeURIComponent(u.split("/").pop().split("?")[0]))}
       </a>`).join("");
     attWrap.style.display="block";
   }else{attWrap.style.display="none";}
 
-  // Footer acciones
   const footerActions=document.getElementById("dm-footer-actions");
   const footerMeta=document.getElementById("dm-footer-meta");
   footerMeta.textContent=`Creado: ${(t.fecha||"").split(",")[0]||"—"}`;
   const esMio=(t.asignado||"").toLowerCase()===MI_USUARIO.toLowerCase();
+  const encId=encodeURIComponent(t.id||"");
   let botonesHTML="";
+  // FIX: al clicar "Resolver" desde el modal se cierra primero y luego abre resolución usando setTimeout
   if(t.estado==="Pendiente"&&esMio){
-    botonesHTML+=`<button class="btn-proc" onclick="cambiarEstadoTicket('${encodeURIComponent(t.id)}','En Proceso');cerrarDetalleBtn()">⚙ En Proceso</button>`;
-    botonesHTML+=`<button class="btn-resolve" onclick="cerrarDetalleBtn();abrirResolucionModal('${encodeURIComponent(t.id)}')">✓ Resolver</button>`;
+    botonesHTML+=`<button class="btn-proc" onclick="cambiarEstadoTicketDesdeModal('${encId}','En Proceso')">⚙ En Proceso</button>`;
+    botonesHTML+=`<button class="btn-resolve" onclick="resolverDesdeModal('${encId}')">✓ Resolver</button>`;
   }else if(t.estado==="En Proceso"&&esMio){
-    botonesHTML+=`<button class="btn-resolve" onclick="cerrarDetalleBtn();abrirResolucionModal('${encodeURIComponent(t.id)}')">✓ Resolver</button>`;
+    botonesHTML+=`<button class="btn-resolve" onclick="resolverDesdeModal('${encId}')">✓ Resolver</button>`;
   }
   if(esMio&&t.recibido!=="si"&&t.estado!=="Resuelto"){
-    botonesHTML+=`<button class="btn-receive" onclick="marcarRecibido('${encodeURIComponent(t.id)}')">📩 Marcar recibido</button>`;
+    botonesHTML+=`<button class="btn-receive" onclick="marcarRecibido('${encId}')">📩 Marcar recibido</button>`;
   }
   footerActions.innerHTML=botonesHTML;
 
-  // Abrir
   document.getElementById("detailOverlay").classList.add("open");
   document.body.style.overflow="hidden";
+}
+
+// FIX: cambiar estado desde modal sin cerrar el modal primero
+async function cambiarEstadoTicketDesdeModal(encId,estado){
+  await cambiarEstadoTicket(encId,estado);
+  // Refrescar modal si sigue abierto
+  const id=decodeURIComponent(encId);
+  const actualizado=ticketsById[id];
+  if(actualizado&&document.getElementById("detailOverlay").classList.contains("open")){
+    abrirDetalle(actualizado);
+  }
+}
+
+// FIX: cierra el modal, espera animación, abre modal de resolución
+function resolverDesdeModal(encId){
+  cerrarDetalleBtn();
+  setTimeout(()=>abrirResolucionModal(encId),220);
 }
 
 function buildTimeline(t){
@@ -1477,7 +1529,6 @@ function cerrarDetalleBtn(){
   ticketDetalleActual=null;
 }
 
-// Cerrar con Escape
 document.addEventListener("keydown",e=>{
   if(e.key==="Escape"&&document.getElementById("detailOverlay").classList.contains("open")){
     cerrarDetalleBtn();
@@ -1488,11 +1539,17 @@ document.addEventListener("keydown",e=>{
 async function cambiarEstadoTicket(idEnc,nuevoEstado){
   const id=decodeURIComponent(idEnc);
   try{
-    const res=await fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({estado:nuevoEstado})});
+    const res=await fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`,{
+      method:"PATCH",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({estado:nuevoEstado})
+    });
     if(!res.ok)throw new Error(`HTTP ${res.status}`);
-    showToast(`Ticket → "${nuevoEstado}"`,"success");await recargarTodo();
+    showToast(`Ticket → "${nuevoEstado}"`,"success");
+    await recargarTodo();
   }catch{showToast("Error al cambiar estado","error");}
 }
+
 function abrirResolucionModal(idEnc){
   ticketResolverId=decodeURIComponent(idEnc);
   document.getElementById("detalleResolucion").value="";
@@ -1500,14 +1557,21 @@ function abrirResolucionModal(idEnc){
   document.getElementById("resolucionModal").classList.add("open");
 }
 function cerrarResolucionModal(){document.getElementById("resolucionModal").classList.remove("open");ticketResolverId=null;}
+
 async function confirmarResolucion(){
   const detalle=document.getElementById("detalleResolucion").value.trim();
   const participantes=document.getElementById("participantesResolucion").value.trim();
   if(!detalle){showToast("Escribe el detalle de resolución","error");return;}
   try{
-    const res=await fetch(`${API_TICKETS}/id/${encodeURIComponent(ticketResolverId)}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({estado:"Resuelto",resolucion:detalle,participantes,fecha_resuelto:new Date().toLocaleString("es-DO")})});
+    const res=await fetch(`${API_TICKETS}/id/${encodeURIComponent(ticketResolverId)}`,{
+      method:"PATCH",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({estado:"Resuelto",resolucion:detalle,participantes,fecha_resuelto:new Date().toLocaleString("es-DO")})
+    });
     if(!res.ok)throw new Error(`HTTP ${res.status}`);
-    showToast("Ticket marcado como resuelto","success");cerrarResolucionModal();await recargarTodo();
+    showToast("Ticket marcado como resuelto","success");
+    cerrarResolucionModal();
+    await recargarTodo();
   }catch{showToast("Error al resolver ticket","error");}
 }
 
@@ -1549,14 +1613,24 @@ function renderReportes(){
   if(!deptos.length){tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;color:var(--t2);padding:24px;font-size:10px">Sin tickets en ${nombre} ${anio}</td></tr>`;}
   else{
     const maxT=deptos[0]?.[1].total||1;
-    tbody.innerHTML=deptos.map(([d,i],idx)=>{const pct=tot?Math.round(i.total/tot*100):0,color=DEP_COLORS[idx%DEP_COLORS.length];return`<tr><td style="font-size:11px;font-weight:500">${d}</td><td style="text-align:center;font-family:var(--mono);font-size:10px">${i.res}/${i.total}</td><td class="dep-bar-c"><div class="dep-bar-bg2"><div class="dep-bar-fg" style="width:${Math.round(i.total/maxT*100)}%;background:${color}"></div></div></td><td class="dep-pct">${pct}%</td></tr>`;}).join("")+`<tr class="dep-total-row"><td>Total</td><td style="text-align:center;font-family:var(--mono);font-size:10px">${res}/${tot}</td><td></td><td style="text-align:right;font-family:var(--mono);font-size:11px;color:var(--indigo2)">100%</td></tr>`;
+    tbody.innerHTML=deptos.map(([d,i],idx)=>{const pct=tot?Math.round(i.total/tot*100):0,color=DEP_COLORS[idx%DEP_COLORS.length];return`<tr><td style="font-size:11px;font-weight:500">${escHtml(d)}</td><td style="text-align:center;font-family:var(--mono);font-size:10px">${i.res}/${i.total}</td><td class="dep-bar-c"><div class="dep-bar-bg2"><div class="dep-bar-fg" style="width:${Math.round(i.total/maxT*100)}%;background:${color}"></div></div></td><td class="dep-pct">${pct}%</td></tr>`;}).join("")+`<tr class="dep-total-row"><td>Total</td><td style="text-align:center;font-family:var(--mono);font-size:10px">${res}/${tot}</td><td></td><td style="text-align:right;font-family:var(--mono);font-size:11px;color:var(--indigo2)">100%</td></tr>`;
   }
   repRenderBarChart(deptos,tot);
   const lb=document.getElementById("repLegendBody");
-  lb.innerHTML=deptos.length?deptos.map(([d,i],idx)=>{const pct=tot?Math.round(i.total/tot*100):0,c=DEP_COLORS[idx%DEP_COLORS.length];return`<tr><td><span class="legend-dot" style="background:${c}"></span>${d}</td><td style="text-align:center">${i.total}</td><td style="text-align:center;font-weight:700;color:${c}">${pct}%</td></tr>`;}).join("")+`<tr class="legend-total"><td><strong>Total</strong></td><td style="text-align:center"><strong>${tot}</strong></td><td style="text-align:center"><strong>100%</strong></td></tr>`:`<tr><td colspan="3" style="text-align:center;color:var(--t2);padding:10px;font-size:10px">Sin datos</td></tr>`;
+  lb.innerHTML=deptos.length?deptos.map(([d,i],idx)=>{const pct=tot?Math.round(i.total/tot*100):0,c=DEP_COLORS[idx%DEP_COLORS.length];return`<tr><td><span class="legend-dot" style="background:${c}"></span>${escHtml(d)}</td><td style="text-align:center">${i.total}</td><td style="text-align:center;font-weight:700;color:${c}">${pct}%</td></tr>`;}).join("")+`<tr class="legend-total"><td><strong>Total</strong></td><td style="text-align:center"><strong>${tot}</strong></td><td style="text-align:center"><strong>100%</strong></td></tr>`:`<tr><td colspan="3" style="text-align:center;color:var(--t2);padding:10px;font-size:10px">Sin datos</td></tr>`;
+
+  // FIX: tickets recientes en reportes usan abrirDetalleById en lugar de JSON inline
   const list=document.getElementById("repRecentList");
   const recientes=tickets.slice().reverse().slice(0,6);
-  list.innerHTML=recientes.length?recientes.map(t=>{const s=t.estado==="Resuelto"?"s-r":t.estado==="En Proceso"?"s-e":"s-p";return`<div class="rep-t-item" style="cursor:pointer" onclick='abrirDetalle(${JSON.stringify(t).replace(/'/g,"&#39;")});'><div style="flex:1;min-width:0"><div class="rep-t-title">${t.titulo||"Sin título"}</div><div class="rep-t-meta">${t.depto||"—"} · ${t.usuario||"—"}</div></div><div class="rep-t-right"><span class="bs ${s}">${t.estado||"—"}</span><span class="rep-t-date">${(t.fecha||"").split(",")[0]||"—"}</span></div></div>`;}).join(""):`<div class="rep-empty">📋 Sin tickets en este mes</div>`;
+  list.innerHTML=recientes.length?recientes.map(t=>{
+    const s=t.estado==="Resuelto"?"s-r":t.estado==="En Proceso"?"s-e":"s-p";
+    const safeId=escHtml(t.id||"");
+    return`<div class="rep-t-item" data-ticket-id="${safeId}" onclick="abrirDetalleById(this.dataset.ticketId)">
+      <div style="flex:1;min-width:0"><div class="rep-t-title">${escHtml(t.titulo||"Sin título")}</div><div class="rep-t-meta">${escHtml(t.depto||"—")} · ${escHtml(t.usuario||"—")}</div></div>
+      <div class="rep-t-right"><span class="bs ${s}">${escHtml(t.estado||"—")}</span><span class="rep-t-date">${escHtml((t.fecha||"").split(",")[0]||"—")}</span></div>
+    </div>`;
+  }).join(""):`<div class="rep-empty">📋 Sin tickets en este mes</div>`;
+
   renderRendimientoTecnicos(tickets,mes,anio);
   const cg=repGetCierreGuardado(mes,anio);
   document.getElementById("repCierreDesc").textContent=`Tickets de ${nombre} ${anio}. Los tickets permanecen activos hasta ser resueltos.`;
@@ -1580,10 +1654,11 @@ function renderRendimientoTecnicos(tkMes){
     const dm={};mk.forEach(t=>{const d=(t.depto||"Sin depto").trim();dm[d]=(dm[d]||0)+1;});
     const deps=Object.entries(dm).sort((a,b)=>b[1]-a[1]).slice(0,5),maxD=deps[0]?.[1]||1;
     const el=document.getElementById(`${pref}-deptos`);
-    if(el)el.innerHTML=deps.length?deps.map(([d,n])=>`<div class="tec-dep-row"><div class="tec-dep-name">${d}</div><div class="tec-dep-bar"><div class="tec-dep-fill" style="width:${Math.round(n/maxD*100)}%;background:${color}"></div></div><div class="tec-dep-n">${n}</div></div>`).join(""):`<span style="color:var(--t3);font-size:10px;font-family:var(--mono)">Sin tickets este mes</span>`;
+    if(el)el.innerHTML=deps.length?deps.map(([d,n])=>`<div class="tec-dep-row"><div class="tec-dep-name">${escHtml(d)}</div><div class="tec-dep-bar"><div class="tec-dep-fill" style="width:${Math.round(n/maxD*100)}%;background:${color}"></div></div><div class="tec-dep-n">${n}</div></div>`).join(""):`<span style="color:var(--t3);font-size:10px;font-family:var(--mono)">Sin tickets este mes</span>`;
   });
   renderComparativaGlobal();
 }
+
 function renderComparativaGlobal(){
   const xAll=repAllTickets.filter(t=>(t.asignado||"").toLowerCase()==="xavier");
   const jAll=repAllTickets.filter(t=>(t.asignado||"").toLowerCase()==="juan");
@@ -1597,7 +1672,7 @@ function renderComparativaGlobal(){
   const maxM=Math.max(...metrics.map(m=>Math.max(m.x,m.j)),1);
   comp.innerHTML=metrics.map(m=>`
     <div class="comp-row">
-      <div class="comp-lbl">${m.l}</div>
+      <div class="comp-lbl">${escHtml(m.l)}</div>
       <div class="comp-bars">
         <div class="comp-bar-item"><div class="comp-bar-name" style="color:var(--cyan)">Xavier</div><div class="comp-bar-bg"><div class="comp-bar-fg" style="width:${Math.round(m.x/maxM*100)}%;background:var(--cyan)"></div></div><div class="comp-val" style="color:var(--cyan)">${m.x}</div></div>
         <div class="comp-bar-item"><div class="comp-bar-name" style="color:var(--indigo2)">Juan</div><div class="comp-bar-bg"><div class="comp-bar-fg" style="width:${Math.round(m.j/maxM*100)}%;background:var(--indigo2)"></div></div><div class="comp-val" style="color:var(--indigo2)">${m.j}</div></div>
@@ -1616,6 +1691,7 @@ function repRenderBarChart(deptos,tot){
 function repGetCierresGuardados(){try{const r=localStorage.getItem(STORAGE_KEY_CIERRES);return r?JSON.parse(r):[];}catch{return[];}}
 function repSaveCierres(c){localStorage.setItem(STORAGE_KEY_CIERRES,JSON.stringify(c));}
 function repGetCierreGuardado(mes,anio){return repGetCierresGuardados().find(c=>c.mes===mes&&c.anio===anio)||null;}
+
 function repCerrarMes(){
   const mes=repMesActual,anio=repAnioActual;
   const tickets=repAllTickets.filter(t=>ticketDelMes(t,mes,anio));
@@ -1627,9 +1703,10 @@ function repCerrarMes(){
   const cierres=repGetCierresGuardados().filter(c=>!(c.mes===mes&&c.anio===anio));cierres.push(cierre);cierres.sort((a,b)=>a.anio!==b.anio?b.anio-a.anio:b.mes-a.mes);repSaveCierres(cierres);
   showToast(`Cierre de ${MESES[mes]} ${anio} guardado`,"success");renderReportes();
 }
+
 function abrirHistorial(){
   const cierres=repGetCierresGuardados(),body=document.getElementById("histBody");
-  body.innerHTML=cierres.length?cierres.map((c,idx)=>{const dep=Object.keys(c.departamentos||{}).length,pctRes=c.total?Math.round(c.resueltos/c.total*100):0;return`<div class="hist-item" onclick="repVerDetalleCierre(${idx})"><div class="hist-item-hdr"><div class="hist-item-title">📅 ${c.nombreMes} ${c.anio}</div><div class="hist-item-date">Generado: ${c.fechaGenerado}</div></div><div class="hist-item-stats"><div class="hist-ms"><span class="ml">Total: </span><span class="mv mp">${c.total}</span></div><div class="hist-ms"><span class="ml">Resueltos: </span><span class="mv mg">${c.resueltos} (${pctRes}%)</span></div><div class="hist-ms"><span class="ml">Pendientes: </span><span class="mv my">${c.pendientes}</span></div><div class="hist-ms"><span class="ml">Proceso: </span><span class="mv mb">${c.proceso}</span></div><div class="hist-ms"><span class="ml">Deptos: </span><span class="mv mp">${dep}</span></div></div></div>`;}).join(""):`<div class="hist-empty">📭 No hay cierres guardados.</div>`;
+  body.innerHTML=cierres.length?cierres.map((c,idx)=>{const dep=Object.keys(c.departamentos||{}).length,pctRes=c.total?Math.round(c.resueltos/c.total*100):0;return`<div class="hist-item" onclick="repVerDetalleCierre(${idx})"><div class="hist-item-hdr"><div class="hist-item-title">📅 ${escHtml(c.nombreMes)} ${c.anio}</div><div class="hist-item-date">Generado: ${escHtml(c.fechaGenerado)}</div></div><div class="hist-item-stats"><div class="hist-ms"><span class="ml">Total: </span><span class="mv mp">${c.total}</span></div><div class="hist-ms"><span class="ml">Resueltos: </span><span class="mv mg">${c.resueltos} (${pctRes}%)</span></div><div class="hist-ms"><span class="ml">Pendientes: </span><span class="mv my">${c.pendientes}</span></div><div class="hist-ms"><span class="ml">Proceso: </span><span class="mv mb">${c.proceso}</span></div><div class="hist-ms"><span class="ml">Deptos: </span><span class="mv mp">${dep}</span></div></div></div>`;}).join(""):`<div class="hist-empty">📭 No hay cierres guardados.</div>`;
   document.getElementById("histOverlay").classList.add("open");
 }
 function cerrarHistorial(){document.getElementById("histOverlay").classList.remove("open");}
@@ -1644,8 +1721,8 @@ function repExportarPDF(){
   const dm={};tickets.forEach(t=>{const d=(t.depto||"Sin depto").trim();if(!dm[d])dm[d]={total:0,res:0};dm[d].total++;if(t.estado==="Resuelto")dm[d].res++;});
   const deptos=Object.entries(dm).sort((a,b)=>b[1].total-a[1].total);
   let chartSrc="";try{chartSrc=document.getElementById("repBarChart").toDataURL("image/png");}catch{}
-  const depRows=deptos.map(([d,i],idx)=>{const pct=tot?Math.round(i.total/tot*100):0,c=DEP_COLORS[idx%DEP_COLORS.length];return`<tr><td>${d}</td><td style="text-align:center">${i.res}/${i.total}</td><td style="text-align:right;font-weight:700;color:${c}">${pct}%</td></tr>`;}).join("");
-  const tRows=tickets.slice().reverse().slice(0,10).map(t=>{const ec=t.estado==="Resuelto"?"#059669":t.estado==="En Proceso"?"#0891b2":"#b45309";return`<tr><td>${t.titulo||"—"}</td><td>${t.depto||"—"}</td><td>${t.usuario||"—"}</td><td>${(t.fecha||"").split(",")[0]}</td><td style="font-weight:700;color:${ec}">${t.estado||"—"}</td></tr>`;}).join("");
+  const depRows=deptos.map(([d,i],idx)=>{const pct=tot?Math.round(i.total/tot*100):0,c=DEP_COLORS[idx%DEP_COLORS.length];return`<tr><td>${escHtml(d)}</td><td style="text-align:center">${i.res}/${i.total}</td><td style="text-align:right;font-weight:700;color:${c}">${pct}%</td></tr>`;}).join("");
+  const tRows=tickets.slice().reverse().slice(0,10).map(t=>{const ec=t.estado==="Resuelto"?"#059669":t.estado==="En Proceso"?"#0891b2":"#b45309";return`<tr><td>${escHtml(t.titulo||"—")}</td><td>${escHtml(t.depto||"—")}</td><td>${escHtml(t.usuario||"—")}</td><td>${escHtml((t.fecha||"").split(",")[0])}</td><td style="font-weight:700;color:${ec}">${escHtml(t.estado||"—")}</td></tr>`;}).join("");
   const xRes=xMes.filter(t=>t.estado==="Resuelto").length,jRes=jMes.filter(t=>t.estado==="Resuelto").length;
   const pw=window.open("","_blank","width=900,height=700");
   pw.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/><title>Informe ${nombre} ${anio}</title><link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"/><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Geist',sans-serif;background:#fff;color:#111;padding:40px;-webkit-font-smoothing:antialiased}@page{margin:18mm}.hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;padding-bottom:18px;border-bottom:2px solid #6366f1}.badge{display:inline-block;background:#6366f1;color:#fff;font-size:9px;font-weight:600;letter-spacing:2px;padding:3px 8px;border-radius:4px;margin-bottom:7px;text-transform:uppercase;font-family:'Geist Mono',monospace}h1{font-family:'Instrument Serif',serif;font-style:italic;font-size:28px;font-weight:400;letter-spacing:-1px}.sub{font-size:12px;color:#666;margin-top:3px;font-family:'Geist Mono',monospace}.meta{text-align:right;font-family:'Geist Mono',monospace;font-size:10px;color:#888}.meta p{margin-bottom:3px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}.kpi{padding:14px 16px;border-radius:10px;border:1px solid #eee;background:#fafafa}.kpi .lbl{font-size:8px;text-transform:uppercase;letter-spacing:1.5px;color:#999;font-family:'Geist Mono',monospace;margin-bottom:6px}.kpi .val{font-family:'Instrument Serif',serif;font-size:34px;font-style:italic;letter-spacing:-1px;line-height:1}.kpi .pct{font-size:10px;font-family:'Geist Mono',monospace;color:#999;margin-top:3px}.kpi.t{border-top:2px solid #6366f1}.kpi.t .val{color:#4f46e5}.kpi.p{border-top:2px solid #d97706}.kpi.p .val{color:#d97706}.kpi.e{border-top:2px solid #0891b2}.kpi.e .val{color:#0891b2}.kpi.r{border-top:2px solid #059669}.kpi.r .val{color:#059669}.sec{font-size:13px;font-weight:600;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid #eee}.blk{margin-bottom:24px;break-inside:avoid}.two{display:grid;grid-template-columns:1fr 1.4fr;gap:18px;margin-bottom:24px}.tec-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}.tec-box{border:1px solid #eee;border-radius:10px;padding:14px}.tec-box.xav{border-top:2px solid #22d3ee}.tec-box.juan{border-top:2px solid #6366f1}.tec-box h3{font-size:13px;font-weight:600;margin-bottom:10px}.tec-stats{display:flex;gap:10px}.tec-st{text-align:center;flex:1}.tec-st .v{font-family:'Instrument Serif',serif;font-size:22px;font-style:italic}.tec-st .l{font-size:8px;text-transform:uppercase;color:#999;font-family:'Geist Mono',monospace}.tec-st .v.g{color:#059669}.tec-st .v.b{color:#22d3ee}.tec-st .v.p{color:#6366f1}.tec-st .v.y{color:#d97706}table{width:100%;border-collapse:collapse}th{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#999;font-family:'Geist Mono',monospace;padding:6px 10px;text-align:left;border-bottom:2px solid #eee}td{padding:7px 10px;font-size:11px;border-bottom:1px solid #f0f0f0}tr:last-child td{border-bottom:none}img{max-width:100%;border-radius:8px;border:1px solid #eee;display:block}.ftr{margin-top:28px;padding-top:14px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:9px;font-family:'Geist Mono',monospace;color:#bbb}</style></head><body><div class="hdr"><div><span class="badge">GM Tickets TI</span><h1>Informe Mensual — ${nombre} ${anio}</h1><div class="sub">Sistema de Soporte Técnico</div></div><div class="meta"><p><strong>Generado:</strong> ${new Date().toLocaleString("es-DO")}</p><p><strong>Sistema:</strong> GM Tickets v3.1</p></div></div><div class="kpis"><div class="kpi t"><div class="lbl">Total</div><div class="val">${tot}</div><div class="pct">100%</div></div><div class="kpi p"><div class="lbl">Pendientes</div><div class="val">${pend}</div><div class="pct">${tot?Math.round(pend/tot*100):0}%</div></div><div class="kpi e"><div class="lbl">En Proceso</div><div class="val">${proc}</div><div class="pct">${tot?Math.round(proc/tot*100):0}%</div></div><div class="kpi r"><div class="lbl">Resueltos</div><div class="val">${res}</div><div class="pct">${tot?Math.round(res/tot*100):0}%</div></div></div><div class="blk"><div class="sec">👨‍💻 Rendimiento de Técnicos — ${nombre} ${anio}</div><div class="tec-row"><div class="tec-box xav"><h3>Xavier Rosario</h3><div class="tec-stats"><div class="tec-st"><div class="v b">${xMes.length}</div><div class="l">Asignados</div></div><div class="tec-st"><div class="v g">${xRes}</div><div class="l">Resueltos</div></div><div class="tec-st"><div class="v y">${xMes.filter(t=>t.estado==="Pendiente").length}</div><div class="l">Pendientes</div></div><div class="tec-st"><div class="v b">${xMes.length?Math.round(xRes/xMes.length*100):0}%</div><div class="l">Resolución</div></div></div></div><div class="tec-box juan"><h3>Juan Francisco Jiménez</h3><div class="tec-stats"><div class="tec-st"><div class="v p">${jMes.length}</div><div class="l">Asignados</div></div><div class="tec-st"><div class="v g">${jRes}</div><div class="l">Resueltos</div></div><div class="tec-st"><div class="v y">${jMes.filter(t=>t.estado==="Pendiente").length}</div><div class="l">Pendientes</div></div><div class="tec-st"><div class="v p">${jMes.length?Math.round(jRes/jMes.length*100):0}%</div><div class="l">Resolución</div></div></div></div></div></div><div class="two"><div class="blk"><div class="sec">Cobertura por departamento</div><table><thead><tr><th>Departamento</th><th style="text-align:center">Res/Total</th><th style="text-align:right">%</th></tr></thead><tbody>${depRows}<tr><td style="font-weight:600">Total</td><td style="text-align:center;font-weight:600">${res}/${tot}</td><td style="text-align:right;font-weight:600;color:#4f46e5">100%</td></tr></tbody></table></div><div class="blk"><div class="sec">Distribución por departamento</div>${chartSrc?`<img src="${chartSrc}" alt="Gráfica"/>`:"<p style='color:#aaa;font-size:11px'>Gráfica no disponible</p>"}</div></div><div class="blk"><div class="sec">Últimos 10 tickets del mes</div><table><thead><tr><th>Título</th><th>Departamento</th><th>Usuario</th><th>Fecha</th><th>Estado</th></tr></thead><tbody>${tRows}</tbody></table>${tot>10?`<p style="font-size:9px;color:#aaa;margin-top:6px;font-family:'Geist Mono',monospace">… y ${tot-10} ticket(s) más.</p>`:""}</div><div class="ftr"><span>GM Tickets TI — Sistema de Soporte Técnico</span><span>${new Date().toLocaleString("es-DO")}</span></div><script>window.onload=()=>setTimeout(()=>window.print(),800);<\/script></body></html>`);pw.document.close();
@@ -1656,31 +1733,41 @@ async function sha256(text){const buf=await crypto.subtle.digest("SHA-256",new T
 
 async function cargarUsuariosSheet(){
   const tbody=document.getElementById("usersSheetBody");
+  if(!tbody)return; // FIX: guard para evitar error si el tbody aún no existe
   tbody.innerHTML=`<tr class="loading-row"><td colspan="6"><span class="spinner"></span>Cargando…</td></tr>`;
   try{
     const data=await fetch(API_USERS).then(r=>r.json());
     sheetUsers=Array.isArray(data)?data:[];
     filtrarTabla();actualizarStatsPills();
     const eu=document.getElementById("cfg-total-users");if(eu)eu.textContent=sheetUsers.length;
-  }catch{document.getElementById("usersSheetBody").innerHTML=`<tr class="loading-row"><td colspan="6" style="color:var(--rose)">⚠ Error al cargar usuarios.</td></tr>`;}
+  }catch{
+    const tbody2=document.getElementById("usersSheetBody");
+    if(tbody2)tbody2.innerHTML=`<tr class="loading-row"><td colspan="6" style="color:var(--rose)">⚠ Error al cargar usuarios.</td></tr>`;
+  }
 }
+
 function filtrarTabla(){
   const s=(document.getElementById("userSearch")?.value||"").toLowerCase(),tbody=document.getElementById("usersSheetBody");
+  if(!tbody)return;
   const f=sheetUsers.filter(u=>(u.NombreUsuario||"").toLowerCase().includes(s)||(u.Rol||"").toLowerCase().includes(s)||(u.Departamento||"").toLowerCase().includes(s)||(u.NombreCompleto||"").toLowerCase().includes(s));
   if(!f.length){tbody.innerHTML=`<tr class="loading-row"><td colspan="6" style="color:var(--t2)">Sin usuarios${s?" con ese filtro":""}.</td></tr>`;return;}
-  tbody.innerHTML=f.map(u=>{const rol=(u.Rol||"usuario").toLowerCase(),hash=(u.Contraseña||"").substring(0,16)+"…",ri=sheetUsers.indexOf(u);return`<tr><td><strong>${u.NombreUsuario||"—"}</strong></td><td style="color:var(--t1)">${u.NombreCompleto||'<em style="color:var(--t3)">Sin nombre</em>'}</td><td class="hash-cell" title="${u.Contraseña||""}">${hash}</td><td><span class="role-tag rt-${rol}">${rol}</span></td><td class="depto-cell">${u.Departamento||"—"}</td><td><div class="actions-row"><button class="btn-xs-edit" onclick="abrirEditarUsuario(${ri})">✏ Editar</button><button class="btn-xs-del" onclick="eliminarUsuarioSheet(${ri})">✕</button></div></td></tr>`;}).join("");
+  tbody.innerHTML=f.map(u=>{const rol=(u.Rol||"usuario").toLowerCase(),hash=(u.Contraseña||"").substring(0,16)+"…",ri=sheetUsers.indexOf(u);return`<tr><td><strong>${escHtml(u.NombreUsuario||"—")}</strong></td><td style="color:var(--t1)">${u.NombreCompleto?escHtml(u.NombreCompleto):'<em style="color:var(--t3)">Sin nombre</em>'}</td><td class="hash-cell" title="${escHtml(u.Contraseña||"")}">${escHtml(hash)}</td><td><span class="role-tag rt-${escHtml(rol)}">${escHtml(rol)}</span></td><td class="depto-cell">${escHtml(u.Departamento||"—")}</td><td><div class="actions-row"><button class="btn-xs-edit" onclick="abrirEditarUsuario(${ri})">✏ Editar</button><button class="btn-xs-del" onclick="eliminarUsuarioSheet(${ri})">✕</button></div></td></tr>`;}).join("");
 }
+
 function actualizarStatsPills(){
-  document.getElementById("stat-total").textContent=sheetUsers.length;
-  document.getElementById("stat-tech").textContent=sheetUsers.filter(u=>u.Rol==="tecnico").length;
-  document.getElementById("stat-user").textContent=sheetUsers.filter(u=>u.Rol==="usuario").length;
-  document.getElementById("stat-adm").textContent=sheetUsers.filter(u=>u.Rol==="admin").length;
+  const et=document.getElementById("stat-total");if(et)et.textContent=sheetUsers.length;
+  const etc=document.getElementById("stat-tech");if(etc)etc.textContent=sheetUsers.filter(u=>u.Rol==="tecnico").length;
+  const eu=document.getElementById("stat-user");if(eu)eu.textContent=sheetUsers.filter(u=>u.Rol==="usuario").length;
+  const ea=document.getElementById("stat-adm");if(ea)ea.textContent=sheetUsers.filter(u=>u.Rol==="admin"||u.Rol==="superadmin").length;
+  const ean=document.getElementById("stat-analista");if(ean)ean.textContent=sheetUsers.filter(u=>u.Rol==="analista").length;
 }
+
 function previewHash(){
   clearTimeout(hashDebounce);const el=document.getElementById("hashPreview"),val=document.getElementById("fPassword").value;
   if(!val){el.textContent="El hash aparecerá aquí…";el.className="field-hint";return;}
   hashDebounce=setTimeout(async()=>{const h=await sha256(val);el.textContent=h.substring(0,32)+"…";el.className="field-hint hashed";},300);
 }
+
 function abrirCrearUsuario(){
   editingRowNum=null;
   document.getElementById("modalTitle").textContent="Nuevo Usuario";
@@ -1691,6 +1778,7 @@ function abrirCrearUsuario(){
   document.getElementById("hashPreview").textContent="El hash aparecerá aquí…";document.getElementById("hashPreview").className="field-hint";
   document.getElementById("userModal").classList.add("open");
 }
+
 function abrirEditarUsuario(idx){
   const u=sheetUsers[idx];if(!u)return;editingRowNum=idx;
   document.getElementById("modalTitle").textContent="Editar Usuario";
@@ -1703,6 +1791,7 @@ function abrirEditarUsuario(idx){
   document.getElementById("hashPreview").textContent="Hash actual: "+(u.Contraseña||"").substring(0,24)+"…";document.getElementById("hashPreview").className="field-hint hashed";
   document.getElementById("userModal").classList.add("open");
 }
+
 async function guardarUsuarioSheet(){
   const username=document.getElementById("fUsername").value.trim();
   const nombreCompleto=document.getElementById("fNombreCompleto").value.trim();
@@ -1728,6 +1817,7 @@ async function guardarUsuarioSheet(){
   }catch(err){showToast("Error: "+err.message,"error");}
   finally{btn.disabled=false;btn.textContent="Guardar";}
 }
+
 async function eliminarUsuarioSheet(idx){
   const u=sheetUsers[idx];if(!u)return;
   if(!confirm(`¿Eliminar a "${u.NombreUsuario}"?`))return;
@@ -1736,6 +1826,7 @@ async function eliminarUsuarioSheet(idx){
     if(!r.ok)throw new Error(`HTTP ${r.status}`);showToast("Usuario eliminado","success");await cargarUsuariosSheet();
   }catch(err){showToast("Error: "+err.message,"error");}
 }
+
 function cerrarModal(){document.getElementById("userModal").classList.remove("open");editingRowNum=null;}
 
 // ─── MIGRACIÓN ────────────────────────────────────────
@@ -1748,6 +1839,7 @@ function abrirMigracion(){
   document.getElementById("btnStartMigrate").disabled=false;document.getElementById("migrateModal").classList.add("open");
 }
 function cerrarMigracion(){document.getElementById("migrateModal").classList.remove("open");}
+
 async function ejecutarMigracion(){
   const ex=sheetUsers.map(u=>(u.NombreUsuario||"").toLowerCase());
   const pend=USUARIOS_HARDCODED.filter(u=>!ex.includes(u.username.toLowerCase()));
@@ -1761,8 +1853,8 @@ async function ejecutarMigracion(){
     try{
       const hash=await sha256(u.password);
       const r=await fetch(API_USERS,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({NombreUsuario:u.username,NombreCompleto:u.nombreCompleto||u.username,Contraseña:hash,Rol:u.rol,Departamento:u.depto||""})});
-      if(!r.ok)throw new Error(`HTTP ${r.status}`);ok++;log.innerHTML+=`<div style="color:var(--emerald)">✓ ${u.username} — ${u.rol}</div>`;
-    }catch(err){fail++;log.innerHTML+=`<div style="color:var(--rose)">✗ ${u.username} — ${err.message}</div>`;}
+      if(!r.ok)throw new Error(`HTTP ${r.status}`);ok++;log.innerHTML+=`<div style="color:var(--emerald)">✓ ${escHtml(u.username)} — ${escHtml(u.rol)}</div>`;
+    }catch(err){fail++;log.innerHTML+=`<div style="color:var(--rose)">✗ ${escHtml(u.username)} — ${escHtml(err.message)}</div>`;}
     log.scrollTop=log.scrollHeight;await new Promise(r=>setTimeout(r,250));
   }
   fill.style.width="100%";label.textContent=`Completado: ${ok} OK · ${fail} errores.`;
