@@ -27,7 +27,7 @@ const ROUTES = {
   admin:      "Admin.html",
   usuario:    "Dashboard.html",
   superadmin: "SuperUsuario.html",
-    analista:   "Analista.html"
+    analista:   "analista.html"
 
 
 };
