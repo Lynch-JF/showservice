@@ -19,7 +19,6 @@
   --accent:var(--violet);--accent2:var(--violet2);
 }
 
-/* ════ PALETAS ════ */
 [data-theme="vino"] {
   --bg:#0e0508;--s0:#150a0d;--s1:#1c0e13;--s2:#241218;--s3:#2e1620;--s4:#3a1c28;
   --b1:rgba(255,200,210,0.06);--b2:rgba(255,200,210,0.11);--b3:rgba(255,200,210,0.18);
@@ -75,6 +74,46 @@
   --emerald:#10b981;--amber:#f59e0b;--rose:#f43f5e;--cyan:#22d3ee;
   --accent:var(--violet);--accent2:var(--violet2);
 }
+[data-theme="rojo"] {
+  --bg:#0f0000;--s0:#1a0000;--s1:#220000;--s2:#2e0000;--s3:#3d0000;--s4:#4d0000;
+  --b1:rgba(255,60,60,0.08);--b2:rgba(255,60,60,0.15);--b3:rgba(255,60,60,0.25);
+  --t0:#fff5f5;--t1:#ffaaaa;--t2:#cc3333;--t3:#7a1010;
+  --violet:#ff1a1a;--violet2:#ff5555;--indigo:#e00000;--indigo2:#ff3333;
+  --emerald:#00e676;--amber:#ffab00;--rose:#ff1744;--cyan:#00e5ff;
+  --accent:var(--violet);--accent2:var(--violet2);
+}
+[data-theme="naranja"] {
+  --bg:#0f0600;--s0:#1a0a00;--s1:#241000;--s2:#301600;--s3:#3d1c00;--s4:#4d2400;
+  --b1:rgba(255,120,0,0.08);--b2:rgba(255,120,0,0.15);--b3:rgba(255,120,0,0.25);
+  --t0:#fff8f0;--t1:#ffcc88;--t2:#cc6600;--t3:#7a3500;
+  --violet:#ff6600;--violet2:#ff9933;--indigo:#e65c00;--indigo2:#ff7722;
+  --emerald:#00e676;--amber:#ffee00;--rose:#ff1744;--cyan:#00e5ff;
+  --accent:var(--violet);--accent2:var(--violet2);
+}
+[data-theme="neon"] {
+  --bg:#000d00;--s0:#001500;--s1:#001e00;--s2:#002800;--s3:#003300;--s4:#004000;
+  --b1:rgba(0,255,80,0.08);--b2:rgba(0,255,80,0.15);--b3:rgba(0,255,80,0.25);
+  --t0:#f0fff4;--t1:#69ff88;--t2:#00aa44;--t3:#006622;
+  --violet:#00ff55;--violet2:#66ff99;--indigo:#00cc44;--indigo2:#00ff55;
+  --emerald:#00e5ff;--amber:#ffee00;--rose:#ff1744;--cyan:#00e5ff;
+  --accent:var(--violet);--accent2:var(--violet2);
+}
+[data-theme="cyan"] {
+  --bg:#000d10;--s0:#001519;--s1:#001e24;--s2:#002830;--s3:#00333d;--s4:#00404d;
+  --b1:rgba(0,220,255,0.08);--b2:rgba(0,220,255,0.15);--b3:rgba(0,220,255,0.25);
+  --t0:#f0fdff;--t1:#67e8f9;--t2:#0099bb;--t3:#005566;
+  --violet:#00d4ff;--violet2:#67e8f9;--indigo:#00aadd;--indigo2:#00ccff;
+  --emerald:#00ff88;--amber:#ffee00;--rose:#ff1744;--cyan:#00e5ff;
+  --accent:var(--violet);--accent2:var(--violet2);
+}
+[data-theme="fucsia"] {
+  --bg:#0f0010;--s0:#18001a;--s1:#220024;--s2:#2d002f;--s3:#38003c;--s4:#45004a;
+  --b1:rgba(255,0,200,0.08);--b2:rgba(255,0,200,0.15);--b3:rgba(255,0,200,0.25);
+  --t0:#fff0ff;--t1:#ff88ee;--t2:#cc00aa;--t3:#770066;
+  --violet:#ff00cc;--violet2:#ff55dd;--indigo:#dd00aa;--indigo2:#ff00cc;
+  --emerald:#00ff88;--amber:#ffee00;--rose:#ff1744;--cyan:#00e5ff;
+  --accent:var(--violet);--accent2:var(--violet2);
+}
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -108,6 +147,8 @@ body{background:var(--bg);color:var(--t0);font-family:var(--font);min-height:100
 .user-info-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .user-info-sub{font-family:var(--mono);font-size:9px;color:var(--t2);margin-top:1px}
 .user-role{display:inline-block;margin-top:3px;font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent2);border:1px solid rgba(167,139,250,.3);background:rgba(167,139,250,.08);padding:1px 6px;border-radius:99px}
+/* Eliana supervisor badge */
+.user-role.supervisor{color:var(--amber);border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.1)}
 .btn-logout{width:100%;padding:7px;border:1px solid var(--b2);background:transparent;color:var(--t2);border-radius:var(--r);font-family:var(--font);font-size:12px;cursor:pointer;transition:all .15s var(--ease)}
 .btn-logout:hover{color:var(--rose);border-color:rgba(244,63,94,.4);background:rgba(244,63,94,.06)}
 
@@ -125,13 +166,12 @@ body{background:var(--bg);color:var(--t0);font-family:var(--font);min-height:100
 .btn-topbar{padding:6px 14px;border:1px solid var(--b2);background:var(--s2);color:var(--t1);border-radius:var(--r);font-family:var(--mono);font-size:11px;cursor:pointer;transition:all .15s var(--ease)}
 .btn-topbar:hover{border-color:var(--accent);color:var(--accent2);background:rgba(167,139,250,.1)}
 
-/* ══ THEME PICKER ══ */
 .theme-btn{padding:6px 12px;border:1px solid var(--b2);background:var(--s2);color:var(--t1);border-radius:var(--r);font-size:13px;cursor:pointer;transition:all .15s;position:relative}
 .theme-btn:hover{border-color:var(--accent);background:rgba(167,139,250,.1)}
-.theme-panel{position:absolute;top:calc(var(--topbar) + 6px);right:28px;width:320px;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);padding:16px;z-index:200;display:none;box-shadow:0 16px 48px rgba(0,0,0,.5)}
+.theme-panel{position:absolute;top:calc(var(--topbar) + 6px);right:28px;width:380px;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);padding:16px;z-index:200;display:none;box-shadow:0 16px 48px rgba(0,0,0,.5)}
 .theme-panel.open{display:block;animation:fadeIn .15s var(--ease)}
 .theme-panel-title{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t2);margin-bottom:12px}
-.theme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.theme-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .theme-swatch{border:2px solid transparent;border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .15s,transform .15s;position:relative}
 .theme-swatch:hover{transform:translateY(-2px);border-color:var(--b3)}
 .theme-swatch.selected{border-color:var(--accent)}
@@ -193,6 +233,9 @@ body{background:var(--bg);color:var(--t0);font-family:var(--font);min-height:100
 .t-resolution{margin-top:12px;padding:10px 12px;background:rgba(16,185,129,.06);border-left:2px solid var(--emerald);font-size:11px;color:rgba(16,185,129,.85);line-height:1.65}
 .t-att{margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--cyan2)}
 
+/* Badge extra: quién lo atendió (para vista de supervisora) */
+.b-atendido{color:var(--indigo2);background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.25);display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;font-weight:500;padding:3px 8px;border-radius:99px;border:1px solid}
+
 .badge{display:inline-flex;align-items:center;font-family:var(--mono);font-size:9px;font-weight:500;padding:3px 8px;border-radius:99px;border:1px solid transparent}
 .b-pend{color:var(--amber);background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.25)}
 .b-proc{color:var(--cyan);background:rgba(34,211,238,.08);border-color:rgba(34,211,238,.25)}
@@ -215,6 +258,8 @@ body{background:var(--bg);color:var(--t0);font-family:var(--font);min-height:100
 .btn-resolve:hover{background:rgba(16,185,129,.18);transform:translateY(-1px)}
 .btn-receive{padding:6px 14px;border-radius:var(--r);font-family:var(--font);font-size:11px;font-weight:600;background:rgba(167,139,250,.1);color:var(--accent2);border:1px solid rgba(167,139,250,.3);cursor:pointer;transition:all .15s}
 .btn-receive:hover{background:rgba(167,139,250,.2);transform:translateY(-1px)}
+.btn-reasignar{padding:6px 14px;border-radius:var(--r);font-family:var(--font);font-size:11px;font-weight:600;background:rgba(245,158,11,.08);color:var(--amber);border:1px solid rgba(245,158,11,.3);cursor:pointer;transition:all .15s}
+.btn-reasignar:hover{background:rgba(245,158,11,.18);transform:translateY(-1px)}
 .btn-cancel{padding:8px 18px;border-radius:var(--r);font-family:var(--font);font-size:12px;font-weight:500;background:transparent;color:var(--t2);border:1px solid var(--b2);cursor:pointer;transition:all .15s}
 .btn-cancel:hover{color:var(--t1);border-color:var(--b3)}
 .btn-danger{padding:8px 18px;border-radius:var(--r);font-family:var(--font);font-size:12px;font-weight:600;background:rgba(244,63,94,.1);color:var(--rose);border:1px solid rgba(244,63,94,.25);cursor:pointer;transition:all .15s}
@@ -232,6 +277,13 @@ body{background:var(--bg);color:var(--t0);font-family:var(--font);min-height:100
 .f-btn.f-pend.active{color:var(--amber);border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.07)}
 .f-btn.f-proc.active{color:var(--cyan);border-color:rgba(34,211,238,.4);background:rgba(34,211,238,.07)}
 .f-btn.f-res.active{color:var(--emerald);border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.07)}
+
+/* Filtro por analista (solo Eliana) */
+.analista-filter-wrap{display:none;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.analista-filter-wrap.visible{display:flex}
+.analista-chip{padding:5px 12px;border-radius:99px;font-family:var(--mono);font-size:10px;font-weight:500;border:1px solid var(--b2);background:transparent;color:var(--t2);cursor:pointer;transition:all .15s}
+.analista-chip:hover{color:var(--t1);border-color:var(--b3)}
+.analista-chip.active{color:var(--amber);border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.07)}
 
 .empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--t2);font-size:13px}
 .empty-icon{font-size:36px;margin-bottom:12px;opacity:.5}
@@ -294,6 +346,9 @@ table.data-table tr:hover td{background:var(--s2)}
 .modal-sub{font-family:var(--mono);font-size:10px;color:var(--t2);margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--b1)}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:22px;padding-top:16px;border-top:1px solid var(--b1)}
 
+/* Separador de grupos en select */
+.form-select optgroup{font-family:var(--mono);font-size:10px;color:var(--t3);background:var(--s0)}
+
 .toast-wrap{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:999;pointer-events:none}
 .toast{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r2);padding:11px 16px;font-size:12px;font-weight:500;color:var(--t1);max-width:300px;opacity:0;transform:translateY(8px) scale(.97);transition:all .25s var(--ease);pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0) scale(1)}
@@ -320,7 +375,7 @@ table.data-table tr:hover td{background:var(--s2)}
       <div class="sb-icon">📊</div>
       <div><div class="sb-brand">GM Tickets <span>TI</span></div></div>
     </div>
-    <div class="sb-version">v3.0 — analista build</div>
+    <div class="sb-version">v3.1 — analista build</div>
   </div>
 
   <p class="sb-section">Mis solicitudes</p>
@@ -329,7 +384,7 @@ table.data-table tr:hover td{background:var(--s2)}
     <span class="nav-badge" id="nb-asignados">0</span>
   </div>
   <div class="nav-item" id="nav-resueltos" onclick="switchView('resueltos')">
-    <span class="nav-icon">✓</span> Mis resueltos
+    <span class="nav-icon">✓</span> <span id="nav-resueltos-label">Mis resueltos</span>
     <span class="nav-badge violet" id="nb-resueltos">0</span>
   </div>
 
@@ -348,7 +403,7 @@ table.data-table tr:hover td{background:var(--s2)}
       <div class="user-info">
         <div class="user-info-name" id="anName">Analista</div>
         <div class="user-info-sub" id="anUser">@analista</div>
-        <div class="user-role">ANALISTA</div>
+        <div class="user-role" id="roleLabel">ANALISTA</div>
       </div>
     </div>
     <button class="btn-logout" onclick="anLogout()">Cerrar sesión</button>
@@ -401,13 +456,17 @@ table.data-table tr:hover td{background:var(--s2)}
     </div>
   </div>
 
-  <!-- ══ MIS RESUELTOS ══ -->
+  <!-- ══ MIS RESUELTOS / TESORERÍA RESUELTOS ══ -->
   <div id="view-resueltos" class="view">
-    <div class="info-banner emerald">
+    <div class="info-banner emerald" id="res-banner">
       <div>
-        <p>✓ Tickets que has resuelto</p>
-        <p>Historial completo de solicitudes de usuario que atendiste y cerraste.</p>
+        <p id="res-banner-title">✓ Tickets que has resuelto</p>
+        <p id="res-banner-sub">Historial completo de solicitudes de usuario que atendiste y cerraste.</p>
       </div>
+    </div>
+    <!-- Chips de filtro por analista — solo visible para Eliana -->
+    <div class="analista-filter-wrap" id="analistaFilterWrap">
+      <span style="font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-right:4px">Filtrar por:</span>
     </div>
     <div class="filters">
       <div class="search-wrap">
@@ -416,11 +475,11 @@ table.data-table tr:hover td{background:var(--s2)}
       </div>
     </div>
     <div class="sec-head">
-      <span class="sec-title">Mis tickets resueltos</span>
+      <span class="sec-title" id="res-sec-title">Mis tickets resueltos</span>
       <span class="sec-count" id="resCount">0 tickets</span>
     </div>
     <div class="tickets-grid" id="resGrid">
-      <div class="empty-state"><div class="empty-icon">✅</div><p>Aún no has resuelto tickets.</p></div>
+      <div class="empty-state"><div class="empty-icon">✅</div><p>Aún no hay tickets resueltos.</p></div>
     </div>
   </div>
 
@@ -513,7 +572,33 @@ table.data-table tr:hover td{background:var(--s2)}
   </div>
 </main>
 
-<!-- MODAL RESOLUCIÓN -->
+<!-- ══ MODAL REASIGNAR ══ -->
+<div class="modal-overlay" id="reasignarModal">
+  <div class="modal">
+    <div class="modal-title">Reasignar Ticket</div>
+    <div class="modal-sub" id="reasignarSubtitle">Selecciona el nuevo responsable</div>
+    <div class="form-group">
+      <label class="form-label">Reasignar a</label>
+      <select class="form-select" id="reasignarDestino">
+        <!--
+          Los grupos se renderizan dinámicamente según el usuario.
+          Para Eliana: Analistas de Tesorería + Técnicos TI.
+          Para otros: solo Técnicos TI.
+        -->
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Motivo de reasignación (opcional)</label>
+      <textarea class="form-textarea" id="reasignarMotivo" placeholder="Ej: Carga de trabajo elevada, ausencia, especialidad requerida…" style="min-height:80px"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="cerrarReasignarModal()">Cancelar</button>
+      <button class="btn-primary" onclick="confirmarReasignar()">🔀 Reasignar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL RESOLUCIÓN ══ -->
 <div class="modal-overlay" id="resolucionModal">
   <div class="modal">
     <div class="modal-title">Marcar como Resuelto</div>
@@ -532,7 +617,50 @@ table.data-table tr:hover td{background:var(--s2)}
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-// ════════════ SESIÓN ════════════
+// ══════════════════════════════════════════════
+// CONFIGURACIÓN CENTRAL
+// ══════════════════════════════════════════════
+
+const API_URL           = "https://api.sheetbest.com/sheets/49638c56-d73c-41cf-8724-5e4d2a6896e5";
+const CLOUDINARY_CLOUD  = "dy50psi1g";
+const CLOUDINARY_PRESET = "tickets_preset";
+
+// Técnicos TI disponibles para reasignación
+const TECNICOS = {
+  Juan:   "Juan Francisco Jiménez",
+  Xavier: "Xavier Rosario",
+  Joel:   "Joel Holguin",
+  Yanna:  "Yanna Martínez"
+};
+
+// ══ ANALISTAS DEL DEPARTAMENTO DE TESORERÍA ══
+// Agrega o quita usuarios de este objeto para mantener el equipo actualizado.
+// La clave es el nombre de usuario (localStorage "usuario"), el valor es el nombre completo.
+const ANALISTAS_TESORERIA = {
+  eliana:  "Eliana Asuncion Payano Jimenez (Supervisora)",
+  chantal: "Chantal Sosa Rosario",
+  yanela:  "Yanela Almonte"
+};
+
+// Usuario con privilegios de supervisora en Tesorería
+const SUPERVISORA_TESORERIA = "eliana";
+
+// Función auxiliar: determina si un usuario es del equipo de Tesorería
+function esTesoreria(usuario) {
+  return Object.keys(ANALISTAS_TESORERIA).includes((usuario||"").toLowerCase());
+}
+
+// Función auxiliar: determina si el ticket pertenece al depto de Tesorería
+function ticketEsTesoreria(t) {
+  return (t.depto||"").toLowerCase().includes("tesor");
+}
+
+const PALABRAS_CRITICO = ["urgente","caído","caida","no funciona","bloqueado","crítico","apagado","no enciende","virus","hackeado","sin internet","sin sistema","fuera de servicio"];
+const PALABRAS_ALTO    = ["lento","error","falla","problema","no responde","reinicia","se traba","pantalla azul","no abre","no carga","tarda"];
+
+// ══════════════════════════════════════════════
+// SESIÓN
+// ══════════════════════════════════════════════
 (function(){
   const rol = localStorage.getItem("rol");
   if(rol !== "analista"){ window.location.href = "index.html"; return; }
@@ -545,6 +673,13 @@ table.data-table tr:hover td{background:var(--s2)}
   window._miUsuario = u;
   window._miDepto   = d;
   window._miNombre  = n;
+
+  // Badge especial para la supervisora
+  const roleLabel = document.getElementById("roleLabel");
+  if(u.toLowerCase() === SUPERVISORA_TESORERIA) {
+    roleLabel.textContent = "SUPERVISORA · TESORERÍA";
+    roleLabel.classList.add("supervisor");
+  }
 })();
 
 function anLogout(){
@@ -552,23 +687,30 @@ function anLogout(){
   window.location.href = "index.html";
 }
 
-// ════════════ TEMAS ════════════
+// ══════════════════════════════════════════════
+// TEMAS
+// ══════════════════════════════════════════════
 const TEMAS = [
-  { id:"oscuro",  label:"Oscuro",      bg:"#080810", dots:["#a78bfa","#22d3ee","#10b981"] },
-  { id:"vino",    label:"Rojo Vino",   bg:"#0e0508", dots:["#c0234e","#e8607a","#f59e0b"] },
-  { id:"rosa",    label:"Rosa Suave",  bg:"#ffe4ee", dots:["#c2185b","#e91e8c","#00bcd4"] },
-  { id:"blanco",  label:"Blanco",      bg:"#f7f7fa", dots:["#5c35c5","#7c55e0","#10b981"] },
-  { id:"dorado",  label:"Dorado",      bg:"#0a0800", dots:["#d4a017","#f0c030","#66bb6a"] },
-  { id:"oceano",  label:"Océano",      bg:"#010d18", dots:["#0ea5e9","#38bdf8","#10b981"] },
-  { id:"bosque",  label:"Bosque",      bg:"#020c04", dots:["#22c55e","#4ade80","#f59e0b"] },
-  { id:"violeta", label:"Violeta",     bg:"#060412", dots:["#9d4edd","#c77dff","#22d3ee"] },
+  { id:"oscuro",  label:"Oscuro",       bg:"#080810", dots:["#a78bfa","#22d3ee","#10b981"] },
+  { id:"vino",    label:"Rojo Vino",    bg:"#0e0508", dots:["#c0234e","#e8607a","#f59e0b"] },
+  { id:"rosa",    label:"Rosa Suave",   bg:"#ffe4ee", dots:["#c2185b","#e91e8c","#00bcd4"] },
+  { id:"blanco",  label:"Blanco",       bg:"#f7f7fa", dots:["#5c35c5","#7c55e0","#10b981"] },
+  { id:"dorado",  label:"Dorado",       bg:"#0a0800", dots:["#d4a017","#f0c030","#66bb6a"] },
+  { id:"oceano",  label:"Océano",       bg:"#010d18", dots:["#0ea5e9","#38bdf8","#10b981"] },
+  { id:"bosque",  label:"Bosque",       bg:"#020c04", dots:["#22c55e","#4ade80","#f59e0b"] },
+  { id:"violeta", label:"Violeta",      bg:"#060412", dots:["#9d4edd","#c77dff","#22d3ee"] },
+  { id:"rojo",    label:"Rojo Puro",    bg:"#0f0000", dots:["#ff1a1a","#ff5555","#00e676"] },
+  { id:"naranja", label:"Naranja",      bg:"#0f0600", dots:["#ff6600","#ff9933","#ffee00"] },
+  { id:"neon",    label:"Verde Neón",   bg:"#000d00", dots:["#00ff55","#66ff99","#00e5ff"] },
+  { id:"cyan",    label:"Cyan Eléct.",  bg:"#000d10", dots:["#00d4ff","#67e8f9","#00ff88"] },
+  { id:"fucsia",  label:"Fucsia",       bg:"#0f0010", dots:["#ff00cc","#ff55dd","#00ff88"] },
 ];
 
 function buildThemeGrid(){
   const grid = document.getElementById("themeGrid");
   const actual = localStorage.getItem("tema") || "oscuro";
   grid.innerHTML = TEMAS.map(t => `
-    <div class="theme-swatch ${t.id === actual ? 'selected' : ''}" onclick="aplicarTema('${t.id}')" title="${t.label}">
+    <div class="theme-swatch ${t.id===actual?'selected':''}" onclick="aplicarTema('${t.id}')" title="${t.label}">
       <div class="theme-check">✓</div>
       <div class="theme-swatch-bg" style="background:${t.bg}">
         ${t.dots.map(c=>`<div class="theme-swatch-dot" style="background:${c}"></div>`).join("")}
@@ -579,11 +721,11 @@ function buildThemeGrid(){
 
 function aplicarTema(id){
   const root = document.documentElement;
-  if(id === "oscuro") root.removeAttribute("data-theme");
-  else root.setAttribute("data-theme", id);
-  localStorage.setItem("tema", id);
+  if(id==="oscuro") root.removeAttribute("data-theme");
+  else root.setAttribute("data-theme",id);
+  localStorage.setItem("tema",id);
   buildThemeGrid();
-  showToast("Tema aplicado: " + (TEMAS.find(t=>t.id===id)?.label||id), "ok");
+  showToast("Tema aplicado: "+(TEMAS.find(t=>t.id===id)?.label||id),"ok");
 }
 
 function toggleThemePanel(){
@@ -592,35 +734,32 @@ function toggleThemePanel(){
   if(panel.classList.contains("open")) buildThemeGrid();
 }
 
-// Cerrar panel al clicar fuera
 document.addEventListener("click", e => {
   const panel = document.getElementById("themePanel");
   const btn   = document.getElementById("themeToggle");
-  if(panel.classList.contains("open") && !panel.contains(e.target) && e.target !== btn)
+  if(panel.classList.contains("open") && !panel.contains(e.target) && e.target!==btn)
     panel.classList.remove("open");
 });
 
-// Aplicar tema guardado al cargar
 (function(){
   const t = localStorage.getItem("tema") || "oscuro";
-  if(t !== "oscuro") document.documentElement.setAttribute("data-theme", t);
+  if(t!=="oscuro") document.documentElement.setAttribute("data-theme",t);
 })();
 
-// ════════════ CONFIG ════════════
-const API_URL           = "https://api.sheetbest.com/sheets/49638c56-d73c-41cf-8724-5e4d2a6896e5";
-const CLOUDINARY_CLOUD  = "dy50psi1g";
-const CLOUDINARY_PRESET = "tickets_preset";
-const NOMBRES_COMPLETOS = { Juan:"Juan Francisco Jiménez", Joel:"Joel Holguin", Yanna:"Yanna Martínez", Xavier:"Xavier Rosario" };
-const PALABRAS_CRITICO  = ["urgente","caído","caida","no funciona","bloqueado","crítico","apagado","no enciende","virus","hackeado","sin internet","sin sistema","fuera de servicio"];
-const PALABRAS_ALTO     = ["lento","error","falla","problema","no responde","reinicia","se traba","pantalla azul","no abre","no carga","tarda"];
+// ══════════════════════════════════════════════
+// ESTADO GLOBAL
+// ══════════════════════════════════════════════
+let allTickets      = [];
+let asigFilter      = "todos";
+let petFilter       = "todos";
+let resAnalistaFilt = "todos"; // filtro de analista en vista resueltos (Eliana)
+let archivos        = [];
+let ticketResId     = null;
+let ticketReasigId  = null;
 
-let allTickets = [];
-let asigFilter = "todos";
-let petFilter  = "todos";
-let archivos   = [];
-let ticketResId = null;
-
-// ════════════ URGENCIA ════════════
+// ══════════════════════════════════════════════
+// URGENCIA
+// ══════════════════════════════════════════════
 function calcUrgencia(t){
   const texto = ((t.titulo||"")+" "+(t.descripcion||"")).toLowerCase();
   let dias = 0;
@@ -639,7 +778,9 @@ function calcUrgencia(t){
   return {level:"normal",label:"🟢 NORMAL",cls:"urg-normal",strip:"strip-normal"};
 }
 
-// ════════════ CLOCK & AUTOREFRESH ════════════
+// ══════════════════════════════════════════════
+// RELOJ Y AUTORECARGA
+// ══════════════════════════════════════════════
 function updateClock(){ document.getElementById("nowTime").textContent = new Date().toLocaleString("es-DO"); }
 updateClock(); setInterval(updateClock, 1000);
 window.addEventListener("load", ()=>{ recargarTodo(); setInterval(recargarTodo, 60000); });
@@ -649,67 +790,263 @@ async function recargarTodo(){
   try{
     const data = await fetch(API_URL).then(r=>r.json());
     allTickets = Array.isArray(data) ? data : [];
-    actualizarBadges(); renderAsignados(); renderResueltos(); renderPeticiones();
+    actualizarBadges();
+    renderAsignados();
+    renderResueltos();
+    renderPeticiones();
     fillLoad("lb-asig");
   }catch{ showToast("Error al cargar datos","err"); }
 }
 function animLoad(id){ const b=document.getElementById(id); if(!b)return; b.style.width="0%"; setTimeout(()=>b.style.width="70%",80); }
 function fillLoad(id){ const b=document.getElementById(id); if(!b)return; b.style.width="100%"; setTimeout(()=>b.style.width="0%",700); }
 
-// ════════════ NAV ════════════
-const VIEW_TITLES = { asignados:"Asignados a mí", resueltos:"Mis resueltos", nueva:"Nueva petición a técnico", peticiones:"Mis peticiones" };
+// ══════════════════════════════════════════════
+// NAVEGACIÓN
+// ══════════════════════════════════════════════
+const esSupervisora = () => (window._miUsuario||"").toLowerCase() === SUPERVISORA_TESORERIA;
+
 function switchView(v){
   document.querySelectorAll(".view").forEach(el=>el.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(el=>el.classList.remove("active"));
   document.getElementById("view-"+v)?.classList.add("active");
   document.getElementById("nav-"+v)?.classList.add("active");
-  document.getElementById("viewTitle").textContent = VIEW_TITLES[v] || v;
+  const titles = {
+    asignados:  "Asignados a mí",
+    nueva:      "Nueva petición a técnico",
+    peticiones: "Mis peticiones",
+    resueltos:  esSupervisora() ? "Resueltos · Tesorería" : "Mis resueltos"
+  };
+  document.getElementById("viewTitle").textContent = titles[v] || v;
 }
 
-// ════════════ BADGES ════════════
+// ══════════════════════════════════════════════
+// BADGES
+// ══════════════════════════════════════════════
 function actualizarBadges(){
   const mi = window._miUsuario;
-  const asig = allTickets.filter(t=>(t.asignado||"").toLowerCase()===mi.toLowerCase()&&t.estado!=="Resuelto");
-  const pets = allTickets.filter(t=>(t.usuario||"").toLowerCase()===mi.toLowerCase());
+  const superv = esSupervisora();
+
+  const asig = allTickets.filter(t =>
+    (t.asignado||"").toLowerCase() === mi.toLowerCase() && t.estado !== "Resuelto"
+  );
+  const pets = allTickets.filter(t =>
+    (t.usuario||"").toLowerCase() === mi.toLowerCase()
+  );
+
   const nbA = document.getElementById("nb-asignados");
   if(nbA){ nbA.textContent=asig.length; nbA.style.display=asig.length>0?"":"none"; }
   const nbP = document.getElementById("nb-peticiones");
   if(nbP){ nbP.textContent=pets.length; nbP.style.display=pets.length>0?"":"none"; }
-  const resueltos = allTickets.filter(t=>(t.asignado||"").toLowerCase()===mi.toLowerCase()&&t.estado==="Resuelto");
+
+  // Supervisora ve todos los resueltos de Tesorería; los demás solo los suyos
+  const resueltos = superv
+    ? allTickets.filter(t => ticketEsTesoreria(t) && t.estado==="Resuelto")
+    : allTickets.filter(t => (t.asignado||"").toLowerCase()===mi.toLowerCase() && t.estado==="Resuelto");
+
   const nbR = document.getElementById("nb-resueltos");
   if(nbR){ nbR.textContent=resueltos.length; nbR.style.display=resueltos.length>0?"":"none"; }
+
+  // Etiquetas dinámicas
+  const navLabel     = document.getElementById("nav-resueltos-label");
+  const bannerTitle  = document.getElementById("res-banner-title");
+  const bannerSub    = document.getElementById("res-banner-sub");
+  const secTitle     = document.getElementById("res-sec-title");
+
+  if(superv){
+    if(navLabel)    navLabel.textContent    = "Resueltos Tesorería";
+    if(bannerTitle) bannerTitle.textContent = "🏦 Resueltos del departamento de Tesorería";
+    if(bannerSub)   bannerSub.textContent   = "Historial completo de todos los tickets cerrados en Tesorería, incluyendo los atendidos por cada analista del equipo.";
+    if(secTitle)    secTitle.textContent    = "Tickets resueltos · Tesorería";
+    construirChipsAnalistas();
+  } else {
+    if(navLabel)    navLabel.textContent    = "Mis resueltos";
+    if(bannerTitle) bannerTitle.textContent = "✓ Tickets que has resuelto";
+    if(bannerSub)   bannerSub.textContent   = "Historial completo de solicitudes de usuario que atendiste y cerraste.";
+    if(secTitle)    secTitle.textContent    = "Mis tickets resueltos";
+    document.getElementById("analistaFilterWrap").classList.remove("visible");
+  }
 }
 
-// ════════════ RENDER ASIGNADOS ════════════
-function setAsigFilter(f,btn){ asigFilter=f; document.querySelectorAll("#view-asignados .f-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); renderAsignados(); }
+// ══════════════════════════════════════════════
+// CHIPS DE FILTRO POR ANALISTA (solo Eliana)
+// ══════════════════════════════════════════════
+function construirChipsAnalistas(){
+  const wrap = document.getElementById("analistaFilterWrap");
+  if(!wrap) return;
+
+  // Recolectar analistas únicos que tienen tickets resueltos en Tesorería
+  const analistasConTickets = [...new Set(
+    allTickets
+      .filter(t => ticketEsTesoreria(t) && t.estado==="Resuelto" && t.asignado)
+      .map(t => (t.asignado||"").toLowerCase())
+  )];
+
+  if(analistasConTickets.length === 0){
+    wrap.classList.remove("visible");
+    return;
+  }
+
+  const chipLabel = wrap.querySelector("span") || document.createElement("span");
+  chipLabel.style.cssText = "font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-right:4px";
+  chipLabel.textContent = "Filtrar por:";
+
+  // Reconstruir chips
+  wrap.innerHTML = "";
+  wrap.appendChild(chipLabel);
+
+  // Chip "Todos"
+  const chipTodos = document.createElement("button");
+  chipTodos.className = "analista-chip" + (resAnalistaFilt==="todos"?" active":"");
+  chipTodos.textContent = "Todos";
+  chipTodos.onclick = () => { resAnalistaFilt="todos"; renderResueltos(); construirChipsAnalistas(); };
+  wrap.appendChild(chipTodos);
+
+  // Un chip por cada analista
+  analistasConTickets.forEach(userKey => {
+    const label = ANALISTAS_TESORERIA[userKey] || userKey;
+    const chip  = document.createElement("button");
+    chip.className = "analista-chip" + (resAnalistaFilt===userKey?" active":"");
+    chip.textContent = label;
+    chip.onclick = () => { resAnalistaFilt=userKey; renderResueltos(); construirChipsAnalistas(); };
+    wrap.appendChild(chip);
+  });
+
+  wrap.classList.add("visible");
+}
+
+// ══════════════════════════════════════════════
+// RENDER ASIGNADOS
+// ══════════════════════════════════════════════
+function setAsigFilter(f,btn){
+  asigFilter=f;
+  document.querySelectorAll("#view-asignados .f-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  renderAsignados();
+}
 
 function renderAsignados(){
-  const grid=document.getElementById("asigGrid");
-  const s=(document.getElementById("asigSearch")?.value||"").toLowerCase();
-  const mi=window._miUsuario;
-  let list=allTickets.filter(t=>(t.asignado||"").toLowerCase()===mi.toLowerCase()&&t.estado!=="Resuelto");
+  const grid = document.getElementById("asigGrid");
+  const s    = (document.getElementById("asigSearch")?.value||"").toLowerCase();
+  const mi   = window._miUsuario;
+  let list   = allTickets.filter(t =>
+    (t.asignado||"").toLowerCase()===mi.toLowerCase() && t.estado!=="Resuelto"
+  );
   if(asigFilter!=="todos") list=list.filter(t=>t.estado===asigFilter);
-  if(s) list=list.filter(t=>(t.titulo||"").toLowerCase().includes(s)||(t.usuario||"").toLowerCase().includes(s)||(t.depto||"").toLowerCase().includes(s));
-  list.sort((a,b)=>{const o={critico:0,alto:1,medio:2,normal:3};return o[calcUrgencia(a).level]-o[calcUrgencia(b).level];});
-  document.getElementById("asigCount").textContent=list.length+" ticket"+(list.length!==1?"s":"");
+  if(s) list=list.filter(t=>
+    (t.titulo||"").toLowerCase().includes(s)||
+    (t.usuario||"").toLowerCase().includes(s)||
+    (t.depto||"").toLowerCase().includes(s)
+  );
+  list.sort((a,b)=>{ const o={critico:0,alto:1,medio:2,normal:3}; return o[calcUrgencia(a).level]-o[calcUrgencia(b).level]; });
+  document.getElementById("asigCount").textContent = list.length+" ticket"+(list.length!==1?"s":"");
   grid.innerHTML="";
-  if(!list.length){ grid.innerHTML=`<div class="empty-state"><div class="empty-icon">${asigFilter!=="todos"?"🔍":"📌"}</div><p>${asigFilter!=="todos"?"Sin tickets con ese estado.":"No tienes tickets asignados activos."}</p></div>`; return; }
-  list.forEach(t=>grid.appendChild(buildAsignadoCard(t)));
+  if(!list.length){
+    grid.innerHTML=`<div class="empty-state"><div class="empty-icon">${asigFilter!=="todos"?"🔍":"📌"}</div><p>${asigFilter!=="todos"?"Sin tickets con ese estado.":"No tienes tickets asignados activos."}</p></div>`;
+    return;
+  }
+  list.forEach(t=>grid.appendChild(buildTicketCard(t,false)));
 }
 
-function buildAsignadoCard(t){
-  const urg=calcUrgencia(t);
-  const ecCls=t.estado==="En Proceso"?"b-proc":"b-pend";
-  const recH=t.recibido==="si"?`<span class="b-received">📩 Recibido · ${(t.fecha_recibido||"").split(",")[0]}</span>`:"";
-  const recibirBtn=t.recibido!=="si"?`<button class="btn-receive" onclick="marcarRecibido('${encodeURIComponent(t.id)}')">📩 Marcar recibido</button>`:"";
-  let botones="";
-  if(t.estado==="Pendiente") botones=`<button class="btn-proc" onclick="cambiarEstado('${encodeURIComponent(t.id)}','En Proceso')">⚙ En Proceso</button><button class="btn-resolve" onclick="abrirResModal('${encodeURIComponent(t.id)}')">✓ Resuelto</button>`;
-  else if(t.estado==="En Proceso") botones=`<button class="btn-resolve" onclick="abrirResModal('${encodeURIComponent(t.id)}')">✓ Resuelto</button>`;
-  let adjH="";
-  if(t.adjuntos&&t.adjuntos.trim()){ const urls=t.adjuntos.split(",").map(u=>u.trim()).filter(Boolean); adjH=urls.map(u=>`<a class="t-att" href="${u}" target="_blank" style="display:inline-block;margin-right:8px;margin-top:4px">📎 ${decodeURIComponent(u.split("/").pop().split("?")[0])}</a>`).join(""); }
-  const div=document.createElement("div");
-  div.className="t-card";
-  div.innerHTML=`
+// ══════════════════════════════════════════════
+// RENDER RESUELTOS
+// ══════════════════════════════════════════════
+function renderResueltos(){
+  const grid = document.getElementById("resGrid");
+  const s    = (document.getElementById("resSearch")?.value||"").toLowerCase();
+  const mi   = window._miUsuario;
+  const superv = esSupervisora();
+
+  // Base: supervisora ve todos de Tesorería; los demás solo los suyos
+  let list = superv
+    ? allTickets.filter(t => ticketEsTesoreria(t) && t.estado==="Resuelto")
+    : allTickets.filter(t => (t.asignado||"").toLowerCase()===mi.toLowerCase() && t.estado==="Resuelto");
+
+  // Filtro adicional por analista (solo activo para Eliana)
+  if(superv && resAnalistaFilt!=="todos"){
+    list = list.filter(t => (t.asignado||"").toLowerCase()===resAnalistaFilt);
+  }
+
+  // Búsqueda
+  if(s) list = list.filter(t=>
+    (t.titulo||"").toLowerCase().includes(s)||
+    (t.usuario||"").toLowerCase().includes(s)||
+    (t.asignado||"").toLowerCase().includes(s)||
+    (t.resolucion||"").toLowerCase().includes(s)
+  );
+
+  document.getElementById("resCount").textContent = list.length+" ticket"+(list.length!==1?"s":"");
+  grid.innerHTML="";
+
+  if(!list.length){
+    grid.innerHTML=`<div class="empty-state"><div class="empty-icon">✅</div><p>${superv?"No hay tickets resueltos"+(resAnalistaFilt!=="todos"?" para este analista":"")+".":"Aún no has resuelto tickets."}</p></div>`;
+    return;
+  }
+
+  // Mostrar del más reciente al más antiguo
+  list.slice().reverse().forEach(t => {
+    const div = buildTicketCard(t, superv); // superv=true → muestra quién lo atendió
+    if(t.resolucion){
+      const res = document.createElement("div");
+      res.className = "t-resolution";
+      res.innerHTML = `✓ ${t.resolucion}<br><small style="opacity:.7">Resuelto: ${t.fecha_resuelto||"—"} ${t.participantes?"· por "+t.participantes:""}</small>`;
+      div.appendChild(res);
+    }
+    grid.appendChild(div);
+  });
+}
+
+// ══════════════════════════════════════════════
+// CONSTRUCTOR DE TARJETA DE TICKET
+// ══════════════════════════════════════════════
+// showAtendido: true → muestra badge "Atendido por X" (útil en vista de supervisora)
+function buildTicketCard(t, showAtendido){
+  const urg   = calcUrgencia(t);
+  const ecCls = t.estado==="Resuelto"?"b-res":t.estado==="En Proceso"?"b-proc":"b-pend";
+  const mi    = window._miUsuario;
+
+  const recH = t.recibido==="si"
+    ? `<span class="b-received">📩 Recibido · ${(t.fecha_recibido||"").split(",")[0]}</span>`
+    : "";
+
+  // Badge "Atendido por" (solo en vista supervisora de resueltos)
+  let atendidoH = "";
+  if(showAtendido && t.estado==="Resuelto"){
+    const nombre = ANALISTAS_TESORERIA[(t.asignado||"").toLowerCase()] || t.asignado || "—";
+    atendidoH = `<span class="b-atendido">👤 ${nombre}</span>`;
+  }
+
+  // Botón "Marcar recibido"
+  const recibirBtn = (t.recibido!=="si" && t.estado!=="Resuelto" && (t.asignado||"").toLowerCase()===mi.toLowerCase())
+    ? `<button class="btn-receive" onclick="marcarRecibido('${encodeURIComponent(t.id)}')">📩 Marcar recibido</button>` : "";
+
+  // ══ BOTÓN REASIGNAR ══
+  // Visible SOLO para Eliana, cuando el ticket está asignado a cualquier
+  // analista de Tesorería (Eliana, Chantal, Yanela) y no está resuelto
+  const superv = esSupervisora();
+  const asignadoEsTesoreria = esTesoreria(t.asignado);
+  const reasignarBtn = (superv && asignadoEsTesoreria && t.estado !== "Resuelto")
+    ? `<button class="btn-reasignar" onclick="abrirReasignarModal('${encodeURIComponent(t.id)}','${encodeURIComponent(t.titulo||"")}','${encodeURIComponent(t.asignado||"")}')">🔀 Reasignar</button>`
+    : "";
+
+  // Botones de estado (solo si es el analista asignado y no está resuelto)
+  let botones = "";
+  if((t.asignado||"").toLowerCase()===mi.toLowerCase() && t.estado!=="Resuelto"){
+    if(t.estado==="Pendiente")
+      botones = `<button class="btn-proc" onclick="cambiarEstado('${encodeURIComponent(t.id)}','En Proceso')">⚙ En Proceso</button><button class="btn-resolve" onclick="abrirResModal('${encodeURIComponent(t.id)}')">✓ Resuelto</button>`;
+    else if(t.estado==="En Proceso")
+      botones = `<button class="btn-resolve" onclick="abrirResModal('${encodeURIComponent(t.id)}')">✓ Resuelto</button>`;
+  }
+
+  // Adjuntos
+  let adjH = "";
+  if(t.adjuntos&&t.adjuntos.trim()){
+    const urls = t.adjuntos.split(",").map(u=>u.trim()).filter(Boolean);
+    adjH = urls.map(u=>`<a class="t-att" href="${u}" target="_blank" style="display:inline-block;margin-right:8px;margin-top:4px">📎 ${decodeURIComponent(u.split("/").pop().split("?")[0])}</a>`).join("");
+  }
+
+  const div = document.createElement("div");
+  div.className = "t-card";
+  div.innerHTML = `
     <div class="urgency-strip ${urg.strip}"></div>
     <div class="t-top">
       <div><div class="t-id">${t.id||""}</div><div class="t-title">${t.titulo||""}</div></div>
@@ -719,64 +1056,149 @@ function buildAsignadoCard(t){
       </div>
     </div>
     <div class="t-desc">${t.descripcion||""}</div>
-    <div class="t-meta"><span class="badge b-depto">${t.depto||""}</span><span class="badge b-user">👤 ${t.usuario||""}</span>${recH}</div>
+    <div class="t-meta">
+      <span class="badge b-depto">${t.depto||""}</span>
+      <span class="badge b-user">👤 ${t.usuario||""}</span>
+      ${recH}${atendidoH}
+    </div>
     <hr class="t-hr"/>
-    <div class="t-bottom"><div class="t-assigned">Solicitado por <strong>${t.usuario||"usuario"}</strong></div><div class="t-date">📅 ${(t.fecha||"").split(",")[0]||""}</div></div>
+    <div class="t-bottom">
+      <div class="t-assigned">Solicitado por <strong>${t.usuario||"usuario"}</strong></div>
+      <div class="t-date">📅 ${(t.fecha||"").split(",")[0]||""}</div>
+    </div>
     ${adjH?`<div style="margin-top:8px">${adjH}</div>`:""}
-    <div class="t-actions">${recibirBtn}${botones}</div>`;
+    <div class="t-actions">${recibirBtn}${botones}${reasignarBtn}</div>`;
   return div;
 }
 
-// ════════════ RENDER RESUELTOS ════════════
-function renderResueltos(){
-  const grid=document.getElementById("resGrid");
-  const s=(document.getElementById("resSearch")?.value||"").toLowerCase();
-  const mi=window._miUsuario;
-  let list=allTickets.filter(t=>(t.asignado||"").toLowerCase()===mi.toLowerCase()&&t.estado==="Resuelto");
-  if(s) list=list.filter(t=>(t.titulo||"").toLowerCase().includes(s)||(t.usuario||"").toLowerCase().includes(s));
-  document.getElementById("resCount").textContent=list.length+" ticket"+(list.length!==1?"s":"");
-  grid.innerHTML="";
-  if(!list.length){ grid.innerHTML=`<div class="empty-state"><div class="empty-icon">✅</div><p>Aún no has resuelto tickets.</p></div>`; return; }
-  list.slice().reverse().forEach(t=>{
-    const div=buildAsignadoCard(t);
-    if(t.resolucion){ const res=document.createElement("div"); res.className="t-resolution"; res.innerHTML=`✓ ${t.resolucion}<br><small style="opacity:.7">Resuelto: ${t.fecha_resuelto||""}</small>`; div.appendChild(res); }
-    grid.appendChild(div);
-  });
-}
-
-// ════════════ ACCIONES ════════════
+// ══════════════════════════════════════════════
+// ACCIONES
+// ══════════════════════════════════════════════
 async function marcarRecibido(idEnc){
-  const id=decodeURIComponent(idEnc);
+  const id = decodeURIComponent(idEnc);
   try{
-    const r=await fetch(`${API_URL}/id/${encodeURIComponent(id)}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({recibido:"si",fecha_recibido:new Date().toLocaleString("es-DO")})});
+    const r = await fetch(`${API_URL}/id/${encodeURIComponent(id)}`,{
+      method:"PATCH", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({recibido:"si", fecha_recibido:new Date().toLocaleString("es-DO")})
+    });
     if(!r.ok) throw new Error();
     showToast("Ticket marcado como recibido ✓","ok"); await recargarTodo();
   }catch{ showToast("Error al marcar recibido","err"); }
 }
 
-async function cambiarEstado(idEnc,nuevoEstado){
-  const id=decodeURIComponent(idEnc);
+async function cambiarEstado(idEnc, nuevoEstado){
+  const id = decodeURIComponent(idEnc);
   try{
-    const r=await fetch(`${API_URL}/id/${encodeURIComponent(id)}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({estado:nuevoEstado})});
+    const r = await fetch(`${API_URL}/id/${encodeURIComponent(id)}`,{
+      method:"PATCH", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({estado:nuevoEstado})
+    });
     if(!r.ok) throw new Error();
     showToast(`Estado → "${nuevoEstado}"`,"ok"); await recargarTodo();
   }catch{ showToast("Error al cambiar estado","err"); }
 }
 
-function abrirResModal(idEnc){ ticketResId=decodeURIComponent(idEnc); document.getElementById("detalleRes").value=""; document.getElementById("resolucionModal").classList.add("open"); }
-function cerrarResModal(){ document.getElementById("resolucionModal").classList.remove("open"); ticketResId=null; }
+function abrirResModal(idEnc){
+  ticketResId = decodeURIComponent(idEnc);
+  document.getElementById("detalleRes").value = "";
+  document.getElementById("resolucionModal").classList.add("open");
+}
+function cerrarResModal(){
+  document.getElementById("resolucionModal").classList.remove("open");
+  ticketResId = null;
+}
 
 async function confirmarResolucion(){
-  const detalle=document.getElementById("detalleRes").value.trim();
+  const detalle = document.getElementById("detalleRes").value.trim();
   if(!detalle){ showToast("Escribe el detalle de la resolución","err"); return; }
   try{
-    const r=await fetch(`${API_URL}/id/${encodeURIComponent(ticketResId)}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({estado:"Resuelto",resolucion:detalle,participantes:window._miNombre||window._miUsuario,fecha_resuelto:new Date().toLocaleString("es-DO")})});
+    const r = await fetch(`${API_URL}/id/${encodeURIComponent(ticketResId)}`,{
+      method:"PATCH", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({
+        estado:"Resuelto",
+        resolucion:detalle,
+        participantes:window._miNombre||window._miUsuario,
+        fecha_resuelto:new Date().toLocaleString("es-DO")
+      })
+    });
     if(!r.ok) throw new Error();
     showToast("Ticket resuelto ✓","ok"); cerrarResModal(); await recargarTodo();
   }catch{ showToast("Error al resolver ticket","err"); }
 }
 
-// ════════════ ARCHIVOS ════════════
+// ══════════════════════════════════════════════
+// REASIGNAR (solo Supervisora · Tesorería)
+// ══════════════════════════════════════════════
+function abrirReasignarModal(idEnc, tituloEnc, asignadoEnc){
+  ticketReasigId     = decodeURIComponent(idEnc);
+  const titulo       = decodeURIComponent(tituloEnc);
+  const asignadoActual = decodeURIComponent(asignadoEnc);
+
+  document.getElementById("reasignarSubtitle").textContent =
+    `"${titulo}" · actualmente: ${asignadoActual||"sin asignar"}`;
+  document.getElementById("reasignarMotivo").value = "";
+
+  // Construir opciones del select dinámicamente
+  const sel = document.getElementById("reasignarDestino");
+  sel.innerHTML = "";
+
+  // Grupo: Analistas de Tesorería
+  const grpAnalistas = document.createElement("optgroup");
+  grpAnalistas.label = "— Analistas Tesorería —";
+  Object.entries(ANALISTAS_TESORERIA).forEach(([key,nombre]) => {
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = nombre;
+    if(key === (asignadoActual||"").toLowerCase()) opt.textContent += " (actual)";
+    grpAnalistas.appendChild(opt);
+  });
+  sel.appendChild(grpAnalistas);
+
+  // Grupo: Técnicos TI
+  const grpTecnicos = document.createElement("optgroup");
+  grpTecnicos.label = "— Técnicos TI —";
+  Object.entries(TECNICOS).forEach(([key,nombre]) => {
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = nombre;
+    grpTecnicos.appendChild(opt);
+  });
+  sel.appendChild(grpTecnicos);
+
+  document.getElementById("reasignarModal").classList.add("open");
+}
+
+function cerrarReasignarModal(){
+  document.getElementById("reasignarModal").classList.remove("open");
+  ticketReasigId = null;
+}
+
+async function confirmarReasignar(){
+  const destino = document.getElementById("reasignarDestino").value;
+  const motivo  = document.getElementById("reasignarMotivo").value.trim();
+  if(!destino){ showToast("Selecciona a quién reasignar","err"); return; }
+
+  try{
+    const payload = { asignado: destino };
+    if(motivo){
+      payload.resolucion = `[Reasignado por ${window._miNombre||window._miUsuario}] ${motivo}`;
+    }
+    const r = await fetch(`${API_URL}/id/${encodeURIComponent(ticketReasigId)}`,{
+      method:"PATCH", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(payload)
+    });
+    if(!r.ok) throw new Error();
+
+    const nombreDestino = ANALISTAS_TESORERIA[destino] || TECNICOS[destino] || destino;
+    showToast(`Ticket reasignado a ${nombreDestino} ✓`,"ok");
+    cerrarReasignarModal();
+    await recargarTodo();
+  }catch{ showToast("Error al reasignar","err"); }
+}
+
+// ══════════════════════════════════════════════
+// ARCHIVOS
+// ══════════════════════════════════════════════
 function fileDragOver(e){ e.preventDefault(); document.getElementById("fileDrop").classList.add("drag"); }
 function fileDragLeave(){ document.getElementById("fileDrop").classList.remove("drag"); }
 function fileDrop(e){ e.preventDefault(); document.getElementById("fileDrop").classList.remove("drag"); agregarArchivos(e.dataTransfer.files); }
@@ -791,55 +1213,69 @@ function agregarArchivos(files){
 }
 function eliminarArchivo(idx){ archivos.splice(idx,1); renderFileList(); }
 function renderFileList(){
-  const lista=document.getElementById("fileList"); if(!lista)return;
+  const lista = document.getElementById("fileList"); if(!lista)return;
   const EXT_ICONS={pdf:"📄",doc:"📝",docx:"📝",xls:"📊",xlsx:"📊",zip:"🗜",png:"🖼",jpg:"🖼",jpeg:"🖼",gif:"🖼",webp:"🖼",svg:"🖼",mp4:"🎬",mov:"🎬"};
-  lista.innerHTML=archivos.map((a,i)=>{
-    const ext=a.nombre.split(".").pop().toLowerCase();
-    const icon=EXT_ICONS[ext]||"📁";
-    const size=a.tamano<1048576?(a.tamano/1024).toFixed(1)+" KB":(a.tamano/1048576).toFixed(1)+" MB";
+  lista.innerHTML = archivos.map((a,i)=>{
+    const ext  = a.nombre.split(".").pop().toLowerCase();
+    const icon = EXT_ICONS[ext]||"📁";
+    const size = a.tamano<1048576?(a.tamano/1024).toFixed(1)+" KB":(a.tamano/1048576).toFixed(1)+" MB";
     return `<div class="file-item"><span style="font-size:16px">${icon}</span><span class="file-item-name">${a.nombre}</span><span class="file-item-size">${size}</span><button class="file-item-rm" onclick="eliminarArchivo(${i})">✕</button></div>`;
   }).join("");
 }
 
 async function subirArchivos(){
   if(!archivos.length) return [];
-  const prog=document.getElementById("uploadProg"),fill=document.getElementById("uploadFill"),label=document.getElementById("uploadLabel");
+  const prog  = document.getElementById("uploadProg");
+  const fill  = document.getElementById("uploadFill");
+  const label = document.getElementById("uploadLabel");
   prog.classList.add("show");
-  const resultados=[];
+  const resultados = [];
   for(let i=0;i<archivos.length;i++){
-    const {file,nombre}=archivos[i];
-    label.textContent=`Subiendo ${i+1}/${archivos.length}: ${nombre}`;
-    const ext=nombre.split(".").pop().toLowerCase();
-    const tipo=["png","jpg","jpeg","gif","webp","svg"].includes(ext)?"image":["mp4","mov","avi"].includes(ext)?"video":"raw";
-    const fd=new FormData();
+    const {file,nombre} = archivos[i];
+    label.textContent = `Subiendo ${i+1}/${archivos.length}: ${nombre}`;
+    const ext  = nombre.split(".").pop().toLowerCase();
+    const tipo = ["png","jpg","jpeg","gif","webp","svg"].includes(ext)?"image":["mp4","mov","avi"].includes(ext)?"video":"raw";
+    const fd   = new FormData();
     fd.append("file",file); fd.append("upload_preset",CLOUDINARY_PRESET); fd.append("folder","tickets");
     try{
-      const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${tipo}/upload`,{method:"POST",body:fd});
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${tipo}/upload`,{method:"POST",body:fd});
       if(!res.ok) throw new Error();
       resultados.push((await res.json()).secure_url);
     }catch{ showToast(`Error subiendo ${nombre}`,"warn"); }
-    fill.style.width=Math.round(((i+1)/archivos.length)*100)+"%";
+    fill.style.width = Math.round(((i+1)/archivos.length)*100)+"%";
   }
-  label.textContent=`✅ ${resultados.length} archivo(s) subido(s).`;
+  label.textContent = `✅ ${resultados.length} archivo(s) subido(s).`;
   setTimeout(()=>{ prog.classList.remove("show"); fill.style.width="0%"; },2500);
   return resultados;
 }
 
-// ════════════ ENVIAR PETICIÓN ════════════
+// ══════════════════════════════════════════════
+// ENVIAR PETICIÓN
+// ══════════════════════════════════════════════
 async function enviarPeticion(){
-  const titulo=document.getElementById("nTitulo").value.trim();
-  const descripcion=document.getElementById("nDescripcion").value.trim();
-  const tecnico=document.getElementById("nTecnico").value;
+  const titulo      = document.getElementById("nTitulo").value.trim();
+  const descripcion = document.getElementById("nDescripcion").value.trim();
+  const tecnico     = document.getElementById("nTecnico").value;
   if(!titulo||!descripcion){ showToast("Completa el título y la descripción","err"); return; }
-  const btn=document.getElementById("btnEnviar");
+  const btn = document.getElementById("btnEnviar");
   btn.disabled=true; btn.textContent="Subiendo archivos…";
-  const urls=await subirArchivos();
+  const urls = await subirArchivos();
   btn.textContent="Enviando petición…";
-  const ticket={id:"TK-"+Date.now(),titulo,descripcion,depto:window._miDepto||"Analista",asignado:tecnico,estado:"Pendiente",usuario:window._miUsuario,fecha:new Date().toLocaleString("es-DO"),adjuntos:urls.join(", "),resolucion:"",participantes:"",fecha_recibido:"",recibido:"",fecha_resuelto:""};
+  const ticket = {
+    id:"TK-"+Date.now(), titulo, descripcion,
+    depto:window._miDepto||"Analista",
+    asignado:tecnico, estado:"Pendiente",
+    usuario:window._miUsuario,
+    fecha:new Date().toLocaleString("es-DO"),
+    adjuntos:urls.join(", "),
+    resolucion:"", participantes:"",
+    fecha_recibido:"", recibido:"", fecha_resuelto:""
+  };
   try{
-    const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(ticket)});
+    const r = await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(ticket)});
     if(!r.ok) throw new Error(`HTTP ${r.status}`);
-    showToast("Petición enviada correctamente ✓","ok"); limpiarFormulario(); await recargarTodo(); switchView("peticiones");
+    showToast("Petición enviada correctamente ✓","ok");
+    limpiarFormulario(); await recargarTodo(); switchView("peticiones");
   }catch(err){ showToast("Error al enviar: "+err.message,"err"); }
   finally{ btn.disabled=false; btn.textContent="📤 Enviar petición"; }
 }
@@ -851,25 +1287,40 @@ function limpiarFormulario(){
   archivos=[]; renderFileList();
 }
 
-// ════════════ RENDER PETICIONES ════════════
-function setPetFilter(f,btn){ petFilter=f; document.querySelectorAll("#view-peticiones .f-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); renderPeticiones(); }
+// ══════════════════════════════════════════════
+// RENDER PETICIONES
+// ══════════════════════════════════════════════
+function setPetFilter(f,btn){
+  petFilter=f;
+  document.querySelectorAll("#view-peticiones .f-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  renderPeticiones();
+}
 
 function renderPeticiones(){
-  const tbody=document.getElementById("petTableBody");
-  const s=(document.getElementById("petSearch")?.value||"").toLowerCase();
-  const mi=window._miUsuario;
-  let list=allTickets.filter(t=>(t.usuario||"").toLowerCase()===mi.toLowerCase());
+  const tbody = document.getElementById("petTableBody");
+  const s     = (document.getElementById("petSearch")?.value||"").toLowerCase();
+  const mi    = window._miUsuario;
+  let list    = allTickets.filter(t=>(t.usuario||"").toLowerCase()===mi.toLowerCase());
   if(petFilter!=="todos") list=list.filter(t=>t.estado===petFilter);
-  if(s) list=list.filter(t=>(t.titulo||"").toLowerCase().includes(s)||(t.asignado||"").toLowerCase().includes(s));
-  list=list.slice().reverse();
-  document.getElementById("petCount").textContent=list.length+" petición"+(list.length!==1?"es":"");
-  if(!list.length){ tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--t2);font-family:var(--mono);font-size:11px">${petFilter!=="todos"?"Sin peticiones con ese estado.":"Aún no has enviado peticiones a técnicos."}</td></tr>`; return; }
-  const ecMap={Resuelto:"b-res","En Proceso":"b-proc",Pendiente:"b-pend"};
-  tbody.innerHTML=list.map(t=>{
-    const ecCls=ecMap[t.estado]||"b-pend";
-    const tec=NOMBRES_COMPLETOS[t.asignado]||t.asignado||"Sin asignar";
-    const recib=t.recibido==="si"?`<span style="font-family:var(--mono);font-size:9px;color:var(--emerald)">📩 Recibido</span>`:"";
-    const resol=t.resolucion?`<span style="font-size:11px;color:var(--emerald)">${t.resolucion.substring(0,50)}${t.resolucion.length>50?"…":""}</span>`:`<span style="font-family:var(--mono);font-size:9px;color:var(--t3)">—</span>`;
+  if(s) list=list.filter(t=>
+    (t.titulo||"").toLowerCase().includes(s)||
+    (t.asignado||"").toLowerCase().includes(s)
+  );
+  list = list.slice().reverse();
+  document.getElementById("petCount").textContent = list.length+" petición"+(list.length!==1?"es":"");
+  if(!list.length){
+    tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--t2);font-family:var(--mono);font-size:11px">${petFilter!=="todos"?"Sin peticiones con ese estado.":"Aún no has enviado peticiones a técnicos."}</td></tr>`;
+    return;
+  }
+  const ecMap = {Resuelto:"b-res","En Proceso":"b-proc",Pendiente:"b-pend"};
+  tbody.innerHTML = list.map(t=>{
+    const ecCls  = ecMap[t.estado]||"b-pend";
+    const tec    = TECNICOS[t.asignado] || ANALISTAS_TESORERIA[(t.asignado||"").toLowerCase()] || t.asignado || "Sin asignar";
+    const recib  = t.recibido==="si"?`<span style="font-family:var(--mono);font-size:9px;color:var(--emerald)">📩 Recibido</span>`:"";
+    const resol  = t.resolucion
+      ? `<span style="font-size:11px;color:var(--emerald)">${t.resolucion.substring(0,50)}${t.resolucion.length>50?"…":""}</span>`
+      : `<span style="font-family:var(--mono);font-size:9px;color:var(--t3)">—</span>`;
     return `<tr>
       <td style="font-family:var(--mono);font-size:9px;color:var(--t3)">${t.id||"—"}</td>
       <td style="font-weight:600;color:var(--t0);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.titulo||"—"}</td>
@@ -881,19 +1332,23 @@ function renderPeticiones(){
   }).join("");
 }
 
-// ════════════ TOAST ════════════
-function showToast(msg,type="ok"){
-  const wrap=document.getElementById("toastWrap");
-  const icon=type==="ok"?"✓ ":type==="err"?"⚠ ":"· ";
-  const el=document.createElement("div");
-  el.className=`toast t-${type}`; el.textContent=icon+msg;
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+function showToast(msg, type="ok"){
+  const wrap = document.getElementById("toastWrap");
+  const icon = type==="ok"?"✓ ":type==="err"?"⚠ ":"· ";
+  const el   = document.createElement("div");
+  el.className = `toast t-${type}`; el.textContent = icon+msg;
   wrap.appendChild(el);
   requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add("show")));
   setTimeout(()=>{ el.classList.remove("show"); setTimeout(()=>el.remove(),300); },3500);
 }
 
-window.addEventListener("click", e=>{
+// Cerrar modales al clicar el overlay
+window.addEventListener("click", e => {
   if(e.target===document.getElementById("resolucionModal")) cerrarResModal();
+  if(e.target===document.getElementById("reasignarModal"))  cerrarReasignarModal();
 });
 </script>
 </body>
