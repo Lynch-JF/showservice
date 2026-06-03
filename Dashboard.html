@@ -149,6 +149,7 @@ input[type="text"],textarea,select{width:100%;padding:10px 14px;background:var(-
 input[type="text"]:focus,textarea:focus,select:focus{border-color:var(--accent);background:var(--surface3)}
 textarea{resize:vertical;min-height:90px}
 select option{background:var(--surface2);color:var(--text)}
+select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
 .depto-info{margin-bottom:14px;padding:10px 14px;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.15);border-radius:var(--radius);font-size:12px;color:var(--accent);display:flex;align-items:center;gap:7px}
 .btn-primary{padding:11px 22px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s var(--ease);display:inline-flex;align-items:center;gap:6px;box-shadow:0 0 18px rgba(99,102,241,.3)}
 .btn-primary:hover{opacity:.88;transform:translateY(-1px);box-shadow:0 0 24px rgba(99,102,241,.5)}
@@ -231,6 +232,9 @@ select option{background:var(--surface2);color:var(--text)}
 .b-res{color:var(--success);background:var(--success-bg);border-color:rgba(26,128,96,.2)}
 .b-asignado{color:var(--accent);background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.15)}
 .b-sin-asignar{color:var(--warning);background:var(--warning-bg);border-color:rgba(160,96,16,.2)}
+/* badge analista */
+.b-analista{color:#7c3aed;background:rgba(124,58,237,.08);border-color:rgba(124,58,237,.2)}
+[data-theme="dark"] .b-analista{color:#c4b5fd;background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.25)}
 [data-theme="dark"] .b-pend{color:var(--amber);background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.25)}
 [data-theme="dark"] .b-proc{color:var(--cyan);background:rgba(34,211,238,.08);border-color:rgba(34,211,238,.25)}
 [data-theme="dark"] .b-res{color:var(--emerald);background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.25)}
@@ -249,12 +253,10 @@ select option{background:var(--surface2);color:var(--text)}
 /* ★ recibido badge */
 .b-recibido{color:var(--success);background:var(--success-bg);border-color:rgba(26,128,96,.35);display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;font-weight:700;padding:4px 10px;border-radius:99px;border:1px solid;letter-spacing:.3px}
 [data-theme="dark"] .b-recibido{color:var(--emerald);background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4)}
-/* tarjeta con estado recibido */
 .ticket-card.recibido-card{border-color:rgba(26,128,96,.25)}
 .ticket-card.recibido-card:hover{border-color:rgba(26,128,96,.45)}
 [data-theme="dark"] .ticket-card.recibido-card{border-color:rgba(16,185,129,.2)}
 [data-theme="dark"] .ticket-card.recibido-card:hover{border-color:rgba(16,185,129,.4)}
-/* banner de recibido dentro de la tarjeta */
 .recibido-notice{margin-top:2px;margin-bottom:10px;padding:9px 13px;background:var(--success-bg);border:1px solid rgba(26,128,96,.2);border-radius:var(--radius);font-size:12px;color:var(--success);line-height:1.5;display:flex;align-items:center;gap:6px}
 [data-theme="dark"] .recibido-notice{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.2);color:var(--emerald)}
 
@@ -418,7 +420,6 @@ select option{background:var(--surface2);color:var(--text)}
       </div>
     </div>
 
-    <!-- Urgency alert row -->
     <div id="urgSummary" class="urg-summary"></div>
 
     <div class="card">
@@ -448,12 +449,18 @@ select option{background:var(--surface2);color:var(--text)}
         <label class="form-label">Descripción detallada</label>
         <textarea id="descripcion" placeholder="Describe con detalle qué pasó, cuándo empezó y qué intentaste hacer..."></textarea>
         <label class="form-label">Asignar técnico</label>
+        <!-- ★ SELECT CON GRUPOS: Técnicos TI + Analistas -->
         <select id="asignadoA">
           <option value="Sin asignar">-- Asignar a técnico --</option>
-          <option value="Xavier">Xavier Rosario</option>
-          <option value="Juan">Juan Francisco Jimenez</option>
-          <option value="Yanna">Yanna Martínez</option>
-          <option value="Joel">Joel Holguin</option>
+          <optgroup label="Técnicos TI">
+            <option value="Xavier">Xavier Rosario</option>
+            <option value="Juan">Juan Francisco Jimenez</option>
+            <option value="Yanna">Yanna Martínez</option>
+            <option value="Joel">Joel Holguin</option>
+          </optgroup>
+          <optgroup label="Analistas" id="analistaOptgroup">
+            <!-- Se puebla dinámicamente desde la API de usuarios -->
+          </optgroup>
         </select>
         <div class="depto-info">
           🏢 <strong style="margin-right:4px">Departamento:</strong>
@@ -484,18 +491,23 @@ select option{background:var(--surface2);color:var(--text)}
       <button class="filter-tab t-proc"  onclick="setEstadoFilter('En Proceso',this)">En Proceso</button>
       <button class="filter-tab t-res"   onclick="setEstadoFilter('Resuelto',this)">Resuelto</button>
       <div class="filter-sep"></div>
+      <!-- ★ SELECT FILTRO CON GRUPOS: Técnicos TI + Analistas -->
       <select class="tecnico-select" id="tecnicoFilter" onchange="renderMisTickets()">
-        <option value="">👤 Todos los técnicos</option>
-        <option value="Xavier">Xavier Rosario</option>
-        <option value="Juan">Juan F. Jiménez</option>
-        <option value="Yanna">Yanna Martínez</option>
-        <option value="Joel">Joel Holguin</option>
+        <option value="">👤 Todos</option>
+        <optgroup label="Técnicos TI">
+          <option value="Xavier">Xavier Rosario</option>
+          <option value="Juan">Juan F. Jiménez</option>
+          <option value="Yanna">Yanna Martínez</option>
+          <option value="Joel">Joel Holguin</option>
+        </optgroup>
+        <optgroup label="Analistas" id="analistaFilterOptgroup">
+          <!-- Se puebla dinámicamente -->
+        </optgroup>
         <option value="Sin asignar">Sin asignar</option>
       </select>
       <input class="search-input" id="srchTickets" placeholder="Buscar tickets…" oninput="renderMisTickets()">
     </div>
 
-    <!-- Urgency filter -->
     <div class="urg-filter-row" id="urgFilterMis">
       <span style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase">Urgencia:</span>
       <button class="urg-pill active" onclick="setUrgFilter('todos',this)">Todos</button>
@@ -619,7 +631,9 @@ const VIEW_TITLES = {
   inicio:"Inicio", nuevo:"Nuevo Ticket",
   mistickets:"Mis Tickets", config:"Configuración"
 };
-const NOMBRES_TEC = {
+
+// ★ NOMBRES_TEC es mutable para poder agregar analistas dinámicamente
+let NOMBRES_TEC = {
   Xavier:"Xavier Rosario", Juan:"Juan Francisco Jiménez",
   Yanna:"Yanna Martínez", Joel:"Joel Holguin"
 };
@@ -633,7 +647,7 @@ let urgFiltro    = "todos";
 let autoRefreshInterval = null;
 
 // ══════════════════════════════════════════════════════
-// ★ URGENCIA AUTOMÁTICA (igual que superadmin)
+// ★ URGENCIA AUTOMÁTICA
 // ══════════════════════════════════════════════════════
 const PALABRAS_CRITICO = ["urgente","urgentes","caído","caida","no funciona","bloqueado","bloqueada","crítico","crítica","apagado","apagada","no enciende","perdida de datos","no accede","virus","hackeado","sin internet","sin sistema","caída total","fuera de servicio","completamente","no hay sistema"];
 const PALABRAS_ALTO    = ["lento","lenta","error","falla","problema","no responde","reinicia","reiniciando","se traba","se cuelga","pantalla azul","no abre","no carga","intermitente","tarda","muy despacio"];
@@ -660,6 +674,50 @@ function calcUrgencia(t) {
   if (diasDesde >= 0 && (t.estado === "Pendiente" || t.estado === "En Proceso"))
     return { level:"medio",   label:"🟡 MEDIO",   cls:"urg-medio",   strip:"strip-medio"  };
   return   { level:"normal",  label:"🟢 NORMAL",  cls:"urg-normal",  strip:"strip-normal" };
+}
+
+// ══════════════════════════════════════════════════════
+// ★ CARGAR ANALISTAS DINÁMICAMENTE
+// ══════════════════════════════════════════════════════
+async function cargarAnalistas() {
+  try {
+    const r    = await fetch(API_USERS);
+    const data = await r.json();
+    if (!Array.isArray(data)) return;
+
+    const analistas = data.filter(u => (u.Rol || "").toLowerCase() === "analista");
+    if (!analistas.length) return;
+
+    // Registrar nombres en NOMBRES_TEC para que las tarjetas los resuelvan
+    analistas.forEach(u => {
+      NOMBRES_TEC[u.NombreUsuario] = u.NombreCompleto || u.NombreUsuario;
+    });
+
+    // Poblar optgroup del formulario "Nuevo Ticket"
+    const og1 = document.getElementById("analistaOptgroup");
+    // Poblar optgroup del filtro en "Mis Tickets"
+    const og2 = document.getElementById("analistaFilterOptgroup");
+
+    analistas.forEach(u => {
+      const nombre = u.NombreCompleto || u.NombreUsuario;
+
+      if (og1) {
+        const opt = document.createElement("option");
+        opt.value       = u.NombreUsuario;
+        opt.textContent = nombre;
+        og1.appendChild(opt);
+      }
+
+      if (og2) {
+        const opt = document.createElement("option");
+        opt.value       = u.NombreUsuario;
+        opt.textContent = nombre;
+        og2.appendChild(opt);
+      }
+    });
+  } catch(e) {
+    console.warn("No se pudieron cargar analistas:", e);
+  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -697,8 +755,12 @@ function calcUrgencia(t) {
 
   updateClock();
   setInterval(updateClock, 1000);
-  recargarTickets();
-  iniciarAutoRefresh();
+
+  // ★ Cargar analistas y luego tickets
+  cargarAnalistas().finally(() => {
+    recargarTickets();
+    iniciarAutoRefresh();
+  });
 })();
 
 function updateClock() {
@@ -762,7 +824,6 @@ async function recargarTickets() {
     if (btn) btn.classList.remove("spinning");
   }
 }
-// alias para js.js
 function cargarTickets() { recargarTickets(); }
 
 // ══════════════════════════════════════════════════════
@@ -831,7 +892,7 @@ function renderMisTickets() {
     (t.descripcion||"").toLowerCase().includes(q) ||
     (t.depto||"").toLowerCase().includes(q)
   );
-  // Sort: critical first
+  // Ordenar: críticos primero
   lista = lista.sort((a,b) => {
     const order = {critico:0, alto:1, medio:2, normal:3};
     return order[calcUrgencia(a).level] - order[calcUrgencia(b).level];
@@ -846,22 +907,27 @@ function renderMisTickets() {
 }
 
 // ══════════════════════════════════════════════════════
-// ★ BUILD TICKET CARD — con urgencia + recibido
+// ★ BUILD TICKET CARD — con urgencia + recibido + analista
 // ══════════════════════════════════════════════════════
 function buildTicketCard(t, conBotonEliminar) {
   const ec = t.estado === "Resuelto"   ? "b-res"  :
              t.estado === "En Proceso" ? "b-proc" : "b-pend";
   const urg = calcUrgencia(t);
 
+  // ★ Detectar si el asignado es analista (no está en los técnicos fijos)
+  const TECNICOS_FIJOS = ["Xavier","Juan","Yanna","Joel"];
+  const esAnalista = t.asignado && !TECNICOS_FIJOS.includes(t.asignado) && t.asignado !== "Sin asignar";
+  const nombreAsignado = NOMBRES_TEC[t.asignado] || t.asignado || "Sin asignar";
+
   const badgeAsig = (t.asignado && t.asignado !== "Sin asignar")
-    ? `<span class="badge b-asignado">👤 ${NOMBRES_TEC[t.asignado] || t.asignado}</span>`
+    ? `<span class="badge ${esAnalista ? 'b-analista' : 'b-asignado'}">${esAnalista ? '📊' : '👤'} ${nombreAsignado}</span>`
     : `<span class="badge b-sin-asignar">⏳ Sin asignar</span>`;
 
-  // ★ Recibido por técnico — comparación robusta (si / Si / SI / true / 1)
+  // Recibido por técnico/analista
   const recibidoVal = String(t.recibido || "").trim().toLowerCase();
   const estaRecibido = recibidoVal === "si" || recibidoVal === "yes" || recibidoVal === "true" || recibidoVal === "1";
   const recibidoH = estaRecibido
-    ? `<span class="b-recibido">📩 Recibido por ${t.asignado || "técnico"}${t.fecha_recibido ? " · " + t.fecha_recibido.split(",")[0] : ""}</span>`
+    ? `<span class="b-recibido">📩 Recibido por ${nombreAsignado}${t.fecha_recibido ? " · " + t.fecha_recibido.split(",")[0] : ""}</span>`
     : "";
 
   const resHtml = t.resolucion ? `
@@ -904,7 +970,7 @@ function buildTicketCard(t, conBotonEliminar) {
         ${badgeAsig}
         <span class="ticket-fecha">📅 ${(t.fecha||"").split(",")[0]||""}</span>
       </div>
-      ${estaRecibido ? `<div class="recibido-notice">📩 Tu ticket fue recibido por <strong>${NOMBRES_TEC[t.asignado] || t.asignado || "el técnico"}</strong>${t.fecha_recibido ? " el " + t.fecha_recibido.split(",")[0] : ""}. Está siendo atendido.</div>` : ""}
+      ${estaRecibido ? `<div class="recibido-notice">📩 Tu ticket fue recibido por <strong>${nombreAsignado}</strong>${t.fecha_recibido ? " el " + t.fecha_recibido.split(",")[0] : ""}. Está siendo atendido.</div>` : ""}
       ${resHtml}
       ${adjHtml}
       ${btnDel}
@@ -1053,7 +1119,7 @@ function showToast(msg, type = "success") {
 })();
 
 // ══════════════════════════════════════════════════════
-// mostrarTickets alias (para js.js)
+// ALIAS para js.js
 // ══════════════════════════════════════════════════════
 function mostrarTickets() { recargarTickets(); }
 </script>
