@@ -463,6 +463,15 @@ table.data-table tr:hover td{background:var(--s2)}
 .cfg-info-row span:last-child{font-weight:500;color:var(--t0)}
 .cfg-actions{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
 
+/* ── ZONA DE PELIGRO ── */
+.danger-zone-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(244,63,94,.04);border:1px solid rgba(244,63,94,.15);border-radius:var(--r2);transition:border-color .2s}
+.danger-zone-row:hover{border-color:rgba(244,63,94,.3)}
+.danger-zone-row-title{font-size:13px;font-weight:600;color:var(--t0);margin-bottom:3px}
+.danger-zone-row-sub{font-family:var(--mono);font-size:10px;color:var(--t2)}
+.danger-zone-row.dz-critical{background:rgba(244,63,94,.07);border-color:rgba(244,63,94,.3)}
+.btn-danger-full{padding:8px 18px;border-radius:var(--r);font-family:var(--font);font-size:12px;font-weight:700;background:rgba(244,63,94,.15);color:var(--rose);border:1px solid rgba(244,63,94,.45);cursor:pointer;transition:all .15s;letter-spacing:.3px;white-space:nowrap}
+.btn-danger-full:hover{background:rgba(244,63,94,.28);transform:translateY(-1px)}
+
 /* ── TOAST ── */
 .toast-wrap{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:999;pointer-events:none}
 .toast{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r2);padding:11px 16px;font-size:12px;font-weight:500;color:var(--t1);max-width:300px;opacity:0;transform:translateY(8px) scale(.97);transition:all .25s var(--ease);pointer-events:none}
@@ -470,6 +479,61 @@ table.data-table tr:hover td{background:var(--s2)}
 .toast.t-ok{border-left:3px solid var(--emerald)}
 .toast.t-err{border-left:3px solid var(--rose)}
 .toast.t-warn{border-left:3px solid var(--amber)}
+
+/* ── LIGHT THEME ── */
+body.light-theme {
+  --bg:#f4f4f8;--s0:#ffffff;--s1:#f8f8fc;--s2:#efeff5;--s3:#e5e5ef;--s4:#d8d8e8;
+  --b1:rgba(0,0,0,0.07);--b2:rgba(0,0,0,0.12);--b3:rgba(0,0,0,0.18);
+  --t0:#111118;--t1:#2a2a3a;--t2:#555568;--t3:#8888a0;
+}
+body.light-theme .topbar { background: rgba(244,244,248,.92); }
+body.light-theme .sidebar { background: #ffffff; }
+body.light-theme .metric,
+body.light-theme .dash-card,
+body.light-theme .t-card,
+body.light-theme .rep-card,
+body.light-theme .tec-card,
+body.light-theme .comp-card,
+body.light-theme .resueltos-section,
+body.light-theme .kpi,
+body.light-theme .cfg-card,
+body.light-theme .cierre-banner,
+body.light-theme .table-wrap,
+body.light-theme .modal,
+body.light-theme .hist-panel { background: #ffffff; }
+body.light-theme .user-pill { background: var(--s2); }
+body.light-theme .month-bar { background: #ffffff; }
+body.light-theme .m-btn:hover { background: var(--s3); }
+body.light-theme .tec-kpi { background: var(--s2); }
+body.light-theme .aviso-banner { background: rgba(245,158,11,.06); }
+body.light-theme .rep-t-item { background: var(--s2); }
+body.light-theme .rep-banner { background: rgba(34,211,238,.04); }
+body.light-theme .urgency-strip.strip-critico { box-shadow: none; }
+body.light-theme .status-dot { box-shadow: 0 0 5px #10b981; }
+
+.theme-toggle {
+  position: relative; width: 44px; height: 24px; flex-shrink: 0;
+  cursor: pointer; background: none; border: none; padding: 0;
+}
+.theme-toggle-track {
+  position: absolute; inset: 0;
+  background: var(--s4); border: 1px solid var(--b2);
+  border-radius: 99px; transition: background .2s;
+}
+body.light-theme .theme-toggle-track { background: var(--indigo); border-color: var(--indigo); }
+.theme-toggle-thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--t2); transition: transform .2s, background .2s;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; line-height: 1;
+}
+body.light-theme .theme-toggle-thumb {
+  transform: translateX(20px); background: #fff;
+}
+.theme-toggle-icon { pointer-events: none; }
+
+
 
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
@@ -489,6 +553,8 @@ table.data-table tr:hover td{background:var(--s2)}
   .kpi-row{grid-template-columns:1fr 1fr}
   .topbar{padding:0 16px}
 }
+
+
 </style>
 </head>
 <body>
@@ -534,10 +600,16 @@ table.data-table tr:hover td{background:var(--s2)}
       <span class="topbar-sep">·</span>
       <div class="topbar-sub"><span class="status-dot"></span><span id="nowTime"></span></div>
     </div>
-    <div class="topbar-right">
-      <button class="btn-topbar" onclick="abrirAyuda()">📞 Ayuda IT</button>
-      <button class="btn-topbar" onclick="recargarTodo()">↻ Actualizar</button>
+  <div class="topbar-right">
+  <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
+    <div class="theme-toggle-track"></div>
+    <div class="theme-toggle-thumb">
+      <span class="theme-toggle-icon" id="themeIcon">🌙</span>
     </div>
+  </button>
+  <button class="btn-topbar" onclick="abrirAyuda()">📞 Ayuda IT</button>
+  <button class="btn-topbar" onclick="recargarTodo()">↻ Actualizar</button>
+</div>
   </div>
 
   <!-- ══ DASHBOARD ══ -->
@@ -760,6 +832,8 @@ table.data-table tr:hover td{background:var(--s2)}
       </div>
     </div>
     <div class="cfg-grid">
+
+      <!-- Información de cuenta -->
       <div class="cfg-card">
         <div class="cfg-card-title">👤 Información de cuenta</div>
         <div class="cfg-card-sub">Datos del administrador activo</div>
@@ -775,6 +849,8 @@ table.data-table tr:hover td{background:var(--s2)}
         <div class="cfg-info-row"><span>Total tickets</span><span id="cfg-total-tickets">—</span></div>
         <div class="cfg-info-row"><span>Última sync</span><span id="cfg-last-sync">—</span></div>
       </div>
+
+      <!-- Ajustes del panel -->
       <div class="cfg-card">
         <div class="cfg-card-title">⚙ Ajustes del panel</div>
         <div class="cfg-card-sub">Personaliza la experiencia de uso</div>
@@ -791,6 +867,45 @@ table.data-table tr:hover td{background:var(--s2)}
           <label class="toggle-sw"><input type="checkbox" id="cfg-showids" checked/><span class="toggle-sl"></span></label>
         </div>
       </div>
+
+      <!-- ══ ZONA DE PELIGRO — ocupa toda la fila ══ -->
+      <div class="cfg-card" style="grid-column:1/-1;border-color:rgba(244,63,94,.2)">
+        <div class="cfg-card-title" style="color:var(--rose);margin-bottom:4px">⚠ Zona de peligro — Blanquear sistema</div>
+        <div class="cfg-card-sub" style="margin-bottom:16px">Estas acciones son irreversibles. Los tickets en la hoja de cálculo <strong style="color:var(--t1)">no se eliminan</strong>, solo datos locales de este dispositivo.</div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+
+          <!-- Limpiar cierres -->
+          <div class="danger-zone-row">
+            <div>
+              <div class="danger-zone-row-title">🗑 Eliminar historial de cierres mensuales</div>
+              <div class="danger-zone-row-sub">Borra todos los cierres guardados en este navegador (localStorage). No afecta tickets remotos.</div>
+            </div>
+            <button class="btn-danger" onclick="resetCierresGuardados()">Limpiar cierres</button>
+          </div>
+
+          <!-- Restablecer preferencias -->
+          <div class="danger-zone-row">
+            <div>
+              <div class="danger-zone-row-title">⚙ Restablecer preferencias del panel</div>
+              <div class="danger-zone-row-sub">Devuelve todos los toggles a su estado por defecto (auto-refresh, toasts, IDs).</div>
+            </div>
+            <button class="btn-danger" onclick="resetPreferencias()">Restablecer</button>
+          </div>
+
+          <!-- RESET TOTAL -->
+          <div class="danger-zone-row dz-critical">
+            <div>
+              <div class="danger-zone-row-title" style="color:var(--rose)">💣 Blanquear sistema completo</div>
+              <div class="danger-zone-row-sub">Elimina cierres, preferencias y cierra la sesión activa. Requiere confirmación escrita. <strong style="color:var(--rose)">No se puede deshacer.</strong></div>
+            </div>
+            <button class="btn-danger-full" onclick="resetSistemaCompleto()">💣 Blanquear todo</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Técnicos de campo — ocupa toda la fila -->
       <div class="cfg-card" style="grid-column:1/-1">
         <div class="cfg-card-title">🔧 Técnicos de campo registrados</div>
         <div class="cfg-card-sub">Personal técnico para asignación de tickets</div>
@@ -808,6 +923,7 @@ table.data-table tr:hover td{background:var(--s2)}
           <button class="btn-danger" onclick="if(confirm('¿Cerrar sesión?'))logout()">🚪 Cerrar sesión</button>
         </div>
       </div>
+
     </div>
   </div>
 </main>
@@ -958,7 +1074,6 @@ let repBarChart = null, repInited = false;
 let urgFilterMap = { urgFilterAsignados:"todos", urgFilterPend:"todos", urgFilterProc:"todos" };
 const adminActual = localStorage.getItem("usuario") || "";
 let sheetUsers = [], editingRowNum = null, hashDebounce = null;
-// API from external JS file (js.js) – fallback
 const API_URL_USERS = "https://api.sheetbest.com/sheets/6784d1e5-1e26-4605-9c19-329eb2b6ea12";
 
 // ════════════════════════════════════════════════════════
@@ -1085,7 +1200,6 @@ function renderDashboard() {
   document.getElementById("st-proc").textContent=proc;
   document.getElementById("st-res").textContent=res;
 
-  // Urgency bar
   const critCount=allTickets.filter(t=>calcUrgencia(t).level==="critico").length;
   const altoCount=allTickets.filter(t=>calcUrgencia(t).level==="alto").length;
   const urgBar=document.getElementById("urgencyBar");
@@ -1355,7 +1469,6 @@ async function cargarUsuariosSheet(){
     sheetUsers=Array.isArray(data)?data:[];
     filtrarTablaUsuarios();
     actualizarStatsPills();
-    const eu=document.getElementById("cfg-total-tickets"); // reuse for display
   }catch{
     document.getElementById("usersBody").innerHTML=`<tr class="loading-row"><td colspan="6" style="color:var(--rose)">⚠ Error al cargar usuarios. Verifica la API.</td></tr>`;
   }
@@ -1505,7 +1618,6 @@ function renderReportes(){
   tickets.forEach(t=>{const d=(t.depto||"Sin depto").trim();if(!dm[d])dm[d]={total:0,res:0};dm[d].total++;if(t.estado==="Resuelto")dm[d].res++;});
   const deptos=Object.entries(dm).sort((a,b)=>b[1].total-a[1].total);
 
-  // Dep table
   const tbody=document.getElementById("repDepTable");
   if(!deptos.length){tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;color:var(--t2);padding:24px;font-size:10px">Sin tickets en ${nombre} ${anio}</td></tr>`;}
   else{
@@ -1517,14 +1629,12 @@ function renderReportes(){
   }
   repRenderBarChart(deptos,total);
 
-  // Legend
   const lb=document.getElementById("repLegendBody");
   lb.innerHTML=deptos.length?deptos.map(([d,i],idx)=>{const pct=total?Math.round(i.total/total*100):0,c=DEP_COLORS[idx%DEP_COLORS.length];
     return`<tr><td><span class="legend-dot" style="background:${c}"></span>${d}</td><td style="text-align:center">${i.total}</td><td style="text-align:center;font-weight:700;color:${c}">${pct}%</td></tr>`;
   }).join("")+`<tr class="legend-total"><td><strong>Total</strong></td><td style="text-align:center"><strong>${total}</strong></td><td style="text-align:center"><strong>100%</strong></td></tr>`
   :`<tr><td colspan="3" style="text-align:center;color:var(--t2);padding:10px;font-size:10px">Sin datos</td></tr>`;
 
-  // Recent list
   const list=document.getElementById("repRecentList");
   const recientes=tickets.slice().reverse().slice(0,6);
   list.innerHTML=recientes.length?recientes.map(t=>{const s=t.estado==="Resuelto"?"s-r":t.estado==="En Proceso"?"s-e":"s-p";
@@ -1679,6 +1789,60 @@ function showToast(msg, type="ok"){
   requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add("show")));
   setTimeout(()=>{el.classList.remove("show");setTimeout(()=>el.remove(),300);},3500);
 }
+
+// ════════════════════════════════════════════════════════
+// RESET / BLANQUEAR SISTEMA
+// ════════════════════════════════════════════════════════
+function resetCierresGuardados() {
+  if (!confirm("¿Eliminar TODOS los cierres mensuales guardados?\nEsta acción no se puede deshacer.")) return;
+  localStorage.removeItem(STORAGE_KEY_CIERRES);
+  showToast("Historial de cierres eliminado", "ok");
+  if (repInited) renderReportes();
+}
+
+function resetPreferencias() {
+  if (!confirm("¿Restablecer las preferencias del panel a sus valores por defecto?")) return;
+  const autoR  = document.getElementById("cfg-autorefresh");
+  const toasts = document.getElementById("cfg-toasts");
+  const showIds= document.getElementById("cfg-showids");
+  if (autoR)  { autoR.checked   = true; aplicarAutorefresh(); }
+  if (toasts) { toasts.checked  = true; }
+  if (showIds){ showIds.checked = true; }
+  showToast("Preferencias restablecidas", "ok");
+}
+
+function resetSistemaCompleto() {
+  if (!confirm("⚠ ATENCIÓN: Esto eliminará TODOS los datos locales del panel:\n• Historial de cierres mensuales\n• Preferencias guardadas\n• Sesión activa\n\n¿Confirmar?")) return;
+  const confirmText = prompt('Escribe BLANQUEAR para confirmar:');
+  if (confirmText !== "BLANQUEAR") {
+    showToast("Cancelado — escribe BLANQUEAR exactamente", "warn");
+    return;
+  }
+  const allKeys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    allKeys.push(localStorage.key(i));
+  }
+  allKeys.forEach(k => localStorage.removeItem(k));
+  showToast("Sistema blanqueado. Redirigiendo…", "ok");
+  setTimeout(() => { window.location.href = "index.html"; }, 1500);
+}
+
+function toggleTheme() {
+  const isLight = document.body.classList.toggle("light-theme");
+  document.getElementById("themeIcon").textContent = isLight ? "☀️" : "🌙";
+  localStorage.setItem("gmtickets_theme", isLight ? "light" : "dark");
+}
+
+// Aplicar tema guardado al cargar
+(function(){
+  if(localStorage.getItem("gmtickets_theme") === "light") {
+    document.body.classList.add("light-theme");
+    const icon = document.getElementById("themeIcon");
+    if(icon) icon.textContent = "☀️";
+  }
+})();
+
+
 </script>
 </body>
 </html>
