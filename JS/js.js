@@ -40,6 +40,12 @@ const NOMBRES_COMPLETOS_TECNICOS = {
   "Xavier": "Xavier Rosario"
 };
 
+const ANALISTAS_TESORERIA = {
+  eliana:  "Eliana Asuncion Payano Jimenez (Supervisora)",
+  chantal: "Chantal Sosa Rosario",
+  yanela:  "Yanela Almonte"
+};
+
 const TECNICOS_DISPONIBLES = ["Sin asignar", "Juan", "Joel", "Yanna", "Xavier"];
 
 // ======================
