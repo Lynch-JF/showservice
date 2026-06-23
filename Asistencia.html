@@ -352,9 +352,6 @@
   .toast.error   { border-left: 3px solid var(--danger); }
   .toast.warning { border-left: 3px solid var(--warning); }
 
-  /* ════════════════════════════════════════════════════════
-     FLOATING NAV BAR (reemplaza el sidebar)
-     ════════════════════════════════════════════════════════ */
   .floating-nav-wrap { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 400; }
   .floating-nav {
     display: flex; align-items: center; gap: 4px;
@@ -423,7 +420,8 @@
       <div class="topbar-sub"><span class="dot"></span>En línea — <span id="clockEl"></span></div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
-      <button class="btn-refresh" onclick="recargar()">↻ Actualizar</button>
+      <!-- FIX: botón Actualizar siempre fuerza fetch real, ignorando cache -->
+      <button class="btn-refresh" onclick="recargar(true)">↻ Actualizar</button>
       <div class="topbar-account">
         <div class="user-avatar" id="sbAvatar">--</div>
         <span id="sbName">Técnico</span>
@@ -577,6 +575,7 @@
     <div class="rep-action-row">
       <button class="btn-rep-primary" id="repBtnCierre" onclick="repCerrarMes()">📦 Guardar cierre mensual</button>
       <button class="btn-rep-export" onclick="repExportarPDF()">🖨️ Exportar / Imprimir</button>
+      <!-- FIX: repRecargar solo hace recargar(true), sin render doble -->
       <button class="btn-rep-sec" onclick="repRecargar()">↻ Actualizar</button>
     </div>
     <div class="rep-cierre-banner">
@@ -614,7 +613,7 @@
         <div class="config-card-title">⚙️ Sistema</div>
         <div class="config-card-desc">Ajustes del panel técnico</div>
         <div class="config-toggle-row">
-          <div class="config-toggle-info"><p>Auto-actualización</p><p>Refresca tickets automáticamente cada 5 min</p></div>
+          <div class="config-toggle-info"><p>Auto-actualización</p><p>Refresca tickets automáticamente cada 5 min si la pestaña está activa</p></div>
           <label class="toggle-switch"><input type="checkbox" id="cfgAutoRefresh" checked onchange="aplicarAutoRefresh()"/><span class="toggle-slider"></span></label>
         </div>
         <div class="config-toggle-row">
@@ -627,9 +626,10 @@
         </div>
         <div class="config-divider"></div>
         <div class="config-card-title" style="font-size:12px;margin-bottom:12px;">ℹ️ Información del sistema</div>
-        <div class="config-info-row"><span>Versión</span><span>v2.1 — Panel Técnico</span></div>
+        <div class="config-info-row"><span>Versión</span><span>v2.2 — Panel Técnico</span></div>
         <div class="config-info-row"><span>API Tickets</span><span style="color:var(--success)">✓ Conectada</span></div>
         <div class="config-info-row"><span>Última sync</span><span id="cfgLastSync">—</span></div>
+        <div class="config-info-row"><span>Cache</span><span id="cfgCacheStatus">—</span></div>
         <div class="config-info-row"><span>Mis tickets cargados</span><span id="cfgTotalTickets">—</span></div>
         <div class="config-info-row"><span>Resueltos totales</span><span id="cfgTotalResueltos" style="color:var(--success)">—</span></div>
       </div>
@@ -654,8 +654,10 @@
           </div>
         </div>
         <div class="config-actions">
-          <button class="btn-config-danger" onclick="if(confirm('¿Limpiar todos los cierres guardados?')){localStorage.removeItem(REP_STORAGE_KEY);renderConfigView();showToast('Cierres eliminados','success');}">🗑 Limpiar cierres guardados</button>
-          <button class="btn-config-save" onclick="recargar();showToast('Tickets actualizados','success');">↻ Forzar actualización</button>
+          <button class="btn-config-danger" onclick="limpiarCacheManual()">🗑 Limpiar caché</button>
+          <button class="btn-config-danger" onclick="if(confirm('¿Limpiar todos los cierres guardados?')){localStorage.removeItem(REP_STORAGE_KEY);renderConfigView();showToast('Cierres eliminados','success');}">🗑 Limpiar cierres</button>
+          <!-- FIX: Forzar actualización siempre hace fetch real -->
+          <button class="btn-config-save" onclick="recargar(true);showToast('Tickets actualizados','success');">↻ Forzar actualización</button>
           <button class="btn-config-danger" onclick="doLogout()">⎋ Cerrar sesión</button>
         </div>
       </div>
@@ -746,31 +748,55 @@ const API_USERS   = "https://api.sheetbest.com/sheets/6784d1e5-1e26-4605-9c19-32
 const MI_USER = localStorage.getItem("usuario") || "Xavier";
 const REP_STORAGE_KEY = "gmtickets_tech_cierres_" + MI_USER.toLowerCase();
 
-// ─── CACHE ────────────────────────────────────────────
-// CORRECCIÓN: caché con TTL de 3 min para tickets
+// ════════════════════════════════════════════════════════
+// CACHE — TTL 3 min, clave por técnico
+// ════════════════════════════════════════════════════════
 const CACHE_KEY_DATA = "gmt_tec_cache_" + MI_USER.toLowerCase();
 const CACHE_KEY_TS   = "gmt_tec_cache_ts_" + MI_USER.toLowerCase();
 const CACHE_TTL      = 3 * 60 * 1000; // 3 minutos
 
-function getCached(){
-  try{
-    const ts = parseInt(localStorage.getItem(CACHE_KEY_TS)||"0");
-    if(Date.now() - ts > CACHE_TTL) return null;
+function getCached() {
+  try {
+    const ts = parseInt(localStorage.getItem(CACHE_KEY_TS) || "0");
+    if (Date.now() - ts > CACHE_TTL) return null;
     const raw = localStorage.getItem(CACHE_KEY_DATA);
     return raw ? JSON.parse(raw) : null;
-  }catch{ return null; }
+  } catch { return null; }
 }
-function setCache(data){
-  try{
+
+function setCache(data) {
+  try {
     localStorage.setItem(CACHE_KEY_DATA, JSON.stringify(data));
     localStorage.setItem(CACHE_KEY_TS, String(Date.now()));
-  }catch(e){ console.warn("Cache write error:", e); }
+  } catch(e) { console.warn("Cache write error:", e); }
 }
-function invalidarCache(){
+
+// FIX: invalidarCache ahora se llama antes de cada mutación (PATCH)
+// para que el siguiente recargar(true) no sirva datos viejos del cache
+function invalidarCache() {
   localStorage.removeItem(CACHE_KEY_DATA);
   localStorage.removeItem(CACHE_KEY_TS);
 }
 
+function limpiarCacheManual() {
+  if (!confirm("¿Limpiar el caché local de tickets?")) return;
+  invalidarCache();
+  showToast("Caché limpiado ✓", "success");
+  recargar(true);
+}
+
+function actualizarEstadoCache() {
+  const ts = parseInt(localStorage.getItem(CACHE_KEY_TS) || "0");
+  const el = document.getElementById("cfgCacheStatus");
+  if (!el) return;
+  if (!ts) { el.textContent = "Sin cache"; return; }
+  const mins = Math.round((Date.now() - ts) / 60000);
+  el.textContent = mins <= 0 ? "Recién cargado" : `hace ${mins} min`;
+}
+
+// ════════════════════════════════════════════════════════
+// CONSTANTES
+// ════════════════════════════════════════════════════════
 const DEP_COLORS = ["#7c6fff","#4fc3ff","#3be38e","#ffd166","#ff6b6b","#f78c6c","#c792ea","#89ddff","#addb67","#ff5370","#82aaff","#ffcb6b","#c3e88d","#e9c46a","#f4a261"];
 const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 
@@ -827,16 +853,18 @@ let repBarChart = null;
   document.getElementById("sbAvatar").textContent = nombreCompleto.substring(0,2).toUpperCase();
   updateClock();
   setInterval(updateClock, 1000);
-  // Arranque: intentar cache primero
+
+  // Arranque: intentar cache primero (0 requests si es válido)
   recargar(false);
   iniciarAutoRefresh();
-  // Visibility API: pausar cuando la pestaña está oculta
+
+  // Visibility API: pausar timer cuando la pestaña está en segundo plano
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
       if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
     } else {
       iniciarAutoRefresh();
-      // Al volver, usar cache si aún es válido
+      // Al volver, respetar cache — solo hace GET si el TTL expiró
       recargar(false);
     }
   });
@@ -851,13 +879,17 @@ function doLogout() {
   window.location.href = "index.html";
 }
 
-// ─── CORRECCIÓN 2: Auto-refresh cada 5 min (no 60s) ──
+// ════════════════════════════════════════════════════════
+// AUTO-REFRESH — 5 min, solo si la pestaña está visible
+// ════════════════════════════════════════════════════════
 function iniciarAutoRefresh() {
   if (autoRefreshTimer) clearInterval(autoRefreshTimer);
   const chk = document.getElementById("cfgAutoRefresh");
   if (!chk || chk.checked) {
-    // forceRefresh=false: respeta caché, solo hace GET si expiró
-    autoRefreshTimer = setInterval(() => { if(!document.hidden) recargar(false); }, 5 * 60 * 1000);
+    // forceRefresh=false: respeta cache, solo hace GET si TTL expiró
+    autoRefreshTimer = setInterval(() => {
+      if (!document.hidden) recargar(false);
+    }, 5 * 60 * 1000);
   }
 }
 
@@ -865,7 +897,9 @@ function aplicarAutoRefresh() {
   if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
   const chk = document.getElementById("cfgAutoRefresh");
   if (chk && chk.checked) {
-    autoRefreshTimer = setInterval(() => { if(!document.hidden) recargar(false); }, 5 * 60 * 1000);
+    autoRefreshTimer = setInterval(() => {
+      if (!document.hidden) recargar(false);
+    }, 5 * 60 * 1000);
     showToast("Auto-actualización activada (5 min)", "success");
   } else {
     showToast("Auto-actualización desactivada", "warning");
@@ -873,9 +907,9 @@ function aplicarAutoRefresh() {
 }
 
 // ════════════════════════════════════════════════════════
-// CARGAR TICKETS — con caché
-// forceRefresh=true  → ignora caché, llama SheetBest
-// forceRefresh=false → usa caché si es válido
+// CARGAR TICKETS — con cache inteligente
+//   forceRefresh=true  → ignora cache, llama SheetBest
+//   forceRefresh=false → usa cache si TTL no expiró (0 requests)
 // ════════════════════════════════════════════════════════
 async function recargar(forceRefresh = false) {
   try {
@@ -884,34 +918,40 @@ async function recargar(forceRefresh = false) {
       if (cached && cached.length) {
         allTickets = cached;
         misTickets = allTickets.filter(t => (t.asignado || "").toLowerCase() === MI_USER.toLowerCase());
-        poblarSelectsTienda();
-        renderDashboard();
-        renderKanban();
-        renderResueltos();
-        if (repInited) renderReportes();
-        return; // 0 requests a SheetBest
+        renderTodo();
+        return; // cache válido — 0 requests a SheetBest
       }
     }
-    // Fetch real
+
+    // Fetch real a SheetBest
     const r    = await fetch(API_TICKETS);
     const data = await r.json();
-    allTickets = Array.isArray(data) ? data : [];
+    allTickets  = Array.isArray(data) ? data : [];
     setCache(allTickets);
-    misTickets = allTickets.filter(t => (t.asignado || "").toLowerCase() === MI_USER.toLowerCase());
-    poblarSelectsTienda();
-    renderDashboard();
-    renderKanban();
-    renderResueltos();
-    if (repInited) renderReportes();
+    misTickets  = allTickets.filter(t => (t.asignado || "").toLowerCase() === MI_USER.toLowerCase());
+    renderTodo();
+
     const syncEl = document.getElementById("cfgLastSync");
     if (syncEl) syncEl.textContent = new Date().toLocaleTimeString("es-DO");
-    const ttEl = document.getElementById("cfgTotalTickets");
-    if (ttEl) ttEl.textContent = misTickets.length;
-    const trEl = document.getElementById("cfgTotalResueltos");
-    if (trEl) trEl.textContent = misTickets.filter(t => t.estado === "Resuelto").length;
+    actualizarEstadoCache();
+
   } catch (e) {
     showToast("Error al cargar tickets", "error");
   }
+}
+
+// Centraliza el render de todas las secciones tras cargar datos
+function renderTodo() {
+  poblarSelectsTienda();
+  renderDashboard();
+  renderKanban();
+  renderResueltos();
+  if (repInited) renderReportes();
+  // Actualizar contadores en config si la vista está activa
+  const ttEl = document.getElementById("cfgTotalTickets");
+  if (ttEl) ttEl.textContent = misTickets.length;
+  const trEl = document.getElementById("cfgTotalResueltos");
+  if (trEl) trEl.textContent = misTickets.filter(t => t.estado === "Resuelto").length;
 }
 
 // ════════════════════════════════════════════════════════
@@ -949,7 +989,7 @@ function setUrgFilterKanban(level, btn) {
 }
 
 // ════════════════════════════════════════════════════════
-// NAVEGACIÓN (floating nav bar)
+// NAVEGACIÓN
 // ════════════════════════════════════════════════════════
 const VIEW_TITLES = { dashboard:"Mi Dashboard", tickets:"Mis Tickets", resueltos:"Mis Tickets Resueltos", reportes:"Mis Reportes Mensuales", config:"Configuración" };
 
@@ -977,6 +1017,7 @@ function renderDashboard() {
   document.getElementById("st-pend").textContent  = pend;
   document.getElementById("st-proc").textContent  = proc;
   document.getElementById("st-res").textContent   = res;
+
   const activos   = mis.filter(t => t.estado !== "Resuelto");
   const critCount = activos.filter(t => calcUrgencia(t).level === "critico").length;
   const altoCount = activos.filter(t => calcUrgencia(t).level === "alto").length;
@@ -987,12 +1028,14 @@ function renderDashboard() {
     ${altoCount > 0 ? `<span class="urg-summary-pill alto">🟠 Alto — ${altoCount}</span>` : ""}
     ${critCount === 0 && altoCount === 0 ? `<span class="urg-summary-pill ok">✓ Sin tickets críticos</span>` : ""}
     <button class="urg-bar-action" onclick="switchView('tickets')">Ver mis tickets →</button>`;
+
   const deptos = {};
   mis.forEach(t => { const d = t.depto || "N/A"; if (!deptos[d]) deptos[d] = {total:0,res:0}; deptos[d].total++; if(t.estado==="Resuelto") deptos[d].res++; });
   const sorted = Object.entries(deptos).sort((a,b)=>b[1].total-a[1].total), maxTotal = sorted[0]?.[1].total||1;
   document.getElementById("deptChart").innerHTML = sorted.length === 0
     ? `<p style="color:var(--muted);font-size:12px">Sin datos de departamento</p>`
     : sorted.map(([d,s]) => { const pct=Math.round(s.res/s.total*100),barW=Math.round(s.total/maxTotal*100); return `<div class="dept-row"><div class="dept-meta"><span class="dept-name">${d}</span><span class="dept-stats"><span style="color:var(--success)">${s.res} res.</span><span>${s.total} total</span><span style="color:var(--accent);font-weight:700">${pct}%</span></span></div><div class="dept-bar-bg"><div class="dept-bar-fill" style="width:${barW}%"></div></div></div>`; }).join("");
+
   const recientes = [...mis].slice(-6).reverse();
   document.getElementById("recentList").innerHTML = recientes.length === 0
     ? `<p style="color:var(--muted);font-size:12px">Sin tickets recientes</p>`
@@ -1008,6 +1051,7 @@ function renderKanban() {
   const chip = document.getElementById("tiendaChip"), chipLabel = document.getElementById("tiendaChipLabel");
   if (tienda) { chip.style.display = "inline-flex"; chipLabel.textContent = tienda; }
   else { chip.style.display = "none"; }
+
   const activos = misTickets.filter(t => t.estado !== "Resuelto");
   const aplicarFiltros = list => list.filter(t => {
     const matchQ = !q || matchSearch(t,q);
@@ -1016,9 +1060,11 @@ function renderKanban() {
     return matchQ && matchT && matchU;
   });
   const sortUrgencia = arr => arr.slice().sort((a,b) => { const order={critico:0,alto:1,medio:2,normal:3}; return order[calcUrgencia(a).level]-order[calcUrgencia(b).level]; });
+
   const pendList = sortUrgencia(aplicarFiltros(activos.filter(t=>t.estado==="Pendiente")));
   const procList = sortUrgencia(aplicarFiltros(activos.filter(t=>t.estado==="En Proceso")));
   const tiendaLabel = tienda ? ` <span style="font-size:9px;color:var(--muted);font-family:var(--mono)">· ${tienda}</span>` : "";
+
   document.getElementById("kanbanGrid").innerHTML = `
     <div class="kanban-col">
       <div class="col-header"><div class="col-title" style="color:var(--warning)">⏳ Pendientes${tiendaLabel}</div><span class="col-count">${pendList.length}</span></div>
@@ -1034,7 +1080,7 @@ function buildTicketCard(t, isPend) {
   const ec  = isPend ? "badge-pend" : "badge-proc";
   const urg = calcUrgencia(t);
   const adjuntosHtml = buildAdjuntos(t.adjuntos);
-  const recibirBtn = (t.recibido !== "si") ? `<button class="btn-receive" onclick="marcarRecibido('${esc(t.id)}')">📩 Marcar recibido</button>` : "";
+  const recibirBtn   = (t.recibido !== "si") ? `<button class="btn-receive" onclick="marcarRecibido('${esc(t.id)}')">📩 Marcar recibido</button>` : "";
   const recibidoBadge = t.recibido === "si" ? `<span class="badge-received">📩 Recibido · ${(t.fecha_recibido||"").split(",")[0]}</span>` : "";
   const botones = isPend
     ? `${recibirBtn}<button class="btn-proc" onclick="cambiarEstado('${esc(t.id)}','En Proceso')">🔧 En proceso</button><button class="btn-res" onclick="abrirResModal('${esc(t.id)}')">✅ Resuelto</button>`
@@ -1050,22 +1096,43 @@ function buildTicketCard(t, isPend) {
   </div>`;
 }
 
-// ─── CORRECCIÓN 1: marcarRecibido — sin invalidar + GET doble ──
+// ════════════════════════════════════════════════════════
+// MUTACIONES — siempre invalidan cache antes del fetch
+// ════════════════════════════════════════════════════════
+
+// FIX: invalidarCache() antes de recargar(true) en cada mutación.
+// Esto evita que el cache sucio se sirva si el TTL aún no expiró.
 async function marcarRecibido(idEnc) {
   const id = decodeURIComponent(idEnc);
   try {
-    const fechaRecibido = new Date().toLocaleString("es-DO");
     const r = await fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ recibido: "si", fecha_recibido: fechaRecibido })
+      body: JSON.stringify({ recibido: "si", fecha_recibido: new Date().toLocaleString("es-DO") })
     });
     if (!r.ok) throw new Error("HTTP " + r.status);
     showToast("Ticket marcado como recibido ✓", "success");
-    // Un solo GET para que todos los paneles vean el cambio
-    await recargar(true);
+    invalidarCache();          // FIX: limpia cache antes de recargar
+    await recargar(true);      // un solo GET fresco
   } catch {
     showToast("Error al marcar como recibido", "error");
+  }
+}
+
+async function cambiarEstado(idEnc, nuevoEstado) {
+  const id = decodeURIComponent(idEnc);
+  try {
+    const r = await fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ estado: nuevoEstado })
+    });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    showToast(`Ticket → "${nuevoEstado}"`, "success");
+    invalidarCache();          // FIX: limpia cache antes de recargar
+    await recargar(true);      // un solo GET fresco
+  } catch (e) {
+    showToast("Error al actualizar estado", "error");
   }
 }
 
@@ -1092,24 +1159,6 @@ function renderResueltos() {
     </div>`).join("");
 }
 
-// ─── CORRECCIÓN 1: cambiarEstado — sin invalidar antes del GET ──
-async function cambiarEstado(idEnc, nuevoEstado) {
-  const id = decodeURIComponent(idEnc);
-  try {
-    const r = await fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ estado: nuevoEstado })
-    });
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    showToast(`Ticket → "${nuevoEstado}"`, "success");
-    // Un solo GET para consistencia en todos los paneles
-    await recargar(true);
-  } catch (e) {
-    showToast("Error al actualizar estado", "error");
-  }
-}
-
 // ════════════════════════════════════════════════════════
 // MODAL RESOLUCIÓN
 // ════════════════════════════════════════════════════════
@@ -1125,23 +1174,21 @@ function closeResModal() {
   pendingResolveId = null;
 }
 
-// ─── CORRECCIÓN 1: confirmarResolucion — sin invalidar antes del GET ──
 async function confirmarResolucion() {
   const detalle = document.getElementById("resDetalle").value.trim();
   const partic  = document.getElementById("resParticipantes").value.trim();
   if (!detalle) { showToast("Escribe el detalle de resolución", "error"); return; }
   try {
-    const fechaResuelto = new Date().toLocaleString("es-DO");
     const r = await fetch(`${API_TICKETS}/id/${encodeURIComponent(pendingResolveId)}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ estado: "Resuelto", resolucion: detalle, participantes: partic, fecha_resuelto: fechaResuelto })
+      body: JSON.stringify({ estado: "Resuelto", resolucion: detalle, participantes: partic, fecha_resuelto: new Date().toLocaleString("es-DO") })
     });
     if (!r.ok) throw new Error("HTTP " + r.status);
     showToast("Ticket resuelto correctamente", "success");
     closeResModal();
-    // Un solo GET para consistencia en todos los paneles
-    await recargar(true);
+    invalidarCache();          // FIX: limpia cache antes de recargar
+    await recargar(true);      // un solo GET fresco
   } catch (e) {
     showToast("Error al resolver ticket", "error");
   }
@@ -1163,10 +1210,11 @@ function initReportes() {
   renderReportes();
 }
 
-// ─── CORRECCIÓN 2: repRecargar — usa recargar(true) en lugar de fetch directo ──
+// FIX: repRecargar hace recargar(true) y NO llama renderReportes() extra.
+// recargar(true) ya llama renderTodo() → renderReportes() si repInited=true.
+// Antes llamaba a ambos, causando doble render y request redundante.
 async function repRecargar() {
   await recargar(true);
-  renderReportes();
   showToast("Datos actualizados", "success");
 }
 
@@ -1200,19 +1248,26 @@ function renderReportes() {
   document.getElementById("repPendPct").textContent=total?Math.round(pend/total*100)+"% del total":"0%";
   document.getElementById("repProcPct").textContent=total?Math.round(proc/total*100)+"% del total":"0%";
   document.getElementById("repResPct").textContent=total?Math.round(res/total*100)+"% del total":"0%";
+
   const deptoMap={};
   tickets.forEach(t=>{const d=(t.depto||"Sin depto").trim();if(!deptoMap[d])deptoMap[d]={total:0,res:0};deptoMap[d].total++;if(t.estado==="Resuelto")deptoMap[d].res++;});
   const deptos=Object.entries(deptoMap).sort((a,b)=>b[1].total-a[1].total);
+
   const tbody=document.getElementById("repDepTable");
   if(deptos.length===0){tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px;font-size:10px;font-family:var(--mono)">Sin mis tickets en ${nombre} ${anio}</td></tr>`;}
   else{const maxT=deptos[0]?.[1].total||1;tbody.innerHTML=deptos.map(([d,info],idx)=>{const pct=total?Math.round(info.total/total*100):0,color=DEP_COLORS[idx%DEP_COLORS.length],barW=Math.round(info.total/maxT*100);return`<tr><td class="dep-name">${d}</td><td class="dep-resuelto">${info.res} / ${info.total}</td><td class="dep-bar-cell"><div class="dep-bar-wrap"><div class="dep-bar-fill" style="width:${barW}%;background:${color}"></div></div></td><td class="dep-pct">${pct}%</td></tr>`;}).join("")+`<tr class="dep-total-row"><td>Total</td><td style="text-align:center;font-family:var(--mono)">${res} / ${total}</td><td></td><td style="text-align:right;font-family:var(--mono);font-weight:700;color:var(--accent)">100%</td></tr>`;}
+
   repRenderBarChart(deptos,total);
+
   const legendBody=document.getElementById("repLegendBody");
   legendBody.innerHTML=deptos.length?deptos.map(([d,info],idx)=>{const pct=total?Math.round(info.total/total*100):0,color=DEP_COLORS[idx%DEP_COLORS.length];return`<tr><td><span class="legend-color-dot" style="background:${color}"></span>${d}</td><td style="text-align:center">${info.total}</td><td style="text-align:center;font-weight:700;color:${color}">${pct}%</td></tr>`;}).join("")+`<tr class="legend-total-row"><td><strong>Total</strong></td><td style="text-align:center"><strong>${total}</strong></td><td style="text-align:center"><strong>100%</strong></td></tr>`:`<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:10px;font-size:9px;font-family:var(--mono)">Sin datos</td></tr>`;
+
   const list=document.getElementById("repRecentList");
   const recientes=tickets.slice().reverse().slice(0,5);
   list.innerHTML=recientes.length===0?`<div class="rep-empty"><div class="rep-empty-icon">📋</div>Sin mis tickets en este mes</div>`:recientes.map(t=>{const ecCls=t.estado==="Resuelto"?"res":t.estado==="En Proceso"?"proc":"pend",fecha=(t.fecha||"").split(",")[0]||"—";return`<div class="rep-ticket-item"><div class="rep-ticket-left"><div class="rep-ticket-titulo">${t.titulo||"Sin título"}</div><div class="rep-ticket-meta">${t.depto||"—"} • ${t.usuario||"—"}</div></div><div class="rep-ticket-right"><span class="badge-sm ${ecCls}">${t.estado||"—"}</span><span class="rep-ticket-fecha">${fecha}</span></div></div>`;}).join("");
+
   renderRendimientoIndividual(tickets,mes,anio,total,pend,proc,res,deptos);
+
   const fechaCierre=new Date(anio,mes+1,0).toLocaleDateString("es-DO"),cierreGuardado=repGetCierreGuardado(mes,anio);
   document.getElementById("repCierreDesc").textContent=`Mis tickets de ${nombre} ${anio}. Asignados a ${MI_USER}.`;
   document.getElementById("repCierreFecha").textContent=fechaCierre;
@@ -1302,7 +1357,7 @@ function repExportarPDF() {
   const ticketRows=tickets.slice().reverse().slice(0,12).map(t=>{const ecColor=t.estado==="Resuelto"?"#1a9060":t.estado==="En Proceso"?"#1a7fa0":"#c97700",urgLabel=calcUrgencia(t).label;return`<tr><td style="padding:5px 10px;font-size:11px;border-bottom:1px solid #eee">${t.titulo||"—"}</td><td style="padding:5px 10px;font-size:11px;border-bottom:1px solid #eee">${t.depto||"—"}</td><td style="padding:5px 10px;font-size:11px;border-bottom:1px solid #eee">${t.usuario||"—"}</td><td style="padding:5px 10px;font-size:11px;border-bottom:1px solid #eee">${(t.fecha||"").split(",")[0]}</td><td style="padding:5px 10px;font-size:11px;border-bottom:1px solid #eee;font-weight:700;color:${ecColor}">${t.estado||"—"}</td><td style="padding:5px 10px;font-size:10px;border-bottom:1px solid #eee">${urgLabel}</td></tr>`;}).join("");
   const pw=window.open("","_blank","width=900,height=700");
   pw.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/><title>Informe Técnico — ${nombreCompleto} — ${nombre} ${anio}</title><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#111;padding:40px}@page{margin:20mm}.hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;padding-bottom:18px;border-bottom:3px solid #7c6fff}.badge{display:inline-block;background:#7c6fff;color:#fff;font-size:9px;font-weight:700;letter-spacing:2px;padding:2px 8px;border-radius:4px;margin-bottom:6px;text-transform:uppercase}h1{font-size:24px;font-weight:800;letter-spacing:-1px}.sub{font-size:12px;color:#555;margin-top:3px;font-family:'DM Mono',monospace}.meta{text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:#777}.tech-pill{display:inline-block;background:#f0eeff;color:#5b4fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid #d4ccff;margin-top:4px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}.kpi{padding:13px 15px;border-radius:9px;border:1px solid #eee;background:#fafafa}.kpi .lbl{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:#888;font-family:'DM Mono',monospace;margin-bottom:5px}.kpi .val{font-size:28px;font-weight:800;letter-spacing:-1px}.kpi.t{border-top:3px solid #5b4fff}.kpi.t .val{color:#5b4fff}.kpi.p{border-top:3px solid #c97700}.kpi.p .val{color:#c97700}.kpi.e{border-top:3px solid #1a7fa0}.kpi.e .val{color:#1a7fa0}.kpi.r{border-top:3px solid #1a9060}.kpi.r .val{color:#1a9060}.perf-box{border:1px solid #e8e8f0;border-radius:10px;padding:18px;margin-bottom:24px;background:#fafbff;border-top:3px solid #7c6fff}.perf-box h3{font-size:14px;font-weight:700;margin-bottom:12px;color:#333}.perf-row{display:flex;gap:16px;flex-wrap:wrap}.perf-kpi{text-align:center;background:#fff;border:1px solid #eee;border-radius:8px;padding:12px 16px;flex:1;min-width:80px}.perf-kpi .v{font-size:22px;font-weight:800}.perf-kpi .l{font-size:9px;text-transform:uppercase;color:#888;font-family:'DM Mono',monospace;margin-top:2px}.perf-kpi .v.g{color:#1a9060}.perf-kpi .v.p{color:#7c6fff}.perf-kpi .v.b{color:#1a7fa0}.perf-bar-wrap{height:8px;background:#eee;border-radius:4px;overflow:hidden;margin:10px 0 4px}.perf-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#1a9060,#3be38e)}.sec{font-size:14px;font-weight:700;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid #eee}.blk{margin-bottom:24px;break-inside:avoid}.two{display:grid;grid-template-columns:1fr 1.5fr;gap:18px;margin-bottom:24px}table{width:100%;border-collapse:collapse}th{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#888;font-family:'DM Mono',monospace;padding:5px 10px;text-align:left;border-bottom:2px solid #eee}img{max-width:100%;border-radius:8px;border:1px solid #eee;display:block;margin:0 auto}.ftr{margin-top:28px;padding-top:14px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:#aaa}</style></head><body>
-  <div class="hdr"><div><span class="badge">GM Tickets TI</span><h1>Informe Mensual Técnico</h1><div class="sub">${nombre} ${anio}</div><div class="tech-pill">👤 ${nombreCompleto}</div></div><div class="meta"><p><strong>Técnico:</strong> ${nombreCompleto}</p><p><strong>Generado:</strong> ${new Date().toLocaleString("es-DO")}</p><p><strong>Sistema:</strong> GM Tickets TI v2.1</p></div></div>
+  <div class="hdr"><div><span class="badge">GM Tickets TI</span><h1>Informe Mensual Técnico</h1><div class="sub">${nombre} ${anio}</div><div class="tech-pill">👤 ${nombreCompleto}</div></div><div class="meta"><p><strong>Técnico:</strong> ${nombreCompleto}</p><p><strong>Generado:</strong> ${new Date().toLocaleString("es-DO")}</p><p><strong>Sistema:</strong> GM Tickets TI v2.2</p></div></div>
   <div class="kpis"><div class="kpi t"><div class="lbl">Mis Tickets</div><div class="val">${total}</div></div><div class="kpi p"><div class="lbl">Pendientes</div><div class="val">${pend}</div></div><div class="kpi e"><div class="lbl">En Proceso</div><div class="val">${proc}</div></div><div class="kpi r"><div class="lbl">Resueltos</div><div class="val">${res}</div></div></div>
   <div class="perf-box"><h3>📊 Mi Rendimiento Individual — ${nombre} ${anio}</h3><div class="perf-row"><div class="perf-kpi"><div class="v g">${pctRes}%</div><div class="l">Tasa resolución</div></div><div class="perf-kpi"><div class="v p">${deptos.length}</div><div class="l">Deptos.</div></div><div class="perf-kpi"><div class="v b">${accTotal}</div><div class="l">Total histórico</div></div><div class="perf-kpi"><div class="v g">${accRes}</div><div class="l">Resueltos hist.</div></div><div class="perf-kpi"><div class="v p">${accPct}%</div><div class="l">% Hist.</div></div></div><div class="perf-bar-wrap"><div class="perf-bar-fill" style="width:${pctRes}%"></div></div><p style="font-size:10px;color:#888;font-family:'DM Mono',monospace">Resolución del mes: ${res} de ${total} tickets (${pctRes}%)</p></div>
   <div class="two"><div class="blk"><div class="sec">Cobertura por departamento</div><table><thead><tr><th>Departamento</th><th style="text-align:center">Res/Total</th><th style="text-align:right">%</th></tr></thead><tbody>${depRows}<tr><td style="padding:7px 10px;font-size:12px;font-weight:700">Total</td><td style="padding:7px 10px;font-size:12px;text-align:center;font-weight:700">${res}/${total}</td><td style="padding:7px 10px;font-size:12px;text-align:right;font-weight:700;color:#5b4fff">100%</td></tr></tbody></table></div><div class="blk"><div class="sec">Distribución por departamento</div>${chartSrc?`<img src="${chartSrc}" alt="Gráfica"/>`:"<p style='color:#aaa;font-size:12px'>Gráfica no disponible</p>"}</div></div>
@@ -1330,6 +1385,7 @@ function renderConfigView() {
   const ttEl=document.getElementById("cfgTotalTickets");if(ttEl)ttEl.textContent=misTickets.length;
   const trEl=document.getElementById("cfgTotalResueltos");if(trEl)trEl.textContent=misTickets.filter(t=>t.estado==="Resuelto").length;
   const cEl=document.getElementById("cfgCierresGuardados");if(cEl)cEl.textContent=repGetCierres().length;
+  actualizarEstadoCache(); // FIX: muestra estado del cache en config
 }
 
 async function sha256(text) {
