@@ -42,8 +42,7 @@
   --r:  6px;
   --r2: 10px;
   --r3: 14px;
-  --sidebar: 228px;
-  --topbar:  54px;
+  --floatbar: 64px;
   --font: 'Inter', system-ui, sans-serif;
   --mono: 'JetBrains Mono', monospace;
   --ease: cubic-bezier(.4,0,.2,1);
@@ -51,7 +50,18 @@
 
 *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-body { background: var(--bg); color: var(--txt0); font-family: var(--font); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; font-size: 13px; line-height: 1.5; }
+body {
+  background: var(--bg);
+  color: var(--txt0);
+  font-family: var(--font);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  font-size: 13px;
+  line-height: 1.5;
+  /* padding bottom for floatbar */
+  padding-bottom: calc(var(--floatbar) + 16px);
+}
 ::selection { background: var(--indigo-m); }
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -59,115 +69,26 @@ body { background: var(--bg); color: var(--txt0); font-family: var(--font); min-
 button { font-family: var(--font); cursor: pointer; }
 input, select, textarea { font-family: var(--font); }
 
-/* ── SIDEBAR ── */
-.sidebar {
-  position: fixed; top: 0; left: 0;
-  width: var(--sidebar); height: 100vh;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  display: flex; flex-direction: column;
-  z-index: 100; overflow-y: auto; overflow-x: hidden;
-}
-.sb-logo {
-  padding: 18px 16px 14px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.sb-brand { display: flex; align-items: center; gap: 10px; }
-.sb-icon {
-  width: 30px; height: 30px;
-  background: var(--indigo);
-  border-radius: 7px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; flex-shrink: 0;
-}
-.sb-name { font-size: 13px; font-weight: 600; color: var(--txt0); letter-spacing: -.2px; }
-.sb-sub  { font-size: 10px; color: var(--txt3); margin-top: 1px; font-family: var(--mono); }
-
-.sb-section {
-  padding: 14px 16px 4px;
-  font-size: 9px; font-weight: 600;
-  letter-spacing: 1.2px; text-transform: uppercase;
-  color: var(--txt3); flex-shrink: 0;
-}
-.nav-item {
-  display: flex; align-items: center; gap: 9px;
-  margin: 1px 8px; padding: 8px 10px;
-  border-radius: var(--r);
-  font-size: 12.5px; font-weight: 400; color: var(--txt2);
-  cursor: pointer; user-select: none;
-  transition: background .12s var(--ease), color .12s var(--ease);
-  position: relative;
-}
-.nav-item:hover { background: var(--surface2); color: var(--txt1); }
-.nav-item.active { background: var(--indigo-s); color: var(--indigo); font-weight: 500; }
-.nav-item.active::before {
-  content: ''; position: absolute; left: -8px; top: 20%; bottom: 20%;
-  width: 2.5px; background: var(--indigo); border-radius: 0 2px 2px 0;
-}
-.nav-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; opacity: .75; }
-.nav-item.active .nav-icon { opacity: 1; }
-.nav-badge {
-  margin-left: auto; font-size: 9px; font-weight: 600;
-  padding: 2px 6px; border-radius: 99px; font-family: var(--mono);
-}
-.nb-blue   { background: var(--indigo-s);   color: var(--indigo); }
-.nb-amber  { background: var(--amber-s);    color: var(--amber); }
-.nb-green  { background: var(--emerald-s);  color: var(--emerald); }
-.nb-rose   { background: var(--rose-s);     color: var(--rose); }
-
-.nav-new {
-  margin-left: auto; font-size: 8px; font-weight: 600;
-  padding: 1px 5px; border-radius: 3px;
-  background: var(--indigo); color: #fff; letter-spacing: .3px;
-}
-.sb-divider { border: none; border-top: 1px solid var(--border); margin: 6px 16px; }
-
-.sb-footer {
-  margin-top: auto; padding: 12px 12px 14px;
-  border-top: 1px solid var(--border); flex-shrink: 0;
-}
-.user-pill {
-  display: flex; align-items: center; gap: 9px;
-  padding: 8px 10px; border-radius: var(--r2);
-  background: var(--surface2); margin-bottom: 8px;
-}
-.user-av {
-  width: 28px; height: 28px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--indigo) 0%, #818CF8 100%);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0;
-}
-.user-name { font-size: 11.5px; font-weight: 600; color: var(--txt0); }
-.user-role { font-size: 9px; color: var(--txt3); font-family: var(--mono); margin-top: 1px; }
-.user-badge {
-  margin-left: auto; font-size: 8px; font-weight: 700;
-  padding: 2px 6px; border-radius: 3px; letter-spacing: .5px; text-transform: uppercase;
-  background: var(--rose-s); color: var(--rose);
-}
-.btn-logout {
-  width: 100%; padding: 6px;
-  border: 1px solid var(--border2); background: transparent;
-  color: var(--txt2); border-radius: var(--r);
-  font-size: 11px; transition: all .12s;
-}
-.btn-logout:hover { color: var(--rose); border-color: var(--rose-m); background: var(--rose-s); }
-
-/* ── MAIN ── */
-.main { margin-left: var(--sidebar); min-height: 100vh; }
-
+/* ── TOPBAR ── */
 .topbar {
-  height: var(--topbar);
-  padding: 0 24px;
+  height: 54px;
+  padding: 0 18px;
   border-bottom: 1px solid var(--border);
   background: var(--surface);
   display: flex; align-items: center; justify-content: space-between;
   position: sticky; top: 0; z-index: 50;
 }
 .topbar-left { display: flex; align-items: center; gap: 10px; }
-.topbar-title { font-size: 14px; font-weight: 600; color: var(--txt0); letter-spacing: -.2px; }
+.topbar-brand { display: flex; align-items: center; gap: 8px; }
+.topbar-brand-icon {
+  width: 26px; height: 26px; background: var(--indigo);
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+}
+.topbar-brand-name { font-size: 13px; font-weight: 700; color: var(--txt0); letter-spacing: -.2px; }
 .topbar-sep { color: var(--border2); }
-.topbar-sub { font-size: 11px; color: var(--txt3); font-family: var(--mono); display: flex; align-items: center; gap: 5px; }
+.topbar-title { font-size: 13px; font-weight: 600; color: var(--txt0); }
+.topbar-sub { font-size: 10px; color: var(--txt3); font-family: var(--mono); display: flex; align-items: center; gap: 5px; }
 .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--emerald); flex-shrink: 0; animation: livepulse 2.5s ease-in-out infinite; }
 @keyframes livepulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
@@ -179,7 +100,7 @@ input, select, textarea { font-family: var(--font); }
   color: var(--txt2); font-size: 11px; font-weight: 500;
   transition: all .12s;
 }
-.top-btn:hover { background: var(--surface2); color: var(--txt1); border-color: var(--border2); }
+.top-btn:hover { background: var(--surface2); color: var(--txt1); }
 .top-btn-icon {
   width: 30px; height: 30px; border-radius: 50%;
   border: 1px solid var(--border); background: transparent;
@@ -194,8 +115,215 @@ input, select, textarea { font-family: var(--font); }
   background: var(--rose); border: 1.5px solid var(--surface);
 }
 
+/* ── FLOATING NAVBAR ── */
+.floatbar-wrap {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  width: calc(100% - 24px);
+  max-width: 1100px;
+}
+
+.floatbar {
+  background: rgba(15, 15, 18, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 16px;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.28), 0 2px 8px rgba(0,0,0,.18);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.floatbar::-webkit-scrollbar { display: none; }
+
+/* nav items inside floatbar */
+.fn-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 9px;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: background .12s var(--ease);
+  position: relative;
+  flex-shrink: 0;
+  min-width: 52px;
+}
+.fn-item:hover { background: rgba(255,255,255,.08); }
+.fn-item.active { background: rgba(79,70,229,.30); }
+.fn-icon {
+  font-size: 16px;
+  line-height: 1;
+  position: relative;
+}
+.fn-label {
+  font-size: 9px;
+  font-weight: 500;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .1px;
+  white-space: nowrap;
+  transition: color .12s;
+}
+.fn-item.active .fn-label { color: #fff; }
+.fn-item:hover .fn-label  { color: rgba(255,255,255,.8); }
+
+/* badge dentro de floatbar */
+.fn-badge {
+  position: absolute;
+  top: 3px; right: 6px;
+  font-family: var(--mono);
+  font-size: 8px; font-weight: 700;
+  padding: 1px 4px; border-radius: 99px;
+  min-width: 14px; text-align: center;
+  line-height: 1.4;
+}
+.fnb-blue   { background: var(--indigo);  color: #fff; }
+.fnb-amber  { background: var(--amber);   color: #fff; }
+.fnb-green  { background: var(--emerald); color: #fff; }
+.fnb-rose   { background: var(--rose);    color: #fff; }
+
+/* divider en la barra */
+.fn-div {
+  width: 1px; height: 28px;
+  background: rgba(255,255,255,.10);
+  flex-shrink: 0; margin: 0 2px;
+}
+
+/* user pill al final */
+.fn-user {
+  display: flex; align-items: center; gap: 7px;
+  padding: 5px 10px; border-radius: 10px;
+  cursor: pointer; flex-shrink: 0;
+  transition: background .12s;
+}
+.fn-user:hover { background: rgba(255,255,255,.08); }
+.fn-av {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--indigo) 0%, #818CF8 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.fn-user-name { font-size: 10px; font-weight: 600; color: rgba(255,255,255,.85); }
+.fn-user-role { font-size: 8px; color: rgba(255,255,255,.4); font-family: var(--mono); }
+.fn-logout-btn {
+  background: rgba(225,29,72,.15);
+  border: 1px solid rgba(225,29,72,.25);
+  color: #F87171;
+  border-radius: 6px;
+  font-size: 9px; padding: 3px 8px;
+  transition: all .12s;
+}
+.fn-logout-btn:hover { background: rgba(225,29,72,.25); }
+
+/* ── MOBILE: solo 5 + "Más" ── */
+.fn-more-btn {
+  display: none; /* se muestra en móvil */
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 9px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  flex-shrink: 0;
+  min-width: 52px;
+  transition: background .12s;
+}
+.fn-more-btn:hover { background: rgba(255,255,255,.08); }
+.fn-more-icon { font-size: 16px; line-height: 1; color: rgba(255,255,255,.75); }
+.fn-more-label { font-size: 9px; font-weight: 500; color: rgba(255,255,255,.5); }
+
+/* "Más" panel overlay */
+.mas-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.5);
+  backdrop-filter: blur(6px);
+  z-index: 190;
+  display: none; align-items: flex-end; justify-content: center;
+  padding-bottom: calc(var(--floatbar) + 20px);
+}
+.mas-overlay.open { display: flex; }
+.mas-panel {
+  background: rgba(20, 20, 28, 0.97);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 18px;
+  padding: 14px 12px 10px;
+  width: calc(100% - 24px);
+  max-width: 420px;
+  animation: masIn .18s var(--ease);
+}
+@keyframes masIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.mas-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-bottom: 10px; margin-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.mas-title { font-size: 10px; font-weight: 600; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: 1px; font-family: var(--mono); }
+.mas-close {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: rgba(255,255,255,.1);
+  border: none; color: rgba(255,255,255,.6);
+  font-size: 12px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; line-height: 1;
+}
+.mas-section-title { font-size: 8px; font-weight: 600; color: rgba(255,255,255,.3); text-transform: uppercase; letter-spacing: 1.2px; font-family: var(--mono); padding: 6px 4px 4px; }
+.mas-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 6px; }
+.mas-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 8px 4px; border-radius: 10px;
+  cursor: pointer; transition: background .12s;
+  position: relative;
+}
+.mas-item:hover { background: rgba(255,255,255,.08); }
+.mas-item.active { background: rgba(79,70,229,.30); }
+.mas-item .mi-icon { font-size: 18px; line-height: 1; }
+.mas-item .mi-label { font-size: 9px; font-weight: 500; color: rgba(255,255,255,.6); text-align: center; white-space: nowrap; }
+.mas-item.active .mi-label { color: #fff; }
+.mas-item .fn-badge { top: 2px; right: 10px; }
+.mas-divider { height: 1px; background: rgba(255,255,255,.07); margin: 4px 0; }
+/* user row dentro del panel más */
+.mas-user-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 6px 4px;
+}
+.mas-user-info { flex: 1; }
+.mas-user-name { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.85); }
+.mas-user-role { font-size: 9px; color: rgba(255,255,255,.4); font-family: var(--mono); }
+
+/* ── RESPONSIVE ── */
+/* Desktop: todos visibles en la barra, sin límite */
+@media (min-width: 769px) {
+  .fn-more-btn { display: none !important; }
+  .fn-desktop-only { display: flex !important; }
+  .fn-mobile-only { display: none !important; }
+  .fn-div { display: block; }
+}
+
+/* Móvil: solo mostrar 5 + "Más", ocultar el resto */
+@media (max-width: 768px) {
+  .floatbar-wrap { width: calc(100% - 20px); }
+  .floatbar { justify-content: space-around; padding: 6px 4px; overflow: hidden; }
+  .fn-desktop-only { display: none !important; }
+  .fn-mobile-only { display: flex !important; }
+  .fn-more-btn { display: flex !important; }
+  .fn-div { display: none; }
+  .fn-user { display: none; }
+}
+
+/* ── MAIN ── */
+.main { padding-top: 0; }
+
 /* ── VIEWS ── */
-.view { display: none; padding: 24px; animation: fadeUp .18s var(--ease); }
+.view { display: none; padding: 20px 18px; animation: fadeUp .18s var(--ease); }
 .view.active { display: block; }
 @keyframes fadeUp { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
 
@@ -326,6 +454,7 @@ input, select, textarea { font-family: var(--font); }
 .uc-ok   { background: var(--surface2); color: var(--txt2);    border-color: var(--border); }
 
 .dash-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 12px; }
+@media (max-width: 700px) { .dash-grid { grid-template-columns: 1fr; } }
 .dept-row { margin-bottom: 9px; }
 .dept-row-top { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
 .dept-row-name { color: var(--txt1); font-weight: 500; }
@@ -343,7 +472,8 @@ input, select, textarea { font-family: var(--font); }
 .recent-meta  { font-size: 10px; color: var(--txt3); font-family: var(--mono); }
 
 /* ── TICKETS GRID ── */
-.tickets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px,1fr)); gap: 12px; }
+.tickets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 12px; }
+@media (max-width: 500px) { .tickets-grid { grid-template-columns: 1fr; } }
 .t-card {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--r3); padding: 16px;
@@ -447,7 +577,7 @@ input, select, textarea { font-family: var(--font); }
 }
 .modal-ftr-actions { display: flex; gap: 7px; flex-wrap: wrap; }
 
-/* ── COMMUNICACIÓN ── */
+/* ── COMUNICACIÓN ── */
 .notif-list { display: flex; flex-direction: column; gap: 6px; }
 .notif-item {
   display: flex; align-items: flex-start; gap: 10px;
@@ -506,6 +636,7 @@ input, select, textarea { font-family: var(--font); }
 .comment-input:focus { border-color: var(--indigo); }
 
 .template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 500px) { .template-grid { grid-template-columns: 1fr; } }
 .tmpl-card {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--r2); padding: 14px 16px; cursor: pointer;
@@ -551,6 +682,7 @@ input, select, textarea { font-family: var(--font); }
 .venc-time.va { color: var(--amber); }
 
 .tec-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+@media (max-width: 600px) { .tec-grid2 { grid-template-columns: 1fr; } }
 .tec-card2 {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--r3); padding: 18px;
@@ -577,8 +709,9 @@ input, select, textarea { font-family: var(--font); }
 .pf-indigo { background: var(--indigo); }
 
 .quality-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 600px) { .quality-grid { grid-template-columns: 1fr; } }
 .qual-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r3); padding: 18px; }
-.qual-title { font-size: 12px; font-weight: 600; color: var(--txt1); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); margin-bottom: 14px; font-size: 10px; }
+.qual-title { font-family: var(--mono); font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .5px; color: var(--txt3); margin-bottom: 14px; }
 .chart-wrap { position: relative; height: 160px; }
 
 /* ── USUARIOS ── */
@@ -612,6 +745,7 @@ table.dt tr:hover td { background: var(--surface2); }
 
 /* ── CONFIG ── */
 .cfg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) { .cfg-grid { grid-template-columns: 1fr; } }
 .cfg-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r3); padding: 20px; }
 .cfg-title { font-size: 13px; font-weight: 600; color: var(--txt0); margin-bottom: 2px; }
 .cfg-sub   { font-size: 11px; color: var(--txt3); font-family: var(--mono); margin-bottom: 16px; }
@@ -637,6 +771,7 @@ table.dt tr:hover td { background: var(--surface2); }
 .m-tab.active { background: var(--indigo); color: #fff; }
 .rep-banner { display: flex; align-items: center; gap: 9px; padding: 9px 14px; margin-bottom: 18px; background: var(--indigo-s); border: 1px solid var(--indigo-m); border-radius: var(--r); font-size: 11.5px; color: var(--indigo); }
 .rep-grid { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 12px; margin-bottom: 18px; }
+@media (max-width: 700px) { .rep-grid { grid-template-columns: 1fr; } }
 .rep-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r3); padding: 16px; }
 .rep-card-title { font-family: var(--mono); font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.2px; color: var(--txt3); margin-bottom: 12px; }
 .dep-t { width: 100%; border-collapse: collapse; }
@@ -650,19 +785,7 @@ table.dt tr:hover td { background: var(--surface2); }
 .rep-t-meta  { font-family: var(--mono); font-size: 9px; color: var(--txt3); }
 .rep-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
 
-/* ── EMPTY ── */
-.empty { grid-column: 1/-1; text-align: center; padding: 50px 20px; color: var(--txt3); }
-.empty-icon { font-size: 32px; margin-bottom: 10px; opacity: .5; }
-
-/* ── TOAST ── */
-.toast-wrap { position: fixed; bottom: 18px; right: 18px; display: flex; flex-direction: column; gap: 7px; z-index: 999; pointer-events: none; }
-.toast { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--r2); padding: 10px 14px; font-size: 12px; font-weight: 500; color: var(--txt1); max-width: 280px; opacity: 0; transform: translateY(6px) scale(.97); transition: all .2s var(--ease); pointer-events: none; }
-.toast.show { opacity: 1; transform: none; pointer-events: auto; }
-.toast.tok  { border-left: 3px solid var(--emerald); }
-.toast.terr { border-left: 3px solid var(--rose); }
-.toast.twrn { border-left: 3px solid var(--amber); }
-
-/* ── MIS TICKETS / TRABAJAR stats ── */
+/* ── MIS TICKETS stats ── */
 .mis-stats { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
 .mis-stat { flex: 1; min-width: 80px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); padding: 12px 14px; text-align: center; }
 .ms-val { font-size: 26px; font-weight: 600; line-height: 1; letter-spacing: -.5px; }
@@ -674,117 +797,46 @@ table.dt tr:hover td { background: var(--surface2); }
 .notif-tabs { display: flex; gap: 2px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r2); padding: 3px; margin-bottom: 14px; width: fit-content; }
 .ntab { padding: 5px 14px; border-radius: 6px; border: none; background: transparent; font-size: 11px; font-weight: 500; color: var(--txt2); cursor: pointer; transition: all .12s; }
 .ntab.active { background: var(--surface); color: var(--txt0); box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+
+/* ── EMPTY ── */
+.empty { grid-column: 1/-1; text-align: center; padding: 50px 20px; color: var(--txt3); }
+.empty-icon { font-size: 32px; margin-bottom: 10px; opacity: .5; }
+
+/* ── TOAST ── */
+.toast-wrap { position: fixed; bottom: 90px; right: 18px; display: flex; flex-direction: column; gap: 7px; z-index: 999; pointer-events: none; }
+.toast { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--r2); padding: 10px 14px; font-size: 12px; font-weight: 500; color: var(--txt1); max-width: 280px; opacity: 0; transform: translateY(6px) scale(.97); transition: all .2s var(--ease); pointer-events: none; }
+.toast.show { opacity: 1; transform: none; pointer-events: auto; }
+.toast.tok  { border-left: 3px solid var(--emerald); }
+.toast.terr { border-left: 3px solid var(--rose); }
+.toast.twrn { border-left: 3px solid var(--amber); }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════ SIDEBAR ═══════════════ -->
-<aside class="sidebar">
-  <div class="sb-logo">
-    <div class="sb-brand">
-      <div class="sb-icon">🎫</div>
-      <div>
-        <div class="sb-name">GM Tickets</div>
-        <div class="sb-sub">v4.0 · superadmin</div>
-      </div>
+<!-- ═══════════════ TOPBAR ═══════════════ -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-brand">
+      <div class="topbar-brand-icon">🎫</div>
+      <span class="topbar-brand-name">GM Tickets</span>
     </div>
+    <span class="topbar-sep">·</span>
+    <span class="topbar-title" id="viewTitle">Dashboard</span>
   </div>
-
-  <p class="sb-section">Principal</p>
-  <div class="nav-item active" id="nav-dashboard" onclick="switchView('dashboard')">
-    <span class="nav-icon">◼</span> Dashboard
-  </div>
-  <div class="nav-item" id="nav-tickets" onclick="switchView('tickets')">
-    <span class="nav-icon">🎫</span> Todos los tickets
-    <span class="nav-badge nb-blue" id="nb-tickets">0</span>
-  </div>
-  <div class="nav-item" id="nav-trabajar" onclick="switchView('trabajar')">
-    <span class="nav-icon">⚒</span> A trabajar
-    <span class="nav-badge nb-amber" id="nb-trabajar" style="display:none">0</span>
-  </div>
-  <div class="nav-item" id="nav-resueltos" onclick="switchView('resueltos')">
-    <span class="nav-icon">✓</span> Mis resueltos
-    <span class="nav-badge nb-green" id="nb-resueltos" style="display:none">0</span>
-  </div>
-  <div class="nav-item" id="nav-mistickets" onclick="switchView('mistickets')">
-    <span class="nav-icon">◈</span> Mis tickets
-  </div>
-
-  <hr class="sb-divider"/>
-
-  <p class="sb-section">Comunicación</p>
-  <div class="nav-item" id="nav-notificaciones" onclick="switchView('notificaciones')">
-    <span class="nav-icon">🔔</span> Notificaciones
-    <span class="nav-badge nb-rose" id="nb-notif">3</span>
-  </div>
-  <div class="nav-item" id="nav-comentarios" onclick="switchView('comentarios')">
-    <span class="nav-icon">💬</span> Comentarios
-    <span class="nav-badge nb-blue" id="nb-coments">5</span>
-  </div>
-  <div class="nav-item" id="nav-plantillas" onclick="switchView('plantillas')">
-    <span class="nav-icon">📄</span> Plantillas
-  </div>
-
-  <hr class="sb-divider"/>
-
-  <p class="sb-section">SLA y Control</p>
-  <div class="nav-item" id="nav-vencidos" onclick="switchView('vencidos')">
-    <span class="nav-icon">⏰</span> Tickets vencidos
-    <span class="nav-badge nb-rose" id="nb-venc">4</span>
-  </div>
-  <div class="nav-item" id="nav-tiempos" onclick="switchView('tiempos')">
-    <span class="nav-icon">📊</span> Tiempos de respuesta
-  </div>
-  <div class="nav-item" id="nav-calidad" onclick="switchView('calidad')">
-    <span class="nav-icon">⭐</span> Métricas de calidad
-  </div>
-
-  <hr class="sb-divider"/>
-
-  <p class="sb-section">Análisis</p>
-  <div class="nav-item" id="nav-reportes" onclick="switchView('reportes');initReportes()">
-    <span class="nav-icon">↗</span> Reportes
-  </div>
-
-  <p class="sb-section">Admin</p>
-  <div class="nav-item" id="nav-usuarios" onclick="switchView('usuarios')">
-    <span class="nav-icon">⊞</span> Usuarios
-  </div>
-  <div class="nav-item" id="nav-config" onclick="switchView('config')">
-    <span class="nav-icon">⚙</span> Configuración
-  </div>
-
-  <div class="sb-footer">
-    <div class="user-pill">
-      <div class="user-av" id="saAvatar">JF</div>
-      <div>
-        <div class="user-name" id="saName">Juan Francisco</div>
-        <div class="user-role" id="saUser">@Juan</div>
-      </div>
-      <span class="user-badge">SA</span>
+  <div class="topbar-right">
+    <div class="topbar-sub">
+      <span class="live-dot"></span>
+      <span id="nowTime"></span>
     </div>
-    <button class="btn-logout" onclick="saLogout()">Cerrar sesión</button>
+    <button class="top-btn" onclick="recargarTodo(true)">↻</button>
+    <button class="top-btn-icon" onclick="switchView('notificaciones')" title="Notificaciones">
+      🔔<span class="notif-dot" id="notifDot"></span>
+    </button>
   </div>
-</aside>
+</div>
 
 <!-- ═══════════════ MAIN ═══════════════ -->
 <main class="main">
-  <div class="topbar">
-    <div class="topbar-left">
-      <span class="topbar-title" id="viewTitle">Dashboard</span>
-      <span class="topbar-sep">·</span>
-      <div class="topbar-sub">
-        <span class="live-dot"></span>
-        <span id="nowTime"></span>
-      </div>
-    </div>
-    <div class="topbar-right">
-      <button class="top-btn" onclick="recargarTodo(true)">↻ Actualizar</button>
-      <button class="top-btn-icon" onclick="switchView('notificaciones')" title="Notificaciones">
-        🔔<span class="notif-dot" id="notifDot"></span>
-      </button>
-    </div>
-  </div>
 
   <!-- DASHBOARD -->
   <div id="view-dashboard" class="view active">
@@ -815,11 +867,9 @@ table.dt tr:hover td { background: var(--surface2); }
         <div class="metric-lbl">Mis tickets</div>
       </div>
     </div>
-
     <div class="urg-strip" id="urgStrip">
       <span class="urg-strip-label">Urgencia</span>
     </div>
-
     <div class="dash-grid">
       <div class="card">
         <div class="section-head" style="margin-bottom:14px">
@@ -987,33 +1037,14 @@ table.dt tr:hover td { background: var(--surface2); }
   <!-- TIEMPOS DE RESPUESTA -->
   <div id="view-tiempos" class="view">
     <div class="sla-grid">
-      <div class="sla-card sla-venc">
-        <div class="sla-ico">⏰</div>
-        <div class="sla-val" id="sla-venc">—</div>
-        <div class="sla-lbl">Tickets vencidos</div>
-      </div>
-      <div class="sla-card sla-resp">
-        <div class="sla-ico">⚡</div>
-        <div class="sla-val" id="sla-resp">—</div>
-        <div class="sla-lbl">Tiempo promedio respuesta</div>
-      </div>
-      <div class="sla-card sla-res">
-        <div class="sla-ico">✓</div>
-        <div class="sla-val" id="sla-res">—</div>
-        <div class="sla-lbl">Tiempo promedio resolución</div>
-      </div>
-      <div class="sla-card sla-rate">
-        <div class="sla-ico">📈</div>
-        <div class="sla-val" id="sla-rate">—</div>
-        <div class="sla-lbl">Tasa de resolución</div>
-      </div>
+      <div class="sla-card sla-venc"><div class="sla-ico">⏰</div><div class="sla-val" id="sla-venc">—</div><div class="sla-lbl">Tickets vencidos</div></div>
+      <div class="sla-card sla-resp"><div class="sla-ico">⚡</div><div class="sla-val" id="sla-resp">—</div><div class="sla-lbl">Tiempo promedio respuesta</div></div>
+      <div class="sla-card sla-res"><div class="sla-ico">✓</div><div class="sla-val" id="sla-res">—</div><div class="sla-lbl">Tiempo promedio resolución</div></div>
+      <div class="sla-card sla-rate"><div class="sla-ico">📈</div><div class="sla-val" id="sla-rate">—</div><div class="sla-lbl">Tasa de resolución</div></div>
     </div>
     <div class="tec-grid2">
       <div class="tec-card2">
-        <div class="tec-head">
-          <div class="tec-av av-cyan">XR</div>
-          <div><div class="tec-name">Xavier Rosario</div><div class="tec-role">Técnico de soporte</div></div>
-        </div>
+        <div class="tec-head"><div class="tec-av av-cyan">XR</div><div><div class="tec-name">Xavier Rosario</div><div class="tec-role">Técnico de soporte</div></div></div>
         <div class="tec-kpis">
           <div class="tec-kpi"><div class="tec-kv kv-blue" id="xav-tot">—</div><div class="tec-kl">Asignados</div></div>
           <div class="tec-kpi"><div class="tec-kv kv-green" id="xav-res">—</div><div class="tec-kl">Resueltos</div></div>
@@ -1023,10 +1054,7 @@ table.dt tr:hover td { background: var(--surface2); }
         <div class="prog-bg"><div class="prog-fill pf-cyan" id="xav-bar" style="width:0%"></div></div>
       </div>
       <div class="tec-card2">
-        <div class="tec-head">
-          <div class="tec-av av-indigo">JF</div>
-          <div><div class="tec-name">Juan Francisco Jiménez</div><div class="tec-role">Técnico senior · Superadmin</div></div>
-        </div>
+        <div class="tec-head"><div class="tec-av av-indigo">JF</div><div><div class="tec-name">Juan Francisco Jiménez</div><div class="tec-role">Técnico senior · Superadmin</div></div></div>
         <div class="tec-kpis">
           <div class="tec-kpi"><div class="tec-kv kv-indigo" id="juan-tot">—</div><div class="tec-kl">Asignados</div></div>
           <div class="tec-kpi"><div class="tec-kv kv-green"  id="juan-res">—</div><div class="tec-kl">Resueltos</div></div>
@@ -1180,6 +1208,195 @@ table.dt tr:hover td { background: var(--surface2); }
   </div>
 </main>
 
+<!-- ═══════════════ FLOATING NAV BAR ═══════════════ -->
+<div class="floatbar-wrap">
+  <nav class="floatbar" id="floatbar">
+
+    <!-- ── DESKTOP: todos visibles ── -->
+    <!-- PRINCIPAL -->
+    <div class="fn-item active fn-desktop-only" id="fn-dashboard" onclick="switchView('dashboard')">
+      <span class="fn-icon">◼</span>
+      <span class="fn-label">Dashboard</span>
+    </div>
+    <div class="fn-item fn-desktop-only" id="fn-tickets" onclick="switchView('tickets')">
+      <span class="fn-icon">🎫</span>
+      <span class="fn-label">Tickets</span>
+      <span class="fn-badge fnb-blue" id="nb-tickets">0</span>
+    </div>
+    <div class="fn-item fn-desktop-only" id="fn-trabajar" onclick="switchView('trabajar')">
+      <span class="fn-icon">⚒</span>
+      <span class="fn-label">A trabajar</span>
+      <span class="fn-badge fnb-amber" id="nb-trabajar" style="display:none">0</span>
+    </div>
+    <div class="fn-item fn-desktop-only" id="fn-resueltos" onclick="switchView('resueltos')">
+      <span class="fn-icon">✓</span>
+      <span class="fn-label">Resueltos</span>
+      <span class="fn-badge fnb-green" id="nb-resueltos" style="display:none">0</span>
+    </div>
+    <div class="fn-item fn-desktop-only" id="fn-mistickets" onclick="switchView('mistickets')">
+      <span class="fn-icon">◈</span>
+      <span class="fn-label">Mis tickets</span>
+    </div>
+
+    <div class="fn-div fn-desktop-only"></div>
+
+    <!-- COMUNICACIÓN -->
+    <div class="fn-item fn-desktop-only" id="fn-notificaciones" onclick="switchView('notificaciones')">
+      <span class="fn-icon">🔔</span>
+      <span class="fn-label">Notif.</span>
+      <span class="fn-badge fnb-rose" id="nb-notif">3</span>
+    </div>
+    <div class="fn-item fn-desktop-only" id="fn-comentarios" onclick="switchView('comentarios')">
+      <span class="fn-icon">💬</span>
+      <span class="fn-label">Comentarios</span>
+      <span class="fn-badge fnb-blue" id="nb-coments">5</span>
+    </div>
+    <div class="fn-item fn-desktop-only" id="fn-plantillas" onclick="switchView('plantillas')">
+      <span class="fn-icon">📄</span>
+      <span class="fn-label">Plantillas</span>
+    </div>
+
+    <div class="fn-div fn-desktop-only"></div>
+
+    <!-- SLA -->
+    <div class="fn-item fn-desktop-only" id="fn-vencidos" onclick="switchView('vencidos')">
+      <span class="fn-icon">⏰</span>
+      <span class="fn-label">Vencidos</span>
+      <span class="fn-badge fnb-rose" id="nb-venc">0</span>
+    </div>
+    <div class="fn-item fn-desktop-only" id="fn-tiempos" onclick="switchView('tiempos')">
+      <span class="fn-icon">📊</span>
+      <span class="fn-label">Tiempos</span>
+    </div>
+    <div class="fn-item fn-desktop-only" id="fn-calidad" onclick="switchView('calidad')">
+      <span class="fn-icon">⭐</span>
+      <span class="fn-label">Calidad</span>
+    </div>
+
+    <div class="fn-div fn-desktop-only"></div>
+
+    <!-- ANÁLISIS + ADMIN -->
+    <div class="fn-item fn-desktop-only" id="fn-reportes" onclick="switchView('reportes');initReportes()">
+      <span class="fn-icon">↗</span>
+      <span class="fn-label">Reportes</span>
+    </div>
+    <div class="fn-item fn-desktop-only" id="fn-usuarios" onclick="switchView('usuarios')">
+      <span class="fn-icon">⊞</span>
+      <span class="fn-label">Usuarios</span>
+    </div>
+    <div class="fn-item fn-desktop-only" id="fn-config" onclick="switchView('config')">
+      <span class="fn-icon">⚙</span>
+      <span class="fn-label">Config.</span>
+    </div>
+
+    <div class="fn-div fn-desktop-only"></div>
+
+    <!-- USER PILL desktop -->
+    <div class="fn-user fn-desktop-only" id="fnUserPill" onclick="switchView('config')">
+      <div class="fn-av" id="fnAvatar">JF</div>
+      <div>
+        <div class="fn-user-name" id="fnUserName">Juan</div>
+        <div class="fn-user-role">SA</div>
+      </div>
+    </div>
+    <button class="fn-logout-btn fn-desktop-only" onclick="saLogout()">↩ Salir</button>
+
+    <!-- ── MÓVIL: 5 principales ── -->
+    <div class="fn-item active fn-mobile-only" id="fnm-dashboard" onclick="switchView('dashboard');closeMasPanel()">
+      <span class="fn-icon">◼</span>
+      <span class="fn-label">Dashboard</span>
+    </div>
+    <div class="fn-item fn-mobile-only" id="fnm-tickets" onclick="switchView('tickets');closeMasPanel()">
+      <span class="fn-icon">🎫</span>
+      <span class="fn-label">Tickets</span>
+      <span class="fn-badge fnb-blue" id="nbm-tickets">0</span>
+    </div>
+    <div class="fn-item fn-mobile-only" id="fnm-trabajar" onclick="switchView('trabajar');closeMasPanel()">
+      <span class="fn-icon">⚒</span>
+      <span class="fn-label">Trabajar</span>
+      <span class="fn-badge fnb-amber" id="nbm-trabajar" style="display:none">0</span>
+    </div>
+    <div class="fn-item fn-mobile-only" id="fnm-notificaciones" onclick="switchView('notificaciones');closeMasPanel()">
+      <span class="fn-icon">🔔</span>
+      <span class="fn-label">Notif.</span>
+      <span class="fn-badge fnb-rose" id="nbm-notif">3</span>
+    </div>
+    <!-- Botón "Más" -->
+    <button class="fn-more-btn fn-mobile-only" id="masBtn" onclick="toggleMasPanel()">
+      <span class="fn-more-icon">⊕</span>
+      <span class="fn-more-label">Más</span>
+    </button>
+
+  </nav>
+</div>
+
+<!-- Panel "Más" (móvil) -->
+<div class="mas-overlay" id="masOverlay" onclick="closeMasPanel()">
+  <div class="mas-panel" onclick="event.stopPropagation()">
+    <div class="mas-header">
+      <span class="mas-title">Todas las secciones</span>
+      <button class="mas-close" onclick="closeMasPanel()">✕</button>
+    </div>
+
+    <div class="mas-section-title">Principal</div>
+    <div class="mas-grid">
+      <div class="mas-item" id="masm-resueltos" onclick="switchView('resueltos');closeMasPanel()">
+        <span class="mi-icon">✓</span><span class="mi-label">Resueltos</span>
+        <span class="fn-badge fnb-green" id="nbm-resueltos" style="display:none">0</span>
+      </div>
+      <div class="mas-item" id="masm-mistickets" onclick="switchView('mistickets');closeMasPanel()">
+        <span class="mi-icon">◈</span><span class="mi-label">Mis tickets</span>
+      </div>
+      <div class="mas-item" id="masm-comentarios" onclick="switchView('comentarios');closeMasPanel()">
+        <span class="mi-icon">💬</span><span class="mi-label">Comentarios</span>
+        <span class="fn-badge fnb-blue" style="top:2px;right:10px">5</span>
+      </div>
+      <div class="mas-item" id="masm-plantillas" onclick="switchView('plantillas');closeMasPanel()">
+        <span class="mi-icon">📄</span><span class="mi-label">Plantillas</span>
+      </div>
+    </div>
+
+    <div class="mas-divider"></div>
+    <div class="mas-section-title">SLA y Control</div>
+    <div class="mas-grid">
+      <div class="mas-item" id="masm-vencidos" onclick="switchView('vencidos');closeMasPanel()">
+        <span class="mi-icon">⏰</span><span class="mi-label">Vencidos</span>
+        <span class="fn-badge fnb-rose" id="nbm-venc" style="top:2px;right:10px">0</span>
+      </div>
+      <div class="mas-item" id="masm-tiempos" onclick="switchView('tiempos');closeMasPanel()">
+        <span class="mi-icon">📊</span><span class="mi-label">Tiempos</span>
+      </div>
+      <div class="mas-item" id="masm-calidad" onclick="switchView('calidad');closeMasPanel()">
+        <span class="mi-icon">⭐</span><span class="mi-label">Calidad</span>
+      </div>
+      <div class="mas-item" id="masm-reportes" onclick="switchView('reportes');initReportes();closeMasPanel()">
+        <span class="mi-icon">↗</span><span class="mi-label">Reportes</span>
+      </div>
+    </div>
+
+    <div class="mas-divider"></div>
+    <div class="mas-section-title">Admin</div>
+    <div class="mas-grid">
+      <div class="mas-item" id="masm-usuarios" onclick="switchView('usuarios');closeMasPanel()">
+        <span class="mi-icon">⊞</span><span class="mi-label">Usuarios</span>
+      </div>
+      <div class="mas-item" id="masm-config" onclick="switchView('config');closeMasPanel()">
+        <span class="mi-icon">⚙</span><span class="mi-label">Config.</span>
+      </div>
+    </div>
+
+    <div class="mas-divider"></div>
+    <div class="mas-user-row">
+      <div class="fn-av" id="masAvatar">JF</div>
+      <div class="mas-user-info">
+        <div class="mas-user-name" id="masUserName">Juan Francisco</div>
+        <div class="mas-user-role" id="masUserRole">@Juan · Superadmin</div>
+      </div>
+      <button class="fn-logout-btn" onclick="saLogout()">↩ Salir</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL DETALLE -->
 <div class="overlay" id="detailOverlay" onclick="cerrarDetalle(event)">
   <div class="modal" id="detailModal">
@@ -1301,7 +1518,6 @@ let repInited = false;
 let comentTicketActivo = null;
 let notifTab = "todas";
 
-// Comments & notifs stored locally
 let comentariosDB = JSON.parse(localStorage.getItem("gmt_comments") || "{}");
 let plantillasDB  = JSON.parse(localStorage.getItem("gmt_plantillas") || "null") || [
   {titulo:"Confirmación de recibo",cat:"Confirmación",contenido:"Hemos recibido tu solicitud y está siendo procesada. Te notificaremos en cuanto tengamos una actualización."},
@@ -1326,18 +1542,34 @@ let notificaciones = [
   }
   const u = localStorage.getItem("usuario") || "Juan";
   const n = localStorage.getItem("nombreCompleto") || u;
-  document.getElementById("saName").textContent = n;
-  document.getElementById("saUser").textContent  = "@" + u;
-  document.getElementById("saAvatar").textContent = n.substring(0,2).toUpperCase();
-  document.getElementById("cfgAvatar").textContent = n.substring(0,2).toUpperCase();
+  const ini = n.substring(0,2).toUpperCase();
+  // topbar / config
+  document.getElementById("cfgAvatar").textContent = ini;
   document.getElementById("cfgNombre").textContent = n;
   document.getElementById("cfgUsr").textContent = "@" + u + " · Superadmin";
   document.getElementById("cfgFieldUser").value   = u;
   document.getElementById("cfgFieldNombre").value = n;
+  // floatbar user pill
+  document.getElementById("fnAvatar").textContent   = ini;
+  document.getElementById("fnUserName").textContent  = n.split(" ")[0];
+  document.getElementById("masAvatar").textContent   = ini;
+  document.getElementById("masUserName").textContent = n;
+  document.getElementById("masUserRole").textContent = "@" + u + " · Superadmin";
 })();
 function saLogout(){
   ["usuario","rol","depto","nombreCompleto"].forEach(k => localStorage.removeItem(k));
   window.location.href = "index.html";
+}
+
+// ── FLOATBAR PANEL "MÁS" ──
+function toggleMasPanel(){
+  const overlay = document.getElementById("masOverlay");
+  overlay.classList.toggle("open");
+  document.getElementById("masBtn").style.background = overlay.classList.contains("open") ? "rgba(79,70,229,.3)" : "";
+}
+function closeMasPanel(){
+  document.getElementById("masOverlay").classList.remove("open");
+  document.getElementById("masBtn").style.background = "";
 }
 
 // ── INIT ──
@@ -1373,27 +1605,51 @@ const VIEW_TITLES = {
   vencidos:"Tickets vencidos", tiempos:"Tiempos de respuesta", calidad:"Métricas de calidad",
   reportes:"Reportes", usuarios:"Usuarios", config:"Configuración"
 };
+
 function switchView(v){
   document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
-  document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
   const ve = document.getElementById("view-" + v); if(ve) ve.classList.add("active");
-  const ni = document.getElementById("nav-" + v); if(ni) ni.classList.add("active");
+
+  // update floatbar active — desktop items
+  document.querySelectorAll(".fn-item").forEach(el => el.classList.remove("active"));
+  const fd = document.getElementById("fn-" + v); if(fd) fd.classList.add("active");
+  const fm = document.getElementById("fnm-" + v); if(fm) fm.classList.add("active");
+  // mas panel items
+  const mm = document.getElementById("masm-" + v); if(mm) mm.classList.add("active");
+
   document.getElementById("viewTitle").textContent = VIEW_TITLES[v] || v;
   if(v === "calidad") initCalidadCharts();
   if(v === "notificaciones") renderNotificaciones();
   if(v === "comentarios") renderComentTicketList();
   if(v === "plantillas") renderPlantillas();
+
+  // scroll bar to active item (desktop)
+  const bar = document.getElementById("floatbar");
+  const activeItem = document.getElementById("fn-" + v);
+  if(activeItem && bar) {
+    const itemLeft = activeItem.offsetLeft;
+    const barCenter = bar.clientWidth / 2;
+    bar.scrollTo({ left: itemLeft - barCenter + activeItem.clientWidth / 2, behavior: "smooth" });
+  }
 }
+
 function actualizarBadges(){
   const mis = allTickets.filter(t => (t.asignado||"").toLowerCase() === MI_USUARIO.toLowerCase());
   const trab = mis.filter(t => t.estado !== "Resuelto");
   const resu = mis.filter(t => t.estado === "Resuelto");
-  document.getElementById("nb-tickets").textContent = allTickets.length;
-  const nt = document.getElementById("nb-trabajar");
-  nt.textContent = trab.length; nt.style.display = trab.length > 0 ? "" : "none";
-  const nr = document.getElementById("nb-resueltos");
-  nr.textContent = resu.length; nr.style.display = resu.length > 0 ? "" : "none";
   const unread = notificaciones.filter(n => !n.leida).length;
+
+  // Update all badge instances (desktop + mobile)
+  const set = (ids, val, hide) => ids.forEach(id => {
+    const el = document.getElementById(id); if(!el) return;
+    el.textContent = val;
+    if(hide !== undefined) el.style.display = hide && val == 0 ? "none" : "";
+  });
+
+  set(["nb-tickets"], allTickets.length);
+  set(["nb-trabajar", "nbm-trabajar"], trab.length, true);
+  set(["nb-resueltos", "nbm-resueltos"], resu.length, true);
+
   const nd = document.getElementById("notifDot");
   if(nd) nd.style.display = unread > 0 ? "" : "none";
 }
@@ -1646,7 +1902,7 @@ function buildTL(t){
 }
 function cerrarDetalle(e){ if(e.target === document.getElementById("detailOverlay")) cerrarDetalleBtn(); }
 function cerrarDetalleBtn(){ document.getElementById("detailOverlay").classList.remove("open"); document.body.style.overflow = ""; ticketDetalle = null; }
-document.addEventListener("keydown", e => { if(e.key === "Escape"){ cerrarDetalleBtn(); cerrarResModal(); cerrarUserModal(); cerrarPlantModal(); } });
+document.addEventListener("keydown", e => { if(e.key === "Escape"){ cerrarDetalleBtn(); cerrarResModal(); cerrarUserModal(); cerrarPlantModal(); closeMasPanel(); } });
 
 async function cambiarEstado(encId, estado){
   const id = decodeURIComponent(encId);
@@ -1805,10 +2061,10 @@ function renderVencidos(){
       return (urg === "critico" && dias > 1) || (urg === "alto" && dias > 2) || dias > 4;
     }catch{ return false; }
   });
-  document.getElementById("nb-venc").textContent = venc.length;
-  document.getElementById("vencCount").textContent = venc.length;
-  const list = document.getElementById("vencidosList");
-  if(!list) return;
+  const nbv = document.getElementById("nb-venc"); if(nbv) nbv.textContent = venc.length;
+  const nbvm = document.getElementById("nbm-venc"); if(nbvm) nbvm.textContent = venc.length;
+  const vc = document.getElementById("vencCount"); if(vc) vc.textContent = venc.length;
+  const list = document.getElementById("vencidosList"); if(!list) return;
   list.innerHTML = venc.length ? venc.map(t => {
     let dias = 0;
     try{ const p=(t.fecha||"").split(",")[0].trim().split("/"); if(p.length===3){ const fd=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0])); dias=Math.floor((ahora-fd)/86400000); } }catch{}
@@ -1830,11 +2086,11 @@ function renderVencidos(){
 function renderTiempos(){
   const xav  = allTickets.filter(t => (t.asignado||"").toLowerCase() === "xavier");
   const juan = allTickets.filter(t => (t.asignado||"").toLowerCase() === "juan");
-  const venc = allTickets.filter(t => t.estado !== "Resuelto").length;
   const totR = allTickets.filter(t => t.estado === "Resuelto").length;
   const rate = allTickets.length ? Math.round(totR / allTickets.length * 100) : 0;
   const se = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
-  se("sla-venc", venc); se("sla-resp", "~4h"); se("sla-res", "~28h"); se("sla-rate", rate + "%");
+  const vencidos = allTickets.filter(t => t.estado !== "Resuelto").length;
+  se("sla-venc", vencidos); se("sla-resp", "~4h"); se("sla-res", "~28h"); se("sla-rate", rate + "%");
   const xTot = xav.length, xRes = xav.filter(t=>t.estado==="Resuelto").length, xPen = xav.filter(t=>t.estado==="Pendiente").length;
   const jTot = juan.length, jRes = juan.filter(t=>t.estado==="Resuelto").length, jPen = juan.filter(t=>t.estado==="Pendiente").length;
   se("xav-tot", xTot); se("xav-res", xRes); se("xav-pen", xPen);
@@ -1854,12 +2110,10 @@ function initCalidadCharts(){
   const res  = allTickets.filter(t => t.estado==="Resuelto").length;
   const ctx1 = document.getElementById("estadoChart")?.getContext("2d");
   if(ctx1){ if(estadoCh) estadoCh.destroy(); estadoCh = new Chart(ctx1,{type:"doughnut",data:{labels:["Pendiente","En Proceso","Resuelto"],datasets:[{data:[pend,proc,res],backgroundColor:["#FDE68A","#A7F3D0","#6EE7B7"],borderColor:["#D97706","#059669","#059669"],borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{boxWidth:10,font:{size:10},padding:10}}}}});}
-
   const dm = {}; allTickets.forEach(t => { const d=(t.depto||"N/A").trim(); dm[d]=(dm[d]||0)+1; });
   const depArr = Object.entries(dm).sort((a,b)=>b[1]-a[1]).slice(0,8);
   const ctx2 = document.getElementById("deptoChart")?.getContext("2d");
   if(ctx2){ if(deptoCh) deptoCh.destroy(); deptoCh = new Chart(ctx2,{type:"bar",data:{labels:depArr.map(([d])=>d.length>8?d.substring(0,8)+"…":d),datasets:[{data:depArr.map(([,n])=>n),backgroundColor:DEP_COLORS.slice(0,depArr.length).map(c=>c+"BB"),borderColor:DEP_COLORS,borderWidth:1.5,borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:9},color:"#74748A"}},y:{grid:{color:"rgba(0,0,0,.05)"},ticks:{font:{size:9},color:"#74748A",stepSize:1},beginAtZero:true}}}});}
-
   const meses6 = []; const ahora = new Date();
   for(let i=5;i>=0;i--){ const d=new Date(ahora.getFullYear(),ahora.getMonth()-i,1); meses6.push({mes:d.getMonth(),anio:d.getFullYear(),label:MESES[d.getMonth()].substring(0,3)}); }
   const totales = meses6.map(({mes,anio}) => allTickets.filter(t=>{ try{const p=(t.fecha||"").split(",")[0].trim().split("/"); return parseInt(p[1])-1===mes&&parseInt(p[2])===anio;}catch{return false;} }).length);
@@ -1886,7 +2140,7 @@ function renderReportes(){
   const dm = {}; tks.forEach(t => { const d=(t.depto||"Sin depto").trim(); if(!dm[d]) dm[d]={total:0,res:0}; dm[d].total++; if(t.estado==="Resuelto") dm[d].res++; });
   const depArr = Object.entries(dm).sort((a,b)=>b[1].total-a[1].total);
   document.getElementById("repDepTable").innerHTML = depArr.length
-    ? depArr.map(([d,i],idx)=>`<tr><td style="font-size:11px;font-weight:500">${esc(d)}</td><td style="text-align:center;font-family:var(--mono);font-size:10px">${i.res}/${i.total}</td><td class="dep-pct">${tot?Math.round(i.total/tot*100):0}%</td></tr>`).join(`<tr style="font-weight:600;border-top:1px solid var(--border)"><td>Total</td><td style="text-align:center;font-family:var(--mono);font-size:10px">${res}/${tot}</td><td class="dep-pct">100%</td></tr>`)
+    ? depArr.map(([d,i])=>`<tr><td style="font-size:11px;font-weight:500">${esc(d)}</td><td style="text-align:center;font-family:var(--mono);font-size:10px">${i.res}/${i.total}</td><td class="dep-pct">${tot?Math.round(i.total/tot*100):0}%</td></tr>`).join(`<tr style="font-weight:600;border-top:1px solid var(--border)"><td>Total</td><td style="text-align:center;font-family:var(--mono);font-size:10px">${res}/${tot}</td><td class="dep-pct">100%</td></tr>`)
     : `<tr><td colspan="3" style="color:var(--txt3);text-align:center;padding:16px;font-size:11px">Sin datos en ${MESES[repMes]}</td></tr>`;
   const ctx = document.getElementById("repBarChart")?.getContext("2d");
   if(ctx){ if(repBarCh) repBarCh.destroy(); if(depArr.length){ repBarCh = new Chart(ctx,{type:"bar",data:{labels:depArr.map(([d])=>d.length>8?d.substring(0,8)+"…":d),datasets:[{data:depArr.map(([,i])=>i.total),backgroundColor:DEP_COLORS.slice(0,depArr.length).map(c=>c+"BB"),borderColor:DEP_COLORS,borderWidth:1.5,borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:9},color:"#74748A"}},y:{grid:{color:"rgba(0,0,0,.05)"},ticks:{font:{size:9},color:"#74748A",stepSize:1},beginAtZero:true}}}}); } }
@@ -1926,7 +2180,7 @@ function filtrarTabla(){
   const f = sheetUsers.filter(u => (u.NombreUsuario||"").toLowerCase().includes(s) || (u.Rol||"").toLowerCase().includes(s) || (u.Departamento||"").toLowerCase().includes(s) || (u.NombreCompleto||"").toLowerCase().includes(s));
   const rolCls = r => ({superadmin:"rp-sa",tecnico:"rp-tec",admin:"rp-adm",usuario:"rp-usr"}[r] || "rp-usr");
   document.getElementById("usersBody").innerHTML = f.length
-    ? f.map((u, i) => `<tr>
+    ? f.map((u) => `<tr>
         <td><strong>${esc(u.NombreUsuario||"—")}</strong></td>
         <td style="color:var(--txt1)">${esc(u.NombreCompleto||"")}</td>
         <td class="hash-cell" title="${esc(u.Contraseña||"")}">${esc((u.Contraseña||"").substring(0,16)+"…")}</td>
@@ -1989,10 +2243,13 @@ async function guardarPerfil(){
   if(!nombre){ showToast("El nombre no puede estar vacío","error"); return; }
   if(pass && pass !== pass2){ showToast("Las contraseñas no coinciden","error"); return; }
   localStorage.setItem("nombreCompleto", nombre);
-  document.getElementById("saName").textContent = nombre;
   document.getElementById("cfgNombre").textContent = nombre;
-  document.getElementById("saAvatar").textContent = nombre.substring(0,2).toUpperCase();
-  document.getElementById("cfgAvatar").textContent = nombre.substring(0,2).toUpperCase();
+  const ini = nombre.substring(0,2).toUpperCase();
+  document.getElementById("cfgAvatar").textContent = ini;
+  document.getElementById("fnAvatar").textContent  = ini;
+  document.getElementById("masAvatar").textContent = ini;
+  document.getElementById("fnUserName").textContent  = nombre.split(" ")[0];
+  document.getElementById("masUserName").textContent = nombre;
   if(pass){
     try{
       const hash = await sha256(pass);
