@@ -282,56 +282,44 @@ input, select, textarea { font-family: var(--font); }
 .f-pill.fp-res.active  { color: var(--emerald); background: var(--emerald-s); border-color: var(--emerald-m); }
 
 /* ── DASHBOARD ── */
-.metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 10px; margin-bottom: 20px; }
-.metric-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--r2); padding: 16px 16px 14px;
-  position: relative; overflow: hidden;
+.dash-hero {
+  display: grid; grid-template-columns: 200px 1fr; gap: 32px;
+  align-items: center; margin-bottom: 22px;
 }
-.metric-card::before {
-  content: ''; position: absolute;
-  bottom: 0; left: 0; right: 0; height: 2px;
-}
-.mc-total::before { background: var(--indigo); }
-.mc-pend::before  { background: var(--amber); }
-.mc-proc::before  { background: var(--cyan); }
-.mc-res::before   { background: var(--emerald); }
-.mc-mis::before   { background: var(--rose); }
-.metric-ico { font-size: 16px; margin-bottom: 10px; opacity: .5; }
-.metric-val { font-size: 32px; font-weight: 600; line-height: 1; margin-bottom: 4px; letter-spacing: -1px; }
-.mc-total .metric-val { color: var(--indigo); }
-.mc-pend  .metric-val { color: var(--amber); }
-.mc-proc  .metric-val { color: var(--cyan); }
-.mc-res   .metric-val { color: var(--emerald); }
-.mc-mis   .metric-val { color: var(--rose); }
-.metric-lbl { font-size: 10px; font-weight: 500; color: var(--txt3); letter-spacing: .4px; text-transform: uppercase; font-family: var(--mono); }
+.dash-greet { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px; }
+.dash-greet h1 { font-size: 19px; font-weight: 600; letter-spacing: -.3px; }
+.dash-greet-date { font-size: 11px; color: var(--txt3); font-family: var(--mono); margin-top: 3px; }
+.ring-wrap { position: relative; width: 168px; height: 168px; }
+.ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ring-num { font-size: 36px; font-weight: 600; letter-spacing: -1px; line-height: 1; }
+.ring-lbl { font-size: 10px; color: var(--txt3); font-family: var(--mono); margin-top: 3px; }
+.flow-rows { display: flex; flex-direction: column; gap: 9px; }
+.flow-row { display: flex; align-items: center; gap: 10px; }
+.flow-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+.flow-name { font-size: 12.5px; flex: 1; color: var(--txt1); }
+.flow-val  { font-size: 13px; font-weight: 600; font-family: var(--mono); }
+.flow-pct  { font-size: 10.5px; color: var(--txt3); font-family: var(--mono); width: 34px; text-align: right; }
+.flow-mis  { border-top: 1px solid var(--border); margin-top: 4px; padding-top: 9px; }
 
-.urg-strip {
-  display: flex; gap: 8px; flex-wrap: wrap;
-  margin-bottom: 18px; align-items: center;
-  padding: 10px 14px;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--r2);
-}
-.urg-strip-label { font-size: 10px; color: var(--txt3); font-family: var(--mono); text-transform: uppercase; letter-spacing: .8px; margin-right: 4px; }
-.urg-chip {
-  display: flex; align-items: center; gap: 5px;
-  padding: 4px 11px; border-radius: 99px;
-  font-family: var(--mono); font-size: 10px; font-weight: 600;
-  border: 1px solid transparent;
-}
-.uc-crit { background: var(--rose-s);   color: var(--rose);    border-color: var(--rose-m); }
-.uc-alto { background: var(--amber-s);  color: var(--amber);   border-color: var(--amber-m); }
-.uc-med  { background: var(--cyan-s);   color: var(--cyan);    border-color: rgba(8,145,178,.25); }
-.uc-ok   { background: var(--surface2); color: var(--txt2);    border-color: var(--border); }
+.heat-title { font-size: 11px; font-weight: 600; color: var(--txt2); text-transform: uppercase; letter-spacing: .6px; font-family: var(--mono); margin-bottom: 11px; }
+.heat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.heat-name { width: 92px; font-size: 11.5px; color: var(--txt1); flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.heat-bar { flex: 1; display: flex; gap: 2px; height: 20px; border-radius: 4px; overflow: hidden; }
+.heat-seg { height: 100%; }
+.heat-total { width: 26px; text-align: right; font-size: 11px; color: var(--txt3); font-family: var(--mono); flex-shrink: 0; }
+.heat-legend { display: flex; gap: 14px; font-size: 10.5px; color: var(--txt3); font-family: var(--mono); margin: 10px 0 22px; }
+.heat-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.heat-legend i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
 
-.dash-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 12px; }
-.dept-row { margin-bottom: 9px; }
-.dept-row-top { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
-.dept-row-name { color: var(--txt1); font-weight: 500; }
-.dept-row-val  { color: var(--txt3); font-family: var(--mono); }
-.dept-bar-bg   { height: 3px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
-.dept-bar-fill { height: 100%; border-radius: 99px; }
+.narr-card {
+  border: 1px solid var(--border); border-radius: var(--r3);
+  padding: 14px 16px; display: flex; gap: 11px; align-items: flex-start;
+  background: var(--surface);
+}
+.narr-ico { font-size: 16px; margin-top: 1px; }
+.narr-text { font-size: 12.5px; color: var(--txt1); line-height: 1.6; }
+.narr-text strong { font-weight: 600; color: var(--txt0); }
+.narr-sub { font-size: 10.5px; color: var(--txt3); font-family: var(--mono); margin-top: 5px; }
 
 .recent-item {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -788,45 +776,65 @@ table.dt tr:hover td { background: var(--surface2); }
 
   <!-- DASHBOARD -->
   <div id="view-dashboard" class="view active">
-    <div class="metrics-row">
-      <div class="metric-card mc-total">
-        <div class="metric-ico">🎫</div>
-        <div class="metric-val" id="st-total">—</div>
-        <div class="metric-lbl">Total tickets</div>
-      </div>
-      <div class="metric-card mc-pend">
-        <div class="metric-ico">⏳</div>
-        <div class="metric-val" id="st-pend">—</div>
-        <div class="metric-lbl">Pendientes</div>
-      </div>
-      <div class="metric-card mc-proc">
-        <div class="metric-ico">⚙</div>
-        <div class="metric-val" id="st-proc">—</div>
-        <div class="metric-lbl">En proceso</div>
-      </div>
-      <div class="metric-card mc-res">
-        <div class="metric-ico">✓</div>
-        <div class="metric-val" id="st-res">—</div>
-        <div class="metric-lbl">Resueltos</div>
-      </div>
-      <div class="metric-card mc-mis">
-        <div class="metric-ico">◈</div>
-        <div class="metric-val" id="st-mis">—</div>
-        <div class="metric-lbl">Mis tickets</div>
+
+    <div class="dash-greet">
+      <div>
+        <h1 id="dashGreet">Hola</h1>
+        <div class="dash-greet-date" id="dashDate">—</div>
       </div>
     </div>
 
-    <div class="urg-strip" id="urgStrip">
-      <span class="urg-strip-label">Urgencia</span>
-    </div>
-
-    <div class="dash-grid">
-      <div class="card">
-        <div class="section-head" style="margin-bottom:14px">
-          <span class="section-title">Por departamento</span>
+    <div class="dash-hero">
+      <div class="ring-wrap">
+        <svg viewBox="0 0 168 168" style="width:168px;height:168px;transform:rotate(-90deg)">
+          <circle cx="84" cy="84" r="70" fill="none" stroke="var(--surface2)" stroke-width="18"/>
+          <circle id="ringRes"  cx="84" cy="84" r="70" fill="none" stroke="#059669" stroke-width="18" stroke-linecap="round"/>
+          <circle id="ringProc" cx="84" cy="84" r="70" fill="none" stroke="#0891B2" stroke-width="18" stroke-linecap="round"/>
+          <circle id="ringPend" cx="84" cy="84" r="70" fill="none" stroke="#D97706" stroke-width="18" stroke-linecap="round"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-num" id="ring-total">—</div>
+          <div class="ring-lbl">tickets totales</div>
         </div>
-        <div id="deptChart"></div>
       </div>
+      <div class="flow-rows">
+        <div class="flow-row">
+          <span class="flow-dot" style="background:#059669"></span>
+          <span class="flow-name">Resueltos</span>
+          <span class="flow-val" id="st-res">—</span>
+          <span class="flow-pct" id="st-res-pct">—</span>
+        </div>
+        <div class="flow-row">
+          <span class="flow-dot" style="background:#D97706"></span>
+          <span class="flow-name">Pendientes</span>
+          <span class="flow-val" id="st-pend">—</span>
+          <span class="flow-pct" id="st-pend-pct">—</span>
+        </div>
+        <div class="flow-row">
+          <span class="flow-dot" style="background:#0891B2"></span>
+          <span class="flow-name">En proceso</span>
+          <span class="flow-val" id="st-proc">—</span>
+          <span class="flow-pct" id="st-proc-pct">—</span>
+        </div>
+        <div class="flow-row flow-mis">
+          <span class="flow-dot" style="background:var(--txt3)"></span>
+          <span class="flow-name" style="color:var(--txt2)">Mis tickets</span>
+          <span class="flow-val" id="st-mis">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="heat-title">Calor por departamento y urgencia</div>
+    <div id="deptChart"></div>
+    <div class="heat-legend">
+      <span><i style="background:#E11D48"></i>crítico</span>
+      <span><i style="background:#D97706"></i>alto</span>
+      <span><i style="background:#0891B2"></i>medio</span>
+      <span><i style="background:#B4B2A9"></i>normal</span>
+    </div>
+
+    <div class="dash-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div id="narrCard"></div>
       <div class="card">
         <div class="section-head" style="margin-bottom:14px">
           <span class="section-title">Actividad reciente</span>
@@ -1334,6 +1342,8 @@ let notificaciones = [
   document.getElementById("cfgUsr").textContent = "@" + u + " · Superadmin";
   document.getElementById("cfgFieldUser").value   = u;
   document.getElementById("cfgFieldNombre").value = n;
+  const primerNombre = (n||"").trim().split(/\s+/)[0] || u;
+  const dg = document.getElementById("dashGreet"); if(dg) dg.textContent = "Hola, " + primerNombre;
 })();
 function saLogout(){
   ["usuario","rol","depto","nombreCompleto"].forEach(k => localStorage.removeItem(k));
@@ -1346,7 +1356,12 @@ function init(){
   recargarTodo(false); cargarUsuarios(false);
   setInterval(() => recargarTodo(false), 5 * 60 * 1000);
 }
-function updateClock(){ document.getElementById("nowTime").textContent = new Date().toLocaleString("es-DO"); }
+function updateClock(){
+  const now = new Date();
+  document.getElementById("nowTime").textContent = now.toLocaleString("es-DO");
+  const dd = document.getElementById("dashDate");
+  if(dd) dd.textContent = now.toLocaleDateString("es-DO", {day:"numeric",month:"long",year:"numeric"}) + ", " + now.toLocaleTimeString("es-DO");
+}
 
 async function recargarTodo(force = false){
   try{
@@ -1410,10 +1425,10 @@ function calcUrg(t){
   const pendLarga = t.estado === "Pendiente" && dias >= 3;
   const procLarga = t.estado === "En Proceso" && dias >= 7;
   const pendMedia = t.estado === "Pendiente" && dias >= 1;
-  if(esCrit || pendLarga || procLarga) return {level:"critico",label:"Crítico",cls:"ub-crit",strip:"ub-strip-crit"};
-  if(esAlto || pendMedia)              return {level:"alto",label:"Alto",cls:"ub-alto",strip:"ub-strip-alto"};
-  if(dias >= 0 && t.estado !== "Resuelto") return {level:"medio",label:"Medio",cls:"ub-med",strip:"ub-strip-med"};
-  return {level:"normal",label:"Normal",cls:"ub-norm",strip:""};
+  if(esCrit || pendLarga || procLarga) return {level:"critico",label:"Crítico",cls:"ub-crit",strip:"ub-strip-crit",color:"#E11D48"};
+  if(esAlto || pendMedia)              return {level:"alto",label:"Alto",cls:"ub-alto",strip:"ub-strip-alto",color:"#D97706"};
+  if(dias >= 0 && t.estado !== "Resuelto") return {level:"medio",label:"Medio",cls:"ub-med",strip:"ub-strip-med",color:"#0891B2"};
+  return {level:"normal",label:"Normal",cls:"ub-norm",strip:"",color:"#B4B2A9"};
 }
 
 // ── DASHBOARD ──
@@ -1424,29 +1439,77 @@ function renderDash(){
   const res  = allTickets.filter(t => t.estado === "Resuelto").length;
   const mis  = allTickets.filter(t => (t.asignado||"").toLowerCase() === MI_USUARIO.toLowerCase()).length;
   const se = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
-  se("st-total", tot); se("st-pend", pend); se("st-proc", proc); se("st-res", res); se("st-mis", mis);
+  se("st-res", res); se("st-pend", pend); se("st-proc", proc); se("st-mis", mis);
+  se("ring-total", tot);
+  const pct = n => tot ? Math.round(n/tot*100) : 0;
+  se("st-res-pct",  pct(res)  + "%");
+  se("st-pend-pct", pct(pend) + "%");
+  se("st-proc-pct", pct(proc) + "%");
 
-  const crit = allTickets.filter(t => calcUrg(t).level === "critico").length;
-  const alto = allTickets.filter(t => calcUrg(t).level === "alto").length;
-  const med  = allTickets.filter(t => calcUrg(t).level === "medio").length;
-  const norm = allTickets.filter(t => calcUrg(t).level === "normal").length;
-  const ub = document.getElementById("urgStrip");
-  if(ub) ub.innerHTML = `<span class="urg-strip-label">Urgencia activa</span>
-    ${crit > 0 ? `<span class="urg-chip uc-crit">🔴 Crítico — ${crit}</span>` : ""}
-    ${alto > 0 ? `<span class="urg-chip uc-alto">🟠 Alto — ${alto}</span>` : ""}
-    ${med  > 0 ? `<span class="urg-chip uc-med">🟡 Medio — ${med}</span>` : ""}
-    <span class="urg-chip uc-ok">🟢 Normal — ${norm}</span>
-    <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="switchView('vencidos')">Ver vencidos →</button>`;
+  // anillo segmentado: circunferencia r=70 -> 2*PI*70 ≈ 439.8
+  const CIRC = 2 * Math.PI * 70;
+  const segs = [
+    {id:"ringRes",  n: res},
+    {id:"ringProc", n: proc},
+    {id:"ringPend", n: pend},
+  ];
+  let offsetAcum = 0;
+  segs.forEach(s => {
+    const frac = tot ? s.n / tot : 0;
+    const len = frac * CIRC;
+    const el = document.getElementById(s.id);
+    if(el){
+      el.setAttribute("stroke-dasharray", `${len} ${CIRC - len}`);
+      el.setAttribute("stroke-dashoffset", `${-offsetAcum}`);
+    }
+    offsetAcum += len;
+  });
 
+  // mapa de calor por departamento × urgencia
   const deptos = {};
-  allTickets.forEach(t => { const d = t.depto || "N/A"; deptos[d] = (deptos[d] || 0) + 1; });
-  const sorted = Object.entries(deptos).sort((a,b) => b[1] - a[1]);
-  const maxV = sorted[0]?.[1] || 1;
-  document.getElementById("deptChart").innerHTML = sorted.map(([d,n], i) =>
-    `<div class="dept-row">
-      <div class="dept-row-top"><span class="dept-row-name">${esc(d)}</span><span class="dept-row-val">${n}</span></div>
-      <div class="dept-bar-bg"><div class="dept-bar-fill" style="width:${Math.round(n/maxV*100)}%;background:${DEP_COLORS[i%DEP_COLORS.length]}"></div></div>
-    </div>`).join("") || "<p style='color:var(--txt3);font-size:12px'>Sin datos</p>";
+  allTickets.forEach(t => {
+    const d = t.depto || "N/A";
+    if(!deptos[d]) deptos[d] = {critico:0,alto:0,medio:0,normal:0,total:0};
+    deptos[d][calcUrg(t).level]++;
+    deptos[d].total++;
+  });
+  const sorted = Object.entries(deptos).sort((a,b) => b[1].total - a[1].total).slice(0,6);
+  document.getElementById("deptChart").innerHTML = sorted.map(([d,c]) => {
+    const segHTML = ["critico","alto","medio","normal"].map(k => {
+      const w = c.total ? (c[k]/c.total*100) : 0;
+      if(w <= 0) return "";
+      const colorMap = {critico:"#E11D48",alto:"#D97706",medio:"#0891B2",normal:"#B4B2A9"};
+      return `<div class="heat-seg" style="flex:${c[k]};background:${colorMap[k]}"></div>`;
+    }).join("");
+    return `<div class="heat-row">
+      <span class="heat-name" title="${esc(d)}">${esc(d)}</span>
+      <div class="heat-bar">${segHTML}</div>
+      <span class="heat-total">${c.total}</span>
+    </div>`;
+  }).join("") || "<p style='color:var(--txt3);font-size:12px'>Sin datos</p>";
+
+  // narrativa: depto con más críticos hoy
+  let narrHTML;
+  const peor = sorted.find(([,c]) => c.critico > 0);
+  if(peor){
+    const [d, c] = peor;
+    narrHTML = `<div class="narr-card">
+      <span class="narr-ico">🔥</span>
+      <div>
+        <div class="narr-text"><strong>${esc(d)}</strong> tiene ${c.critico} ticket${c.critico!==1?"s":""} crítico${c.critico!==1?"s":""} sin resolver, el más alto entre los departamentos activos.</div>
+        <div class="narr-sub">de ${c.total} tickets totales en ese departamento</div>
+      </div>
+    </div>`;
+  } else {
+    narrHTML = `<div class="narr-card">
+      <span class="narr-ico">✅</span>
+      <div>
+        <div class="narr-text">Sin tickets críticos activos en este momento.</div>
+        <div class="narr-sub">${tot} tickets en total, ${res} resueltos</div>
+      </div>
+    </div>`;
+  }
+  document.getElementById("narrCard").innerHTML = narrHTML;
 
   document.getElementById("recentTickets").innerHTML = allTickets.slice(-5).reverse().map(t =>
     `<div class="recent-item" onclick="abrirDetalleById(${JSON.stringify(t.id||"")})">
@@ -1993,6 +2056,8 @@ async function guardarPerfil(){
   document.getElementById("cfgNombre").textContent = nombre;
   document.getElementById("saAvatar").textContent = nombre.substring(0,2).toUpperCase();
   document.getElementById("cfgAvatar").textContent = nombre.substring(0,2).toUpperCase();
+  const dg = document.getElementById("dashGreet");
+  if(dg) dg.textContent = "Hola, " + (nombre.trim().split(/\s+/)[0] || nombre);
   if(pass){
     try{
       const hash = await sha256(pass);
