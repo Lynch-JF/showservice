@@ -362,6 +362,56 @@ table.data-table tr:hover td{background:var(--s2)}
   .theme-panel{right:8px;width:280px}
 }
 @media(max-width:600px){.view{padding:16px}}
+
+/* ══════════════════════════════════════
+   ★ CHATBOT IA — GM Asistente
+══════════════════════════════════════ */
+#chatbotFab{position:fixed;bottom:28px;right:28px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--indigo));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 20px rgba(167,139,250,.4);z-index:998;transition:transform .2s var(--ease),box-shadow .2s}
+#chatbotFab:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(167,139,250,.55)}
+#chatbotFab .fab-badge{position:absolute;top:-3px;right:-3px;width:16px;height:16px;background:var(--emerald);border-radius:50%;border:2px solid var(--bg);display:none}
+#chatbotFab .fab-badge.show{display:block}
+#chatbotPanel{position:fixed;bottom:92px;right:28px;width:360px;max-height:520px;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);box-shadow:0 16px 48px rgba(0,0,0,.5);display:flex;flex-direction:column;z-index:997;overflow:hidden;opacity:0;transform:translateY(12px) scale(.97);pointer-events:none;transition:opacity .22s var(--ease),transform .22s var(--ease)}
+#chatbotPanel.open{opacity:1;transform:translateY(0) scale(1);pointer-events:all}
+.chat-header{padding:14px 16px;background:linear-gradient(135deg,var(--accent) 0%,var(--indigo) 100%);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.chat-header-avatar{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;border:1.5px solid rgba(255,255,255,.35)}
+.chat-header-info{flex:1}
+.chat-header-name{font-size:13px;font-weight:700;color:#fff;line-height:1.2}
+.chat-header-status{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:4px;margin-top:1px}
+.chat-status-dot{width:5px;height:5px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite}
+.chat-close-btn{background:rgba(255,255,255,.15);border:none;color:#fff;width:26px;height:26px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:background .15s;flex-shrink:0}
+.chat-close-btn:hover{background:rgba(255,255,255,.28)}
+.chat-suggestions{display:flex;gap:6px;padding:10px 12px 0;flex-wrap:wrap;flex-shrink:0}
+.chat-suggestion-chip{padding:5px 11px;border-radius:99px;border:1px solid var(--b2);background:var(--s2);color:var(--t2);font-family:var(--mono);font-size:10px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
+.chat-suggestion-chip:hover{border-color:var(--accent);color:var(--accent2);background:rgba(167,139,250,.08)}
+.chat-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0}
+.chat-messages::-webkit-scrollbar{width:4px}
+.chat-messages::-webkit-scrollbar-thumb{background:var(--s4);border-radius:99px}
+.chat-msg{display:flex;gap:8px;align-items:flex-end;animation:msgIn .18s var(--ease)}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.chat-msg.user{flex-direction:row-reverse}
+.chat-msg-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--indigo));display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:#fff;font-weight:700}
+.chat-msg.bot .chat-msg-avatar{background:var(--s2);border:1px solid var(--b2);font-size:13px}
+.chat-msg-bubble{max-width:76%;padding:9px 13px;border-radius:14px;font-size:12.5px;line-height:1.5;color:var(--t0)}
+.chat-msg.bot .chat-msg-bubble{background:var(--s2);border:1px solid var(--b1);border-bottom-left-radius:4px}
+.chat-msg.user .chat-msg-bubble{background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+.chat-typing{display:flex;gap:8px;align-items:center;padding:0 4px}
+.chat-typing-dots{display:flex;gap:4px;background:var(--s2);border:1px solid var(--b1);padding:8px 13px;border-radius:14px;border-bottom-left-radius:4px}
+.chat-typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--t3);animation:typingDot 1.2s ease-in-out infinite}
+.chat-typing-dots span:nth-child(2){animation-delay:.2s}
+.chat-typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes typingDot{0%,60%,100%{opacity:.3;transform:scale(1)}30%{opacity:1;transform:scale(1.3)}}
+.chat-input-area{padding:10px 12px;border-top:1px solid var(--b1);display:flex;gap:8px;align-items:center;flex-shrink:0;background:var(--s1)}
+#chatInput{flex:1;padding:8px 13px;background:var(--s2);border:1px solid var(--b2);border-radius:99px;color:var(--t0);font-family:var(--font);font-size:12px;outline:none;transition:border-color .15s}
+#chatInput:focus{border-color:var(--accent)}
+#chatInput::placeholder{color:var(--t3)}
+#chatSendBtn{width:34px;height:34px;border-radius:50%;background:var(--accent);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .15s;flex-shrink:0}
+#chatSendBtn:hover{opacity:.88;transform:scale(1.06)}
+#chatSendBtn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.chat-footer{padding:6px 12px 8px;font-family:var(--mono);font-size:9px;color:var(--t3);text-align:center;border-top:1px solid var(--b1);flex-shrink:0}
+@media(max-width:640px){
+  #chatbotPanel{width:calc(100vw - 40px);right:20px;bottom:84px}
+  #chatbotFab{right:20px;bottom:20px}
+}
 </style>
 </head>
 <body>
@@ -606,6 +656,43 @@ table.data-table tr:hover td{background:var(--s2)}
   </div>
 </div>
 
+
+<!-- ════ CHATBOT IA ════ -->
+<button id="chatbotFab" onclick="toggleChat()" title="Asistente IA — GM Tickets">
+  🤖
+  <div class="fab-badge" id="fabBadge"></div>
+</button>
+
+<div id="chatbotPanel">
+  <div class="chat-header">
+    <div class="chat-header-avatar">🤖</div>
+    <div class="chat-header-info">
+      <div class="chat-header-name">NEXO Asistente</div>
+      <div class="chat-header-status"><div class="chat-status-dot"></div>Soporte interno · Powered by Mistral</div>
+    </div>
+    <button class="chat-close-btn" onclick="toggleChat()">✕</button>
+  </div>
+
+  <div class="chat-suggestions" id="chatSuggestions">
+    <button class="chat-suggestion-chip" onclick="sendSuggestion('¿Cuántos tickets tengo asignados?')">Mis asignados</button>
+    <button class="chat-suggestion-chip" onclick="sendSuggestion('¿Cómo escalo una petición a un técnico?')">Escalar a técnico</button>
+    <button class="chat-suggestion-chip" onclick="sendSuggestion('¿Cómo marco un ticket como resuelto?')">Marcar resuelto</button>
+    <button class="chat-suggestion-chip" onclick="sendSuggestion('¿Cómo reasigno un ticket?')">Reasignar</button>
+  </div>
+
+  <div class="chat-messages" id="chatMessages"></div>
+
+  <div class="chat-input-area">
+    <input type="text" id="chatInput" placeholder="Escribe tu consulta…"
+      onkeydown="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); sendChatMessage(); }"
+      autocomplete="off">
+    <button id="chatSendBtn" onclick="sendChatMessage()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+  <div class="chat-footer">GM Tickets TI · Grupo Michel · Asistente en Beta</div>
+</div>
+
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
@@ -616,6 +703,180 @@ table.data-table tr:hover td{background:var(--s2)}
 const API_URL           = "https://api.sheetbest.com/sheets/a50a59f4-402a-4937-a0fc-e20789380908";
 const CLOUDINARY_CLOUD  = "dy50psi1g";
 const CLOUDINARY_PRESET = "tickets_preset";
+
+// ══════════════════════════════════════════════
+// ★ CHATBOT IA — GM Asistente (panel Analista) con OpenRouter (Mistral)
+// ══════════════════════════════════════════════
+
+
+// ★ OPENROUTER API KEY
+const OPENROUTER_API_KEY = "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";
+const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const OPENROUTER_MODEL   = "cohere/north-mini-code:free";
+
+let chatOpen    = false;
+let chatHistory = [];
+let chatTyping  = false;
+
+function buildSystemPrompt(){
+  const mi     = window._miUsuario || "Analista";
+  const nombre = window._miNombre  || mi;
+  const superv = esSupervisora();
+  const asig   = allTickets.filter(t => (t.asignado||"").toLowerCase()===mi.toLowerCase() && t.estado!=="Resuelto");
+  const pets   = allTickets.filter(t => (t.usuario||"").toLowerCase()===mi.toLowerCase());
+  const resCount = superv
+    ? allTickets.filter(t => ticketEsTesoreria(t) && t.estado==="Resuelto").length
+    : allTickets.filter(t => (t.asignado||"").toLowerCase()===mi.toLowerCase() && t.estado==="Resuelto").length;
+
+  const listaAsig = asig.slice(0,5).map(t => `• [${t.id}] "${t.titulo}" — ${t.estado} — usuario: ${t.usuario}`).join("\n") || "No tienes tickets asignados activos.";
+
+  return "Eres GM Asistente, el asistente virtual interno del sistema GM Tickets TI de Grupo Michel, en el panel de ANALISTA. Ayudas a analistas a gestionar tickets de usuarios que les asignan, y a escalar peticiones al equipo técnico de TI cuando lo necesiten.\n\n" +
+  "CONTEXTO DEL ANALISTA ACTUAL:\n- Nombre: " + nombre + "\n- Rol: " + (superv ? "Supervisora de Tesorería" : "Analista") + "\n- Tickets asignados activos: " + asig.length + "\n- Peticiones enviadas a técnicos: " + pets.length + "\n- Tickets resueltos: " + resCount + "\n- Asignados recientes:\n" + listaAsig + "\n\n" +
+  "FUNCIONES DEL PANEL ANALISTA:\n- \"Asignados a mí\": tickets de usuarios que debes atender. Botones: marcar recibido, pasar a En Proceso, marcar Resuelto.\n- \"Mis resueltos\": historial de tickets que cerraste.\n- \"Nueva petición\": para escalar un problema técnico a un técnico de TI (Juan, Xavier, Joel o Yanna), con título, descripción y archivos adjuntos opcionales.\n- \"Mis peticiones\": seguimiento de lo que has escalado a técnicos.\n" + (superv ? "- Como supervisora de Tesorería, también puedes reasignar tickets entre analistas del equipo desde el botón 🔀 Reasignar.\n" : "") +
+  "\nINSTRUCCIONES:\n- Responde SIEMPRE en español dominicano, de forma clara, profesional y concisa (máximo 3-4 párrafos cortos)\n- Usa el contexto de tickets que tienes para responder preguntas sobre su carga de trabajo\n- Guía paso a paso sobre cómo usar las funciones del panel cuando lo pregunten\n- No inventes datos que no estén en el contexto\n- Si preguntan algo fuera de tu alcance (ej. password de otro sistema, temas no relacionados a TI), indica que contacten al equipo de TI o a su supervisor.";
+}
+
+function initChatbot(){
+  const nombre = (window._miNombre || window._miUsuario || "Hola").split(" ")[0];
+  appendBotMessage("¡Hola, " + nombre + "! 👋 Soy **NEXO Asistente**. Puedo ayudarte con tus tickets asignados, cómo escalar peticiones a técnicos, o cualquier duda sobre el panel.\n\n¿En qué te ayudo?");
+  setTimeout(function(){
+    const badge = document.getElementById("fabBadge");
+    if (badge && !chatOpen) badge.classList.add("show");
+  }, 2000);
+}
+
+function toggleChat(){
+  chatOpen = !chatOpen;
+  const panel = document.getElementById("chatbotPanel");
+  const badge = document.getElementById("fabBadge");
+  if (chatOpen){
+    panel.classList.add("open");
+    if (badge) badge.classList.remove("show");
+    setTimeout(function(){ const inp=document.getElementById("chatInput"); if(inp) inp.focus(); }, 250);
+    scrollChatToBottom();
+  } else {
+    panel.classList.remove("open");
+  }
+}
+
+function scrollChatToBottom(){
+  const msgs = document.getElementById("chatMessages");
+  if (msgs) setTimeout(function(){ msgs.scrollTop = msgs.scrollHeight; }, 50);
+}
+
+function appendBotMessage(text){
+  const msgs = document.getElementById("chatMessages");
+  if (!msgs) return;
+  const div = document.createElement("div");
+  div.className = "chat-msg bot";
+  const formatted = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br>");
+  div.innerHTML = '<div class="chat-msg-avatar">🤖</div><div class="chat-msg-bubble">' + formatted + '</div>';
+  msgs.appendChild(div);
+  scrollChatToBottom();
+}
+
+function appendUserMessage(text){
+  const msgs = document.getElementById("chatMessages");
+  if (!msgs) return;
+  const initials = (window._miNombre || "U").split(" ").map(function(p){ return p[0]; }).join("").substring(0,2).toUpperCase();
+  const div = document.createElement("div");
+  div.className = "chat-msg user";
+  div.innerHTML = '<div class="chat-msg-avatar">' + initials + '</div><div class="chat-msg-bubble">' + text.replace(/</g,"&lt;") + '</div>';
+  msgs.appendChild(div);
+  scrollChatToBottom();
+}
+
+function showTypingIndicator(){
+  const msgs = document.getElementById("chatMessages");
+  if (!msgs) return;
+  const div = document.createElement("div");
+  div.className = "chat-typing";
+  div.id = "chatTypingIndicator";
+  div.innerHTML = '<div class="chat-msg-avatar" style="width:26px;height:26px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">🤖</div><div class="chat-typing-dots"><span></span><span></span><span></span></div>';
+  msgs.appendChild(div);
+  scrollChatToBottom();
+}
+
+function removeTypingIndicator(){
+  const el = document.getElementById("chatTypingIndicator");
+  if (el) el.remove();
+}
+
+function sendSuggestion(text){
+  const sugg = document.getElementById("chatSuggestions");
+  if (sugg) sugg.style.display = "none";
+  document.getElementById("chatInput").value = text;
+  sendChatMessage();
+}
+
+async function sendChatMessage(){
+  if (chatTyping) return;
+  const input   = document.getElementById("chatInput");
+  const sendBtn = document.getElementById("chatSendBtn");
+  const text    = input.value.trim();
+  if (!text) return;
+
+  const sugg = document.getElementById("chatSuggestions");
+  if (sugg) sugg.style.display = "none";
+
+  appendUserMessage(text);
+  input.value = "";
+  input.disabled  = true;
+  sendBtn.disabled = true;
+  chatTyping = true;
+
+  chatHistory.push({ role: "user", parts: [{ text: text }] });
+  showTypingIndicator();
+
+  try {
+    const sysPrompt = buildSystemPrompt();
+    const openrouterMessages = [{ role: "system", content: sysPrompt }].concat(
+      chatHistory.map(function(m){ return { role: m.role === "model" ? "assistant" : "user", content: m.parts[0].text }; })
+    );
+
+    const response = await fetch(OPENROUTER_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + OPENROUTER_API_KEY,
+        "HTTP-Referer": window.location.origin,
+        "X-Title": "GM Tickets TI"
+      },
+      body: JSON.stringify({
+        model: OPENROUTER_MODEL,
+        messages: openrouterMessages,
+        temperature: 0.7,
+        max_tokens: 500
+      })
+    });
+
+    if (!response.ok){
+      const errData = await response.json().catch(function(){ return {}; });
+      throw new Error(errData.error ? errData.error.message : ("HTTP " + response.status));
+    }
+
+    const data    = await response.json();
+    const botText = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || "No pude generar una respuesta. Intenta de nuevo.";
+
+    chatHistory.push({ role: "model", parts: [{ text: botText }] });
+    removeTypingIndicator();
+    appendBotMessage(botText);
+
+  } catch(err){
+    removeTypingIndicator();
+    console.error("OpenRouter error:", err);
+    appendBotMessage("⚠️ Error al conectar con el asistente: " + err.message + ".\n\nIntenta de nuevo en un momento.");
+  } finally {
+    chatTyping = false;
+    input.disabled  = false;
+    sendBtn.disabled = false;
+    input.focus();
+  }
+}
+
+initChatbot();
+
+
 
 const TECNICOS = {
   Juan:   "Juan Francisco Jiménez",
