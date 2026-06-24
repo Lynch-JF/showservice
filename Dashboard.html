@@ -202,20 +202,17 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
 [data-theme="dark"] .urg-pill.up-alto.active{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08)}
 
 /* ══════════════════════════════════════
-   ★ TICKET CARDS — MEJORADAS
+   TICKET CARDS
 ══════════════════════════════════════ */
 .tickets-grid{display:grid;gap:14px}
 .ticket-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow);transition:all .2s var(--ease);position:relative;overflow:hidden}
 .ticket-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--border2)}
-
-/* urgency strip */
 .urgency-strip{position:absolute;top:0;left:0;right:0;height:3px}
 .strip-critico{background:linear-gradient(90deg,#ef4444,#dc2626);box-shadow:0 0 10px rgba(239,68,68,.35)}
 .strip-alto{background:linear-gradient(90deg,#f59e0b,#d97706)}
 [data-theme="light"] .strip-alto{background:linear-gradient(90deg,#a06010,#d97706)}
 .strip-medio{background:linear-gradient(90deg,var(--cyan),#0891b2)}
 .strip-normal{display:none}
-
 .ticket-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;flex-wrap:wrap}
 .ticket-id-tag{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:3px}
 .ticket-titulo{font-size:15px;font-weight:700;color:var(--text);line-height:1.3}
@@ -224,15 +221,12 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
 .ticket-desc{font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .ticket-meta-row{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:10px}
 .ticket-fecha{font-size:10px;color:var(--text3);font-family:var(--mono)}
-
-/* badges */
 .badge{font-size:9px;font-weight:600;font-family:var(--mono);padding:3px 9px;border-radius:99px;border:1px solid transparent;display:inline-flex;align-items:center;gap:3px}
 .b-pend{color:var(--warning);background:var(--warning-bg);border-color:rgba(160,96,16,.2)}
 .b-proc{color:var(--cyan);background:rgba(8,145,178,.1);border-color:rgba(8,145,178,.2)}
 .b-res{color:var(--success);background:var(--success-bg);border-color:rgba(26,128,96,.2)}
 .b-asignado{color:var(--accent);background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.15)}
 .b-sin-asignar{color:var(--warning);background:var(--warning-bg);border-color:rgba(160,96,16,.2)}
-/* badge analista */
 .b-analista{color:#7c3aed;background:rgba(124,58,237,.08);border-color:rgba(124,58,237,.2)}
 [data-theme="dark"] .b-analista{color:#c4b5fd;background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.25)}
 [data-theme="dark"] .b-pend{color:var(--amber);background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.25)}
@@ -240,8 +234,6 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
 [data-theme="dark"] .b-res{color:var(--emerald);background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.25)}
 [data-theme="dark"] .b-asignado{color:var(--accent2);background:rgba(129,140,248,.08);border-color:rgba(129,140,248,.2)}
 [data-theme="dark"] .b-sin-asignar{color:var(--amber);background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.2)}
-
-/* ★ urgency badge */
 .urgency-badge{display:inline-flex;align-items:center;gap:3px;font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 8px;border-radius:99px;border:1px solid transparent;letter-spacing:.4px}
 .urg-critico{color:#fca5a5;background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.35)}
 .urg-alto{color:var(--warning);background:var(--warning-bg);border-color:rgba(160,96,16,.3)}
@@ -249,8 +241,6 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
 .urg-normal{color:var(--text3);background:var(--surface2);border-color:var(--border)}
 [data-theme="dark"] .urg-alto{color:var(--amber);background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.35)}
 [data-theme="dark"] .urg-medio{color:var(--cyan);background:rgba(34,211,238,.08);border-color:rgba(34,211,238,.25)}
-
-/* ★ recibido badge */
 .b-recibido{color:var(--success);background:var(--success-bg);border-color:rgba(26,128,96,.35);display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;font-weight:700;padding:4px 10px;border-radius:99px;border:1px solid;letter-spacing:.3px}
 [data-theme="dark"] .b-recibido{color:var(--emerald);background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4)}
 .ticket-card.recibido-card{border-color:rgba(26,128,96,.25)}
@@ -259,16 +249,11 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
 [data-theme="dark"] .ticket-card.recibido-card:hover{border-color:rgba(16,185,129,.4)}
 .recibido-notice{margin-top:2px;margin-bottom:10px;padding:9px 13px;background:var(--success-bg);border:1px solid rgba(26,128,96,.2);border-radius:var(--radius);font-size:12px;color:var(--success);line-height:1.5;display:flex;align-items:center;gap:6px}
 [data-theme="dark"] .recibido-notice{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.2);color:var(--emerald)}
-
-/* resolucion */
 .resolucion-box{margin-top:10px;padding:11px 14px;background:var(--success-bg);border-radius:var(--radius);border-left:3px solid var(--success);font-size:12px;color:var(--text);line-height:1.55}
 [data-theme="dark"] .resolucion-box{background:rgba(16,185,129,.06);border-left-color:var(--emerald);color:rgba(16,185,129,.9)}
-
-/* adjuntos */
 .adj-links{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;padding-top:8px;border-top:1px dashed var(--border2)}
 .adj-link{display:inline-flex;align-items:center;gap:5px;background:rgba(99,102,241,.07);color:var(--accent);border-radius:99px;padding:4px 11px;font-size:10px;font-weight:600;text-decoration:none;transition:background .15s;font-family:var(--mono)}
 .adj-link:hover{background:rgba(99,102,241,.14)}
-
 .btn-delete{margin-top:10px;padding:6px 13px;background:var(--danger-bg);color:var(--danger);border:1px solid rgba(192,48,48,.2);border-radius:var(--radius);font-family:var(--mono);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
 .btn-delete:hover{background:var(--danger);color:#fff}
 .empty-state{text-align:center;padding:50px 20px;color:var(--text3);font-size:13px;font-family:var(--mono)}
@@ -341,6 +326,309 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
 .toast.t-warn{border-left:3px solid var(--warning)}
 
 /* ══════════════════════════════════════
+   ★ CHATBOT IA — GM Asistente
+══════════════════════════════════════ */
+
+/* Botón flotante */
+#chatbotFab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 4px 20px rgba(99,102,241,.45);
+  z-index: 998;
+  transition: transform .2s var(--ease), box-shadow .2s;
+}
+#chatbotFab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 28px rgba(99,102,241,.6);
+}
+#chatbotFab .fab-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 16px;
+  height: 16px;
+  background: var(--emerald);
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+  display: none;
+}
+#chatbotFab .fab-badge.show { display: block; }
+
+/* Panel del chat */
+#chatbotPanel {
+  position: fixed;
+  bottom: 92px;
+  right: 28px;
+  width: 360px;
+  max-height: 520px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  z-index: 997;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(12px) scale(.97);
+  pointer-events: none;
+  transition: opacity .22s var(--ease), transform .22s var(--ease);
+}
+#chatbotPanel.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+/* Header del chat */
+.chat-header {
+  padding: 14px 16px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.chat-header-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(255,255,255,.35);
+}
+.chat-header-info { flex: 1; }
+.chat-header-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+.chat-header-status {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: rgba(255,255,255,.75);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 1px;
+}
+.chat-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: pulse 2s infinite;
+}
+.chat-close-btn {
+  background: rgba(255,255,255,.15);
+  border: none;
+  color: #fff;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: background .15s;
+  flex-shrink: 0;
+}
+.chat-close-btn:hover { background: rgba(255,255,255,.28); }
+
+/* Sugerencias rápidas */
+.chat-suggestions {
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px 0;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.chat-suggestion-chip {
+  padding: 5px 11px;
+  border-radius: 99px;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--text2);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.chat-suggestion-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(99,102,241,.06);
+}
+
+/* Área de mensajes */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+.chat-messages::-webkit-scrollbar { width: 4px; }
+.chat-messages::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 99px; }
+
+/* Mensajes */
+.chat-msg {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  animation: msgIn .18s var(--ease);
+}
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.chat-msg.user { flex-direction: row-reverse; }
+
+.chat-msg-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+  color: #fff;
+  font-weight: 700;
+}
+.chat-msg.bot .chat-msg-avatar {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  font-size: 13px;
+}
+
+.chat-msg-bubble {
+  max-width: 76%;
+  padding: 9px 13px;
+  border-radius: 14px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text);
+}
+.chat-msg.bot .chat-msg-bubble {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+.chat-msg.user .chat-msg-bubble {
+  background: var(--accent);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+/* Typing indicator */
+.chat-typing {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 0 4px;
+}
+.chat-typing-dots {
+  display: flex;
+  gap: 4px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 8px 13px;
+  border-radius: 14px;
+  border-bottom-left-radius: 4px;
+}
+.chat-typing-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text3);
+  animation: typingDot 1.2s ease-in-out infinite;
+}
+.chat-typing-dots span:nth-child(2) { animation-delay: .2s; }
+.chat-typing-dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes typingDot {
+  0%, 60%, 100% { opacity: .3; transform: scale(1); }
+  30% { opacity: 1; transform: scale(1.3); }
+}
+
+/* Input area */
+.chat-input-area {
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+  background: var(--surface);
+}
+#chatInput {
+  flex: 1;
+  padding: 8px 13px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 99px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 12px;
+  outline: none;
+  transition: border-color .15s;
+  margin-bottom: 0;
+}
+#chatInput:focus { border-color: var(--accent); }
+#chatInput::placeholder { color: var(--text3); }
+#chatSendBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: all .15s;
+  flex-shrink: 0;
+  box-shadow: 0 0 12px rgba(99,102,241,.3);
+}
+#chatSendBtn:hover { opacity: .88; transform: scale(1.06); }
+#chatSendBtn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+/* Footer del chat */
+.chat-footer {
+  padding: 6px 12px 8px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  text-align: center;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════ */
 @media(max-width:640px){
@@ -349,6 +637,8 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
   .nav-item{justify-content:center;padding:10px}
   .user-pill{justify-content:center}
   .view{padding:14px}
+  #chatbotPanel { width: calc(100vw - 40px); right: 20px; bottom: 84px; }
+  #chatbotFab { right: 20px; bottom: 20px; }
 }
   </style>
 </head>
@@ -365,7 +655,7 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
         <div class="sb-brand">GM Tickets <span>TI</span></div>
       </div>
     </div>
-    <div class="sb-version">v3.1 — usuario</div>
+    <div class="sb-version">v3.2 — usuario</div>
   </div>
   <p class="sb-section">Principal</p>
   <div class="nav-item active" id="nav-inicio"     onclick="switchView('inicio')"><span class="nav-icon">◼</span><span>Inicio</span></div>
@@ -449,7 +739,6 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
         <label class="form-label">Descripción detallada</label>
         <textarea id="descripcion" placeholder="Describe con detalle qué pasó, cuándo empezó y qué intentaste hacer..."></textarea>
         <label class="form-label">Asignar técnico</label>
-        <!-- ★ SELECT CON GRUPOS: Técnicos TI + Analistas -->
         <select id="asignadoA">
           <option value="Sin asignar">-- Asignar a técnico --</option>
           <optgroup label="Técnicos TI">
@@ -458,9 +747,7 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
             <option value="Yanna">Yanna Martínez</option>
             <option value="Joel">Joel Holguin</option>
           </optgroup>
-          <optgroup label="Analistas" id="analistaOptgroup">
-            <!-- Se puebla dinámicamente desde la API de usuarios -->
-          </optgroup>
+          <optgroup label="Analistas" id="analistaOptgroup"></optgroup>
         </select>
         <div class="depto-info">
           🏢 <strong style="margin-right:4px">Departamento:</strong>
@@ -491,7 +778,6 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
       <button class="filter-tab t-proc"  onclick="setEstadoFilter('En Proceso',this)">En Proceso</button>
       <button class="filter-tab t-res"   onclick="setEstadoFilter('Resuelto',this)">Resuelto</button>
       <div class="filter-sep"></div>
-      <!-- ★ SELECT FILTRO CON GRUPOS: Técnicos TI + Analistas -->
       <select class="tecnico-select" id="tecnicoFilter" onchange="renderMisTickets()">
         <option value="">👤 Todos</option>
         <optgroup label="Técnicos TI">
@@ -500,9 +786,7 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
           <option value="Yanna">Yanna Martínez</option>
           <option value="Joel">Joel Holguin</option>
         </optgroup>
-        <optgroup label="Analistas" id="analistaFilterOptgroup">
-          <!-- Se puebla dinámicamente -->
-        </optgroup>
+        <optgroup label="Analistas" id="analistaFilterOptgroup"></optgroup>
         <option value="Sin asignar">Sin asignar</option>
       </select>
       <input class="search-input" id="srchTickets" placeholder="Buscar tickets…" oninput="renderMisTickets()">
@@ -568,8 +852,9 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
         </div>
         <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
           <div class="cfg-card-title" style="font-size:11px;margin-bottom:10px">ℹ Información del sistema</div>
-          <div class="cfg-info-row"><span>Versión</span><span>v3.1.0 — Usuario</span></div>
+          <div class="cfg-info-row"><span>Versión</span><span>v3.2.0 — Usuario</span></div>
           <div class="cfg-info-row"><span>API Tickets</span><span style="color:var(--success)">✓ Conectada</span></div>
+          <div class="cfg-info-row"><span>Asistente IA</span><span style="color:var(--success)">✓ Mistral (OpenRouter)</span></div>
           <div class="cfg-info-row"><span>Mis tickets</span><span id="cfgInfoTotal">—</span></div>
           <div class="cfg-info-row"><span>Resueltos</span><span id="cfgInfoRes" style="color:var(--success)">—</span></div>
         </div>
@@ -617,6 +902,53 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
   </div>
 </div>
 
+<!-- ════ CHATBOT IA ════ -->
+<!-- Botón flotante -->
+<button id="chatbotFab" onclick="toggleChat()" title="Asistente IA — GM Tickets">
+  🤖
+  <div class="fab-badge" id="fabBadge"></div>
+</button>
+
+<!-- Panel del chat -->
+<div id="chatbotPanel">
+  <div class="chat-header">
+    <div class="chat-header-avatar">🤖</div>
+    <div class="chat-header-info">
+      <div class="chat-header-name">GM Asistente</div>
+      <div class="chat-header-status">
+        <div class="chat-status-dot"></div>
+        Soporte técnico · Powered by Mistral
+      </div>
+    </div>
+    <button class="chat-close-btn" onclick="toggleChat()">✕</button>
+  </div>
+
+  <div class="chat-suggestions" id="chatSuggestions">
+    <button class="chat-suggestion-chip" onclick="sendSuggestion('¿Cómo creo un ticket nuevo?')">Crear ticket</button>
+    <button class="chat-suggestion-chip" onclick="sendSuggestion('¿Cuánto tarda en resolverse mi ticket?')">Tiempos de respuesta</button>
+    <button class="chat-suggestion-chip" onclick="sendSuggestion('Mi internet no funciona')">Internet caído</button>
+    <button class="chat-suggestion-chip" onclick="sendSuggestion('¿Cómo contacto a un técnico?')">Contactar técnico</button>
+  </div>
+
+  <div class="chat-messages" id="chatMessages">
+    <!-- Mensaje de bienvenida inicial -->
+  </div>
+
+  <div class="chat-input-area">
+    <input
+      type="text"
+      id="chatInput"
+      placeholder="Escribe tu consulta…"
+      onkeydown="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); sendChatMessage(); }"
+      autocomplete="off"
+    >
+    <button id="chatSendBtn" onclick="sendChatMessage()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+  <div class="chat-footer">GM Tickets TI · Grupo Michel · Asistente en Beta</div>
+</div>
+
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script src="JS/js.js"></script>
@@ -627,12 +959,16 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
 const API_TICKETS = "https://api.sheetbest.com/sheets/a50a59f4-402a-4937-a0fc-e20789380908";
 const API_USERS   = "https://api.sheetbest.com/sheets/6784d1e5-1e26-4605-9c19-329eb2b6ea12";
 
+// ★ OPENROUTER API KEY
+const OPENROUTER_API_KEY = "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";
+const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const OPENROUTER_MODEL   = "cohere/north-mini-code:free";
+
 const VIEW_TITLES = {
   inicio:"Inicio", nuevo:"Nuevo Ticket",
   mistickets:"Mis Tickets", config:"Configuración"
 };
 
-// ★ NOMBRES_TEC es mutable para poder agregar analistas dinámicamente
 let NOMBRES_TEC = {
   Xavier:"Xavier Rosario", Juan:"Juan Francisco Jiménez",
   Yanna:"Yanna Martínez", Joel:"Joel Holguin"
@@ -641,13 +977,23 @@ let NOMBRES_TEC = {
 // ══════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════
-let todosTickets = [];
-let estadoFiltro = "";
-let urgFiltro    = "todos";
+let todosTickets       = [];
+let estadoFiltro       = "";
+let urgFiltro          = "todos";
 let autoRefreshInterval = null;
 
+// Estado del chatbot
+let chatOpen     = false;
+let chatHistory  = [];   // [{role:"user"|"model", parts:[{text:"..."}]}]
+let chatTyping   = false;
+
+// Estado de creación de ticket desde el bot
+// fases: null | "esperando_titulo" | "esperando_descripcion" | "esperando_tecnico" | "esperando_confirmacion"
+let chatTicketFlow = null;
+let chatTicketData = {};
+
 // ══════════════════════════════════════════════════════
-// ★ URGENCIA AUTOMÁTICA
+// URGENCIA AUTOMÁTICA
 // ══════════════════════════════════════════════════════
 const PALABRAS_CRITICO = ["urgente","urgentes","caído","caida","no funciona","bloqueado","bloqueada","crítico","crítica","apagado","apagada","no enciende","perdida de datos","no accede","virus","hackeado","sin internet","sin sistema","caída total","fuera de servicio","completamente","no hay sistema"];
 const PALABRAS_ALTO    = ["lento","lenta","error","falla","problema","no responde","reinicia","reiniciando","se traba","se cuelga","pantalla azul","no abre","no carga","intermitente","tarda","muy despacio"];
@@ -677,47 +1023,24 @@ function calcUrgencia(t) {
 }
 
 // ══════════════════════════════════════════════════════
-// ★ CARGAR ANALISTAS DINÁMICAMENTE
+// CARGAR ANALISTAS
 // ══════════════════════════════════════════════════════
 async function cargarAnalistas() {
   try {
     const r    = await fetch(API_USERS);
     const data = await r.json();
     if (!Array.isArray(data)) return;
-
     const analistas = data.filter(u => (u.Rol || "").toLowerCase() === "analista");
     if (!analistas.length) return;
-
-    // Registrar nombres en NOMBRES_TEC para que las tarjetas los resuelvan
-    analistas.forEach(u => {
-      NOMBRES_TEC[u.NombreUsuario] = u.NombreCompleto || u.NombreUsuario;
-    });
-
-    // Poblar optgroup del formulario "Nuevo Ticket"
+    analistas.forEach(u => { NOMBRES_TEC[u.NombreUsuario] = u.NombreCompleto || u.NombreUsuario; });
     const og1 = document.getElementById("analistaOptgroup");
-    // Poblar optgroup del filtro en "Mis Tickets"
     const og2 = document.getElementById("analistaFilterOptgroup");
-
     analistas.forEach(u => {
       const nombre = u.NombreCompleto || u.NombreUsuario;
-
-      if (og1) {
-        const opt = document.createElement("option");
-        opt.value       = u.NombreUsuario;
-        opt.textContent = nombre;
-        og1.appendChild(opt);
-      }
-
-      if (og2) {
-        const opt = document.createElement("option");
-        opt.value       = u.NombreUsuario;
-        opt.textContent = nombre;
-        og2.appendChild(opt);
-      }
+      if (og1) { const opt = document.createElement("option"); opt.value = u.NombreUsuario; opt.textContent = nombre; og1.appendChild(opt); }
+      if (og2) { const opt = document.createElement("option"); opt.value = u.NombreUsuario; opt.textContent = nombre; og2.appendChild(opt); }
     });
-  } catch(e) {
-    console.warn("No se pudieron cargar analistas:", e);
-  }
+  } catch(e) { console.warn("No se pudieron cargar analistas:", e); }
 }
 
 // ══════════════════════════════════════════════════════
@@ -727,24 +1050,19 @@ async function cargarAnalistas() {
   const rol = localStorage.getItem("rol");
   if (!rol || rol !== "usuario") { window.location.href = "index.html"; return; }
 
-  // Tema guardado
   const darkSaved = localStorage.getItem("dash_dark") === "1";
   if (darkSaved) {
     document.documentElement.setAttribute("data-theme","dark");
-    const btn = document.getElementById("darkBtn");
-    if (btn) btn.textContent = "☀";
-    const chk = document.getElementById("cfgDarkMode");
-    if (chk) chk.checked = true;
+    const btn = document.getElementById("darkBtn"); if (btn) btn.textContent = "☀";
+    const chk = document.getElementById("cfgDarkMode"); if (chk) chk.checked = true;
   }
 
   const nombreCompleto = localStorage.getItem("nombreCompleto") || localStorage.getItem("usuario") || "Usuario";
   const depto          = localStorage.getItem("depto") || "Sin departamento";
 
-  // Sidebar
   document.getElementById("sbName").textContent   = nombreCompleto;
   document.getElementById("sbAvatar").textContent = nombreCompleto.substring(0,2).toUpperCase();
 
-  // Banner
   const hora = new Date().getHours();
   const saludo = hora < 12 ? "¡Buenos días," : hora < 19 ? "¡Buenas tardes," : "¡Buenas noches,";
   document.getElementById("perfilSaludo").textContent = saludo;
@@ -756,11 +1074,9 @@ async function cargarAnalistas() {
   updateClock();
   setInterval(updateClock, 1000);
 
-  // ★ Cargar analistas y luego tickets
-  cargarAnalistas().finally(() => {
-    recargarTickets();
-    iniciarAutoRefresh();
-  });
+  initChatbot();
+
+  cargarAnalistas().finally(() => { recargarTickets(); iniciarAutoRefresh(); });
 })();
 
 function updateClock() {
@@ -794,8 +1110,6 @@ async function recargarTickets() {
     const r = await fetch(API_TICKETS);
     const data = await r.json();
     todosTickets = Array.isArray(data) ? data.filter(t => t.usuario === usuario) : [];
-
-    // Stats banner
     const tot  = todosTickets.length;
     const pend = todosTickets.filter(t => t.estado === "Pendiente").length;
     const proc = todosTickets.filter(t => t.estado === "En Proceso").length;
@@ -804,19 +1118,13 @@ async function recargarTickets() {
     document.getElementById("ps-pend").textContent  = pend;
     document.getElementById("ps-proc").textContent  = proc;
     document.getElementById("ps-res").textContent   = res;
-
-    // Nav badge
     const nb = document.getElementById("nb-pendientes");
     nb.textContent = pend; nb.style.display = pend > 0 ? "" : "none";
-
     renderUrgSummary();
     renderUltimos();
     renderMisTickets();
-
-    // Config stats
     const cfgT = document.getElementById("cfgInfoTotal"); if (cfgT) cfgT.textContent = tot;
     const cfgR = document.getElementById("cfgInfoRes");   if (cfgR) cfgR.textContent = res;
-
   } catch(e) {
     showToast("Error al cargar tickets","error");
     console.error(e);
@@ -827,35 +1135,31 @@ async function recargarTickets() {
 function cargarTickets() { recargarTickets(); }
 
 // ══════════════════════════════════════════════════════
-// URGENCY SUMMARY (inicio)
+// URGENCY SUMMARY
 // ══════════════════════════════════════════════════════
 function renderUrgSummary() {
-  const cont = document.getElementById("urgSummary");
-  if (!cont) return;
+  const cont = document.getElementById("urgSummary"); if (!cont) return;
   const active = todosTickets.filter(t => t.estado !== "Resuelto");
-  const crit  = active.filter(t => calcUrgencia(t).level === "critico").length;
-  const alto  = active.filter(t => calcUrgencia(t).level === "alto").length;
+  const crit = active.filter(t => calcUrgencia(t).level === "critico").length;
+  const alto = active.filter(t => calcUrgencia(t).level === "alto").length;
   if (crit === 0 && alto === 0) {
-    cont.innerHTML = `<span class="urg-summary-pill usp-ok">✓ Sin tickets urgentes — todo bajo control</span>`;
-    return;
+    cont.innerHTML = '<span class="urg-summary-pill usp-ok">✓ Sin tickets urgentes — todo bajo control</span>'; return;
   }
   let html = "";
-  if (crit > 0) html += `<span class="urg-summary-pill usp-critico">🔴 ${crit} ticket${crit>1?"s":""} crítico${crit>1?"s":""}</span>`;
-  if (alto > 0) html += `<span class="urg-summary-pill usp-alto">🟠 ${alto} ticket${alto>1?"s":""} de alta prioridad</span>`;
-  html += `<button onclick="switchView('mistickets')" style="padding:5px 14px;border-radius:99px;background:rgba(99,102,241,.08);color:var(--accent);border:1px solid rgba(99,102,241,.2);font-size:10px;font-family:var(--mono);font-weight:600;cursor:pointer;margin-left:4px">Ver detalles →</button>`;
+  if (crit > 0) html += '<span class="urg-summary-pill usp-critico">🔴 ' + crit + ' ticket' + (crit>1?"s":"") + ' crítico' + (crit>1?"s":"") + '</span>';
+  if (alto > 0) html += '<span class="urg-summary-pill usp-alto">🟠 ' + alto + ' ticket' + (alto>1?"s":"") + ' de alta prioridad</span>';
+  html += '<button onclick="switchView(\'mistickets\')" style="padding:5px 14px;border-radius:99px;background:rgba(99,102,241,.08);color:var(--accent);border:1px solid rgba(99,102,241,.2);font-size:10px;font-family:var(--mono);font-weight:600;cursor:pointer;margin-left:4px">Ver detalles →</button>';
   cont.innerHTML = html;
 }
 
 // ══════════════════════════════════════════════════════
-// ÚLTIMOS (INICIO)
+// ÚLTIMOS
 // ══════════════════════════════════════════════════════
 function renderUltimos() {
-  const cont = document.getElementById("ultimosTickets");
-  if (!cont) return;
+  const cont = document.getElementById("ultimosTickets"); if (!cont) return;
   const ultimos = [...todosTickets].reverse().slice(0, 3);
   if (ultimos.length === 0) {
-    cont.innerHTML = `<div class="empty-state"><div class="empty-icon">🎫</div>Aún no tienes tickets. <br><button class="btn-primary" style="margin-top:12px;font-size:12px;padding:8px 18px" onclick="switchView('nuevo')">Crear primer ticket</button></div>`;
-    return;
+    cont.innerHTML = '<div class="empty-state"><div class="empty-icon">🎫</div>Aún no tienes tickets.<br><button class="btn-primary" style="margin-top:12px;font-size:12px;padding:8px 18px" onclick="switchView(\'nuevo\')">Crear primer ticket</button></div>'; return;
   }
   cont.innerHTML = ultimos.map(t => buildTicketCard(t, false)).join("");
 }
@@ -875,106 +1179,69 @@ function setUrgFilter(level, btn) {
   btn.classList.add("active");
   renderMisTickets();
 }
-
 function renderMisTickets() {
-  const cont    = document.getElementById("listaTickets");
-  const count   = document.getElementById("ticketCount");
+  const cont  = document.getElementById("listaTickets");
+  const count = document.getElementById("ticketCount");
   if (!cont) return;
-  const q       = (document.getElementById("srchTickets")?.value  || "").toLowerCase();
-  const tecnico = (document.getElementById("tecnicoFilter")?.value || "");
-
+  const q       = (document.getElementById("srchTickets") ? document.getElementById("srchTickets").value : "").toLowerCase();
+  const tecnico = (document.getElementById("tecnicoFilter") ? document.getElementById("tecnicoFilter").value : "");
   let lista = [...todosTickets].reverse();
   if (estadoFiltro) lista = lista.filter(t => t.estado === estadoFiltro);
   if (tecnico)      lista = lista.filter(t => (t.asignado||"") === tecnico);
   if (urgFiltro !== "todos") lista = lista.filter(t => calcUrgencia(t).level === urgFiltro);
-  if (q)            lista = lista.filter(t =>
+  if (q) lista = lista.filter(t =>
     (t.titulo||"").toLowerCase().includes(q) ||
     (t.descripcion||"").toLowerCase().includes(q) ||
     (t.depto||"").toLowerCase().includes(q)
   );
-  // Ordenar: críticos primero
   lista = lista.sort((a,b) => {
-    const order = {critico:0, alto:1, medio:2, normal:3};
+    const order = {critico:0,alto:1,medio:2,normal:3};
     return order[calcUrgencia(a).level] - order[calcUrgencia(b).level];
   });
-
   if (count) count.textContent = lista.length + " ticket" + (lista.length !== 1 ? "s" : "");
-  if (lista.length === 0) {
-    cont.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div>No hay tickets con esos filtros.</div>`;
-    return;
-  }
+  if (lista.length === 0) { cont.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div>No hay tickets con esos filtros.</div>'; return; }
   cont.innerHTML = lista.map(t => buildTicketCard(t, true)).join("");
 }
 
 // ══════════════════════════════════════════════════════
-// ★ BUILD TICKET CARD — con urgencia + recibido + analista
+// BUILD TICKET CARD
 // ══════════════════════════════════════════════════════
 function buildTicketCard(t, conBotonEliminar) {
-  const ec = t.estado === "Resuelto"   ? "b-res"  :
-             t.estado === "En Proceso" ? "b-proc" : "b-pend";
+  const ec = t.estado === "Resuelto" ? "b-res" : t.estado === "En Proceso" ? "b-proc" : "b-pend";
   const urg = calcUrgencia(t);
-
-  // ★ Detectar si el asignado es analista (no está en los técnicos fijos)
   const TECNICOS_FIJOS = ["Xavier","Juan","Yanna","Joel"];
   const esAnalista = t.asignado && !TECNICOS_FIJOS.includes(t.asignado) && t.asignado !== "Sin asignar";
   const nombreAsignado = NOMBRES_TEC[t.asignado] || t.asignado || "Sin asignar";
-
   const badgeAsig = (t.asignado && t.asignado !== "Sin asignar")
-    ? `<span class="badge ${esAnalista ? 'b-analista' : 'b-asignado'}">${esAnalista ? '📊' : '👤'} ${nombreAsignado}</span>`
-    : `<span class="badge b-sin-asignar">⏳ Sin asignar</span>`;
-
-  // Recibido por técnico/analista
+    ? '<span class="badge ' + (esAnalista ? 'b-analista' : 'b-asignado') + '">' + (esAnalista ? '📊' : '👤') + ' ' + nombreAsignado + '</span>'
+    : '<span class="badge b-sin-asignar">⏳ Sin asignar</span>';
   const recibidoVal = String(t.recibido || "").trim().toLowerCase();
   const estaRecibido = recibidoVal === "si" || recibidoVal === "yes" || recibidoVal === "true" || recibidoVal === "1";
-  const recibidoH = estaRecibido
-    ? `<span class="b-recibido">📩 Recibido por ${nombreAsignado}${t.fecha_recibido ? " · " + t.fecha_recibido.split(",")[0] : ""}</span>`
-    : "";
-
-  const resHtml = t.resolucion ? `
-    <div class="resolucion-box">
-      ✅ <strong>Resolución:</strong> ${t.resolucion}<br>
-      <small style="opacity:.7">Participantes: ${t.participantes||"N/A"} · ${t.fecha_resuelto||"—"}</small>
-    </div>` : "";
-
+  const resHtml = t.resolucion ? '<div class="resolucion-box">✅ <strong>Resolución:</strong> ' + t.resolucion + '<br><small style="opacity:.7">Participantes: ' + (t.participantes||"N/A") + ' · ' + (t.fecha_resuelto||"—") + '</small></div>' : "";
   let adjHtml = "";
   if (t.adjuntos && t.adjuntos.trim()) {
     const urls  = t.adjuntos.split(",").map(u => u.trim()).filter(Boolean);
-    const links = urls.map(url => {
+    const links = urls.map(function(url) {
       const nombre = decodeURIComponent(url.split("/").pop().split("?")[0]);
       const ext    = nombre.split(".").pop().toLowerCase();
-      return `<a class="adj-link" href="${url}" target="_blank" rel="noopener">${getFileIconEmoji(ext)} ${nombre}</a>`;
+      return '<a class="adj-link" href="' + url + '" target="_blank" rel="noopener">' + getFileIconEmoji(ext) + ' ' + nombre + '</a>';
     }).join("");
-    adjHtml = `<div class="adj-links">${links}</div>`;
+    adjHtml = '<div class="adj-links">' + links + '</div>';
   }
-
   const btnDel = (conBotonEliminar && t.estado === "Pendiente")
-    ? `<button class="btn-delete" onclick="eliminarTicket('${encodeURIComponent(t.id)}')">🗑 Eliminar</button>`
-    : "";
-
-  return `
-    <div class="ticket-card${estaRecibido ? ' recibido-card' : ''}">
-      <div class="urgency-strip ${urg.strip}"></div>
-      <div class="ticket-card-top">
-        <div>
-          <div class="ticket-id-tag">${t.id || ""}</div>
-          <div class="ticket-titulo">${t.titulo || ""}</div>
-          <div class="ticket-depto-tag">[${t.depto || ""}]</div>
-        </div>
-        <div class="ticket-badges">
-          <span class="badge ${ec}">${t.estado || ""}</span>
-          <span class="urgency-badge ${urg.cls}">${urg.label}</span>
-        </div>
-      </div>
-      <div class="ticket-desc">${t.descripcion || ""}</div>
-      <div class="ticket-meta-row">
-        ${badgeAsig}
-        <span class="ticket-fecha">📅 ${(t.fecha||"").split(",")[0]||""}</span>
-      </div>
-      ${estaRecibido ? `<div class="recibido-notice">📩 Tu ticket fue recibido por <strong>${nombreAsignado}</strong>${t.fecha_recibido ? " el " + t.fecha_recibido.split(",")[0] : ""}. Está siendo atendido.</div>` : ""}
-      ${resHtml}
-      ${adjHtml}
-      ${btnDel}
-    </div>`;
+    ? '<button class="btn-delete" onclick="eliminarTicket(\'' + encodeURIComponent(t.id) + '\')">🗑 Eliminar</button>' : "";
+  return '<div class="ticket-card' + (estaRecibido ? ' recibido-card' : '') + '">' +
+    '<div class="urgency-strip ' + urg.strip + '"></div>' +
+    '<div class="ticket-card-top"><div>' +
+    '<div class="ticket-id-tag">' + (t.id||"") + '</div>' +
+    '<div class="ticket-titulo">' + (t.titulo||"") + '</div>' +
+    '<div class="ticket-depto-tag">[' + (t.depto||"") + ']</div></div>' +
+    '<div class="ticket-badges"><span class="badge ' + ec + '">' + (t.estado||"") + '</span>' +
+    '<span class="urgency-badge ' + urg.cls + '">' + urg.label + '</span></div></div>' +
+    '<div class="ticket-desc">' + (t.descripcion||"") + '</div>' +
+    '<div class="ticket-meta-row">' + badgeAsig + '<span class="ticket-fecha">📅 ' + ((t.fecha||"").split(",")[0]||"") + '</span></div>' +
+    (estaRecibido ? '<div class="recibido-notice">📩 Tu ticket fue recibido por <strong>' + nombreAsignado + '</strong>' + (t.fecha_recibido ? " el " + t.fecha_recibido.split(",")[0] : "") + '. Está siendo atendido.</div>' : "") +
+    resHtml + adjHtml + btnDel + '</div>';
 }
 
 function getFileIconEmoji(ext) {
@@ -992,7 +1259,7 @@ function getFileIconEmoji(ext) {
 function eliminarTicket(idEnc) {
   const id = decodeURIComponent(idEnc);
   if (!confirm("¿Seguro que deseas eliminar este ticket?")) return;
-  fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`, { method:"DELETE" })
+  fetch(API_TICKETS + "/id/" + encodeURIComponent(id), { method:"DELETE" })
     .then(() => { showToast("Ticket eliminado","success"); recargarTickets(); })
     .catch(()  => showToast("Error al eliminar","error"));
 }
@@ -1041,15 +1308,8 @@ function toggleDarkMode() {
 function toggleDarkModeCheck(on) {
   const btn = document.getElementById("darkBtn");
   const chk = document.getElementById("cfgDarkMode");
-  if (on) {
-    document.documentElement.setAttribute("data-theme","dark");
-    localStorage.setItem("dash_dark","1");
-    if (btn) btn.textContent = "☀";
-  } else {
-    document.documentElement.removeAttribute("data-theme");
-    localStorage.setItem("dash_dark","0");
-    if (btn) btn.textContent = "🌙";
-  }
+  if (on) { document.documentElement.setAttribute("data-theme","dark"); localStorage.setItem("dash_dark","1"); if (btn) btn.textContent = "☀"; }
+  else    { document.documentElement.removeAttribute("data-theme"); localStorage.setItem("dash_dark","0"); if (btn) btn.textContent = "🌙"; }
   if (chk) chk.checked = on;
   showToast(on ? "Modo oscuro activado" : "Modo claro activado","success");
 }
@@ -1065,15 +1325,13 @@ async function guardarNombre() {
   document.getElementById("perfilAvatar").textContent   = nombre.split(" ").map(p=>p[0]).join("").substring(0,2).toUpperCase();
   renderConfig();
   try {
-    const r = await fetch(`${API_USERS}/NombreUsuario/${encodeURIComponent(usuario)}`, {
+    const r = await fetch(API_USERS + "/NombreUsuario/" + encodeURIComponent(usuario), {
       method:"PATCH", headers:{"Content-Type":"application/json"},
       body:JSON.stringify({ NombreCompleto: nombre })
     });
     if (!r.ok) throw new Error("HTTP " + r.status);
     showToast("Nombre actualizado ✓","success");
-  } catch {
-    showToast("Nombre guardado localmente (error de red)","warning");
-  }
+  } catch { showToast("Nombre guardado localmente (error de red)","warning"); }
 }
 
 // ══════════════════════════════════════════════════════
@@ -1089,17 +1347,18 @@ document.getElementById("ayudaModal").addEventListener("click", function(e) {
 // TOAST
 // ══════════════════════════════════════════════════════
 let toastId = 0;
-function showToast(msg, type = "success") {
+function showToast(msg, type) {
+  type = type || "success";
   const chk = document.getElementById("cfgToasts");
   if (chk && !chk.checked) return;
-  const wrap = document.getElementById("toastWrap"), id = ++toastId;
+  const wrap = document.getElementById("toastWrap");
   const icon = type === "success" ? "✓ " : type === "error" ? "⚠ " : "· ";
   const el = document.createElement("div");
-  el.className = `toast t-${type === "success" ? "ok" : type === "error" ? "err" : "warn"}`;
+  el.className = "toast t-" + (type === "success" ? "ok" : type === "error" ? "err" : "warn");
   el.textContent = icon + msg;
   wrap.appendChild(el);
-  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add("show")));
-  setTimeout(() => { el.classList.remove("show"); setTimeout(() => el.remove(), 300); }, 3200);
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ el.classList.add("show"); }); });
+  setTimeout(function(){ el.classList.remove("show"); setTimeout(function(){ el.remove(); }, 300); }, 3200);
 }
 
 // ══════════════════════════════════════════════════════
@@ -1109,14 +1368,339 @@ function showToast(msg, type = "success") {
   const fileInput  = document.getElementById("fileInput");
   const uploadZone = document.getElementById("uploadZone");
   if (!fileInput || !uploadZone) return;
-  uploadZone.addEventListener("dragover",  e => { e.preventDefault(); uploadZone.classList.add("dragover"); });
-  uploadZone.addEventListener("dragleave", ()  => uploadZone.classList.remove("dragover"));
-  uploadZone.addEventListener("drop", e => {
+  uploadZone.addEventListener("dragover",  function(e){ e.preventDefault(); uploadZone.classList.add("dragover"); });
+  uploadZone.addEventListener("dragleave", function(){ uploadZone.classList.remove("dragover"); });
+  uploadZone.addEventListener("drop", function(e){
     e.preventDefault(); uploadZone.classList.remove("dragover");
     agregarArchivos(e.dataTransfer.files);
   });
-  fileInput.addEventListener("change", () => { agregarArchivos(fileInput.files); fileInput.value = ""; });
+  fileInput.addEventListener("change", function(){ agregarArchivos(fileInput.files); fileInput.value = ""; });
 })();
+
+// ══════════════════════════════════════════════════════
+// ★ CHATBOT IA — GM Asistente con OpenRouter (Mistral) + Creación de Tickets
+// ══════════════════════════════════════════════════════
+
+function buildSystemPrompt() {
+  const usuario = localStorage.getItem("nombreCompleto") || localStorage.getItem("usuario") || "Usuario";
+  const depto   = localStorage.getItem("depto") || "Sin departamento";
+  const tot     = todosTickets.length;
+  const pend    = todosTickets.filter(function(t){ return t.estado === "Pendiente"; }).length;
+  const proc    = todosTickets.filter(function(t){ return t.estado === "En Proceso"; }).length;
+  const res     = todosTickets.filter(function(t){ return t.estado === "Resuelto"; }).length;
+  const ultimos = [...todosTickets].reverse().slice(0,3)
+    .map(function(t){ return "• [" + t.id + "] \"" + t.titulo + "\" — " + t.estado + " — Técnico: " + (NOMBRES_TEC[t.asignado]||t.asignado||"Sin asignar") + " — " + ((t.fecha||"").split(",")[0]); })
+    .join("\n") || "No hay tickets registrados aún.";
+
+  return "Eres GM Asistente, el asistente de soporte técnico virtual del sistema GM Tickets TI de Grupo Michel (empresa industrial dominicana). Tu rol es ayudar a los empleados usuarios con soporte técnico de primer nivel, guiarlos en el uso del sistema de tickets, y resolver dudas comunes antes de que escalen un ticket.\n\nCONTEXTO DEL USUARIO ACTUAL:\n- Nombre: " + usuario + "\n- Departamento: " + depto + "\n- Total de tickets: " + tot + " (" + pend + " pendientes, " + proc + " en proceso, " + res + " resueltos)\n- Últimos tickets:\n" + ultimos + "\n\nEQUIPO TÉCNICO TI DE GRUPO MICHEL:\n- Xavier Rosario — Técnico TI general (x.rosario@grupomichel.com)\n- Joel Holguin — Técnico TI (j.holguin@grupomichel.com / 809-722-2874)\n- Yanna Martínez — Técnico TI (y.martinez@grupomichel.com / 809-390-5286)\n- Juan Francisco Jiménez — SuperAdmin TI (dptoIT@grupomichel.com / 809-931-3720)\n\nSISTEMA GM TICKETS:\n- Para crear un ticket: ir a \"Nuevo Ticket\" en el menú lateral → completar título, descripción, asignar técnico → clic en \"Enviar Ticket\"\n- Los estados son: Pendiente → En Proceso → Resuelto\n- Cuando un ticket es \"Recibido\" por el técnico, aparece un aviso verde en la tarjeta\n- Los tickets urgentes tienen una franja de color arriba (roja=crítico, naranja=alto, azul=medio)\n- Puedes eliminar tickets en estado Pendiente desde \"Mis Tickets\"\n- El sistema se actualiza automáticamente cada 30 segundos\n\nSOLUCIONES COMUNES:\n- Internet lento/caído: Reiniciar el router (apagar 30 seg, encender), si persiste crear ticket\n- Impresora no imprime: Verificar que esté encendida y conectada, reiniciar spooler de impresión, si persiste crear ticket\n- Sistema/PC lento: Reiniciar el equipo, cerrar programas innecesarios, si persiste crear ticket\n- No puedo iniciar sesión: Verificar usuario y contraseña, si olvidaste credenciales contactar a TI\n- Error en algún programa: Cerrar y abrir el programa, si persiste tomar captura y crear ticket con descripción detallada\n- PC no enciende: Verificar cables de poder, si no enciende llamar directamente a TI (urgente)\n- Correo no funciona: Verificar conexión a internet primero, luego crear ticket con detalles\n\nCREACIÓN DE TICKETS DESDE EL CHAT:\n- Puedes ofrecer crear un ticket directamente desde el chat si el usuario no puede resolver el problema\n- Cuando el usuario confirme que quiere que crees el ticket, responde EXACTAMENTE con: INICIAR_CREACION_TICKET\n- No uses esa palabra en ningún otro contexto\n\nINSTRUCCIONES:\n- Responde SIEMPRE en español dominicano, de forma amigable, clara y concisa\n- Primero sugiere pasos de autosolución antes de recomendar crear un ticket\n- Si el problema es urgente (PC caída, sin internet en área completa, virus), indica que llamen directamente al técnico\n- Máximo 3-4 párrafos cortos por respuesta, usa emojis con moderación\n- Si el usuario pregunta por sus tickets, usa el contexto que tienes\n- No inventas información que no esté en el contexto\n- Si algo está fuera de tu alcance, ofrece crear el ticket directamente desde aquí\n- Si el usuario dice que no pudo resolver el problema o que quiere crear un ticket, pregunta si desea que lo crees desde el chat y si confirma, responde con: INICIAR_CREACION_TICKET";
+}
+
+function initChatbot() {
+  const usuario = localStorage.getItem("nombreCompleto") || localStorage.getItem("usuario") || "Hola";
+  const nombre  = usuario.split(" ")[0];
+  appendBotMessage("¡Hola, " + nombre + "! 👋 Soy **GM Asistente**, tu soporte técnico virtual. Puedo ayudarte a resolver problemas comunes, guiarte con el sistema de tickets, o incluso **crear un ticket por ti** directamente desde aquí.\n\n¿En qué te puedo ayudar hoy?");
+  setTimeout(function(){
+    const badge = document.getElementById("fabBadge");
+    if (badge && !chatOpen) badge.classList.add("show");
+  }, 2000);
+}
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  const panel = document.getElementById("chatbotPanel");
+  const badge = document.getElementById("fabBadge");
+  if (chatOpen) {
+    panel.classList.add("open");
+    if (badge) badge.classList.remove("show");
+    setTimeout(function(){ var inp = document.getElementById("chatInput"); if(inp) inp.focus(); }, 250);
+    scrollChatToBottom();
+  } else {
+    panel.classList.remove("open");
+  }
+}
+
+function scrollChatToBottom() {
+  const msgs = document.getElementById("chatMessages");
+  if (msgs) setTimeout(function(){ msgs.scrollTop = msgs.scrollHeight; }, 50);
+}
+
+function appendBotMessage(text) {
+  const msgs = document.getElementById("chatMessages");
+  if (!msgs) return;
+  const div = document.createElement("div");
+  div.className = "chat-msg bot";
+  const formatted = text
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\n/g, "<br>");
+  div.innerHTML = '<div class="chat-msg-avatar">🤖</div><div class="chat-msg-bubble">' + formatted + '</div>';
+  msgs.appendChild(div);
+  scrollChatToBottom();
+}
+
+function appendUserMessage(text) {
+  const msgs = document.getElementById("chatMessages");
+  if (!msgs) return;
+  const userInitials = (localStorage.getItem("nombreCompleto") || "U").split(" ").map(function(p){ return p[0]; }).join("").substring(0,2).toUpperCase();
+  const div = document.createElement("div");
+  div.className = "chat-msg user";
+  div.innerHTML = '<div class="chat-msg-avatar">' + userInitials + '</div><div class="chat-msg-bubble">' + text.replace(/</g,"&lt;") + '</div>';
+  msgs.appendChild(div);
+  scrollChatToBottom();
+}
+
+function showTypingIndicator() {
+  const msgs = document.getElementById("chatMessages");
+  if (!msgs) return;
+  const div = document.createElement("div");
+  div.className = "chat-typing";
+  div.id = "chatTypingIndicator";
+  div.innerHTML = '<div class="chat-msg-avatar" style="width:26px;height:26px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">🤖</div><div class="chat-typing-dots"><span></span><span></span><span></span></div>';
+  msgs.appendChild(div);
+  scrollChatToBottom();
+}
+
+function removeTypingIndicator() {
+  const el = document.getElementById("chatTypingIndicator");
+  if (el) el.remove();
+}
+
+function sendSuggestion(text) {
+  const sugg = document.getElementById("chatSuggestions");
+  if (sugg) sugg.style.display = "none";
+  document.getElementById("chatInput").value = text;
+  sendChatMessage();
+}
+
+// ── Creación de ticket desde el bot ──
+function iniciarFlujoChatTicket() {
+  chatTicketFlow = "esperando_titulo";
+  chatTicketData = {};
+  appendBotMessage("¡Perfecto, vamos a crear el ticket! 🎫\n\n**Paso 1 de 3:** ¿Cuál es el título del problema? (breve y descriptivo)\n_Ej: \"Impresora no imprime en Contabilidad\"_");
+}
+
+function appendBotTicketConfirmCard(data) {
+  const msgs = document.getElementById("chatMessages");
+  if (!msgs) return;
+  const tecNombre = NOMBRES_TEC[data.tecnico] || data.tecnico || "Sin asignar";
+  const div = document.createElement("div");
+  div.className = "chat-msg bot";
+  div.innerHTML = '<div class="chat-msg-avatar">🤖</div><div class="chat-msg-bubble" style="max-width:90%">' +
+    '<strong>📋 Resumen del ticket:</strong><br><br>' +
+    '<div style="background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-size:11.5px;margin:6px 0">' +
+    '<div style="margin-bottom:5px"><strong style="color:var(--text3);font-family:var(--mono);font-size:9px;letter-spacing:1px">TÍTULO</strong><br>' + data.titulo + '</div>' +
+    '<div style="margin-bottom:5px"><strong style="color:var(--text3);font-family:var(--mono);font-size:9px;letter-spacing:1px">DESCRIPCIÓN</strong><br>' + data.descripcion + '</div>' +
+    '<div><strong style="color:var(--text3);font-family:var(--mono);font-size:9px;letter-spacing:1px">TÉCNICO</strong><br>👤 ' + tecNombre + '</div>' +
+    '</div>' +
+    '¿Confirmas que deseas crear este ticket? Responde <strong>sí</strong> para confirmar o <strong>no</strong> para cancelar.' +
+    '</div>';
+  msgs.appendChild(div);
+  scrollChatToBottom();
+}
+
+async function crearTicketDesdeChat(data) {
+  const usuario = localStorage.getItem("usuario") || "Usuario";
+  const depto   = localStorage.getItem("depto")   || "Sin departamento";
+
+  const nuevoTicket = {
+    id:             "TK-" + Date.now(),
+    titulo:         data.titulo,
+    descripcion:    data.descripcion,
+    depto:          depto,
+    asignado:       data.tecnico || "Sin asignar",
+    estado:         "Pendiente",
+    usuario:        usuario,
+    fecha:          new Date().toLocaleString("es-DO"),
+    adjuntos:       "",
+    resolucion:     "",
+    participantes:  "",
+    fecha_recibido: "",
+    recibido_por:   "",
+    fecha_resuelto: ""
+  };
+
+  const r = await fetch(API_TICKETS, {
+    method:  "POST",
+    headers: { "Content-Type": "application/json" },
+    body:    JSON.stringify(nuevoTicket)
+  });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+
+  // Intentar enviar correo si hay form
+  try {
+    const form = document.getElementById("ticketForm");
+    if (form) {
+      const set = function(name, val) { const el = form.querySelector('[name="' + name + '"]'); if(el) el.value = val; };
+      set("ticket_id", nuevoTicket.id);
+      set("ticket_usuario", nuevoTicket.usuario);
+      set("ticket_departamento", nuevoTicket.depto);
+      set("ticket_titulo", nuevoTicket.titulo);
+      set("ticket_descripcion", nuevoTicket.descripcion);
+      set("ticket_fecha", nuevoTicket.fecha);
+      if (typeof emailjs !== "undefined") {
+        emailjs.sendForm("service_8oishge", "template_mferzbn", form, "60Wdt0a0Ejlr-BGGa").catch(function(){});
+      }
+    }
+  } catch(e) { console.warn("EmailJS desde chat:", e); }
+
+  return nuevoTicket;
+}
+
+// ── Manejo del flujo de tickets en el chat ──
+async function handleChatTicketFlow(userText) {
+  const txt = userText.trim();
+
+  if (chatTicketFlow === "esperando_titulo") {
+    chatTicketData.titulo = txt;
+    chatTicketFlow = "esperando_descripcion";
+    appendBotMessage("**Paso 2 de 3:** Describe el problema con más detalle.\n_¿Cuándo empezó? ¿Qué intentaste hacer? ¿Qué mensaje de error aparece?_");
+    return true;
+  }
+
+  if (chatTicketFlow === "esperando_descripcion") {
+    chatTicketData.descripcion = txt;
+    chatTicketFlow = "esperando_tecnico";
+    appendBotMessage("**Paso 3 de 3:** ¿A qué técnico deseas asignarlo?\n\nResponde con el número:\n**1.** Xavier Rosario\n**2.** Joel Holguin\n**3.** Yanna Martínez\n**4.** Juan F. Jiménez\n**0.** Sin asignar (TI decide)");
+    return true;
+  }
+
+  if (chatTicketFlow === "esperando_tecnico") {
+    const opciones = { "1":"Xavier", "2":"Joel", "3":"Yanna", "4":"Juan", "0":"Sin asignar",
+      "xavier":"Xavier", "joel":"Joel", "yanna":"Yanna", "juan":"Juan", "sin asignar":"Sin asignar" };
+    const sel = opciones[txt.toLowerCase()] || opciones[txt] || "Sin asignar";
+    chatTicketData.tecnico = sel;
+    chatTicketFlow = "esperando_confirmacion";
+    appendBotTicketConfirmCard(chatTicketData);
+    return true;
+  }
+
+  if (chatTicketFlow === "esperando_confirmacion") {
+    const confirm_words = ["si","sí","yes","confirmar","confirmo","dale","ok","okay","claro","correcto","crear","va","vamos"];
+    const cancel_words  = ["no","cancelar","cancel","nope","negativo","olvídalo"];
+    const lower = txt.toLowerCase();
+
+    if (confirm_words.some(function(w){ return lower.includes(w); })) {
+      showTypingIndicator();
+      try {
+        const ticket = await crearTicketDesdeChat(chatTicketData);
+        removeTypingIndicator();
+        appendBotMessage("✅ **¡Ticket creado exitosamente!**\n\nID: **" + ticket.id + "**\nTítulo: " + ticket.titulo + "\nEstado: Pendiente\n\nEl equipo de TI recibirá una notificación. Puedes ver el estado de tu ticket en **Mis Tickets**.");
+        recargarTickets();
+        showToast("Ticket creado desde el chat ✓","success");
+      } catch(e) {
+        removeTypingIndicator();
+        appendBotMessage("⚠️ Hubo un error al crear el ticket. Por favor intenta desde el formulario de **Nuevo Ticket** en el menú lateral.");
+        console.error("Error creando ticket desde chat:", e);
+      }
+      chatTicketFlow = null;
+      chatTicketData = {};
+      return true;
+    }
+
+    if (cancel_words.some(function(w){ return lower.includes(w); })) {
+      chatTicketFlow = null;
+      chatTicketData = {};
+      appendBotMessage("Entendido, ticket cancelado. Si cambias de opinión puedes decirme en cualquier momento o ir a **Nuevo Ticket** en el menú lateral. ¿Hay algo más en que te pueda ayudar?");
+      return true;
+    }
+
+    // Si no se entiende la respuesta
+    appendBotMessage("¿Confirmas la creación del ticket? Responde **sí** para crear o **no** para cancelar.");
+    return true;
+  }
+
+  return false;
+}
+
+async function sendChatMessage() {
+  if (chatTyping) return;
+  const input   = document.getElementById("chatInput");
+  const sendBtn = document.getElementById("chatSendBtn");
+  const text    = input.value.trim();
+  if (!text) return;
+
+  const sugg = document.getElementById("chatSuggestions");
+  if (sugg) sugg.style.display = "none";
+
+  appendUserMessage(text);
+  input.value = "";
+  input.disabled  = true;
+  sendBtn.disabled = true;
+  chatTyping = true;
+
+  // Si hay un flujo de creación de ticket activo, manejarlo directamente
+  if (chatTicketFlow) {
+    await handleChatTicketFlow(text);
+    chatTyping = false;
+    input.disabled  = false;
+    sendBtn.disabled = false;
+    input.focus();
+    return;
+  }
+
+  chatHistory.push({ role: "user", parts: [{ text: text }] });
+
+  showTypingIndicator();
+
+  try {
+    const sysPrompt = buildSystemPrompt();
+
+    // OpenRouter usa formato OpenAI: { role: "system"|"user"|"assistant", content: "..." }
+    const openrouterMessages = [
+      { role: "system", content: sysPrompt }
+    ].concat(
+      chatHistory.map(function(m) {
+        return { role: m.role === "model" ? "assistant" : "user", content: m.parts[0].text };
+      })
+    );
+
+    const response = await fetch(OPENROUTER_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + OPENROUTER_API_KEY,
+        "HTTP-Referer": window.location.origin,
+        "X-Title": "GM Tickets TI"
+      },
+      body: JSON.stringify({
+        model: OPENROUTER_MODEL,
+        messages: openrouterMessages,
+        temperature: 0.7,
+        max_tokens: 500
+      })
+    });
+
+    if (!response.ok) {
+      const errData = await response.json().catch(function(){ return {}; });
+      throw new Error(errData.error ? errData.error.message : ("HTTP " + response.status));
+    }
+
+    const data = await response.json();
+    const botText = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || "No pude generar una respuesta. Intenta de nuevo.";
+
+    chatHistory.push({ role: "model", parts: [{ text: botText }] });
+
+    removeTypingIndicator();
+
+    // Detectar si el modelo quiere iniciar el flujo de ticket
+    if (botText.includes("INICIAR_CREACION_TICKET")) {
+      const cleanText = botText.replace("INICIAR_CREACION_TICKET", "").trim();
+      if (cleanText) appendBotMessage(cleanText);
+      iniciarFlujoChatTicket();
+    } else {
+      appendBotMessage(botText);
+    }
+
+  } catch(err) {
+    removeTypingIndicator();
+    console.error("OpenRouter error:", err);
+    appendBotMessage("⚠️ Error al conectar con el asistente: " + err.message + ".\n\nPuedes intentarlo de nuevo o contactar directamente a TI.");
+  } finally {
+    chatTyping = false;
+    input.disabled  = false;
+    sendBtn.disabled = false;
+    input.focus();
+  }
+}
 
 // ══════════════════════════════════════════════════════
 // ALIAS para js.js
