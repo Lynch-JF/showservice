@@ -914,7 +914,7 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
   <div class="chat-header">
     <div class="chat-header-avatar">🤖</div>
     <div class="chat-header-info">
-      <div class="chat-header-name">GM Asistente</div>
+      <div class="chat-header-name">Nexo Asistente</div>
       <div class="chat-header-status">
         <div class="chat-status-dot"></div>
         Soporte técnico · Powered by Mistral
@@ -963,7 +963,6 @@ const API_USERS   = "https://api.sheetbest.com/sheets/6784d1e5-1e26-4605-9c19-32
 const OPENROUTER_API_KEY = "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";
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 const OPENROUTER_MODEL   = "cohere/north-mini-code:free";
-
 const VIEW_TITLES = {
   inicio:"Inicio", nuevo:"Nuevo Ticket",
   mistickets:"Mis Tickets", config:"Configuración"
@@ -972,7 +971,63 @@ const VIEW_TITLES = {
 let NOMBRES_TEC = {
   Xavier:"Xavier Rosario", Juan:"Juan Francisco Jiménez",
   Yanna:"Yanna Martínez", Joel:"Joel Holguin"
+  
 };
+
+let manualTI = [];
+async function cargarManual() {
+  try {
+    const r = await fetch("JS/manual.json");
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    manualTI = await r.json();
+  } catch(e) { console.warn("No se pudo cargar el manual:", e); manualTI = []; }
+}
+
+function buscarEnManual(mensajeUsuario, maxResultados) {
+  maxResultados = maxResultados || 4;
+  if (!manualTI.length) return "";
+  const msgLower    = mensajeUsuario.toLowerCase();
+  const palabrasMsg = msgLower.split(/\s+/).filter(function(p){ return p.length > 3; });
+  const puntuados = manualTI.map(function(item) {
+    const texto = ((item.seccion||"") + " " + (item.contenido||"") + " " + (item.palabras_clave||"")).toLowerCase();
+    let puntaje = 0;
+    palabrasMsg.forEach(function(palabra){ if (texto.includes(palabra)) puntaje++; });
+    const claves = (item.palabras_clave||"").toLowerCase().split(",").map(function(k){ return k.trim(); });
+    claves.forEach(function(k){ if (k && msgLower.includes(k)) puntaje += 3; });
+    return { item: item, puntaje: puntaje };
+  });
+  return puntuados
+    .filter(function(p){ return p.puntaje > 0; })
+    .sort(function(a,b){ return b.puntaje - a.puntaje; })
+    .slice(0, maxResultados)
+    .map(function(p){ return "[" + p.item.seccion + "]\n" + p.item.contenido; })
+    .join("\n\n---\n\n");
+}
+
+
+// Busca las secciones del manual más relevantes al mensaje del usuario
+function buscarEnManual(mensajeUsuario, maxResultados) {
+  maxResultados = maxResultados || 4;
+  if (!manualTI.length) return "";
+  const msgLower    = mensajeUsuario.toLowerCase();
+  const palabrasMsg = msgLower.split(/\s+/).filter(function(p){ return p.length > 3; });
+
+  const puntuados = manualTI.map(function(item) {
+    const texto = ((item.seccion||"") + " " + (item.contenido||"") + " " + (item.palabras_clave||"")).toLowerCase();
+    let puntaje = 0;
+    palabrasMsg.forEach(function(palabra){ if (texto.includes(palabra)) puntaje++; });
+    const claves = (item.palabras_clave||"").toLowerCase().split(",").map(function(k){ return k.trim(); });
+    claves.forEach(function(k){ if (k && msgLower.includes(k)) puntaje += 3; });
+    return { item: item, puntaje: puntaje };
+  });
+
+  return puntuados
+    .filter(function(p){ return p.puntaje > 0; })
+    .sort(function(a,b){ return b.puntaje - a.puntaje; })
+    .slice(0, maxResultados)
+    .map(function(p){ return "[" + p.item.seccion + "]\n" + p.item.contenido; })
+    .join("\n\n---\n\n");
+}
 
 // ══════════════════════════════════════════════════════
 // STATE
@@ -1076,7 +1131,7 @@ async function cargarAnalistas() {
 
   initChatbot();
 
-  cargarAnalistas().finally(() => { recargarTickets(); iniciarAutoRefresh(); });
+cargarAnalistas().then(cargarManual).finally(() => { recargarTickets(); iniciarAutoRefresh(); });
 })();
 
 function updateClock() {
@@ -1392,13 +1447,13 @@ function buildSystemPrompt() {
     .map(function(t){ return "• [" + t.id + "] \"" + t.titulo + "\" — " + t.estado + " — Técnico: " + (NOMBRES_TEC[t.asignado]||t.asignado||"Sin asignar") + " — " + ((t.fecha||"").split(",")[0]); })
     .join("\n") || "No hay tickets registrados aún.";
 
-  return "Eres GM Asistente, el asistente de soporte técnico virtual del sistema GM Tickets TI de Grupo Michel (empresa industrial dominicana). Tu rol es ayudar a los empleados usuarios con soporte técnico de primer nivel, guiarlos en el uso del sistema de tickets, y resolver dudas comunes antes de que escalen un ticket.\n\nCONTEXTO DEL USUARIO ACTUAL:\n- Nombre: " + usuario + "\n- Departamento: " + depto + "\n- Total de tickets: " + tot + " (" + pend + " pendientes, " + proc + " en proceso, " + res + " resueltos)\n- Últimos tickets:\n" + ultimos + "\n\nEQUIPO TÉCNICO TI DE GRUPO MICHEL:\n- Xavier Rosario — Técnico TI general (x.rosario@grupomichel.com)\n- Joel Holguin — Técnico TI (j.holguin@grupomichel.com / 809-722-2874)\n- Yanna Martínez — Técnico TI (y.martinez@grupomichel.com / 809-390-5286)\n- Juan Francisco Jiménez — SuperAdmin TI (dptoIT@grupomichel.com / 809-931-3720)\n\nSISTEMA GM TICKETS:\n- Para crear un ticket: ir a \"Nuevo Ticket\" en el menú lateral → completar título, descripción, asignar técnico → clic en \"Enviar Ticket\"\n- Los estados son: Pendiente → En Proceso → Resuelto\n- Cuando un ticket es \"Recibido\" por el técnico, aparece un aviso verde en la tarjeta\n- Los tickets urgentes tienen una franja de color arriba (roja=crítico, naranja=alto, azul=medio)\n- Puedes eliminar tickets en estado Pendiente desde \"Mis Tickets\"\n- El sistema se actualiza automáticamente cada 30 segundos\n\nSOLUCIONES COMUNES:\n- Internet lento/caído: Reiniciar el router (apagar 30 seg, encender), si persiste crear ticket\n- Impresora no imprime: Verificar que esté encendida y conectada, reiniciar spooler de impresión, si persiste crear ticket\n- Sistema/PC lento: Reiniciar el equipo, cerrar programas innecesarios, si persiste crear ticket\n- No puedo iniciar sesión: Verificar usuario y contraseña, si olvidaste credenciales contactar a TI\n- Error en algún programa: Cerrar y abrir el programa, si persiste tomar captura y crear ticket con descripción detallada\n- PC no enciende: Verificar cables de poder, si no enciende llamar directamente a TI (urgente)\n- Correo no funciona: Verificar conexión a internet primero, luego crear ticket con detalles\n\nCREACIÓN DE TICKETS DESDE EL CHAT:\n- Puedes ofrecer crear un ticket directamente desde el chat si el usuario no puede resolver el problema\n- Cuando el usuario confirme que quiere que crees el ticket, responde EXACTAMENTE con: INICIAR_CREACION_TICKET\n- No uses esa palabra en ningún otro contexto\n\nINSTRUCCIONES:\n- Responde SIEMPRE en español dominicano, de forma amigable, clara y concisa\n- Primero sugiere pasos de autosolución antes de recomendar crear un ticket\n- Si el problema es urgente (PC caída, sin internet en área completa, virus), indica que llamen directamente al técnico\n- Máximo 3-4 párrafos cortos por respuesta, usa emojis con moderación\n- Si el usuario pregunta por sus tickets, usa el contexto que tienes\n- No inventas información que no esté en el contexto\n- Si algo está fuera de tu alcance, ofrece crear el ticket directamente desde aquí\n- Si el usuario dice que no pudo resolver el problema o que quiere crear un ticket, pregunta si desea que lo crees desde el chat y si confirma, responde con: INICIAR_CREACION_TICKET";
+  return "Eres Nexo Asistente, el asistente de soporte técnico virtual del sistema GM Tickets TI de Grupo Michel (empresa industrial dominicana). Tu rol es ayudar a los empleados usuarios con soporte técnico de primer nivel, guiarlos en el uso del sistema de tickets, y resolver dudas comunes antes de que escalen un ticket.\n\nCONTEXTO DEL USUARIO ACTUAL:\n- Nombre: " + usuario + "\n- Departamento: " + depto + "\n- Total de tickets: " + tot + " (" + pend + " pendientes, " + proc + " en proceso, " + res + " resueltos)\n- Últimos tickets:\n" + ultimos + "\n\nEQUIPO TÉCNICO TI DE GRUPO MICHEL:\n- Xavier Rosario — Técnico TI general (x.rosario@grupomichel.com)\n- Joel Holguin — Técnico TI (j.holguin@grupomichel.com / 809-722-2874)\n- Yanna Martínez — Técnico TI (y.martinez@grupomichel.com / 809-390-5286)\n- Juan Francisco Jiménez — SuperAdmin TI (dptoIT@grupomichel.com / 809-931-3720)\n\nSISTEMA GM TICKETS:\n- Para crear un ticket: ir a \"Nuevo Ticket\" en el menú lateral → completar título, descripción, asignar técnico → clic en \"Enviar Ticket\"\n- Los estados son: Pendiente → En Proceso → Resuelto\n- Cuando un ticket es \"Recibido\" por el técnico, aparece un aviso verde en la tarjeta\n- Los tickets urgentes tienen una franja de color arriba (roja=crítico, naranja=alto, azul=medio)\n- Puedes eliminar tickets en estado Pendiente desde \"Mis Tickets\"\n- El sistema se actualiza automáticamente cada 30 segundos\n\nSOLUCIONES COMUNES:\n- Internet lento/caído: Reiniciar el router (apagar 30 seg, encender), si persiste crear ticket\n- Impresora no imprime: Verificar que esté encendida y conectada, reiniciar spooler de impresión, si persiste crear ticket\n- Sistema/PC lento: Reiniciar el equipo, cerrar programas innecesarios, si persiste crear ticket\n- No puedo iniciar sesión: Verificar usuario y contraseña, si olvidaste credenciales contactar a TI\n- Error en algún programa: Cerrar y abrir el programa, si persiste tomar captura y crear ticket con descripción detallada\n- PC no enciende: Verificar cables de poder, si no enciende llamar directamente a TI (urgente)\n- Correo no funciona: Verificar conexión a internet primero, luego crear ticket con detalles\n\nCREACIÓN DE TICKETS DESDE EL CHAT:\n- Puedes ofrecer crear un ticket directamente desde el chat si el usuario no puede resolver el problema\n- Cuando el usuario confirme que quiere que crees el ticket, responde EXACTAMENTE con: INICIAR_CREACION_TICKET\n- No uses esa palabra en ningún otro contexto\n\nINSTRUCCIONES:\n- Responde SIEMPRE en español dominicano, de forma amigable, clara y concisa\n- Primero sugiere pasos de autosolución antes de recomendar crear un ticket\n- Si el problema es urgente (PC caída, sin internet en área completa, virus), indica que llamen directamente al técnico\n- Máximo 3-4 párrafos cortos por respuesta, usa emojis con moderación\n- Si el usuario pregunta por sus tickets, usa el contexto que tienes\n- No inventas información que no esté en el contexto\n- Si algo está fuera de tu alcance, ofrece crear el ticket directamente desde aquí\n- Si el usuario dice que no pudo resolver el problema o que quiere crear un ticket, pregunta si desea que lo crees desde el chat y si confirma, responde con: INICIAR_CREACION_TICKET";
 }
 
 function initChatbot() {
   const usuario = localStorage.getItem("nombreCompleto") || localStorage.getItem("usuario") || "Hola";
   const nombre  = usuario.split(" ")[0];
-  appendBotMessage("¡Hola, " + nombre + "! 👋 Soy **GM Asistente**, tu soporte técnico virtual. Puedo ayudarte a resolver problemas comunes, guiarte con el sistema de tickets, o incluso **crear un ticket por ti** directamente desde aquí.\n\n¿En qué te puedo ayudar hoy?");
+  appendBotMessage("¡Hola, " + nombre + "! 👋 Soy **Nexo Asistente**, tu soporte técnico virtual. Puedo ayudarte a resolver problemas comunes, guiarte con el sistema de tickets, o incluso **crear un ticket por ti** directamente desde aquí.\n\n¿En qué te puedo ayudar hoy?");
   setTimeout(function(){
     const badge = document.getElementById("fabBadge");
     if (badge && !chatOpen) badge.classList.add("show");
@@ -1643,10 +1698,15 @@ async function sendChatMessage() {
 
   try {
     const sysPrompt = buildSystemPrompt();
+const contextoManual = buscarEnManual(text);
+const sysPromptFinal = sysPrompt + (contextoManual
+  ? "\n\nFRAGMENTOS RELEVANTES DEL MANUAL DE INSTALACIÓN SIMBUSINESS:\n" + contextoManual +
+    "\n\nUsa esta información del manual para responder con precisión cuando la pregunta esté relacionada. Si la pregunta no está cubierta aquí, usa tu conocimiento general de soporte técnico."
+  : "");
 
     // OpenRouter usa formato OpenAI: { role: "system"|"user"|"assistant", content: "..." }
     const openrouterMessages = [
-      { role: "system", content: sysPrompt }
+      { role: "system", content: sysPromptFinal }
     ].concat(
       chatHistory.map(function(m) {
         return { role: m.role === "model" ? "assistant" : "user", content: m.parts[0].text };
