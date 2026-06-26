@@ -1,0 +1,32 @@
+[
+  {
+    "id": "MAN-SIM-001",
+    "seccion": "SIMBUSINESS — Carpeta SIM requerida en disco local C",
+    "contenido": "Antes de instalar SIMBUSINESS hay que preparar la carpeta C:\\SIM. Debe contener: una subcarpeta 'documentos', una subcarpeta 'reportes', un archivo de sonido WAV llamado 'alarma', un archivo .rpt llamado 'pedidosConduce', un archivo comprimido llamado 'reportes' (este envía las informaciones a la carpeta reportes), un archivo de bloc de notas llamado 'SIMCONFIG' con las configuraciones del sistema, y un archivo .jpg llamado 'temp'. Esta carpeta normalmente se crea automática si ya están los demás requerimientos instalados, pero para evitar errores se recomienda crearla manualmente antes de seguir con la instalación.",
+    "palabras_clave": "carpeta SIM, disco local C, SIMCONFIG, instalar SIM, requerimientos SIM, pedidosConduce, alarma wav"
+  },
+  {
+    "id": "MAN-SIM-002",
+    "seccion": "SIMBUSINESS — Requisitos previos a instalar en cada equipo",
+    "contenido": "Después de crear la carpeta SIM, hay que instalar en el equipo, en este orden, los siguientes componentes obligatorios: Archivo MSI 32 BIT, Archivo MSI 64 BIT, Archivo CRredistx64, Archivo CRredistx86, Dynamic .NET TWAIN 4.1, EpsonFPhostControlIX, y OWC11. Estos componentes son indispensables en cada equipo donde se vaya a usar SIMBUSINESS; sin ellos el sistema no funciona correctamente.",
+    "palabras_clave": "MSI 32 bit, MSI 64 bit, CRredist, dynamic net twain, EpsonFPhostControlIX, OWC11, requisitos instalación SIM, componentes necesarios"
+  },
+  {
+    "id": "MAN-SIM-003",
+    "seccion": "SIMBUSINESS — Publish de instalación (Caja vs Oficina)",
+    "contenido": "Existen dos versiones del sistema SIMBUSINESS según el tipo de usuario: una para auxiliares de caja y otra para colaboradores de oficina. Cada una usa un publish (enlace de instalación) distinto. Publish de SIM de Caja: Hptronics.com/actualizaciones/simcasamichelx86/sim.application. Publish de SIM de Oficina: Hptronics.com/actualizaciones/simcasamicheloficinax86/sim.application. Es muy importante usar el publish correcto según el rol del usuario que va a usar el sistema.",
+    "palabras_clave": "publish SIM, instalar SIM caja, instalar SIM oficina, sim.application, link instalación SIMBUSINESS, descargar SIM"
+  },
+  {
+    "id": "MAN-SIM-004",
+    "seccion": "SIMBUSINESS — Navegador recomendado para la instalación",
+    "contenido": "Los publish de instalación de SIMBUSINESS (tanto de Caja como de Oficina) deben ejecutarse únicamente desde Microsoft Edge. Otros navegadores como Google Chrome o Brave tienen restricciones que complican o impiden la instalación correcta del sistema. Usar un navegador distinto a Edge para este proceso suele causar errores y problemas durante la instalación.",
+    "palabras_clave": "navegador SIM, microsoft edge, chrome no funciona, brave no funciona, error instalación navegador"
+  },
+  {
+    "id": "MAN-SIM-005",
+    "seccion": "SIMBUSINESS — Configuración de ODBC (paso final)",
+    "contenido": "El último y más importante paso de la instalación es configurar los ODBC, tanto de oficina como de caja. Los ODBC son los que permiten la conexión (ping) con el servidor para poder hacer reportes, ventas, y demás operaciones del sistema. Esta configuración NO debe hacerla el usuario por su cuenta: es necesario comunicarse directamente con Yanna Martínez o con Juan Francisco Jiménez para que ellos realicen la configuración de los ODBC.",
+    "palabras_clave": "ODBC, configurar ODBC, conexión servidor SIM, ping servidor, no puedo hacer reportes SIM, no puedo vender SIM, Yanna Martinez, Juan Francisco Jimenez ODBC"
+  }
+]
