@@ -1686,15 +1686,19 @@ async function nexoSendMessage() {
 
   try {
     const sysPrompt = nexoBuildSystemPrompt();
-    const messages = [{ role: "system", content: sysPrompt }].concat(nexoHistory);
+const sysPromptClean = sysPrompt
+  .replace(/[^\x00-\x7F]/g, c => {
+    try { return encodeURIComponent(c); } catch { return ''; }
+  });
 
-    const response = await fetch(OPENROUTER_API_URL, {
+const messages = [{ role: "system", content: sysPromptClean }].concat(nexoHistory);
+   const response = await fetch(OPENROUTER_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + OPENROUTER_API_KEY,
-        "HTTP-Referer": window.location.origin,
-        "X-Title": "GM Tickets TI — Nexo"
+        "HTTP-Referer": "https://grupomichel.com",
+        "X-Title": "GM Tickets TI - Nexo"
       },
       body: JSON.stringify({
         model: OPENROUTER_MODEL,
