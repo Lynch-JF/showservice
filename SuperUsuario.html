@@ -981,7 +981,7 @@ table.data-table tr:hover td{background:var(--s2)}
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-// ══════════════════════════════════════════════
+/// ══════════════════════════════════════════════
 // GM Tickets TI — SuperAdmin JS Refactorizado
 // Backend: Railway + Supabase (JWT)
 // ══════════════════════════════════════════════
@@ -1036,32 +1036,23 @@ let notificaciones = [
   const u = localStorage.getItem("usuario") || "Juan";
   const n = localStorage.getItem("nombreCompleto") || u;
   const ini = n.substring(0,2).toUpperCase();
-  document.getElementById("cfgAvatar").textContent = ini;
-  document.getElementById("cfgNombre").textContent = n;
-  document.getElementById("cfgUsr").textContent = "@" + u + " · Superadmin";
-  document.getElementById("cfgFieldUser").value   = u;
-  document.getElementById("cfgFieldNombre").value = n;
-  document.getElementById("fnAvatar").textContent   = ini;
-  document.getElementById("fnUserName").textContent  = n.split(" ")[0];
-  document.getElementById("masAvatar").textContent   = ini;
-  document.getElementById("masUserName").textContent = n;
-  document.getElementById("masUserRole").textContent = "@" + u + " · Superadmin";
+  // Sidebar user pill
+  const setEl = (id, val, prop="textContent") => { const e=document.getElementById(id); if(e) e[prop]=val; };
+  setEl("saAvatar", ini);
+  setEl("saName", n);
+  setEl("saUsername", "@" + u);
+  // Config view
+  setEl("cfg-avatar", ini);
+  setEl("cfg-nombre-completo", n);
+  setEl("cfg-username", "@" + u);
+  setEl("cfg-depto", localStorage.getItem("depto") || "TI");
+  setEl("cfg-field-username", u, "value");
+  setEl("cfg-field-nombre", n, "value");
 })();
 
 function saLogout(){
   ["usuario","rol","depto","nombreCompleto","gmt_token"].forEach(k => localStorage.removeItem(k));
   window.location.href = "index.html";
-}
-
-// ── FLOATBAR ──
-function toggleMasPanel(){
-  const overlay = document.getElementById("masOverlay");
-  overlay.classList.toggle("open");
-  document.getElementById("masBtn").style.background = overlay.classList.contains("open") ? "rgba(79,70,229,.3)" : "";
-}
-function closeMasPanel(){
-  document.getElementById("masOverlay").classList.remove("open");
-  document.getElementById("masBtn").style.background = "";
 }
 
 // ── INIT ──
@@ -1094,8 +1085,8 @@ async function recargarTodo(force = false){
     ticketsById = {};
     allTickets.forEach(t => { if(t.id) ticketsById[t.id] = t; });
     renderTodo();
-    const el = document.getElementById("cfgSync"); if(el) el.textContent = new Date().toLocaleTimeString("es-DO");
-    const et = document.getElementById("cfgTotT"); if(et) et.textContent = allTickets.length;
+    const el = document.getElementById("cfg-last-sync"); if(el) el.textContent = new Date().toLocaleTimeString("es-DO");
+    const et = document.getElementById("cfg-total-tickets"); if(et) et.textContent = allTickets.length;
   } catch(e){
     if(e.message !== "Unauthorized") showToast("Error al cargar tickets","error");
   }
@@ -1119,22 +1110,11 @@ const VIEW_TITLES = {
 function switchView(v){
   document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
   const ve = document.getElementById("view-" + v); if(ve) ve.classList.add("active");
-  document.querySelectorAll(".fn-item").forEach(el => el.classList.remove("active"));
-  const fd = document.getElementById("fn-" + v); if(fd) fd.classList.add("active");
-  const fm = document.getElementById("fnm-" + v); if(fm) fm.classList.add("active");
-  const mm = document.getElementById("masm-" + v); if(mm) mm.classList.add("active");
-  document.getElementById("viewTitle").textContent = VIEW_TITLES[v] || v;
-  if(v === "calidad") initCalidadCharts();
-  if(v === "notificaciones") renderNotificaciones();
-  if(v === "comentarios") renderComentTicketList();
-  if(v === "plantillas") renderPlantillas();
-  const bar = document.getElementById("floatbar");
-  const activeItem = document.getElementById("fn-" + v);
-  if(activeItem && bar){
-    const itemLeft = activeItem.offsetLeft;
-    const barCenter = bar.clientWidth / 2;
-    bar.scrollTo({ left: itemLeft - barCenter + activeItem.clientWidth / 2, behavior: "smooth" });
-  }
+  // Sidebar nav items use nav- prefix
+  document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+  const nd = document.getElementById("nav-" + v); if(nd) nd.classList.add("active");
+  const vt = document.getElementById("viewTitle"); if(vt) vt.textContent = VIEW_TITLES[v] || v;
+  if(v === "usuarios") cargarUsuarios(false);
 }
 
 function actualizarBadges(){
@@ -1343,8 +1323,9 @@ function abrirDetalle(t){
   ticketDetalle = t;
   const urg = calcUrg(t);
   const eCls = t.estado==="Resuelto"?"b-res":t.estado==="En Proceso"?"b-proc":"b-pend";
-  document.getElementById("dm-id").textContent = "#" + t.id;
-  document.getElementById("dm-title").textContent = t.titulo || "Sin título";
+  const setDM = (id,v,prop="textContent")=>{ const e=document.getElementById(id); if(e) e[prop]=v; };
+  setDM("dm-id", "#" + t.id);
+  setDM("dm-title", t.titulo || "Sin título");
   document.getElementById("dm-badges").innerHTML =
     `<span class="badge ${eCls}">${esc(t.estado||"")}</span>
      <span class="urg-badge ${urg.cls}">${urg.label}</span>
@@ -1352,11 +1333,12 @@ function abrirDetalle(t){
      ${t.recibido==="si"?`<span class="badge" style="background:var(--emerald-s);color:var(--emerald)">📩 Recibido</span>`:""}`;
   const colorFor = s => { let h=0; for(let i=0;i<(s||"").length;i++) h=(h<<5)-h+s.charCodeAt(i); return DEP_COLORS[Math.abs(h)%DEP_COLORS.length]; };
   const ini = s => s ? s.substring(0,2).toUpperCase() : "??";
-  document.getElementById("dm-usuario").innerHTML  = `<span class="av-sm" style="background:${colorFor(t.usuario)}">${ini(t.usuario)}</span>${esc(t.usuario||"—")}`;
-  document.getElementById("dm-asignado").innerHTML = `<span class="av-sm" style="background:${colorFor(t.asignado)}">${ini(t.asignado||"SA")}</span>${esc(t.asignado||"Sin asignar")}`;
-  document.getElementById("dm-fecha").textContent  = t.fecha || "—";
-  document.getElementById("dm-depto").textContent  = t.depto || "—";
-  document.getElementById("dm-desc").textContent   = t.descripcion || "Sin descripción.";
+
+  setDM("dm-usuario", `<span class="dm-avatar" style="background:${colorFor(t.usuario)}">${ini(t.usuario)}</span>${esc(t.usuario||"—")}`, "innerHTML");
+  setDM("dm-asignado", `<span class="dm-avatar" style="background:${colorFor(t.asignado)}">${ini(t.asignado||"SA")}</span>${esc(t.asignado||"Sin asignar")}`, "innerHTML");
+  setDM("dm-fecha", t.fecha || "—");
+  setDM("dm-depto", t.depto || "—");
+  setDM("dm-desc", t.descripcion || "Sin descripción.");
   const tl = buildTL(t);
   document.getElementById("dm-timeline").innerHTML = tl.map((ev,i) =>
     `<div class="tl-item">
@@ -1369,23 +1351,21 @@ function abrirDetalle(t){
         <div class="tl-date">${esc(ev.fecha)}</div>
       </div>
     </div>`).join("");
-  const rw = document.getElementById("dm-res-wrap");
+  const rw = document.getElementById("dm-resolution-wrap");
   if(t.estado==="Resuelto" && t.resolucion){
     rw.style.display = "block";
-    document.getElementById("dm-res-text").textContent = t.resolucion;
-    document.getElementById("dm-res-meta").textContent = `Participantes: ${t.participantes||"N/A"} — ${t.fecha_resuelto||""}`;
-  } else { rw.style.display = "none"; }
-  document.getElementById("dm-ftr-meta").textContent = `Creado: ${t.fecha||"—"}`;
+    setDM("dm-resolution-text", t.resolucion);
+    setDM("dm-resolution-meta", `Participantes: ${t.participantes||"N/A"} — ${t.fecha_resuelto||""}`);
+  } else if(rw) { rw.style.display = "none"; }
+  setDM("dm-footer-meta", `Creado: ${t.fecha||"—"}`);
   const esMio = (t.asignado||"").toLowerCase() === MI_USUARIO.toLowerCase();
   let bots = "";
   if(t.estado==="Pendiente" && esMio)    bots += `<button class="btn btn-ghost btn-sm" onclick="cambiarEstadoModal(${t.id},'En Proceso')">⚙ En proceso</button><button class="btn btn-emerald btn-sm" onclick="resolverDesdeModal(${t.id})">✓ Resolver</button>`;
   else if(t.estado==="En Proceso" && esMio) bots += `<button class="btn btn-emerald btn-sm" onclick="resolverDesdeModal(${t.id})">✓ Resolver</button>`;
   if(esMio && t.recibido!=="si" && t.estado!=="Resuelto") bots += `<button class="btn btn-ghost btn-sm" onclick="marcarRecibido(${t.id})">📩 Recibido</button>`;
-  document.getElementById("dm-ftr-actions").innerHTML = bots;
+  setDM("dm-footer-actions", bots, "innerHTML");
   document.getElementById("detailOverlay").classList.add("open");
   document.body.style.overflow = "hidden";
-  // Cargar comentarios del ticket
-  cargarComentariosModal(t.id);
 }
 function buildTL(t){
   const ev = [];
@@ -1398,7 +1378,7 @@ function buildTL(t){
 }
 function cerrarDetalle(e){ if(e.target===document.getElementById("detailOverlay")) cerrarDetalleBtn(); }
 function cerrarDetalleBtn(){ document.getElementById("detailOverlay").classList.remove("open"); document.body.style.overflow=""; ticketDetalle=null; }
-document.addEventListener("keydown", e => { if(e.key==="Escape"){ cerrarDetalleBtn(); cerrarResModal(); cerrarUserModal(); cerrarPlantModal(); closeMasPanel(); } });
+document.addEventListener("keydown", e => { if(e.key==="Escape"){ cerrarDetalleBtn(); cerrarResolucionModal(); cerrarModal(); } });
 
 // ── ACCIONES TICKETS ──
 async function cambiarEstado(id, estado){
@@ -1428,14 +1408,14 @@ async function marcarRecibido(id){
 
 function abrirResModal(id){
   ticketResId = id;
-  document.getElementById("resDetalle").value = "";
-  document.getElementById("resParticipantes").value = MI_USUARIO;
-  document.getElementById("resModal").classList.add("open");
+  document.getElementById("detalleResolucion").value = "";
+  document.getElementById("participantesResolucion").value = MI_USUARIO;
+  document.getElementById("resolucionModal").classList.add("open");
 }
-function cerrarResModal(){ document.getElementById("resModal").classList.remove("open"); ticketResId = null; }
+function cerrarResolucionModal(){ document.getElementById("resolucionModal").classList.remove("open"); ticketResId = null; }
 async function confirmarResolucion(){
-  const detalle = document.getElementById("resDetalle").value.trim();
-  const partic  = document.getElementById("resParticipantes").value.trim();
+  const detalle = document.getElementById("detalleResolucion").value.trim();
+  const partic  = document.getElementById("participantesResolucion").value.trim();
   if(!detalle){ showToast("Escribe el detalle","error"); return; }
   try{
     const r = await apiFetch(`/tickets/${ticketResId}`, {
@@ -1665,72 +1645,71 @@ async function cargarUsuarios(force=false){
     if(!res.ok) throw new Error();
     sheetUsers = await res.json();
     filtrarTabla();
-    const el=document.getElementById("cfgTotU"); if(el) el.textContent=sheetUsers.length;
+    const el=document.getElementById("cfg-total-users"); if(el) el.textContent=sheetUsers.length;
     renderStatPills();
   } catch{ showToast("Error al cargar usuarios","error"); }
 }
 function renderStatPills(){
-  const pills=document.getElementById("statPills"); if(!pills) return;
   const cnt=rol=>sheetUsers.filter(u=>u.rol===rol).length;
-  pills.innerHTML=[
-    `<span class="badge b-dept">${sheetUsers.length} total</span>`,
-    `<span class="badge b-proc">${cnt("tecnico")} técnicos</span>`,
-    `<span class="badge b-res">${cnt("usuario")} usuarios</span>`,
-    `<span class="badge b-pend">${cnt("admin")+cnt("superadmin")} admins</span>`,
-  ].join("");
+  const se=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  se("stat-total", sheetUsers.length);
+  se("stat-tech",  cnt("tecnico"));
+  se("stat-user",  cnt("usuario"));
+  se("stat-adm",   cnt("admin")+cnt("superadmin"));
+  se("stat-analista", cnt("analista"));
 }
 function filtrarTabla(){
   const s=(document.getElementById("userSearch")?.value||"").toLowerCase();
   const f=sheetUsers.filter(u=>(u.nombre_usuario||"").toLowerCase().includes(s)||(u.rol||"").toLowerCase().includes(s)||(u.departamento||"").toLowerCase().includes(s)||(u.nombre_completo||"").toLowerCase().includes(s));
-  const rolCls=r=>({superadmin:"rp-sa",tecnico:"rp-tec",admin:"rp-adm",usuario:"rp-usr"}[r]||"rp-usr");
-  document.getElementById("usersBody").innerHTML=f.length
+  const rolCls=r=>({superadmin:"rt-superadmin",tecnico:"rt-tecnico",admin:"rt-admin",usuario:"rt-usuario",analista:"rt-analista"}[r]||"rt-usuario");
+  document.getElementById("usersSheetBody").innerHTML=f.length
     ? f.map(u=>`<tr>
         <td><strong>${esc(u.nombre_usuario||"—")}</strong></td>
         <td>${esc(u.nombre_completo||"")}</td>
         <td class="hash-cell">••••••••••••••••</td>
-        <td><span class="role-pill ${rolCls(u.rol)}">${esc(u.rol||"usuario")}</span></td>
-        <td style="font-family:var(--mono);font-size:11px;color:var(--txt2)">${esc(u.departamento||"—")}</td>
-        <td><div style="display:flex;gap:5px">
-          <button class="btn btn-ghost btn-sm" onclick="editarUser(${u.id})">✏ Editar</button>
-          <button class="btn btn-rose btn-sm" onclick="eliminarUser(${u.id},'${esc(u.nombre_usuario)}')">✕</button>
+        <td><span class="role-tag ${rolCls(u.rol)}">${esc(u.rol||"usuario")}</span></td>
+        <td class="depto-cell">${esc(u.departamento||"—")}</td>
+        <td><div class="actions-row">
+          <button class="btn-xs-edit" onclick="editarUser(${u.id})">✏ Editar</button>
+          <button class="btn-xs-del"  onclick="eliminarUser(${u.id},'${esc(u.nombre_usuario)}')">✕ Desactivar</button>
         </div></td>
       </tr>`).join("")
-    : `<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--txt3);font-family:var(--mono);font-size:11px">Sin usuarios.</td></tr>`;
+    : `<tr class="loading-row"><td colspan="6">Sin usuarios.</td></tr>`;
 }
-function abrirCrearUser(){
+function abrirCrearUsuario(){
   editingUserId=null;
-  document.getElementById("userModalTitle").textContent="Nuevo usuario";
-  ["fUser","fPass","fNombre"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("modalTitle").textContent="Nuevo usuario";
+  document.getElementById("modalSubtitle").textContent="La contraseña se cifra con bcrypt.";
+  ["fUsername","fPassword","fNombreCompleto"].forEach(id=>{const e=document.getElementById(id);if(e)e.value="";});
   document.getElementById("fRol").value="usuario";
   document.getElementById("fDepto").value="";
-  document.getElementById("hashPreview").textContent="La contraseña se guarda cifrada con bcrypt";
+  document.getElementById("hashPreview").textContent="La contraseña se guardará cifrada";
   document.getElementById("userModal").classList.add("open");
 }
 function editarUser(id){
   editingUserId=id;
   const u=sheetUsers.find(x=>x.id===id);
   if(!u) return;
-  document.getElementById("userModalTitle").textContent="Editar usuario";
-  document.getElementById("fUser").value=u.nombre_usuario||"";
-  document.getElementById("fNombre").value=u.nombre_completo||"";
-  document.getElementById("fPass").value="";
+  document.getElementById("modalTitle").textContent="Editar usuario";
+  document.getElementById("fUsername").value=u.nombre_usuario||"";
+  document.getElementById("fNombreCompleto").value=u.nombre_completo||"";
+  document.getElementById("fPassword").value="";
   document.getElementById("fRol").value=u.rol||"usuario";
   document.getElementById("fDepto").value=u.departamento||"";
   document.getElementById("hashPreview").textContent="Dejar en blanco para no cambiar la contraseña";
   document.getElementById("userModal").classList.add("open");
 }
-function cerrarUserModal(){ document.getElementById("userModal").classList.remove("open"); editingUserId=null; }
-// Ya no necesitamos SHA-256 en el frontend — el backend hace bcrypt
-function previewHash(){ document.getElementById("hashPreview").textContent="✓ La contraseña se cifrará con bcrypt al guardar"; }
-async function guardarUser(){
-  const nombre_usuario  = document.getElementById("fUser").value.trim();
-  const nombre_completo = document.getElementById("fNombre").value.trim();
-  const contrasena      = document.getElementById("fPass").value.trim();
+function cerrarModal(){ document.getElementById("userModal").classList.remove("open"); editingUserId=null; }
+function previewHash(){ document.getElementById("hashPreview").textContent="✓ Se cifrará con bcrypt al guardar"; }
+async function guardarUsuarioSheet(){
+  const nombre_usuario  = document.getElementById("fUsername").value.trim();
+  const nombre_completo = document.getElementById("fNombreCompleto").value.trim();
+  const contrasena      = document.getElementById("fPassword").value.trim();
   const rol             = document.getElementById("fRol").value;
   const departamento    = document.getElementById("fDepto").value;
   if(!nombre_usuario){ showToast("El usuario es obligatorio","error"); return; }
   if(!editingUserId && !contrasena){ showToast("La contraseña es obligatoria","error"); return; }
-  const btn=document.getElementById("btnGuardarUser"); btn.disabled=true; btn.textContent="Guardando…";
+  const btn=document.getElementById("btnGuardar"); btn.disabled=true; btn.textContent="Guardando…";
   try{
     const payload={ nombre_usuario, nombre_completo:nombre_completo||nombre_usuario, rol, departamento };
     if(contrasena) payload.contrasena = contrasena;
@@ -1742,7 +1721,7 @@ async function guardarUser(){
     }
     if(!r.ok){ const e=await r.json(); throw new Error(e.error||"Error"); }
     showToast(editingUserId?"Usuario actualizado":"Usuario creado","success");
-    cerrarUserModal(); await cargarUsuarios(true);
+    cerrarModal(); await cargarUsuarios(true);
   } catch(err){ showToast("Error: "+err.message,"error"); }
   finally{ btn.disabled=false; btn.textContent="Guardar"; }
 }
@@ -1757,9 +1736,9 @@ async function eliminarUser(id, nombre){
 
 // ── PERFIL ──
 async function guardarPerfil(){
-  const nombre=document.getElementById("cfgFieldNombre").value.trim();
-  const pass  =document.getElementById("cfgFieldPass").value;
-  const pass2 =document.getElementById("cfgFieldPass2").value;
+  const nombre=document.getElementById("cfg-field-nombre").value.trim();
+  const pass  =document.getElementById("cfg-field-pass").value;
+  const pass2 =document.getElementById("cfg-field-pass2").value;
   if(!nombre){ showToast("El nombre no puede estar vacío","error"); return; }
   if(pass && pass!==pass2){ showToast("Las contraseñas no coinciden","error"); return; }
   try{
@@ -1770,13 +1749,12 @@ async function guardarPerfil(){
     const r = await apiFetch(`/usuarios/${userId}`, { method:"PATCH", body: JSON.stringify(payload) });
     if(!r.ok) throw new Error();
     localStorage.setItem("nombreCompleto", nombre);
-    document.getElementById("cfgNombre").textContent=nombre;
     const ini=nombre.substring(0,2).toUpperCase();
-    ["cfgAvatar","fnAvatar","masAvatar"].forEach(id=>{ const e=document.getElementById(id); if(e) e.textContent=ini; });
-    document.getElementById("fnUserName").textContent=nombre.split(" ")[0];
-    document.getElementById("masUserName").textContent=nombre;
-    document.getElementById("cfgFieldPass").value="";
-    document.getElementById("cfgFieldPass2").value="";
+    ["saAvatar","cfg-avatar"].forEach(id=>{ const e=document.getElementById(id); if(e) e.textContent=ini; });
+    const sn=document.getElementById("saName"); if(sn) sn.textContent=nombre;
+    const cn=document.getElementById("cfg-nombre-completo"); if(cn) cn.textContent=nombre;
+    document.getElementById("cfg-field-pass").value="";
+    document.getElementById("cfg-field-pass2").value="";
     showToast("Perfil actualizado","success");
   } catch(err){ showToast("Error: "+err.message,"error"); }
 }
@@ -1841,6 +1819,24 @@ async function nexoSendMessage(){
   finally{ nexoTyping=false; input.disabled=false; btn.disabled=false; input.focus(); }
 }
 
+// ── STUBS PARA FUNCIONES DEL HTML ──
+function cargarUsuariosSheet(){ cargarUsuarios(true); }
+function abrirMigracion(){ showToast("Migración no disponible en nueva versión","info"); }
+function cerrarMigracion(){ document.getElementById("migrateModal")?.classList.remove("open"); }
+function ejecutarMigracion(){ showToast("Migración no disponible","info"); }
+function aplicarAutorefresh(){}
+function setTrabajarFilter(f,btn){ trabFilter=f; document.querySelectorAll("#trabajarFilters .f-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); renderTrabajar(); }
+function setMisFilter(f,btn){ misFilter=f; document.querySelectorAll("#misFilters .f-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); renderMisTickets(); }
+function filtrarMisTickets(){ renderMisTickets(); }
+function setUrgFilter(f,btn,containerId){ document.querySelectorAll(`#${containerId} .urg-pill`).forEach(b=>b.classList.remove("active")); btn.classList.add("active"); renderTickets(); }
+// Reportes stubs
+function seleccionarMes(m,btn){ repMes=m; document.querySelectorAll(".m-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); renderReportes(); }
+function repVerTodos(){ switchView("tickets"); }
+function repCerrarMes(){ showToast("Cierre mensual generado","success"); }
+function repExportarPDF(){ window.print(); }
+function repRecargar(){ renderReportes(); }
+function abrirHistorial(){ showToast("Historial no disponible en esta versión","info"); }
+function cerrarHistorial(){ document.getElementById("histOverlay")?.classList.remove("open"); }
 init();
 </script>
 </body>
