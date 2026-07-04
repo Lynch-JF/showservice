@@ -1,12 +1,24 @@
 // ======================
-// API SheetBest — TICKETS
+// API BACKEND — Railway (Auth + Tickets)
 // ======================
-const API_URL = "https://api.sheetbest.com/sheets/a50a59f4-402a-4937-a0fc-e20789380908";
+const API_BASE = "https://gm-tickets-backend-production.up.railway.app/api";
 
-// ======================
-// API SheetBest — USUARIOS
-// ======================
-const USERS_SHEET_API = "https://api.sheetbest.com/sheets/6784d1e5-1e26-4605-9c19-329eb2b6ea12";
+// SheetBest ya NO se usa para tickets — queda solo como referencia histórica.
+// const API_URL = "https://api.sheetbest.com/sheets/a50a59f4-402a-4937-a0fc-e20789380908";
+
+function getToken() { return localStorage.getItem("gmt_token") || ""; }
+function authHeaders() {
+  return { "Content-Type": "application/json", "Authorization": "Bearer " + getToken() };
+}
+async function apiFetch(path, opts = {}) {
+  const res = await fetch(API_BASE + path, { ...opts, headers: { ...authHeaders(), ...(opts.headers || {}) } });
+  if (res.status === 401) {
+    alert("Tu sesión expiró. Vuelve a iniciar sesión.");
+    logout();
+    throw new Error("Unauthorized");
+  }
+  return res;
+}
 
 // ======================
 // CLOUDINARY CONFIG
@@ -14,22 +26,13 @@ const USERS_SHEET_API = "https://api.sheetbest.com/sheets/6784d1e5-1e26-4605-9c1
 const CLOUDINARY_CLOUD_NAME    = "dy50psi1g";
 const CLOUDINARY_UPLOAD_PRESET = "tickets_preset";
 
-// ======================
-// CACHÉ DE USUARIOS
-// ======================
-const CACHE_KEY    = "tickets_users_cache";
-const CACHE_TS_KEY = "tickets_users_cache_ts";
-const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutos
-
 // Rutas por rol
 const ROUTES = {
   tecnico:    "Asistencia.html",
   admin:      "Admin.html",
   usuario:    "Dashboard.html",
   superadmin: "SuperUsuario.html",
-    analista:   "analista.html"
-
-
+  analista:   "analista.html"
 };
 
 // Nombres completos de técnicos (fuente única de verdad)
@@ -49,47 +52,7 @@ const ANALISTAS_TESORERIA = {
 const TECNICOS_DISPONIBLES = ["Sin asignar", "Juan", "Joel", "Yanna", "Xavier"];
 
 // ======================
-// SHA-256 (Web Crypto API)
-// ======================
-async function sha256(text) {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-// ======================
-// CACHÉ — helpers
-// ======================
-function getCachedUsers() {
-  try {
-    const ts = parseInt(localStorage.getItem(CACHE_TS_KEY) || "0", 10);
-    if (Date.now() - ts > CACHE_TTL_MS) return null;
-    const raw = localStorage.getItem(CACHE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function setCachedUsers(users) {
-  try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify(users));
-    localStorage.setItem(CACHE_TS_KEY, Date.now().toString());
-  } catch (e) {
-    console.warn("No se pudo guardar caché:", e);
-  }
-}
-
-async function fetchUsersFromSheet() {
-  const res = await fetch(USERS_SHEET_API);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  const users = Array.isArray(data) ? data : [];
-  setCachedUsers(users);
-  return users;
-}
-
-// ======================
-// LOGIN — con protección anti-doble clic
+// LOGIN — vía backend Railway (JWT)
 // ======================
 let _loginInProgress = false;
 
@@ -104,7 +67,6 @@ async function login() {
   const userInput = userEl ? userEl.value.trim() : "";
   const passInput = passEl ? passEl.value : "";
 
-  // Limpiar error previo
   if (errorEl) { errorEl.textContent = ""; errorEl.style.display = "none"; }
 
   if (!userInput || !passInput) {
@@ -116,46 +78,34 @@ async function login() {
   if (btnLogin) { btnLogin.disabled = true; btnLogin.textContent = "Verificando..."; }
 
   try {
-    const hashIngresado = await sha256(passInput);
+    let res  = await fetch(`${API_BASE}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nombre_usuario: userInput, contrasena: passInput })
+    });
+    let data = await res.json();
 
-    let users     = getCachedUsers();
-    let usedCache = !!users;
-    if (!users) users = await fetchUsersFromSheet();
+    if (!res.ok) {
+      const hashLegacy = await sha256(passInput);
+      const resLegacy  = await fetch(`${API_BASE}/auth/login-legacy`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nombre_usuario: userInput, sha256_hash: hashLegacy })
+      });
+      const dataLegacy = await resLegacy.json();
 
-    let encontrado = _findUser(users, userInput, hashIngresado);
-
-    // Si no encontrado en caché, refrescar una vez
-    if (!encontrado && usedCache) {
-      console.log("[Auth] No encontrado en caché, refrescando...");
-      users      = await fetchUsersFromSheet();
-      encontrado = _findUser(users, userInput, hashIngresado);
+      if (!resLegacy.ok) {
+        _setLoginError(errorEl, dataLegacy.error || data.error || "Usuario o contraseña incorrectos.");
+        return;
+      }
+      res = resLegacy; data = dataLegacy;
     }
 
-    if (encontrado) {
-      _guardarSesion(encontrado);
-      window.location.href = ROUTES[localStorage.getItem("rol")] || "Dashboard.html";
-    } else {
-      _setLoginError(errorEl, "Usuario o contraseña incorrectos.");
-    }
+    _guardarSesion(data);
+    window.location.href = ROUTES[data.user.rol] || "Dashboard.html";
 
   } catch (err) {
     console.error("[Auth] Error en login:", err);
-
-    // Fallback: caché de emergencia
-    const emergencia = getCachedUsers();
-    if (emergencia) {
-      console.warn("[Auth] Sin red — usando caché de emergencia");
-      try {
-        const hashIngresado = await sha256(passInput);
-        const encontrado    = _findUser(emergencia, userInput, hashIngresado);
-        if (encontrado) {
-          _guardarSesion(encontrado);
-          window.location.href = ROUTES[localStorage.getItem("rol")] || "Dashboard.html";
-          return;
-        }
-      } catch { /* ignorar */ }
-    }
-
     _setLoginError(errorEl, "Error de conexión. Inténtalo de nuevo.");
 
   } finally {
@@ -164,30 +114,26 @@ async function login() {
   }
 }
 
-// ─── Helpers internos de login ───
-function _findUser(users, username, hash) {
-  return users.find(u =>
-    (u.NombreUsuario || "").toLowerCase() === username.toLowerCase() &&
-    (u.Contraseña    || "") === hash
-  ) || null;
+async function sha256(text) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
-function _guardarSesion(usuario) {
-  let rol = usuario.Rol;
-  if ((usuario.NombreUsuario || "").toLowerCase() === "juan") rol = "superadmin";
-  localStorage.setItem("usuario",        usuario.NombreUsuario);
-  localStorage.setItem("rol",            rol);
-  localStorage.setItem("depto",          usuario.Departamento   || "");
-  localStorage.setItem("nombreCompleto", usuario.NombreCompleto || usuario.NombreUsuario);
+function _guardarSesion(data) {
+  const { token, user } = data;
+  localStorage.setItem("gmt_token",      token);
+  localStorage.setItem("usuario",        user.nombre_usuario);
+  localStorage.setItem("rol",            user.rol);
+  localStorage.setItem("depto",          user.departamento || "");
+  localStorage.setItem("nombreCompleto", user.nombre_completo || user.nombre_usuario);
 }
 
 function _setLoginError(el, msg) {
   if (!el) return;
   el.textContent = msg;
   el.style.display = "block";
-  // Shake animation si existe la clase
   el.classList.remove("shake");
-  void el.offsetWidth; // reflow
+  void el.offsetWidth;
   el.classList.add("shake");
 }
 
@@ -195,7 +141,7 @@ function _setLoginError(el, msg) {
 // LOGOUT
 // ======================
 function logout() {
-  ["usuario", "rol", "depto", "nombreCompleto"].forEach(k => localStorage.removeItem(k));
+  ["usuario", "rol", "depto", "nombreCompleto", "gmt_token"].forEach(k => localStorage.removeItem(k));
   window.location.href = "index.html";
 }
 
@@ -205,7 +151,6 @@ function logout() {
 function protegerPagina(rolRequerido) {
   if (localStorage.getItem("rol") !== rolRequerido) window.location.href = "index.html";
 }
-
 function protegerPaginaRoles(...rolesPermitidos) {
   if (!rolesPermitidos.includes(localStorage.getItem("rol"))) window.location.href = "index.html";
 }
@@ -214,7 +159,7 @@ function protegerPaginaRoles(...rolesPermitidos) {
 // ENTER en campos de login
 // ======================
 document.addEventListener("DOMContentLoaded", () => {
-  ["password", "contrasena", "username", "usuario"].forEach(id => {
+  ["contrasena", "username", "usuario"].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener("keydown", e => { if (e.key === "Enter") login(); });
   });
@@ -227,13 +172,6 @@ let archivosSeleccionados = [];
 let archivosSubidos       = [];
 
 // ======================
-// GENERAR ID
-// ======================
-function generarID() {
-  return "TK-" + Date.now().toString().slice(-6);
-}
-
-// ======================
 // ARCHIVOS — helpers UI
 // ======================
 const FILE_ICONS = {
@@ -244,10 +182,7 @@ const FILE_ICONS = {
   png: "🖼️", jpg: "🖼️", jpeg: "🖼️", gif: "🖼️", webp: "🖼️", svg: "🖼️",
   mp4: "🎬", mov: "🎬", avi: "🎬",
 };
-
-function getFileIcon(ext) {
-  return FILE_ICONS[ext.toLowerCase()] || "📁";
-}
+function getFileIcon(ext) { return FILE_ICONS[ext.toLowerCase()] || "📁"; }
 
 function agregarArchivos(lista) {
   [...lista].forEach(file => {
@@ -359,7 +294,7 @@ async function subirArchivosACloudinary() {
 }
 
 // ======================
-// CREAR TICKET
+// CREAR TICKET — ahora contra Railway
 // ======================
 async function crearTicket() {
   const titulo      = document.getElementById("titulo").value.trim();
@@ -379,32 +314,31 @@ async function crearTicket() {
   archivosSubidos = await subirArchivosACloudinary();
   if (btnEnviar) btnEnviar.textContent = "Enviando ticket...";
 
-  const nuevoTicket = {
-    id:             "TK-" + Date.now(),
+  const payload = {
     titulo,
     descripcion,
     depto,
-    asignado:       asignadoA,
-    estado:         "Pendiente",
+    asignado:   asignadoA,
+    estado:     "Pendiente",
     usuario,
-    fecha:          new Date().toLocaleString("es-DO"),
-    adjuntos:       archivosSubidos.map(a => a.url).join(", "),
-    resolucion:     "",
-    participantes:  "",
-    fecha_recibido: "",
-    recibido_por:   "",
-    fecha_resuelto: ""
+    adjuntos:   archivosSubidos.map(a => a.url).join(", ")
   };
 
   try {
-    const res = await fetch(API_URL, {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify(nuevoTicket)
+    const res = await apiFetch("/tickets", {
+      method: "POST",
+      body:   JSON.stringify(payload)
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const ticketCreado = await res.json();
 
-    enviarCorreoTicket(nuevoTicket, archivosSubidos.map(a => a.url));
+    // Para el correo usamos fecha local (el backend guarda su propio creado_en)
+    enviarCorreoTicket({
+      id:          ticketCreado.id,
+      usuario, depto, titulo, descripcion,
+      fecha:       new Date().toLocaleString("es-DO"),
+      asignado:    asignadoA
+    }, archivosSubidos.map(a => a.url));
 
     ["titulo", "descripcion"].forEach(id => { document.getElementById(id).value = ""; });
     document.getElementById("asignadoA").value = "Sin asignar";
@@ -416,8 +350,10 @@ async function crearTicket() {
     mostrarTickets();
 
   } catch (err) {
-    console.error("❌ Error creando ticket:", err);
-    alert("❌ Error al guardar el ticket. Revisa la consola.");
+    if (err.message !== "Unauthorized") {
+      console.error("❌ Error creando ticket:", err);
+      alert("❌ Error al guardar el ticket. Revisa la consola.");
+    }
   } finally {
     if (btnEnviar) { btnEnviar.disabled = false; btnEnviar.textContent = "Enviar Ticket"; }
   }
@@ -470,6 +406,15 @@ function _buildAdjuntosHtml(adjuntos) {
 }
 
 // ======================
+// HELPER — fecha ISO -> texto local
+// ======================
+function _fmtFecha(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return isNaN(d) ? iso : d.toLocaleString("es-DO");
+}
+
+// ======================
 // HELPER — construir card de ticket
 // ======================
 function _buildTicketCard(t, opciones = {}) {
@@ -484,32 +429,31 @@ function _buildTicketCard(t, opciones = {}) {
     <div class="resolucion-box">
       <strong>✅ Resolución:</strong><br>${t.resolucion || "No hay detalle"}<br>
       <small><b>Participantes:</b> ${t.participantes || "N/A"}</small><br>
-      <small><b>Fecha Resuelto:</b> ${t.fecha_resuelto || "-"}</small>
+      <small><b>Fecha Resuelto:</b> ${_fmtFecha(t.fecha_resuelto) || "-"}</small>
     </div>` : "";
 
   const adjuntosHtml = _buildAdjuntosHtml(t.adjuntos);
 
-  // Botones de acción
   let botonesAccion = "";
-  const idEnc = encodeURIComponent(t.id);
+  const id = t.id;
   if (t.estado !== "Resuelto") {
     if (mostrarBotones) {
       botonesAccion = `
-        <button class="btn-proceso"  onclick="cambiarEstado('${idEnc}','En Proceso')">🔧 En Proceso</button>
-        <button class="btn-resuelto" onclick="marcarResuelto('${idEnc}')">✅ Resuelto</button>`;
+        <button class="btn-proceso"  onclick="cambiarEstado(${id},'En Proceso')">🔧 En Proceso</button>
+        <button class="btn-resuelto" onclick="marcarResuelto(${id})">✅ Resuelto</button>`;
     } else if (mostrarBotonesAdmin) {
       if (t.estado === "Pendiente") {
         botonesAccion = `
-          <button class="btn-proceso"  onclick="cambiarEstadoAdmin('${idEnc}','En Proceso')">🔧 En Proceso</button>
-          <button class="btn-resuelto" onclick="marcarResuelto('${idEnc}')">✅ Resuelto</button>`;
+          <button class="btn-proceso"  onclick="cambiarEstadoAdmin(${id},'En Proceso')">🔧 En Proceso</button>
+          <button class="btn-resuelto" onclick="marcarResuelto(${id})">✅ Resuelto</button>`;
       } else if (t.estado === "En Proceso") {
-        botonesAccion = `<button class="btn-resuelto" onclick="marcarResuelto('${idEnc}')">✅ Resuelto</button>`;
+        botonesAccion = `<button class="btn-resuelto" onclick="marcarResuelto(${id})">✅ Resuelto</button>`;
       }
     }
   }
 
   const btnReasignar = esAdmin
-    ? `<button class="btn-reasignar" onclick="abrirReasignar('${idEnc}')">🔁 Reasignar</button>`
+    ? `<button class="btn-reasignar" onclick="abrirReasignar(${id})">🔁 Reasignar</button>`
     : "";
 
   const div = document.createElement("div");
@@ -521,7 +465,7 @@ function _buildTicketCard(t, opciones = {}) {
     <div class="titulo">${t.titulo || ""}</div>
     <div class="descripcion">${t.descripcion || ""}</div>
     <div class="usuario-tag">🙍 Solicitado por: <b>${t.usuario || ""}</b></div>
-    <div class="fecha">📅 ${t.fecha || ""}</div>
+    <div class="fecha">📅 ${_fmtFecha(t.creado_en) || t.fecha || ""}</div>
     ${badgeAsignado}
     ${adjuntosHtml}
     <br>
@@ -542,11 +486,13 @@ function mostrarTickets() {
   const usuario = localStorage.getItem("usuario");
   cont.innerHTML = "<p style='color:#94a3b8;text-align:center;'>Cargando...</p>";
 
-  fetch(API_URL)
+  apiFetch("/tickets")
     .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
     .then(data => {
       cont.innerHTML = "";
-      const misTickets = data.filter(t => t.usuario === usuario).reverse();
+      const misTickets = (Array.isArray(data) ? data : [])
+        .filter(t => t.usuario === usuario)
+        .reverse();
 
       if (!misTickets.length) {
         cont.innerHTML = "<p style='color:#94a3b8;text-align:center;'>No tienes tickets registrados aún.</p>";
@@ -566,7 +512,7 @@ function mostrarTickets() {
         const resolucionHtml = t.resolucion ? `
           <div class="resolucion-box">✅ <strong>Resolución:</strong> ${t.resolucion}
             <br><small><b>Participantes:</b> ${t.participantes || "N/A"}</small>
-            <br><small><b>Fecha:</b> ${t.fecha_resuelto || "-"}</small>
+            <br><small><b>Fecha:</b> ${_fmtFecha(t.fecha_resuelto) || "-"}</small>
           </div>` : "";
 
         const adjuntosHtml = _buildAdjuntosHtml(t.adjuntos)
@@ -577,24 +523,25 @@ function mostrarTickets() {
         div.innerHTML = `
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:6px;">
             <h4 style="margin:0;"><span style="color:#4e54c8;">[${t.depto || ""}]</span> ${t.titulo}</h4>
-            <span style="font-family:monospace;font-size:11px;font-weight:700;background:#ede9fe;color:#5b21b6;padding:3px 10px;border-radius:20px;letter-spacing:0.5px;white-space:nowrap;"># ${t.id || "—"}</span>
+            <span style="font-family:monospace;font-size:11px;font-weight:700;background:#ede9fe;color:#5b21b6;padding:3px 10px;border-radius:20px;letter-spacing:0.5px;white-space:nowrap;"># ${t.id ?? "—"}</span>
           </div>
           <p>${t.descripcion}</p>
           <p><strong>Departamento:</strong> ${t.depto || ""}</p>
-          <p><strong>Fecha:</strong> ${t.fecha || ""}</p>
+          <p><strong>Fecha:</strong> ${_fmtFecha(t.creado_en)}</p>
           ${asignadoBadge}
           <span class="ticket-status ${statusClass}">${t.estado}</span>
           ${resolucionHtml}
           ${adjuntosHtml}
           <br>
           ${t.estado === "Pendiente"
-            ? `<button class="btn-delete" onclick="eliminarTicket('${encodeURIComponent(t.id)}')">🗑 Eliminar</button>`
+            ? `<button class="btn-delete" onclick="eliminarTicket(${t.id})">🗑 Eliminar</button>`
             : ""}
         `;
         cont.appendChild(div);
       });
     })
     .catch(err => {
+      if (err.message === "Unauthorized") return;
       console.error("Error cargando tickets:", err);
       cont.innerHTML = "<p style='color:#ef4444;'>Error al cargar tickets.</p>";
     });
@@ -605,9 +552,9 @@ function mostrarTickets() {
 // ======================
 function eliminarTicket(id) {
   if (!confirm("¿Seguro que deseas eliminar este ticket?")) return;
-  fetch(`${API_URL}/id/${encodeURIComponent(id)}`, { method: "DELETE" })
-    .then(() => { alert("🗑️ Ticket eliminado"); mostrarTickets(); })
-    .catch(err => console.error("Error eliminando:", err));
+  apiFetch(`/tickets/${id}`, { method: "DELETE" })
+    .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); alert("🗑️ Ticket eliminado"); mostrarTickets(); })
+    .catch(err => { if (err.message !== "Unauthorized") console.error("Error eliminando:", err); });
 }
 
 // ======================
@@ -624,10 +571,10 @@ function mostrarTodosTickets() {
 
   const tecnicoActual = localStorage.getItem("usuario");
 
-  fetch(API_URL)
+  apiFetch("/tickets")
     .then(res => res.json())
     .then(data => {
-      data.filter(t =>
+      (Array.isArray(data) ? data : []).filter(t =>
         !t.asignado ||
         t.asignado === "Sin asignar" ||
         t.asignado.toLowerCase() === tecnicoActual.toLowerCase()
@@ -635,7 +582,7 @@ function mostrarTodosTickets() {
         const div = _buildTicketCard(t, { mostrarBotones: true });
         if      (t.estado === "Pendiente")  pendientes.appendChild(div);
         else if (t.estado === "En Proceso") enProceso.appendChild(div);
-        else if (t.estado === "Resuelto" && esHoyLatina(t.fecha_resuelto)) {
+        else if (t.estado === "Resuelto" && esHoyISO(t.fecha_resuelto)) {
           if (resueltos) resueltos.appendChild(div);
         }
       });
@@ -645,7 +592,7 @@ function mostrarTodosTickets() {
       if (!enProceso.innerHTML.trim())
         enProceso.innerHTML  = "<p style='color:#94a3b8;text-align:center;'>Ningún ticket en proceso.</p>";
     })
-    .catch(err => console.error("Error mostrando tickets técnico:", err));
+    .catch(err => { if (err.message !== "Unauthorized") console.error("Error mostrando tickets técnico:", err); });
 }
 
 // ======================
@@ -664,10 +611,10 @@ function mostrarTicketsAdmin() {
   const adminActual = localStorage.getItem("usuario");
   let cntPendientes = 0, cntProceso = 0;
 
-  fetch(API_URL)
+  apiFetch("/tickets")
     .then(res => res.json())
     .then(data => {
-      data.forEach(t => {
+      (Array.isArray(data) ? data : []).forEach(t => {
         if      (t.estado === "Pendiente")  { pendientes.appendChild(_buildTicketCard(t, { esAdmin: true })); cntPendientes++; }
         else if (t.estado === "En Proceso") { enProceso.appendChild(_buildTicketCard(t, { esAdmin: true })); cntProceso++; }
         else if (t.estado === "Resuelto")   { resueltos.appendChild(_buildTicketCard(t, { esAdmin: true })); }
@@ -692,6 +639,7 @@ function mostrarTicketsAdmin() {
       if (typeof aplicarFiltroResueltos === "function") aplicarFiltroResueltos();
     })
     .catch(err => {
+      if (err.message === "Unauthorized") return;
       console.error("Error mostrando tickets admin:", err);
       pendientes.innerHTML = "<p style='color:#ef4444;'>Error al cargar tickets.</p>";
     });
@@ -701,26 +649,26 @@ function mostrarTicketsAdmin() {
 // CAMBIAR ESTADO — Técnico
 // ======================
 function cambiarEstado(id, nuevoEstado) {
-  fetch(`${API_URL}/id/${encodeURIComponent(id)}`, {
-    method: "PATCH", headers: { "Content-Type": "application/json" },
+  apiFetch(`/tickets/${id}`, {
+    method: "PATCH",
     body: JSON.stringify({ estado: nuevoEstado })
   })
   .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
   .then(() => mostrarTodosTickets())
-  .catch(err => console.error("Error cambiando estado:", err));
+  .catch(err => { if (err.message !== "Unauthorized") console.error("Error cambiando estado:", err); });
 }
 
 // ======================
 // CAMBIAR ESTADO — Admin
 // ======================
 function cambiarEstadoAdmin(id, nuevoEstado) {
-  fetch(`${API_URL}/id/${encodeURIComponent(id)}`, {
-    method: "PATCH", headers: { "Content-Type": "application/json" },
+  apiFetch(`/tickets/${id}`, {
+    method: "PATCH",
     body: JSON.stringify({ estado: nuevoEstado })
   })
   .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
   .then(() => mostrarTicketsAdmin())
-  .catch(err => console.error("Error cambiando estado (admin):", err));
+  .catch(err => { if (err.message !== "Unauthorized") console.error("Error cambiando estado (admin):", err); });
 }
 
 // ======================
@@ -729,7 +677,7 @@ function cambiarEstadoAdmin(id, nuevoEstado) {
 let ticketResueltoId = null;
 
 function marcarResuelto(id) {
-  ticketResueltoId = decodeURIComponent(id);
+  ticketResueltoId = id;
   document.getElementById("resueltoModal").style.display = "flex";
 }
 
@@ -747,18 +695,14 @@ function guardarResolucion() {
 
   if (!detalle) { alert("⚠️ Escribe cómo se resolvió la tarea"); return; }
 
-  const updateData = {
-    estado:         "Resuelto",
-    participantes,
-    resolucion:     detalle,
-    fecha_resuelto: new Date().toLocaleString("es-DO")
-  };
+  // fecha_resuelto la coloca el backend automáticamente al recibir estado "Resuelto"
+  const updateData = { estado: "Resuelto", participantes, resolucion: detalle };
 
-  fetch(`${API_URL}/id/${encodeURIComponent(ticketResueltoId)}`, {
-    method: "PATCH", headers: { "Content-Type": "application/json" },
+  apiFetch(`/tickets/${ticketResueltoId}`, {
+    method: "PATCH",
     body: JSON.stringify(updateData)
   })
-  .then(res => res.json())
+  .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
   .then(() => {
     alert("✅ Ticket marcado como resuelto");
     cerrarModal();
@@ -767,7 +711,7 @@ function guardarResolucion() {
     else                                          mostrarTodosTickets();
     mostrarTickets();
   })
-  .catch(err => console.error("Error:", err));
+  .catch(err => { if (err.message !== "Unauthorized") console.error("Error:", err); });
 }
 
 // ======================
@@ -776,7 +720,7 @@ function guardarResolucion() {
 let ticketReasignarId = null;
 
 function abrirReasignar(id) {
-  ticketReasignarId = decodeURIComponent(id);
+  ticketReasignarId = id;
   const select = document.getElementById("selectTecnico");
   if (!select) return;
   select.innerHTML = TECNICOS_DISPONIBLES.map(t => {
@@ -795,8 +739,8 @@ function guardarReasignacion() {
   const nuevo = document.getElementById("selectTecnico").value;
   if (!ticketReasignarId) return;
 
-  fetch(`${API_URL}/id/${encodeURIComponent(ticketReasignarId)}`, {
-    method: "PATCH", headers: { "Content-Type": "application/json" },
+  apiFetch(`/tickets/${ticketReasignarId}`, {
+    method: "PATCH",
     body: JSON.stringify({ asignado: nuevo })
   })
   .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
@@ -805,21 +749,16 @@ function guardarReasignacion() {
     cerrarReasignar();
     mostrarTicketsAdmin();
   })
-  .catch(err => console.error("Error reasignando:", err));
+  .catch(err => { if (err.message !== "Unauthorized") console.error("Error reasignando:", err); });
 }
 
 // ======================
-// UTILIDADES DE FECHA
+// UTILIDADES DE FECHA (ahora fechas ISO del backend)
 // ======================
-function parseFechaLatina(fechaStr) {
-  if (!fechaStr) return null;
-  const [d, m, y] = fechaStr.split(",")[0].trim().split("/");
-  return new Date(`${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`);
-}
-
-function esHoyLatina(fechaStr) {
-  const f = parseFechaLatina(fechaStr);
-  if (!f) return false;
+function esHoyISO(iso) {
+  if (!iso) return false;
+  const f = new Date(iso);
+  if (isNaN(f)) return false;
   const hoy = new Date(); hoy.setHours(0,0,0,0);
   f.setHours(0,0,0,0);
   return f.getTime() === hoy.getTime();
@@ -831,13 +770,11 @@ function esHoyLatina(fechaStr) {
 function abrirAyuda()  { document.getElementById("ayudaModal")?.classList.add("show"); }
 function cerrarAyuda() { document.getElementById("ayudaModal")?.classList.remove("show"); }
 
-
 (function iniciarAutoRefresh() {
   const rol = localStorage.getItem("rol");
   if      (rol === "usuario")                       setInterval(mostrarTickets,      30000);
   else if (rol === "tecnico")                       setInterval(mostrarTodosTickets, 30000);
   else if (rol === "admin" || rol === "superadmin") setInterval(mostrarTicketsAdmin, 60000);
-  // analista maneja su propio refresh en Analista.html
 })();
 
 window.onload = function () {
