@@ -820,13 +820,31 @@
 <div class="toast" id="toastEl"></div>
 
 <script>
-// ════════════════════════════════════════════════════════
-// CONFIG
-// ════════════════════════════════════════════════════════
-const API_TICKETS = "https://api.sheetbest.com/sheets/a50a59f4-402a-4937-a0fc-e20789380908";
-const API_USERS   = "https://api.sheetbest.com/sheets/6784d1e5-1e26-4605-9c19-329eb2b6ea12";
-const MI_USER = localStorage.getItem("usuario") || "Xavier";
-const REP_STORAGE_KEY = "gmtickets_tech_cierres_" + MI_USER.toLowerCase();
+/* ══════════════════════════════════════════════════════
+   CONFIG — Backend real (Railway + Supabase)
+══════════════════════════════════════════════════════ */
+const API_BASE = "https://gm-tickets-backend-production.up.railway.app/api";
+const MI_USER  = localStorage.getItem("usuario") || "Tecnico";
+
+function getToken() { return localStorage.getItem("gmt_token") || ""; }
+function authHeaders() {
+  return { "Content-Type": "application/json", "Authorization": "Bearer " + getToken() };
+}
+async function apiFetch(path, opts = {}) {
+  const res = await fetch(API_BASE + path, { ...opts, headers: { ...authHeaders(), ...(opts.headers || {}) } });
+  if (res.status === 401) {
+    showToast("Sesión expirada, vuelve a iniciar sesión", "error");
+    setTimeout(logout, 1500);
+    throw new Error("Unauthorized");
+  }
+  return res;
+}
+
+const OPENROUTER_API_KEY = "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";
+const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const OPENROUTER_MODEL   = "cohere/north-mini-code:free";
+
+const REP_STORAGE_KEY = "gmt_cierres_" + MI_USER.toLowerCase();
 
 // ════════════════════════════════════════════════════════
 // CACHE — TTL 3 min, clave por técnico
@@ -851,8 +869,6 @@ function setCache(data) {
   } catch(e) { console.warn("Cache write error:", e); }
 }
 
-// FIX: invalidarCache ahora se llama antes de cada mutación (PATCH)
-// para que el siguiente recargar(true) no sirva datos viejos del cache
 function invalidarCache() {
   localStorage.removeItem(CACHE_KEY_DATA);
   localStorage.removeItem(CACHE_KEY_TS);
@@ -887,23 +903,23 @@ const PALABRAS_CRITICO = ["urgente","urgentes","caído","caida","no funciona","b
 const PALABRAS_ALTO    = ["lento","lenta","error","falla","problema","no responde","reinicia","reiniciando","se traba","se cuelga","pantalla azul","no abre","no carga","intermitente","tarda","muy despacio"];
 
 function calcUrgencia(t) {
-  const texto = ((t.titulo || "") + " " + (t.descripcion || "")).toLowerCase();
+  const texto = ((t.titulo||"") + " " + (t.descripcion||"")).toLowerCase();
   let diasDesde = 0;
   try {
-    const partes = (t.fecha || "").split(",")[0].trim().split("/");
-    if (partes.length === 3) {
-      const d = new Date(parseInt(partes[2]), parseInt(partes[1]) - 1, parseInt(partes[0]));
-      diasDesde = Math.floor((new Date() - d) / (1000 * 60 * 60 * 24));
-    }
+    const d = new Date(t.creado_en || t.fecha || "");
+    if (!isNaN(d)) diasDesde = Math.floor((new Date() - d) / (1000*60*60*24));
   } catch {}
-  const esCritico = PALABRAS_CRITICO.some(p => texto.includes(p));
-  const esAlto    = PALABRAS_ALTO.some(p => texto.includes(p));
+  const esCritico = PALABRAS_CRITICO.some(function(p){ return texto.includes(p); });
+  const esAlto    = PALABRAS_ALTO.some(function(p){ return texto.includes(p); });
   const pendLarga = t.estado === "Pendiente"  && diasDesde >= 3;
   const procLarga = t.estado === "En Proceso" && diasDesde >= 7;
   const pendMedia = t.estado === "Pendiente"  && diasDesde >= 1;
-  if (esCritico || pendLarga || procLarga) return { level:"critico", label:"🔴 CRÍTICO", cls:"urg-critico", strip:"strip-critico" };
-  if (esAlto || pendMedia) return { level:"alto", label:"🟠 ALTO", cls:"urg-alto", strip:"strip-alto" };
-  if (diasDesde >= 0 && (t.estado === "Pendiente" || t.estado === "En Proceso")) return { level:"medio", label:"🟡 MEDIO", cls:"urg-medio", strip:"strip-medio" };
+  if (esCritico || pendLarga || procLarga)
+    return { level:"critico", label:"🔴 CRÍTICO", cls:"urg-critico", strip:"strip-critico" };
+  if (esAlto || pendMedia)
+    return { level:"alto", label:"🟠 ALTO", cls:"urg-alto", strip:"strip-alto" };
+  if (diasDesde >= 0 && (t.estado === "Pendiente" || t.estado === "En Proceso"))
+    return { level:"medio", label:"🟡 MEDIO", cls:"urg-medio", strip:"strip-medio" };
   return { level:"normal", label:"🟢 NORMAL", cls:"urg-normal", strip:"strip-normal" };
 }
 
@@ -945,7 +961,6 @@ let repBarChart = null;
       if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
     } else {
       iniciarAutoRefresh();
-      // Al volver, respetar cache — solo hace GET si el TTL expiró
       recargar(false);
     }
   });
@@ -955,10 +970,12 @@ function updateClock() {
   document.getElementById("clockEl").textContent = new Date().toLocaleString("es-DO");
 }
 
-function doLogout() {
-  ["usuario","rol","nombreCompleto","depto"].forEach(k => localStorage.removeItem(k));
+function logout() {
+  ["usuario","rol","nombreCompleto","depto","gmt_token"].forEach(k => localStorage.removeItem(k));
   window.location.href = "index.html";
 }
+// Alias por compatibilidad con onclick="doLogout()" en el HTML
+function doLogout() { logout(); }
 
 // ════════════════════════════════════════════════════════
 // AUTO-REFRESH — 5 min, solo si la pestaña está visible
@@ -967,7 +984,6 @@ function iniciarAutoRefresh() {
   if (autoRefreshTimer) clearInterval(autoRefreshTimer);
   const chk = document.getElementById("cfgAutoRefresh");
   if (!chk || chk.checked) {
-    // forceRefresh=false: respeta cache, solo hace GET si TTL expiró
     autoRefreshTimer = setInterval(() => {
       if (!document.hidden) recargar(false);
     }, 5 * 60 * 1000);
@@ -988,36 +1004,50 @@ function aplicarAutoRefresh() {
 }
 
 // ════════════════════════════════════════════════════════
-// CARGAR TICKETS — con cache inteligente
-//   forceRefresh=true  → ignora cache, llama SheetBest
-//   forceRefresh=false → usa cache si TTL no expiró (0 requests)
+// CARGAR TICKETS — Railway + cache inteligente
+//   recargar(false) → usa cache si el TTL no ha expirado (0 requests)
+//   recargar(true)  → ignora cache, llama al backend
 // ════════════════════════════════════════════════════════
-async function recargar(forceRefresh = false) {
+async function recargar(forceRefresh) {
+  const btn = document.getElementById("refreshBtn");
+  if (btn) btn.classList.add("spinning");
+
   try {
     if (!forceRefresh) {
       const cached = getCached();
-      if (cached && cached.length) {
+      if (cached) {
         allTickets = cached;
-        misTickets = allTickets.filter(t => (t.asignado || "").toLowerCase() === MI_USER.toLowerCase());
+        misTickets = allTickets.filter(t => (t.asignado||"").toLowerCase() === MI_USER.toLowerCase());
         renderTodo();
-        return; // cache válido — 0 requests a SheetBest
+        actualizarEstadoCache();
+        return;
       }
     }
 
-    // Fetch real a SheetBest
-    const r    = await fetch(API_TICKETS);
+    const r = await apiFetch("/tickets");
+    if (!r.ok) throw new Error("HTTP " + r.status);
     const data = await r.json();
-    allTickets  = Array.isArray(data) ? data : [];
-    setCache(allTickets);
-    misTickets  = allTickets.filter(t => (t.asignado || "").toLowerCase() === MI_USER.toLowerCase());
-    renderTodo();
 
-    const syncEl = document.getElementById("cfgLastSync");
-    if (syncEl) syncEl.textContent = new Date().toLocaleTimeString("es-DO");
+    allTickets = (Array.isArray(data) ? data : []).map(t => ({
+      ...t,
+      fecha:          t.creado_en ? new Date(t.creado_en).toLocaleString("es-DO") : "",
+      fecha_recibido: t.fecha_recibido ? new Date(t.fecha_recibido).toLocaleString("es-DO") : "",
+      fecha_resuelto: t.fecha_resuelto ? new Date(t.fecha_resuelto).toLocaleString("es-DO") : "",
+      recibido:       t.recibido ? "si" : ""
+    }));
+
+    setCache(allTickets);
+    misTickets = allTickets.filter(t => (t.asignado||"").toLowerCase() === MI_USER.toLowerCase());
+    renderTodo();
     actualizarEstadoCache();
 
   } catch (e) {
-    showToast("Error al cargar tickets", "error");
+    if (e.message !== "Unauthorized") {
+      showToast("Error al cargar tickets", "error");
+      console.error(e);
+    }
+  } finally {
+    if (btn) btn.classList.remove("spinning");
   }
 }
 
@@ -1028,7 +1058,6 @@ function renderTodo() {
   renderKanban();
   renderResueltos();
   if (repInited) renderReportes();
-  // Actualizar contadores en config si la vista está activa
   const ttEl = document.getElementById("cfgTotalTickets");
   if (ttEl) ttEl.textContent = misTickets.length;
   const trEl = document.getElementById("cfgTotalResueltos");
@@ -1161,11 +1190,11 @@ function buildTicketCard(t, isPend) {
   const ec  = isPend ? "badge-pend" : "badge-proc";
   const urg = calcUrgencia(t);
   const adjuntosHtml = buildAdjuntos(t.adjuntos);
-  const recibirBtn   = (t.recibido !== "si") ? `<button class="btn-receive" onclick="marcarRecibido('${esc(t.id)}')">📩 Marcar recibido</button>` : "";
+  const recibirBtn   = (t.recibido !== "si") ? `<button class="btn-receive" onclick="marcarRecibido(${t.id})">📩 Marcar recibido</button>` : "";
   const recibidoBadge = t.recibido === "si" ? `<span class="badge-received">📩 Recibido · ${(t.fecha_recibido||"").split(",")[0]}</span>` : "";
   const botones = isPend
-    ? `${recibirBtn}<button class="btn-proc" onclick="cambiarEstado('${esc(t.id)}','En Proceso')">🔧 En proceso</button><button class="btn-res" onclick="abrirResModal('${esc(t.id)}')">✅ Resuelto</button>`
-    : `${recibirBtn}<button class="btn-res" onclick="abrirResModal('${esc(t.id)}')">✅ Marcar resuelto</button>`;
+    ? `${recibirBtn}<button class="btn-proc" onclick="cambiarEstado(${t.id},'En Proceso')">🔧 En proceso</button><button class="btn-res" onclick="abrirResModal(${t.id})">✅ Resuelto</button>`
+    : `${recibirBtn}<button class="btn-res" onclick="abrirResModal(${t.id})">✅ Marcar resuelto</button>`;
   return `<div class="tcard">
     <div class="urgency-strip ${urg.strip}"></div>
     <div class="tcard-top"><div><div class="tcard-id">${t.id||""}</div><div class="tcard-title">${t.titulo||""}</div></div><div class="tcard-badges"><span class="badge ${ec}">${t.estado||""}</span><span class="urgency-badge ${urg.cls}">${urg.label}</span></div></div>
@@ -1180,40 +1209,33 @@ function buildTicketCard(t, isPend) {
 // ════════════════════════════════════════════════════════
 // MUTACIONES — siempre invalidan cache antes del fetch
 // ════════════════════════════════════════════════════════
-
-// FIX: invalidarCache() antes de recargar(true) en cada mutación.
-// Esto evita que el cache sucio se sirva si el TTL aún no expiró.
-async function marcarRecibido(idEnc) {
-  const id = decodeURIComponent(idEnc);
+async function marcarRecibido(id) {
   try {
-    const r = await fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`, {
+    const r = await apiFetch(`/tickets/${id}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ recibido: "si", fecha_recibido: new Date().toLocaleString("es-DO") })
+      body: JSON.stringify({ recibido: true })
     });
     if (!r.ok) throw new Error("HTTP " + r.status);
     showToast("Ticket marcado como recibido ✓", "success");
-    invalidarCache();          // FIX: limpia cache antes de recargar
-    await recargar(true);      // un solo GET fresco
-  } catch {
-    showToast("Error al marcar como recibido", "error");
+    invalidarCache();
+    await recargar(true);
+  } catch (e) {
+    if (e.message !== "Unauthorized") showToast("Error al marcar como recibido", "error");
   }
 }
 
-async function cambiarEstado(idEnc, nuevoEstado) {
-  const id = decodeURIComponent(idEnc);
+async function cambiarEstado(id, nuevoEstado) {
   try {
-    const r = await fetch(`${API_TICKETS}/id/${encodeURIComponent(id)}`, {
+    const r = await apiFetch(`/tickets/${id}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ estado: nuevoEstado })
     });
     if (!r.ok) throw new Error("HTTP " + r.status);
     showToast(`Ticket → "${nuevoEstado}"`, "success");
-    invalidarCache();          // FIX: limpia cache antes de recargar
-    await recargar(true);      // un solo GET fresco
+    invalidarCache();
+    await recargar(true);
   } catch (e) {
-    showToast("Error al actualizar estado", "error");
+    if (e.message !== "Unauthorized") showToast("Error al actualizar estado", "error");
   }
 }
 
@@ -1243,8 +1265,8 @@ function renderResueltos() {
 // ════════════════════════════════════════════════════════
 // MODAL RESOLUCIÓN
 // ════════════════════════════════════════════════════════
-function abrirResModal(idEnc) {
-  pendingResolveId = decodeURIComponent(idEnc);
+function abrirResModal(id) {
+  pendingResolveId = id;
   document.getElementById("resDetalle").value       = "";
   document.getElementById("resParticipantes").value = MI_USER;
   document.getElementById("resModal").classList.add("open");
@@ -1260,18 +1282,17 @@ async function confirmarResolucion() {
   const partic  = document.getElementById("resParticipantes").value.trim();
   if (!detalle) { showToast("Escribe el detalle de resolución", "error"); return; }
   try {
-    const r = await fetch(`${API_TICKETS}/id/${encodeURIComponent(pendingResolveId)}`, {
+    const r = await apiFetch(`/tickets/${pendingResolveId}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ estado: "Resuelto", resolucion: detalle, participantes: partic, fecha_resuelto: new Date().toLocaleString("es-DO") })
+      body: JSON.stringify({ estado: "Resuelto", resolucion: detalle, participantes: partic })
     });
     if (!r.ok) throw new Error("HTTP " + r.status);
     showToast("Ticket resuelto correctamente", "success");
     closeResModal();
-    invalidarCache();          // FIX: limpia cache antes de recargar
-    await recargar(true);      // un solo GET fresco
+    invalidarCache();
+    await recargar(true);
   } catch (e) {
-    showToast("Error al resolver ticket", "error");
+    if (e.message !== "Unauthorized") showToast("Error al resolver ticket", "error");
   }
 }
 
@@ -1285,15 +1306,13 @@ function cerrarAyuda() { document.getElementById("ayudaModal").classList.remove(
 // REPORTES
 // ════════════════════════════════════════════════════════
 function initReportes() {
+  repInited = true;
   document.querySelectorAll(".rep-month-btn").forEach(b => b.classList.remove("active"));
   const btn = document.querySelector(`.rep-month-btn[data-m="${repMes}"]`);
   if (btn) btn.classList.add("active");
   renderReportes();
 }
 
-// FIX: repRecargar hace recargar(true) y NO llama renderReportes() extra.
-// recargar(true) ya llama renderTodo() → renderReportes() si repInited=true.
-// Antes llamaba a ambos, causando doble render y request redundante.
 async function repRecargar() {
   await recargar(true);
   showToast("Datos actualizados", "success");
@@ -1466,34 +1485,44 @@ function renderConfigView() {
   const ttEl=document.getElementById("cfgTotalTickets");if(ttEl)ttEl.textContent=misTickets.length;
   const trEl=document.getElementById("cfgTotalResueltos");if(trEl)trEl.textContent=misTickets.filter(t=>t.estado==="Resuelto").length;
   const cEl=document.getElementById("cfgCierresGuardados");if(cEl)cEl.textContent=repGetCierres().length;
-  actualizarEstadoCache(); // FIX: muestra estado del cache en config
+  actualizarEstadoCache();
 }
 
-async function sha256(text) {
-  const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(text));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
-}
-
+// FIX: actualización de perfil vía backend real.
+// La contraseña usa /auth/change-password (requiere contraseña actual, igual que SuperAdmin.html).
+// TODO: el update de "nombre_completo" propio del técnico aún no tiene endpoint confirmado
+// (SuperAdmin.html lo hace vía /usuarios/:id usando un id que sale de sheetUsers, que este panel no carga).
+// Por ahora el nombre solo se actualiza en localStorage/UI hasta confirmar la ruta correcta.
 async function guardarPerfil() {
-  const nombre=document.getElementById("cfgFieldNombre").value.trim();
-  const pass=document.getElementById("cfgFieldPass").value,pass2=document.getElementById("cfgFieldPass2").value;
-  if(!nombre){showToast("El nombre no puede estar vacío","error");return;}
-  if(pass&&pass!==pass2){showToast("Las contraseñas no coinciden","error");return;}
-  localStorage.setItem("nombreCompleto",nombre);
-  document.getElementById("sbName").textContent=nombre;
-  document.getElementById("sbAvatar").textContent=nombre.substring(0,2).toUpperCase();
+  const nombre = document.getElementById("cfgFieldNombre").value.trim();
+  const pass   = document.getElementById("cfgFieldPass").value;
+  const pass2  = document.getElementById("cfgFieldPass2").value;
+
+  if (!nombre) { showToast("El nombre no puede estar vacío", "error"); return; }
+  if (pass && pass !== pass2) { showToast("Las contraseñas no coinciden", "error"); return; }
+
+  localStorage.setItem("nombreCompleto", nombre);
+  document.getElementById("sbName").textContent = nombre;
+  document.getElementById("sbAvatar").textContent = nombre.substring(0,2).toUpperCase();
   renderConfigView();
-  if(pass){
-    try{
-      const hash=await sha256(pass);
-      const r=await fetch(`${API_USERS}/NombreUsuario/${encodeURIComponent(MI_USER)}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({NombreCompleto:nombre,Contraseña:hash})});
-      if(!r.ok)throw new Error("HTTP "+r.status);
-      document.getElementById("cfgFieldPass").value="";document.getElementById("cfgFieldPass2").value="";
-      showToast("Perfil y contraseña actualizados ✓","success");
-    }catch(err){showToast("Nombre guardado. Error API: "+err.message,"warning");}
-  }else{
-    try{await fetch(`${API_USERS}/NombreUsuario/${encodeURIComponent(MI_USER)}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({NombreCompleto:nombre})});}catch{}
-    showToast("Nombre actualizado ✓","success");
+
+  if (pass) {
+    const passActual = prompt("Por seguridad, escribe tu contraseña ACTUAL para confirmar el cambio:");
+    if (!passActual) { showToast("Nombre guardado localmente. Contraseña no cambiada.", "warning"); return; }
+    try {
+      const r = await apiFetch("/auth/change-password", {
+        method: "PATCH",
+        body: JSON.stringify({ contrasena_actual: passActual, contrasena_nueva: pass })
+      });
+      if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.error || "Error al cambiar contraseña"); }
+      document.getElementById("cfgFieldPass").value = "";
+      document.getElementById("cfgFieldPass2").value = "";
+      showToast("Nombre actualizado y contraseña cambiada ✓", "success");
+    } catch (err) {
+      showToast("Nombre guardado. Error con contraseña: " + err.message, "warning");
+    }
+  } else {
+    showToast("Nombre actualizado ✓ (pendiente de sincronizar con el backend)", "success");
   }
 }
 
@@ -1502,7 +1531,6 @@ async function guardarPerfil() {
 // ════════════════════════════════════════════════════════
 function matchSearch(t,q){return(t.titulo||"").toLowerCase().includes(q)||(t.depto||"").toLowerCase().includes(q)||(t.descripcion||"").toLowerCase().includes(q)||(t.usuario||"").toLowerCase().includes(q);}
 function buildAdjuntos(adjStr){if(!adjStr||!adjStr.trim())return"";const urls=adjStr.split(",").map(u=>u.trim()).filter(Boolean);const links=urls.map(u=>`<a class="adj-link" href="${u}" target="_blank" rel="noopener">📎 ${decodeURIComponent(u.split("/").pop().split("?")[0])}</a>`).join("");return`<div style="margin-top:6px">${links}</div>`;}
-function esc(s){return encodeURIComponent(s||"");}
 function showToast(msg,type="success"){
   const chk=document.getElementById("cfgToasts");if(chk&&!chk.checked)return;
   const el=document.getElementById("toastEl");
@@ -1517,15 +1545,10 @@ function showToast(msg,type="success"){
 // ════════════════════════════════════════════════════════
 // ★ NEXO — Asistente IA Analítico (Panel Técnico)
 // ════════════════════════════════════════════════════════
-const OPENROUTER_API_KEY = "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";
-const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
-const OPENROUTER_MODEL   = "cohere/north-mini-code:free";
-
 let nexoOpen    = false;
 let nexoHistory = [];
 let nexoTyping  = false;
 
-// Construye un resumen analítico real a partir de misTickets — no inventa nada
 function nexoAnalisisTickets() {
   const mis = misTickets || [];
   const tot = mis.length;
@@ -1551,7 +1574,6 @@ function nexoAnalisisTickets() {
     .map(([d,info]) => `• ${d}: ${info.total} tickets (${info.res} resueltos, ${info.total?Math.round(info.res/info.total*100):0}%)`)
     .join("\n") || "Sin datos.";
 
-  // Tendencia últimos 6 meses (reusa la misma lógica de renderActividadMeses)
   const mesActual = new Date().getMonth(), anioActual = new Date().getFullYear();
   const tendencia = [];
   for (let i=5;i>=0;i--){
@@ -1686,13 +1708,12 @@ async function nexoSendMessage() {
 
   try {
     const sysPrompt = nexoBuildSystemPrompt();
-const sysPromptClean = sysPrompt
-  .replace(/[^\x00-\x7F]/g, c => {
-    try { return encodeURIComponent(c); } catch { return ''; }
-  });
+    const sysPromptClean = sysPrompt.replace(/[^\x00-\x7F]/g, c => {
+      try { return encodeURIComponent(c); } catch { return ''; }
+    });
 
-const messages = [{ role: "system", content: sysPromptClean }].concat(nexoHistory);
-   const response = await fetch(OPENROUTER_API_URL, {
+    const messages = [{ role: "system", content: sysPromptClean }].concat(nexoHistory);
+    const response = await fetch(OPENROUTER_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
