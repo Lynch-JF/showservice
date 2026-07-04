@@ -146,6 +146,29 @@ button{font-family:inherit}
 .btn-ghost{background:var(--surface-alt);color:var(--ink-soft);border-color:var(--border)}
 .btn-ghost:hover{color:var(--ink);border-color:var(--border-strong)}
 
+/* ── TICKET DETAIL MODAL ──*/
+.modal-overlay{position:fixed;inset:0;background:rgba(20,24,31,.5);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:300;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);width:100%;max-width:560px;max-height:85vh;display:flex;flex-direction:column;animation:modalIn .2s var(--ease);overflow:hidden;box-shadow:var(--shadow-pop)}
+@keyframes modalIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-header{padding:20px 22px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px}
+.modal-header-content{flex:1;min-width:0}
+.modal-id{font-family:var(--mono);font-size:10px;color:var(--ink-faint);margin-bottom:5px}
+.modal-title{font-family:var(--font-display);font-size:19px;font-weight:600;line-height:1.3;margin-bottom:10px}
+.modal-badges{display:flex;flex-wrap:wrap;gap:6px}
+.modal-close{width:30px;height:30px;border-radius:50%;background:var(--surface-alt);border:1px solid var(--border);color:var(--ink-soft);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modal-close:hover{color:var(--ink);background:var(--surface-sunk)}
+.modal-body{flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:16px}
+.modal-section{display:flex;flex-direction:column;gap:10px}
+.modal-section-label{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:1.2px;color:var(--ink-faint);margin-bottom:2px}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-cell{background:var(--surface-alt);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 14px}
+.modal-cell-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--ink-faint);margin-bottom:5px}
+.modal-cell-value{font-size:13px;font-weight:600;color:var(--ink)}
+.modal-desc{background:var(--surface-alt);border:1px solid var(--border);border-radius:var(--r);padding:14px;font-size:12.5px;color:var(--ink-soft);line-height:1.7}
+.modal-divider{border:none;border-top:1px solid var(--border)}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+
 /* ── CHAT ── */
 .chat-fab{position:fixed;bottom:22px;right:22px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#7c6bf5);border:none;box-shadow:0 8px 24px rgba(79,70,229,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;z-index:400;transition:transform .2s var(--ease)}
 .chat-fab:hover{transform:scale(1.06)}
@@ -161,8 +184,16 @@ button{font-family:inherit}
 .chat-msg.user{flex-direction:row-reverse}
 .chat-av{width:24px;height:24px;border-radius:50%;background:var(--surface-alt);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 .chat-msg.user .chat-av{background:var(--primary);color:#fff;border:none}
-.chat-bubble{background:var(--surface-alt);border-radius:var(--r);padding:9px 12px;font-size:12px;line-height:1.5;max-width:80%}
+.chat-bubble{background:var(--surface-alt);border-radius:var(--r);padding:9px 12px;font-size:12px;line-height:1.5;max-width:80%;word-wrap:break-word}
 .chat-msg.user .chat-bubble{background:var(--primary);color:#fff}
+.chat-suggestions{display:flex;flex-direction:column;gap:6px;padding:4px 0}
+.chat-suggestion{padding:9px 12px;background:var(--surface-alt);border:1px solid var(--border);border-radius:var(--r-sm);font-size:12px;color:var(--ink-soft);cursor:pointer;transition:all .15s var(--ease);text-align:left;font-weight:500}
+.chat-suggestion:hover{background:var(--primary-soft);color:var(--primary);border-color:var(--primary)}
+.chat-typing{display:flex;gap:4px;align-items:center}
+.chat-typing span{width:4px;height:4px;border-radius:50%;background:var(--ink-faint);animation:typing .6s ease-in-out infinite}
+.chat-typing span:nth-child(2){animation-delay:.1s}
+.chat-typing span:nth-child(3){animation-delay:.2s}
+@keyframes typing{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-6px)}}
 .chat-input-row{padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px}
 .chat-input-row input{flex:1;padding:9px 12px;border-radius:99px;border:1px solid var(--border);background:var(--surface-alt);outline:none;font-size:12px}
 .chat-input-row input:focus{border-color:var(--primary)}
@@ -170,7 +201,7 @@ button{font-family:inherit}
 
 /* ── TOAST ── */
 .toast-wrap{position:fixed;bottom:20px;left:20px;display:flex;flex-direction:column;gap:8px;z-index:999;pointer-events:none}
-.toast{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:11px 16px;font-size:12px;font-weight:500;max-width:300px;opacity:0;transform:translateY(8px) scale(.97);transition:all .25s var(--ease);pointer-events:none;box-shadow:var(--shadow-md)}
+.toast{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:11px 16px;font-size:12px;font-weight:500;max-width:300px;opacity:0;transform:translateY(8px) scale(.97);transition:all .25s var(--ease);pointer-events:none;box-shadow:var(--shadow-md);display:flex;align-items:center;gap:8px}
 .toast.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
 .toast.ok{border-left:3px solid var(--emerald)}
 .toast.err{border-left:3px solid var(--rose)}
@@ -190,6 +221,7 @@ button{font-family:inherit}
   .perfil-banner{flex-direction:column;gap:14px}
   .perfil-stats{width:100%;justify-content:space-around}
   .tickets-grid{grid-template-columns:1fr}
+  .modal-grid{grid-template-columns:1fr}
   .chat-panel{right:10px;bottom:82px;width:calc(100vw - 20px)}
   .chat-fab{right:16px;bottom:16px}
 }
@@ -208,14 +240,14 @@ button{font-family:inherit}
 <aside class="sidebar" id="sidebar">
   <div class="sb-logo">
     <div class="sb-icon">🎫</div>
-    <div class="sb-brand">GM Tickets<span>Usuario · v4.0</span></div>
+    <div class="sb-brand">GM Tickets<span>Usuario · v4.1</span></div>
     <button class="sb-close" onclick="closeSidebar()">✕</button>
   </div>
   <div class="sb-scroll">
     <p class="sb-section">Principal</p>
     <div class="nav-item active" id="nav-mis-tickets" onclick="switchView('mis-tickets')"><span class="nav-icon">📌</span> Mis tickets<span class="nav-badge" id="nb-mis">0</span></div>
     <div class="nav-item" id="nav-nuevo" onclick="switchView('nuevo')"><span class="nav-icon">➕</span> Nuevo ticket</div>
-    <div class="nav-item" id="nav-historial" onclick="switchView('historial')"><span class="nav-icon">📋</span> Historial<span class="nav-badge" id="nb-hist" style="display:none">0</span></div>
+    <div class="nav-item" id="nav-historial" onclick="switchView('historial')"><span class="nav-icon">📋</span> Historial</div>
     <p class="sb-section">Más</p>
     <div class="nav-item" id="nav-config" onclick="switchView('config')"><span class="nav-icon">⚙</span> Configuración</div>
   </div>
@@ -370,6 +402,7 @@ const MI_USUARIO = localStorage.getItem("usuario") || "usuario";
 let allTickets = [];
 let chatOpen = false;
 
+function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 function getToken(){ return localStorage.getItem("gmt_token") || ""; }
 function authHeaders(){ return { "Content-Type": "application/json", "Authorization": "Bearer " + getToken() }; }
 
@@ -383,7 +416,6 @@ async function apiFetch(path, opts = {}){
   return res;
 }
 
-// ── INIT ──
 function init(){
   updateClock();
   setInterval(updateClock, 1000);
@@ -396,7 +428,7 @@ function init(){
   ["userName","perfilName"].forEach(id => { const e=document.getElementById(id); if(e) e.textContent=n; });
   document.getElementById("userRole").textContent = "@" + u;
   document.getElementById("perfilDept").textContent = d;
-  document.getElementById("perfilRole").textContent = document.getElementById("perfilRole").textContent;
+  document.getElementById("cfgNombre").value = n;
   
   reloadData();
 }
@@ -438,7 +470,7 @@ function renderTodo(){
         </div>
         <div class="ticket-footer"><span>📅 ${new Date(t.creado_en||"").toLocaleDateString("es-DO")}</span></div>
       </div>`).join("")
-    : `<div class="empty"><div class="empty-icon">🎫</div><p>Sin tickets. <a href="#" onclick="switchView('nuevo')">Crear uno</a></p></div>`;
+    : `<div class="empty"><div class="empty-icon">🎫</div><p>Sin tickets. <a href="#" onclick="switchView('nuevo');return false" style="color:var(--primary);font-weight:600">Crear uno</a></p></div>`;
   
   const hist = document.getElementById("historialGrid");
   if(hist) hist.innerHTML = allTickets.filter(t => t.estado==="Resuelto").length
@@ -449,8 +481,6 @@ function renderTodo(){
       </div>`).join("")
     : `<div class="empty"><div class="empty-icon">📋</div><p>Sin historial</p></div>`;
 }
-
-function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
 function switchView(v){
   document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
@@ -488,9 +518,201 @@ function limpiarFormulario(){
   document.getElementById("inputDepto").value = "";
 }
 
+/* ── MODAL TICKET DETAIL ── */
 function viewTicket(id){
   const t = allTickets.find(x => x.id === id);
-  if(t) alert(`#${t.id}\n${t.titulo}\n${t.descripcion}\n\nEstado: ${t.estado}\nDepartamento: ${t.depto}`);
+  if(!t) return;
+  
+  const modal = document.getElementById("ticketModal") || crearModalTicket();
+  
+  document.getElementById("modal-id").textContent = "#" + t.id;
+  document.getElementById("modal-title").textContent = t.titulo || "Sin título";
+  
+  const estadoClass = t.estado === "Pendiente" ? "b-pend" : t.estado === "En Proceso" ? "b-proc" : "b-res";
+  document.getElementById("modal-badges").innerHTML = 
+    `<span class="badge ${estadoClass}">${esc(t.estado || "")}</span>
+     <span class="badge b-res">${esc(t.depto || "Sin depto")}</span>`;
+  
+  document.getElementById("modal-usuario").textContent = esc(t.usuario || "—");
+  document.getElementById("modal-depto").textContent = esc(t.depto || "—");
+  document.getElementById("modal-estado").textContent = esc(t.estado || "—");
+  document.getElementById("modal-fecha").textContent = new Date(t.creado_en || "").toLocaleDateString("es-DO");
+  document.getElementById("modal-desc").textContent = t.descripcion || "Sin descripción";
+  
+  const footer = document.getElementById("modal-footer");
+  footer.innerHTML = `<span style="font-family:var(--mono);font-size:10px;color:var(--ink-faint)">Creado: ${new Date(t.creado_en || "").toLocaleString("es-DO")}</span>`;
+  
+  modal.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function crearModalTicket(){
+  const div = document.createElement("div");
+  div.id = "ticketModal";
+  div.className = "modal-overlay";
+  div.onclick = (e) => { if(e.target === div) cerrarTicketModal(); };
+  div.innerHTML = `
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-header-content">
+          <div class="modal-id" id="modal-id">#—</div>
+          <div class="modal-title" id="modal-title">—</div>
+          <div class="modal-badges" id="modal-badges"></div>
+        </div>
+        <button class="modal-close" onclick="cerrarTicketModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-section">
+          <div class="modal-section-label">Información general</div>
+          <div class="modal-grid">
+            <div class="modal-cell">
+              <div class="modal-cell-label">Reportado por</div>
+              <div class="modal-cell-value" id="modal-usuario">—</div>
+            </div>
+            <div class="modal-cell">
+              <div class="modal-cell-label">Departamento</div>
+              <div class="modal-cell-value" id="modal-depto">—</div>
+            </div>
+            <div class="modal-cell">
+              <div class="modal-cell-label">Estado</div>
+              <div class="modal-cell-value" id="modal-estado">—</div>
+            </div>
+            <div class="modal-cell">
+              <div class="modal-cell-label">Fecha</div>
+              <div class="modal-cell-value" id="modal-fecha">—</div>
+            </div>
+          </div>
+        </div>
+        <hr class="modal-divider"/>
+        <div class="modal-section">
+          <div class="modal-section-label">Descripción</div>
+          <div class="modal-desc" id="modal-desc">—</div>
+        </div>
+      </div>
+      <div class="modal-footer" id="modal-footer"></div>
+    </div>
+  `;
+  document.body.appendChild(div);
+  return div;
+}
+
+function cerrarTicketModal(){
+  const m = document.getElementById("ticketModal");
+  if(m) m.classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+document.addEventListener("keydown", e => { if(e.key === "Escape") cerrarTicketModal(); });
+
+/* ── NEXO MEJORADO ── */
+function toggleChat(){
+  chatOpen = !chatOpen;
+  const panel = document.getElementById("chatPanel");
+  const msgs = document.getElementById("chatMsgs");
+  
+  panel.classList.toggle("open", chatOpen);
+  
+  if(chatOpen){
+    if(msgs.children.length === 0){
+      nexoWelcome();
+    }
+    setTimeout(() => document.getElementById("chatInput")?.focus(), 200);
+  }
+}
+
+function nexoWelcome(){
+  const msgs = document.getElementById("chatMsgs");
+  const nombre = (localStorage.getItem("nombreCompleto") || MI_USUARIO).split(" ")[0];
+  
+  const welcomeDiv = document.createElement("div");
+  welcomeDiv.className = "chat-msg";
+  welcomeDiv.innerHTML = `
+    <div class="chat-av">🧠</div>
+    <div class="chat-bubble" style="max-width:100%;background:linear-gradient(135deg,var(--primary-soft),var(--surface-alt));border:1px solid var(--primary);color:var(--primary)">
+      <div style="font-weight:600;margin-bottom:6px">¡Hola, ${esc(nombre)}! 👋</div>
+      <div style="font-size:11px;line-height:1.6">Soy <strong>Nexo</strong>, tu asistente inteligente en GM Tickets.</div>
+      <div style="font-size:11px;line-height:1.6;margin-top:4px">Puedo ayudarte a:</div>
+      <div style="font-size:11px;margin-top:6px">
+        • 📝 Crear y gestionar tus tickets<br/>
+        • 📊 Ver el estado de tus solicitudes<br/>
+        • ⚡ Responder preguntas rápidas<br/>
+        • 💡 Darte sugerencias
+      </div>
+    </div>
+  `;
+  msgs.appendChild(welcomeDiv);
+  
+  setTimeout(() => {
+    const sugDiv = document.createElement("div");
+    sugDiv.id = "chatSuggestions";
+    sugDiv.className = "chat-suggestions";
+    sugDiv.innerHTML = `
+      <button class="chat-suggestion" onclick="sendSuggestion('¿Cuál es el estado de mis tickets?')">📊 Ver estado de mis tickets</button>
+      <button class="chat-suggestion" onclick="sendSuggestion('¿Cómo creo un nuevo ticket?')">📝 Cómo crear un ticket</button>
+      <button class="chat-suggestion" onclick="sendSuggestion('Necesito ayuda rápida')">⚡ Solicitar ayuda</button>
+    `;
+    msgs.appendChild(sugDiv);
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 300);
+}
+
+function sendSuggestion(texto){
+  const sugg = document.getElementById("chatSuggestions");
+  if(sugg) sugg.remove();
+  sendChat(true, texto);
+}
+
+function sendChat(isSuggestion = false, customText = null){
+  const input = document.getElementById("chatInput");
+  const text = customText || input.value.trim();
+  if(!text) return;
+  
+  const msgs = document.getElementById("chatMsgs");
+  
+  const userDiv = document.createElement("div");
+  userDiv.className = "chat-msg user";
+  const ini = (localStorage.getItem("nombreCompleto") || MI_USUARIO).split(" ")[0][0];
+  userDiv.innerHTML = `<div class="chat-av">${ini}</div><div class="chat-bubble">${esc(text)}</div>`;
+  msgs.appendChild(userDiv);
+  
+  if(!isSuggestion) input.value = "";
+  input.disabled = true;
+  msgs.scrollTop = msgs.scrollHeight;
+  
+  setTimeout(() => {
+    const typingDiv = document.createElement("div");
+    typingDiv.id = "nexoTyping";
+    typingDiv.className = "chat-msg";
+    typingDiv.innerHTML = `<div class="chat-av">🧠</div><div class="chat-typing"><span></span><span></span><span></span></div>`;
+    msgs.appendChild(typingDiv);
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 300);
+  
+  setTimeout(() => {
+    document.getElementById("nexoTyping")?.remove();
+    
+    const responses = {
+      "estado": `Tienes **${allTickets.length} tickets en total**. De ellos: **${allTickets.filter(t=>t.estado==="Pendiente").length} pendientes**, **${allTickets.filter(t=>t.estado==="En Proceso").length} en proceso**, y **${allTickets.filter(t=>t.estado==="Resuelto").length} resueltos**. ¿Necesitas detalles de alguno?`,
+      "crear": "Puedes crear un nuevo ticket en la sección **Nuevo Ticket** del menú. Describe tu problema y lo derivaremos al equipo correcto.",
+      "ayuda": "Estoy aquí para ayudarte. Puedes preguntarme sobre tus tickets, crear nuevos, o cualquier cosa del sistema. ¿Qué necesitas? 🙌",
+      "default": "Entendido. Para más información, visita **Nuevo Ticket** o contacta al equipo de soporte. 💬"
+    };
+    
+    let key = "default";
+    const txt = text.toLowerCase();
+    if(txt.includes("estado")) key = "estado";
+    else if(txt.includes("crear") || txt.includes("nuevo")) key = "crear";
+    else if(txt.includes("ayuda")) key = "ayuda";
+    
+    const botDiv = document.createElement("div");
+    botDiv.className = "chat-msg";
+    botDiv.innerHTML = `<div class="chat-av">🧠</div><div class="chat-bubble">${responses[key]}</div>`;
+    msgs.appendChild(botDiv);
+    msgs.scrollTop = msgs.scrollHeight;
+    
+    input.disabled = false;
+    input.focus();
+  }, 1500);
 }
 
 async function guardarPerfil(){
@@ -502,7 +724,6 @@ async function guardarPerfil(){
   if(pass && pass !== pass2){ showToast("Las contraseñas no coinciden","err"); return; }
   
   try{
-    // TODO: Integrar con API /usuarios/:id para actualizar perfil
     localStorage.setItem("nombreCompleto", nombre);
     showToast("✓ Perfil actualizado","ok");
   } catch{ showToast("Error","err"); }
@@ -511,7 +732,11 @@ async function guardarPerfil(){
 function toggleChat(){
   chatOpen = !chatOpen;
   document.getElementById("chatPanel").classList.toggle("open", chatOpen);
-  if(chatOpen) setTimeout(() => document.getElementById("chatInput")?.focus(), 200);
+  if(chatOpen){
+    const msgs = document.getElementById("chatMsgs");
+    if(msgs.children.length === 0) nexoWelcome();
+    setTimeout(() => document.getElementById("chatInput")?.focus(), 200);
+  }
 }
 
 function openSidebar(){ document.getElementById("sidebar").classList.add("open"); document.getElementById("sidebarOverlay").classList.add("show"); }
@@ -520,33 +745,12 @@ function closeSidebar(){ document.getElementById("sidebar").classList.remove("op
 function showToast(msg, type="ok"){
   const w = document.getElementById("toastWrap");
   const t = document.createElement("div");
-  t.className = `toast ${type}`;
-  t.textContent = msg;
+  t.className = `toast ${type === "ok" ? "ok" : "err"}`;
+  const emoji = type === "ok" ? "✓" : "⚠️";
+  t.innerHTML = `<span>${emoji}</span><span>${esc(msg)}</span>`;
   w.appendChild(t);
   requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add("show")));
   setTimeout(() => { t.classList.remove("show"); setTimeout(() => t.remove(), 300); }, 3000);
-}
-
-function sendChat(){
-  const input = document.getElementById("chatInput");
-  const text = input.value.trim();
-  if(!text) return;
-  
-  const msgs = document.getElementById("chatMsgs");
-  const div = document.createElement("div");
-  div.className = "chat-msg user";
-  div.innerHTML = `<div class="chat-av">U</div><div class="chat-bubble">${esc(text)}</div>`;
-  msgs.appendChild(div);
-  input.value = "";
-  msgs.scrollTop = msgs.scrollHeight;
-  
-  setTimeout(() => {
-    const div2 = document.createElement("div");
-    div2.className = "chat-msg";
-    div2.innerHTML = `<div class="chat-av">🧠</div><div class="chat-bubble">Estoy aquí para ayudarte. ¿Hay algo específico que necesites?</div>`;
-    msgs.appendChild(div2);
-    msgs.scrollTop = msgs.scrollHeight;
-  }, 500);
 }
 
 function logout(){
