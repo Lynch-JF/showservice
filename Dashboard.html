@@ -921,10 +921,29 @@ select optgroup{background:var(--surface2);color:var(--text3);font-size:11px}
 <script src="JS/js.js"></script>
 <script>
 /* ══════════════════════════════════════════════════════
-   CONFIG
+   CONFIG — Backend real (Railway + Supabase)
 ══════════════════════════════════════════════════════ */
-const API_TICKETS        = "https://api.sheetbest.com/sheets/a50a59f4-402a-4937-a0fc-e20789380908";
-const API_USERS          = "https://api.sheetbest.com/sheets/6784d1e5-1e26-4605-9c19-329eb2b6ea12";
+//const API_BASE = "https://gm-tickets-backend-production.up.railway.app/api";
+
+/*function getToken() { return localStorage.getItem("gmt_token") || ""; }
+function authHeaders() {
+  return { "Content-Type": "application/json", "Authorization": "Bearer " + getToken() };
+}
+async function apiFetch(path, opts = {}) {
+  const res = await fetch(API_BASE + path, { ...opts, headers: { ...authHeaders(), ...(opts.headers || {}) } });
+  if (res.status === 401) {
+    showToast("Sesión expirada, vuelve a iniciar sesión", "error");
+    setTimeout(logout, 1500);
+    throw new Error("Unauthorized");
+  }
+  return res;
+}
+
+function logout() {
+  ["usuario","rol","nombreCompleto","depto","gmt_token"].forEach(k => localStorage.removeItem(k));
+  window.location.href = "index.html";
+}*/
+
 const OPENROUTER_API_KEY = "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";
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 const OPENROUTER_MODEL   = "cohere/north-mini-code:free";
@@ -981,14 +1000,11 @@ let chatOpen            = false;
 let chatHistory         = [];
 let chatTyping          = false;
 
-// ★ Estado del asistente de generación de ticket
-let aiTicketDraft = null;   // Objeto con titulo, descripcion, urgencia, categoria, tecnico
-let faqVisible    = false;  // Si el panel FAQ está mostrándose
+let aiTicketDraft = null;
+let faqVisible    = false;
 
 /* ══════════════════════════════════════════════════════
    ★ FUNCIÓN 1: GENERACIÓN IA DE TICKET ESTRUCTURADO
-   Llama a la IA con el problema en lenguaje natural y
-   devuelve JSON con titulo, descripcion, urgencia, categoria.
 ══════════════════════════════════════════════════════ */
 async function generarEstructuraTicket(problemaNatural) {
   const depto   = localStorage.getItem("depto") || "Sin departamento";
@@ -1054,13 +1070,11 @@ Reglas de técnico sugerido:
   const data    = await response.json();
   const rawText = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || "{}";
 
-  // Limpiar posibles backticks o texto extra antes del JSON
   const jsonMatch = rawText.match(/\{[\s\S]*\}/);
   if (!jsonMatch) throw new Error("No se pudo parsear el JSON de la IA");
 
   const parsed = JSON.parse(jsonMatch[0]);
 
-  // Validar campos mínimos
   if (!parsed.titulo || !parsed.descripcion) throw new Error("JSON incompleto");
 
   return {
@@ -1074,14 +1088,11 @@ Reglas de técnico sugerido:
 
 /* ══════════════════════════════════════════════════════
    ★ FUNCIÓN 2: INYECTAR DATOS IA EN EL FORMULARIO
-   Pre-llena titulo, descripcion y técnico. Muestra banner
-   y lanza el FAQ automático.
 ══════════════════════════════════════════════════════ */
 function inyectarEnFormulario(draft) {
   document.getElementById("titulo").value       = draft.titulo;
   document.getElementById("descripcion").value  = draft.descripcion;
 
-  // Seleccionar técnico sugerido en el <select>
   const sel = document.getElementById("asignadoA");
   if (sel && draft.tecnico_sugerido) {
     const opciones = Array.from(sel.options);
@@ -1091,16 +1102,12 @@ function inyectarEnFormulario(draft) {
     if (match) sel.value = match.value;
   }
 
-  // Mostrar banner IA con tags de urgencia y categoría
   mostrarBannerIA(draft);
-
-  // Buscar FAQ con tickets similares resueltos
   buscarFAQ(draft.titulo + " " + draft.descripcion);
 }
 
 /* ══════════════════════════════════════════════════════
    ★ FUNCIÓN 3: BANNER IA EN EL FORMULARIO
-   Muestra urgencia y categoría detectadas por la IA.
 ══════════════════════════════════════════════════════ */
 function mostrarBannerIA(draft) {
   const banner = document.getElementById("aiPrefillBanner");
@@ -1139,9 +1146,8 @@ function dismissAiBanner() {
 
 /* ══════════════════════════════════════════════════════
    ★ FUNCIÓN 4: FAQ AUTOMÁTICO
-   Busca tickets similares ya resueltos en el historial
-   (todos los tickets de la API, no solo los del usuario).
-   Usa similitud básica de palabras clave.
+   FIX: ahora usa apiFetch("/tickets") en vez de la vieja
+   constante API_TICKETS (SheetBest) que ya no existe.
 ══════════════════════════════════════════════════════ */
 function calcularSimilitud(textoA, textoB) {
   const limpiar = function(t) {
@@ -1163,22 +1169,20 @@ function calcularSimilitud(textoA, textoB) {
 async function buscarFAQ(textoBusqueda) {
   if (!textoBusqueda || textoBusqueda.trim().length < 10) return;
   try {
-    // Buscar en todos los tickets resueltos (no solo del usuario actual)
     let todosResueltos = [];
     try {
-      const r    = await fetch(API_TICKETS);
+      const r    = await apiFetch("/tickets");
       const data = await r.json();
       todosResueltos = Array.isArray(data)
         ? data.filter(function(t){ return t.estado === "Resuelto" && t.resolucion && t.resolucion.trim(); })
         : [];
     } catch(e) {
-      // Si falla la API global, usar los tickets del usuario actual
+      // Si falla la API global, usar los tickets ya cargados del usuario actual
       todosResueltos = todosTickets.filter(function(t){ return t.estado === "Resuelto" && t.resolucion; });
     }
 
     if (!todosResueltos.length) return;
 
-    // Calcular similitud y tomar los top 3
     const conScore = todosResueltos.map(function(t) {
       const textoTicket = (t.titulo || "") + " " + (t.descripcion || "");
       return { ticket: t, score: calcularSimilitud(textoBusqueda, textoTicket) };
@@ -1218,17 +1222,14 @@ function mostrarFAQ(tickets) {
 }
 
 function marcarFAQResuelto(el, resEnc) {
-  // Resaltar el ítem seleccionado
   document.querySelectorAll(".faq-item").forEach(function(i){ i.style.opacity = ".45"; });
   el.style.opacity = "1";
   el.style.borderColor = "var(--success)";
   el.style.background  = "var(--success-bg)";
 
-  // Mostrar mensaje de resolución
   const msg = document.getElementById("faqResolvedMsg");
   if (msg) msg.classList.add("visible");
 
-  // Ocultar acciones y mostrar botón de "igual quiero el ticket"
   const actions = document.getElementById("faqActions");
   if (actions) {
     actions.innerHTML = '<button class="btn-faq-skip" onclick="skipFaq()" style="color:var(--text2)">← Volver al formulario</button>' +
@@ -1242,19 +1243,17 @@ function skipFaq() {
   const panel = document.getElementById("faqPanel");
   if (panel) panel.classList.remove("visible");
   faqVisible = false;
-  // Enfocar el formulario
   const titulo = document.getElementById("titulo");
   if (titulo) titulo.focus();
 }
 
 function confirmarCreacionTicket() {
   skipFaq();
-  // Continuar con el envío normal
   crearTicket();
 }
 
 /* ══════════════════════════════════════════════════════
-   ★ FUNCIÓN 5: BOTÓN ENVIAR — Ahora muestra FAQ si aplica
+   ★ FUNCIÓN 5: BOTÓN ENVIAR
 ══════════════════════════════════════════════════════ */
 function iniciarEnvioTicket() {
   const titulo = (document.getElementById("titulo").value || "").trim();
@@ -1263,7 +1262,6 @@ function iniciarEnvioTicket() {
   if (!titulo) { showToast("Escribe un título para el ticket","error"); return; }
   if (!desc)   { showToast("Agrega una descripción del problema","error"); return; }
 
-  // Si el FAQ está visible y aún no fue descartado, no enviar directamente
   if (faqVisible) {
     showToast("Revisa las soluciones sugeridas o haz clic en 'Crear ticket de todos modos'","warning");
     document.getElementById("faqPanel").scrollIntoView({ behavior:"smooth", block:"center" });
@@ -1275,9 +1273,6 @@ function iniciarEnvioTicket() {
 
 /* ══════════════════════════════════════════════════════
    ★ FUNCIÓN 6: AUTO-CLASIFICACIÓN DE URGENCIA POR IA
-   Reemplaza las keywords hardcodeadas. La IA asigna
-   urgencia contextualmente al momento de crear el ticket.
-   Se llama cuando el campo título cambia (con debounce).
 ══════════════════════════════════════════════════════ */
 let urgenciaIATimeout = null;
 let urgenciaIACacheKey = "";
@@ -1295,7 +1290,6 @@ function onTituloInput() {
 }
 
 async function clasificarUrgenciaIA(texto) {
-  // Solo clasifica si hay texto suficiente en descripción también
   const desc = (document.getElementById("descripcion").value || "").trim();
   const textoCompleto = texto + " " + desc;
   if (textoCompleto.trim().length < 12) return;
@@ -1336,7 +1330,6 @@ Responde ÚNICAMENTE con la palabra de urgencia, sin más texto.`;
     const validos = ["critico", "alto", "medio", "normal"];
     const urg     = validos.find(function(v){ return rawUrg.includes(v); }) || "normal";
 
-    // Mostrar indicador visual de urgencia detectada
     mostrarIndicadorUrgencia(urg);
 
   } catch(e) {
@@ -1345,7 +1338,6 @@ Responde ÚNICAMENTE con la palabra de urgencia, sin más texto.`;
 }
 
 function mostrarIndicadorUrgencia(nivel) {
-  // Remover indicador previo si existe
   const prev = document.getElementById("urgIndicadorIA");
   if (prev) prev.remove();
 
@@ -1388,11 +1380,8 @@ function calcUrgencia(t) {
   const texto = ((t.titulo||"") + " " + (t.descripcion||"")).toLowerCase();
   let diasDesde = 0;
   try {
-    const partes = (t.fecha||"").split(",")[0].trim().split("/");
-    if (partes.length === 3) {
-      const d = new Date(parseInt(partes[2]), parseInt(partes[1])-1, parseInt(partes[0]));
-      diasDesde = Math.floor((new Date() - d) / (1000*60*60*24));
-    }
+    const d = new Date(t.creado_en || t.fecha || "");
+    if (!isNaN(d)) diasDesde = Math.floor((new Date() - d) / (1000*60*60*24));
   } catch {}
   const esCritico = PALABRAS_CRITICO.some(function(p){ return texto.includes(p); });
   const esAlto    = PALABRAS_ALTO.some(function(p){ return texto.includes(p); });
@@ -1410,23 +1399,27 @@ function calcUrgencia(t) {
 
 /* ══════════════════════════════════════════════════════
    CARGAR ANALISTAS
+   FIX: ahora usa apiFetch("/usuarios") en vez de la vieja
+   constante API_USERS (SheetBest), y campos en minúscula
+   (rol, nombre_usuario, nombre_completo) como en Supabase.
 ══════════════════════════════════════════════════════ */
 async function cargarAnalistas() {
   try {
-    const r    = await fetch(API_USERS);
+    const r    = await apiFetch("/usuarios");
+    if (!r.ok) throw new Error("HTTP " + r.status);
     const data = await r.json();
     if (!Array.isArray(data)) return;
-    const analistas = data.filter(function(u){ return (u.Rol||"").toLowerCase() === "analista"; });
+    const analistas = data.filter(function(u){ return (u.rol||"").toLowerCase() === "analista"; });
     if (!analistas.length) return;
-    analistas.forEach(function(u){ NOMBRES_TEC[u.NombreUsuario] = u.NombreCompleto || u.NombreUsuario; });
+    analistas.forEach(function(u){ NOMBRES_TEC[u.nombre_usuario] = u.nombre_completo || u.nombre_usuario; });
     const og1 = document.getElementById("analistaOptgroup");
     const og2 = document.getElementById("analistaFilterOptgroup");
     analistas.forEach(function(u) {
-      const nombre = u.NombreCompleto || u.NombreUsuario;
-      if (og1) { const opt = document.createElement("option"); opt.value = u.NombreUsuario; opt.textContent = nombre; og1.appendChild(opt); }
-      if (og2) { const opt = document.createElement("option"); opt.value = u.NombreUsuario; opt.textContent = nombre; og2.appendChild(opt); }
+      const nombre = u.nombre_completo || u.nombre_usuario;
+      if (og1) { const opt = document.createElement("option"); opt.value = u.nombre_usuario; opt.textContent = nombre; og1.appendChild(opt); }
+      if (og2) { const opt = document.createElement("option"); opt.value = u.nombre_usuario; opt.textContent = nombre; og2.appendChild(opt); }
     });
-  } catch(e) { console.warn("Analistas no cargados:", e); }
+  } catch(e) { console.warn("Analistas no cargados (puede requerir permisos de admin):", e); }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -1484,36 +1477,49 @@ function aplicarAutoRefresh() {
   else showToast("Auto-actualización desactivada","warning");
 }
 
-/* ══════════════════════════════════════════════════════
-   CARGAR TICKETS
-══════════════════════════════════════════════════════ */
 async function recargarTickets() {
   const btn = document.getElementById("refreshBtn");
   if (btn) btn.classList.add("spinning");
   const usuario = localStorage.getItem("usuario");
   try {
-    const r    = await fetch(API_TICKETS);
+    const r = await apiFetch("/tickets");
+    if (!r.ok) throw new Error("HTTP " + r.status);
     const data = await r.json();
-    todosTickets = Array.isArray(data) ? data.filter(function(t){ return t.usuario === usuario; }) : [];
+
+    todosTickets = (Array.isArray(data) ? data : [])
+      .filter(function(t){ return t.usuario === usuario; })
+      .map(function(t){
+        return {
+          ...t,
+          fecha:          t.creado_en ? new Date(t.creado_en).toLocaleString("es-DO") : "",
+          fecha_recibido: t.fecha_recibido ? new Date(t.fecha_recibido).toLocaleString("es-DO") : "",
+          fecha_resuelto: t.fecha_resuelto ? new Date(t.fecha_resuelto).toLocaleString("es-DO") : "",
+          recibido:       t.recibido ? "si" : ""
+        };
+      });
+
     const tot  = todosTickets.length;
     const pend = todosTickets.filter(function(t){ return t.estado === "Pendiente"; }).length;
     const proc = todosTickets.filter(function(t){ return t.estado === "En Proceso"; }).length;
     const res  = todosTickets.filter(function(t){ return t.estado === "Resuelto"; }).length;
+
     document.getElementById("ps-total").textContent = tot;
     document.getElementById("ps-pend").textContent  = pend;
     document.getElementById("ps-proc").textContent  = proc;
     document.getElementById("ps-res").textContent   = res;
     const nb = document.getElementById("nb-pendientes");
     nb.textContent = pend; nb.style.display = pend > 0 ? "" : "none";
+
     renderUrgSummary();
     renderUltimos();
     renderMisTickets();
     const cfgT = document.getElementById("cfgInfoTotal"); if (cfgT) cfgT.textContent = tot;
     const cfgR = document.getElementById("cfgInfoRes");   if (cfgR) cfgR.textContent = res;
-  } catch(e) { showToast("Error al cargar tickets","error"); console.error(e); }
-  finally { if (btn) btn.classList.remove("spinning"); }
+  } catch(e) {
+    if (e.message !== "Unauthorized") showToast("Error al cargar tickets","error");
+    console.error(e);
+  } finally { if (btn) btn.classList.remove("spinning"); }
 }
-function cargarTickets() { recargarTickets(); }
 
 /* ══════════════════════════════════════════════════════
    URGENCY SUMMARY
@@ -1643,8 +1649,8 @@ function getFileIconEmoji(ext) {
 function eliminarTicket(idEnc) {
   const id = decodeURIComponent(idEnc);
   if (!confirm("¿Seguro que deseas eliminar este ticket?")) return;
-  fetch(API_TICKETS + "/id/" + encodeURIComponent(id), { method:"DELETE" })
-    .then(function(){ showToast("Ticket eliminado","success"); recargarTickets(); })
+  apiFetch("/tickets/" + encodeURIComponent(id), { method:"DELETE" })
+    .then(function(r){ if(!r.ok) throw new Error(); showToast("Ticket eliminado","success"); recargarTickets(); })
     .catch(function(){ showToast("Error al eliminar","error"); });
 }
 
@@ -1658,11 +1664,6 @@ function switchView(v) {
   const nav = document.getElementById("nav-" + v);
   if (nav) nav.classList.add("active");
   document.getElementById("viewTitle").textContent = VIEW_TITLES[v] || v;
-
-  // Al entrar a "nuevo", limpiar estado si venía de otra vista
-  if (v === "nuevo") {
-    // No limpiar si viene del chat con un draft
-  }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -1703,24 +1704,46 @@ function toggleDarkModeCheck(on) {
   showToast(on ? "Modo oscuro activado" : "Modo claro activado","success");
 }
 
+/* ══════════════════════════════════════════════════════
+   GUARDAR NOMBRE
+   FIX: ya no usa API_USERS (SheetBest). Busca el propio
+   usuario en /usuarios por nombre_usuario para obtener su
+   id, y hace PATCH /usuarios/:id con nombre_completo.
+   ⚠️ Esto asume que el rol "usuario" tiene permiso para
+   leer /usuarios. Si el backend lo restringe a admin,
+   esta llamada devolverá 401/403 y quedará como fallback
+   local — en ese caso se necesita una ruta tipo
+   PATCH /auth/me o /usuarios/me.
+══════════════════════════════════════════════════════ */
 async function guardarNombre() {
   const nombre  = document.getElementById("cfgFieldNombre").value.trim();
   const usuario = localStorage.getItem("usuario");
   if (!nombre) { showToast("El nombre no puede estar vacío","error"); return; }
+
   localStorage.setItem("nombreCompleto", nombre);
   document.getElementById("sbName").textContent       = nombre;
   document.getElementById("sbAvatar").textContent     = nombre.substring(0,2).toUpperCase();
   document.getElementById("perfilNombre").textContent = nombre + "!";
   document.getElementById("perfilAvatar").textContent = nombre.split(" ").map(function(p){ return p[0]; }).join("").substring(0,2).toUpperCase();
   renderConfig();
+
   try {
-    const r = await fetch(API_USERS + "/NombreUsuario/" + encodeURIComponent(usuario), {
-      method:"PATCH", headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({ NombreCompleto: nombre })
+    const rList = await apiFetch("/usuarios");
+    if (!rList.ok) throw new Error("HTTP " + rList.status);
+    const lista = await rList.json();
+    const yo = Array.isArray(lista) ? lista.find(function(u){ return u.nombre_usuario === usuario; }) : null;
+    if (!yo || !yo.id) throw new Error("Usuario no encontrado en /usuarios");
+
+    const rPatch = await apiFetch("/usuarios/" + yo.id, {
+      method: "PATCH",
+      body: JSON.stringify({ nombre_completo: nombre })
     });
-    if (!r.ok) throw new Error("HTTP " + r.status);
+    if (!rPatch.ok) throw new Error("HTTP " + rPatch.status);
     showToast("Nombre actualizado ✓","success");
-  } catch { showToast("Nombre guardado localmente (error de red)","warning"); }
+  } catch (err) {
+    showToast("Nombre guardado localmente (sin sincronizar con el servidor)","warning");
+    console.warn("guardarNombre:", err);
+  }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -1857,8 +1880,6 @@ function sendSuggestion(text) {
 
 /* ══════════════════════════════════════════════════════
    ★ FUNCIÓN 7: TARJETA PREVIEW EN EL CHAT
-   Muestra el draft generado por IA dentro del chat
-   con botón para enviarlo al formulario.
 ══════════════════════════════════════════════════════ */
 function appendTicketPreviewCard(draft) {
   const msgs = document.getElementById("chatMessages");
@@ -1900,25 +1921,18 @@ function appendTicketPreviewCard(draft) {
 
 /* ══════════════════════════════════════════════════════
    ★ FUNCIÓN 8: USAR DRAFT EN FORMULARIO
-   Transfiere el ticket generado por IA al formulario,
-   cambia a la vista "Nuevo Ticket" y lanza el FAQ.
 ══════════════════════════════════════════════════════ */
 function usarDraftEnFormulario(draft) {
   aiTicketDraft = draft;
-
-  // Ir al formulario
   switchView("nuevo");
 
-  // Pequeño delay para que el DOM esté listo
   setTimeout(function() {
     inyectarEnFormulario(draft);
     showToast("Formulario pre-llenado por IA ✨","success");
-    // Scroll al formulario
     const card = document.querySelector("#view-nuevo .card");
     if (card) card.scrollIntoView({ behavior:"smooth", block:"start" });
   }, 100);
 
-  // Cerrar chat
   toggleChat();
 }
 
@@ -1988,17 +2002,14 @@ async function sendChatMessage() {
     chatHistory.push({ role:"model", parts:[{ text: botText }] });
     removeTypingIndicator();
 
-    // ★ Detectar si el modelo quiere generar el ticket estructurado
     if (botText.includes("GENERAR_TICKET_IA")) {
       const cleanText = botText.replace("GENERAR_TICKET_IA","").trim();
       if (cleanText) appendBotMessage(cleanText);
 
-      // Mostrar loading de generación
       appendBotMessage("✨ Generando ticket estructurado con IA...");
       showTypingIndicator();
 
       try {
-        // Usar el último mensaje del usuario como descripción del problema
         const problemaUsuario = chatHistory
           .filter(function(m){ return m.role === "user"; })
           .map(function(m){ return m.parts[0].text; })
@@ -2035,6 +2046,5 @@ async function sendChatMessage() {
 ══════════════════════════════════════════════════════ */
 function mostrarTickets() { recargarTickets(); }
 </script>
-
 </body>
 </html>
