@@ -697,12 +697,26 @@ table.data-table tr:hover td{background:var(--s2)}
 
 <script>
 // ══════════════════════════════════════════════
-// CONFIGURACIÓN CENTRAL
+// CONFIGURACIÓN CENTRAL — Backend real (Railway + Supabase)
 // ══════════════════════════════════════════════
 
-const API_URL           = "https://api.sheetbest.com/sheets/a50a59f4-402a-4937-a0fc-e20789380908";
-const CLOUDINARY_CLOUD  = "dy50psi1g";
-const CLOUDINARY_PRESET = "tickets_preset";
+const API_BASE           = "https://gm-tickets-backend-production.up.railway.app/api";
+const CLOUDINARY_CLOUD   = "dy50psi1g";
+const CLOUDINARY_PRESET  = "tickets_preset";
+
+function getToken() { return localStorage.getItem("gmt_token") || ""; }
+function authHeaders() {
+  return { "Content-Type": "application/json", "Authorization": "Bearer " + getToken() };
+}
+async function apiFetch(path, opts = {}) {
+  const res = await fetch(API_BASE + path, { ...opts, headers: { ...authHeaders(), ...(opts.headers || {}) } });
+  if (res.status === 401) {
+    showToast("Sesión expirada, vuelve a iniciar sesión", "err");
+    setTimeout(anLogout, 1500);
+    throw new Error("Unauthorized");
+  }
+  return res;
+}
 
 // ══════════════════════════════════════════════
 // ★ CHATBOT IA — GM Asistente (panel Analista) con OpenRouter (Mistral)
@@ -908,8 +922,9 @@ const PALABRAS_ALTO    = ["lento","error","falla","problema","no responde","rein
 // SESIÓN
 // ══════════════════════════════════════════════
 (function(){
-  const rol = localStorage.getItem("rol");
-  if(rol !== "analista"){ window.location.href = "index.html"; return; }
+  const rol   = localStorage.getItem("rol");
+  const token = localStorage.getItem("gmt_token");
+  if(rol !== "analista" || !token){ window.location.href = "index.html"; return; }
   const u = localStorage.getItem("usuario") || "Analista";
   const n = localStorage.getItem("nombreCompleto") || u;
   const d = localStorage.getItem("depto") || "";
@@ -928,7 +943,7 @@ const PALABRAS_ALTO    = ["lento","error","falla","problema","no responde","rein
 })();
 
 function anLogout(){
-  ["usuario","rol","depto","nombreCompleto"].forEach(k => localStorage.removeItem(k));
+  ["usuario","rol","depto","nombreCompleto","gmt_token"].forEach(k => localStorage.removeItem(k));
   window.location.href = "index.html";
 }
 
@@ -1062,13 +1077,13 @@ function chequearNotificaciones(tickets){
 
   // ── Primera carga: solo capturar estado inicial, no notificar ──
   if(knownIds === null){
-    knownIds = new Set(tickets.map(t => t.id));
+    knownIds = new Set(tickets.map(t => String(t.id)));
     tickets
       .filter(t => t.estado === "Resuelto" && (t.usuario||"").toLowerCase() === mi.toLowerCase())
-      .forEach(t => knownResueltos.add(t.id));
+      .forEach(t => knownResueltos.add(String(t.id)));
     tickets
       .filter(t => calcUrgencia(t).level === "critico" && t.estado !== "Resuelto")
-      .forEach(t => knownCriticos.add(t.id));
+      .forEach(t => knownCriticos.add(String(t.id)));
     return;
   }
 
@@ -1176,15 +1191,23 @@ window.addEventListener("load", ()=>{
 async function recargarTodo(){
   animLoad("lb-asig");
   try{
-    const data = await fetch(API_URL).then(r=>r.json());
-    allTickets = Array.isArray(data) ? data : [];
+    const r = await apiFetch("/tickets");
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    const data = await r.json();
+    allTickets = (Array.isArray(data) ? data : []).map(t => ({
+      ...t,
+      fecha:          t.creado_en      ? new Date(t.creado_en).toLocaleString("es-DO")      : "",
+      fecha_recibido: t.fecha_recibido ? new Date(t.fecha_recibido).toLocaleString("es-DO") : "",
+      fecha_resuelto: t.fecha_resuelto ? new Date(t.fecha_resuelto).toLocaleString("es-DO") : "",
+      recibido:       t.recibido ? "si" : ""
+    }));
     chequearNotificaciones(allTickets);  // ── NOTIF: comparar tras cada recarga ──
     actualizarBadges();
     renderAsignados();
     renderResueltos();
     renderPeticiones();
     fillLoad("lb-asig");
-  }catch{ showToast("Error al cargar datos","err"); }
+  }catch(e){ if(e.message !== "Unauthorized") showToast("Error al cargar datos","err"); }
 }
 
 function animLoad(id){ const b=document.getElementById(id); if(!b)return; b.style.width="0%"; setTimeout(()=>b.style.width="70%",80); }
@@ -1446,25 +1469,25 @@ function buildTicketCard(t, showAtendido){
 async function marcarRecibido(idEnc){
   const id = decodeURIComponent(idEnc);
   try{
-    const r = await fetch(`${API_URL}/id/${encodeURIComponent(id)}`,{
-      method:"PATCH", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({recibido:"si", fecha_recibido:new Date().toLocaleString("es-DO")})
+    const r = await apiFetch(`/tickets/${encodeURIComponent(id)}`,{
+      method:"PATCH",
+      body: JSON.stringify({recibido:true})
     });
     if(!r.ok) throw new Error();
     showToast("Ticket marcado como recibido ✓","ok"); await recargarTodo();
-  }catch{ showToast("Error al marcar recibido","err"); }
+  }catch(e){ if(e.message !== "Unauthorized") showToast("Error al marcar recibido","err"); }
 }
 
 async function cambiarEstado(idEnc, nuevoEstado){
   const id = decodeURIComponent(idEnc);
   try{
-    const r = await fetch(`${API_URL}/id/${encodeURIComponent(id)}`,{
-      method:"PATCH", headers:{"Content-Type":"application/json"},
+    const r = await apiFetch(`/tickets/${encodeURIComponent(id)}`,{
+      method:"PATCH",
       body: JSON.stringify({estado:nuevoEstado})
     });
     if(!r.ok) throw new Error();
     showToast(`Estado → "${nuevoEstado}"`,"ok"); await recargarTodo();
-  }catch{ showToast("Error al cambiar estado","err"); }
+  }catch(e){ if(e.message !== "Unauthorized") showToast("Error al cambiar estado","err"); }
 }
 
 function abrirResModal(idEnc){
@@ -1481,18 +1504,17 @@ async function confirmarResolucion(){
   const detalle = document.getElementById("detalleRes").value.trim();
   if(!detalle){ showToast("Escribe el detalle de la resolución","err"); return; }
   try{
-    const r = await fetch(`${API_URL}/id/${encodeURIComponent(ticketResId)}`,{
-      method:"PATCH", headers:{"Content-Type":"application/json"},
+    const r = await apiFetch(`/tickets/${encodeURIComponent(ticketResId)}`,{
+      method:"PATCH",
       body: JSON.stringify({
         estado:"Resuelto",
         resolucion:detalle,
-        participantes:window._miNombre||window._miUsuario,
-        fecha_resuelto:new Date().toLocaleString("es-DO")
+        participantes:window._miNombre||window._miUsuario
       })
     });
     if(!r.ok) throw new Error();
     showToast("Ticket resuelto ✓","ok"); cerrarResModal(); await recargarTodo();
-  }catch{ showToast("Error al resolver ticket","err"); }
+  }catch(e){ if(e.message !== "Unauthorized") showToast("Error al resolver ticket","err"); }
 }
 
 // ══════════════════════════════════════════════
@@ -1544,15 +1566,15 @@ async function confirmarReasignar(){
   try{
     const payload = { asignado: destino };
     if(motivo) payload.resolucion = `[Reasignado por ${window._miNombre||window._miUsuario}] ${motivo}`;
-    const r = await fetch(`${API_URL}/id/${encodeURIComponent(ticketReasigId)}`,{
-      method:"PATCH", headers:{"Content-Type":"application/json"},
+    const r = await apiFetch(`/tickets/${encodeURIComponent(ticketReasigId)}`,{
+      method:"PATCH",
       body: JSON.stringify(payload)
     });
     if(!r.ok) throw new Error();
     const nombreDestino = ANALISTAS_TESORERIA[destino] || TECNICOS[destino] || destino;
     showToast(`Ticket reasignado a ${nombreDestino} ✓`,"ok");
     cerrarReasignarModal(); await recargarTodo();
-  }catch{ showToast("Error al reasignar","err"); }
+  }catch(e){ if(e.message !== "Unauthorized") showToast("Error al reasignar","err"); }
 }
 
 // ══════════════════════════════════════════════
@@ -1620,22 +1642,18 @@ async function enviarPeticion(){
   btn.disabled=true; btn.textContent="Subiendo archivos…";
   const urls = await subirArchivos();
   btn.textContent="Enviando petición…";
-  const ticket = {
-    id:"TK-"+Date.now(), titulo, descripcion,
-    depto:window._miDepto||"Analista",
-    asignado:tecnico, estado:"Pendiente",
-    usuario:window._miUsuario,
-    fecha:new Date().toLocaleString("es-DO"),
-    adjuntos:urls.join(", "),
-    resolucion:"", participantes:"",
-    fecha_recibido:"", recibido:"", fecha_resuelto:""
+  const payload = {
+    titulo, descripcion,
+    depto: window._miDepto || "Analista",
+    asignado: tecnico,
+    adjuntos: urls.join(", ")
   };
   try{
-    const r = await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(ticket)});
+    const r = await apiFetch("/tickets", { method:"POST", body: JSON.stringify(payload) });
     if(!r.ok) throw new Error(`HTTP ${r.status}`);
     showToast("Petición enviada correctamente ✓","ok");
     limpiarFormulario(); await recargarTodo(); switchView("peticiones");
-  }catch(err){ showToast("Error al enviar: "+err.message,"err"); }
+  }catch(err){ if(err.message !== "Unauthorized") showToast("Error al enviar: "+err.message,"err"); }
   finally{ btn.disabled=false; btn.textContent="📤 Enviar petición"; }
 }
 
