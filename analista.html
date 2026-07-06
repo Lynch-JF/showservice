@@ -342,6 +342,7 @@ table.data-table tr:hover td{background:var(--s2)}
 .modal-title{font-size:18px;font-weight:600;margin-bottom:4px;font-family:var(--serif);font-style:italic}
 .modal-sub{font-family:var(--mono);font-size:10px;color:var(--t2);margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--b1)}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:22px;padding-top:16px;border-top:1px solid var(--b1)}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
 
 .form-select optgroup{font-family:var(--mono);font-size:10px;color:var(--t3);background:var(--s0)}
 
@@ -352,134 +353,71 @@ table.data-table tr:hover td{background:var(--s2)}
 .toast.t-err{border-left:3px solid var(--rose)}
 .toast.t-warn{border-left:3px solid var(--amber)}
 
-@media(max-width:900px){
-  .sidebar{width:60px}
-  .sb-brand,.sb-version,.nav-item span:not(.nav-icon),.sb-footer .user-info,.btn-logout,.nav-badge,.sb-section{display:none}
-  .nav-item{justify-content:center}
-  .main{margin-left:60px}
+/* ══════════════════════════════════════
+   ★ RESPONSIVE — off-canvas sidebar + hamburger
+══════════════════════════════════════ */
+.btn-hamburger{display:none;padding:6px 11px;border:1px solid var(--b2);background:var(--s2);color:var(--t1);border-radius:var(--r);font-size:15px;line-height:1;cursor:pointer;transition:all .15s var(--ease);flex-shrink:0}
+.btn-hamburger:hover{border-color:var(--accent);color:var(--accent2);background:rgba(167,139,250,.1)}
+#sidebarOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99}
+#sidebarOverlay.open{display:block;animation:fadeIn .15s var(--ease)}
+
+/* Sidebar becomes an off-canvas drawer below 880px, opened via hamburger */
+.btn-hamburger{display:none;padding:6px 11px;border:1px solid var(--b2);background:var(--s2);color:var(--t1);border-radius:var(--r);font-size:15px;line-height:1;cursor:pointer;transition:all .15s var(--ease);flex-shrink:0}
+.btn-hamburger:hover{border-color:var(--accent);color:var(--accent2);background:rgba(167,139,250,.1)}
+#sidebarOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99}
+#sidebarOverlay.open{display:block;animation:fadeIn .15s var(--ease)}
+
+@media(max-width:880px){
+  .btn-hamburger{display:inline-flex;align-items:center;justify-content:center}
+  .sidebar{width:260px;max-width:82vw;transform:translateX(-100%);transition:transform .25s var(--ease);box-shadow:16px 0 48px rgba(0,0,0,.45)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
   .form-row{grid-template-columns:1fr}
-  .theme-panel{right:8px;width:280px}
-}
-@media(max-width:600px){.view{padding:16px}}
-
-/* ══════════════════════════════════════
-   ★ CHATBOT IA — GM Asistente
-══════════════════════════════════════ */
-#chatbotFab{position:fixed;bottom:28px;right:28px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--indigo));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 20px rgba(167,139,250,.4);z-index:998;transition:transform .2s var(--ease),box-shadow .2s}
-#chatbotFab:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(167,139,250,.55)}
-#chatbotFab .fab-badge{position:absolute;top:-3px;right:-3px;width:16px;height:16px;background:var(--emerald);border-radius:50%;border:2px solid var(--bg);display:none}
-#chatbotFab .fab-badge.show{display:block}
-#chatbotPanel{position:fixed;bottom:92px;right:28px;width:360px;max-height:520px;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);box-shadow:0 16px 48px rgba(0,0,0,.5);display:flex;flex-direction:column;z-index:997;overflow:hidden;opacity:0;transform:translateY(12px) scale(.97);pointer-events:none;transition:opacity .22s var(--ease),transform .22s var(--ease)}
-#chatbotPanel.open{opacity:1;transform:translateY(0) scale(1);pointer-events:all}
-.chat-header{padding:14px 16px;background:linear-gradient(135deg,var(--accent) 0%,var(--indigo) 100%);display:flex;align-items:center;gap:10px;flex-shrink:0}
-.chat-header-avatar{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;border:1.5px solid rgba(255,255,255,.35)}
-.chat-header-info{flex:1}
-.chat-header-name{font-size:13px;font-weight:700;color:#fff;line-height:1.2}
-.chat-header-status{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:4px;margin-top:1px}
-.chat-status-dot{width:5px;height:5px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite}
-.chat-close-btn{background:rgba(255,255,255,.15);border:none;color:#fff;width:26px;height:26px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:background .15s;flex-shrink:0}
-.chat-close-btn:hover{background:rgba(255,255,255,.28)}
-.chat-suggestions{display:flex;gap:6px;padding:10px 12px 0;flex-wrap:wrap;flex-shrink:0}
-.chat-suggestion-chip{padding:5px 11px;border-radius:99px;border:1px solid var(--b2);background:var(--s2);color:var(--t2);font-family:var(--mono);font-size:10px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
-.chat-suggestion-chip:hover{border-color:var(--accent);color:var(--accent2);background:rgba(167,139,250,.08)}
-.chat-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0}
-.chat-messages::-webkit-scrollbar{width:4px}
-.chat-messages::-webkit-scrollbar-thumb{background:var(--s4);border-radius:99px}
-.chat-msg{display:flex;gap:8px;align-items:flex-end;animation:msgIn .18s var(--ease)}
-@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.chat-msg.user{flex-direction:row-reverse}
-.chat-msg-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--indigo));display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:#fff;font-weight:700}
-.chat-msg.bot .chat-msg-avatar{background:var(--s2);border:1px solid var(--b2);font-size:13px}
-.chat-msg-bubble{max-width:76%;padding:9px 13px;border-radius:14px;font-size:12.5px;line-height:1.5;color:var(--t0)}
-.chat-msg.bot .chat-msg-bubble{background:var(--s2);border:1px solid var(--b1);border-bottom-left-radius:4px}
-.chat-msg.user .chat-msg-bubble{background:var(--accent);color:#fff;border-bottom-right-radius:4px}
-.chat-typing{display:flex;gap:8px;align-items:center;padding:0 4px}
-.chat-typing-dots{display:flex;gap:4px;background:var(--s2);border:1px solid var(--b1);padding:8px 13px;border-radius:14px;border-bottom-left-radius:4px}
-.chat-typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--t3);animation:typingDot 1.2s ease-in-out infinite}
-.chat-typing-dots span:nth-child(2){animation-delay:.2s}
-.chat-typing-dots span:nth-child(3){animation-delay:.4s}
-@keyframes typingDot{0%,60%,100%{opacity:.3;transform:scale(1)}30%{opacity:1;transform:scale(1.3)}}
-.chat-input-area{padding:10px 12px;border-top:1px solid var(--b1);display:flex;gap:8px;align-items:center;flex-shrink:0;background:var(--s1)}
-#chatInput{flex:1;padding:8px 13px;background:var(--s2);border:1px solid var(--b2);border-radius:99px;color:var(--t0);font-family:var(--font);font-size:12px;outline:none;transition:border-color .15s}
-#chatInput:focus{border-color:var(--accent)}
-#chatInput::placeholder{color:var(--t3)}
-#chatSendBtn{width:34px;height:34px;border-radius:50%;background:var(--accent);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .15s;flex-shrink:0}
-#chatSendBtn:hover{opacity:.88;transform:scale(1.06)}
-#chatSendBtn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-.chat-footer{padding:6px 12px 8px;font-family:var(--mono);font-size:9px;color:var(--t3);text-align:center;border-top:1px solid var(--b1);flex-shrink:0}
-@media(max-width:640px){
-  #chatbotPanel{width:calc(100vw - 40px);right:20px;bottom:84px}
-  #chatbotFab{right:20px;bottom:20px}
+  .theme-panel{right:10px;left:10px;width:auto;max-width:none}
+  .topbar{padding:0 14px}
+  .topbar-title{font-size:14px}
+  .topbar-sub{display:none}
+  .view{padding:18px}
 }
 
-/* ══════════════════════════════════════
-   ★ FORMULARIO KPI (exclusivo Rafael) — mobile-first, tipo wizard/SPA
-══════════════════════════════════════ */
-.kpi-wizard{max-width:640px;margin:0 auto}
+@media(max-width:680px){
+  table.data-table{min-width:620px}
+  .metrics-row{grid-template-columns:repeat(2,1fr)}
+  .tickets-grid{grid-template-columns:1fr}
+  .filters{flex-direction:column;align-items:stretch}
+  .search-wrap{min-width:0;width:100%}
+  .filters .f-btn{flex:1;text-align:center}
+  .topbar-right{gap:6px}
+  .btn-topbar{padding:6px 10px;font-size:10px}
+  .theme-btn{padding:6px 10px}
+  .form-card{padding:18px}
+  #chatbotPanel{width:calc(100vw - 24px);right:12px;left:12px;bottom:80px;max-height:70vh}
+  #chatbotFab{right:16px;bottom:16px;width:48px;height:48px;font-size:20px}
+  .kpi-score-bar{flex-direction:column;align-items:flex-start;gap:6px}
+  .modal{padding:22px}
+}
 
-/* progreso */
-.kpi-progress{display:flex;align-items:center;gap:6px;margin-bottom:20px}
-.kpi-progress-step{flex:1;height:4px;border-radius:99px;background:var(--s3);transition:background .25s}
-.kpi-progress-step.done,.kpi-progress-step.active{background:var(--accent)}
-.kpi-progress-label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--t2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
-
-/* score sticky */
-.kpi-score-bar{position:sticky;top:calc(var(--topbar) + 8px);z-index:10;display:flex;align-items:center;justify-content:space-between;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);padding:12px 18px;margin-bottom:16px;backdrop-filter:blur(10px)}
-.kpi-score-bar-label{font-family:var(--mono);font-size:9px;color:var(--t2);letter-spacing:1px;text-transform:uppercase}
-.kpi-score-bar-tienda{font-size:13px;font-weight:600;color:var(--t0);margin-top:2px}
-.kpi-score-val{font-family:var(--serif);font-size:30px;line-height:1;color:var(--accent2)}
-.kpi-score-val.low{color:var(--rose)}
-.kpi-score-val.mid{color:var(--amber)}
-.kpi-score-val.high{color:var(--emerald)}
-
-/* pasos */
-.kpi-step{display:none;animation:fadeIn .2s var(--ease)}
-.kpi-step.active{display:block}
-.kpi-step-title{font-size:15px;font-weight:600;margin-bottom:4px;color:var(--t0)}
-.kpi-step-sub{font-family:var(--mono);font-size:10px;color:var(--t2);margin-bottom:18px}
-
-/* tarjeta de ítem del checklist */
-.kpi-item-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);padding:14px 16px;margin-bottom:10px;transition:border-color .2s}
-.kpi-item-card.answered-si{border-color:rgba(16,185,129,.3)}
-.kpi-item-card.answered-no{border-color:rgba(244,63,94,.3)}
-.kpi-item-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-.kpi-item-num{font-family:var(--mono);font-size:9px;color:var(--t3)}
-.kpi-item-title{font-size:13px;font-weight:500;color:var(--t0);line-height:1.4}
-.kpi-toggle-row{display:flex;gap:8px}
-.kpi-toggle-btn{flex:1;padding:11px 8px;border-radius:var(--r);border:1px solid var(--b2);background:var(--s2);color:var(--t2);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center}
-.kpi-toggle-btn.si.active{background:rgba(16,185,129,.14);border-color:var(--emerald);color:var(--emerald)}
-.kpi-toggle-btn.no.active{background:rgba(244,63,94,.14);border-color:var(--rose);color:var(--rose)}
-
-/* tarjeta de observación (paso hallazgos) */
-.kpi-obs-card{background:var(--s1);border:1px solid rgba(244,63,94,.25);border-radius:var(--r2);padding:16px;margin-bottom:12px}
-.kpi-obs-title{font-size:13px;font-weight:600;color:var(--rose);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.kpi-obs-field{margin-bottom:10px}
-.kpi-obs-field:last-child{margin-bottom:0}
-.kpi-obs-label{display:block;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t2);margin-bottom:5px}
-.kpi-obs-input,.kpi-obs-textarea{width:100%;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);color:var(--t0);font-family:var(--font);font-size:13px;outline:none}
-.kpi-obs-textarea{resize:vertical;min-height:60px}
-.kpi-obs-input:focus,.kpi-obs-textarea:focus{border-color:var(--accent)}
-.kpi-all-ok{text-align:center;padding:40px 20px;color:var(--emerald)}
-.kpi-all-ok-icon{font-size:36px;margin-bottom:10px}
-
-/* resumen */
-.kpi-summary-box{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);padding:18px;margin-bottom:14px}
-.kpi-summary-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b1);font-size:12px}
-.kpi-summary-row:last-child{border-bottom:none}
-.kpi-summary-row span:first-child{color:var(--t2)}
-.kpi-summary-row span:last-child{color:var(--t0);font-weight:600}
-
-/* navegación entre pasos */
-.kpi-nav{display:flex;gap:10px;margin-top:18px}
-.kpi-nav .btn-primary,.kpi-nav .btn-cancel{flex:1}
-@media(max-width:600px){
-  .kpi-score-bar{top:8px}
+@media(max-width:460px){
+  .metrics-row{grid-template-columns:1fr 1fr}
+  .metric{padding:14px 14px 12px}
+  .metric-val{font-size:30px}
+  .view{padding:14px}
+  .modal{max-width:calc(100vw - 24px);padding:18px}
+  .modal-actions{flex-direction:column-reverse}
+  .modal-actions button{width:100%}
+  .form-actions{flex-direction:column-reverse}
+  .form-actions button{width:100%}
+  .kpi-nav{flex-direction:column}
+  .t-actions{gap:6px}
+  .t-actions button{flex:1;min-width:120px}
+  .chat-suggestions{overflow-x:auto;flex-wrap:nowrap;padding-bottom:8px}
+  .chat-suggestion-chip{flex-shrink:0}
 }
 </style>
 </head>
 <body>
 
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="sb-logo">
     <div class="sb-wordmark">
       <div class="sb-icon">📊</div>
@@ -525,9 +463,12 @@ table.data-table tr:hover td{background:var(--s2)}
   </div>
 </aside>
 
+<div id="sidebarOverlay" onclick="closeSidebar()"></div>
+
 <main class="main">
   <div class="topbar">
     <div class="topbar-left">
+      <button class="btn-hamburger" id="btnHamburger" onclick="toggleSidebar()" title="Menú">☰</button>
       <span class="topbar-title" id="viewTitle">Asignados a mí</span>
       <span class="topbar-sep">·</span>
       <div class="topbar-sub"><span class="status-dot"></span><span id="nowTime"></span></div>
@@ -644,7 +585,7 @@ table.data-table tr:hover td{background:var(--s2)}
           <div class="upload-label" id="uploadLabel">Subiendo…</div>
         </div>
       </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end">
+      <div class="form-actions">
         <button class="btn-cancel" onclick="limpiarFormulario()">Limpiar</button>
         <button class="btn-primary" id="btnEnviar" onclick="enviarPeticion()">📤 Enviar petición</button>
       </div>
@@ -1391,7 +1332,22 @@ function switchView(v){
     kpi:        "Formulario KPI · Evaluación de tiendas"
   };
   document.getElementById("viewTitle").textContent = titles[v] || v;
+  closeSidebar();
+  window.scrollTo({top:0,behavior:"smooth"});
 }
+
+// ══════════════════════════════════════════════
+// SIDEBAR MÓVIL (off-canvas)
+// ══════════════════════════════════════════════
+function toggleSidebar(){
+  document.getElementById("sidebar")?.classList.toggle("open");
+  document.getElementById("sidebarOverlay")?.classList.toggle("open");
+}
+function closeSidebar(){
+  document.getElementById("sidebar")?.classList.remove("open");
+  document.getElementById("sidebarOverlay")?.classList.remove("open");
+}
+window.addEventListener("resize", () => { if(window.innerWidth > 880) closeSidebar(); });
 
 // ══════════════════════════════════════════════
 // BADGES
