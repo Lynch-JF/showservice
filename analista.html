@@ -114,8 +114,7 @@
   --emerald:#00ff88;--amber:#ffee00;--rose:#ff1744;--cyan:#00e5ff;
   --accent:var(--violet);--accent2:var(--violet2);
 }
-
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+* ,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--t0);font-family:var(--font);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
 ::selection{background:rgba(167,139,250,.35)}
@@ -412,6 +411,30 @@ table.data-table tr:hover td{background:var(--s2)}
   #chatbotPanel{width:calc(100vw - 40px);right:20px;bottom:84px}
   #chatbotFab{right:20px;bottom:20px}
 }
+
+/* ══════════════════════════════════════
+   ★ FORMULARIO KPI (exclusivo Rafael)
+══════════════════════════════════════ */
+.kpi-header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.kpi-score-box{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);padding:16px 22px;text-align:center;min-width:140px}
+.kpi-score-val{font-family:var(--serif);font-size:34px;line-height:1;color:var(--accent2)}
+.kpi-score-val.low{color:var(--rose)}
+.kpi-score-val.mid{color:var(--amber)}
+.kpi-score-val.high{color:var(--emerald)}
+.kpi-score-label{font-family:var(--mono);font-size:9px;color:var(--t2);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+.kpi-table-wrap{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);overflow-x:auto;margin-bottom:16px}
+table.kpi-table{width:100%;border-collapse:collapse;min-width:900px}
+table.kpi-table th{text-align:left;padding:9px 12px;font-family:var(--mono);font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:var(--t3);background:var(--s0);border-bottom:1px solid var(--b1);white-space:nowrap}
+table.kpi-table td{padding:8px 12px;font-size:12px;border-bottom:1px solid var(--b1);vertical-align:middle;color:var(--t1)}
+table.kpi-table tr:last-child td{border-bottom:none}
+table.kpi-table tr:hover td{background:var(--s2)}
+.kpi-item-name{max-width:220px;font-size:11.5px;color:var(--t0)}
+.kpi-select{padding:5px 8px;background:var(--s2);border:1px solid var(--b2);border-radius:6px;color:var(--t0);font-family:var(--font);font-size:11px;outline:none;min-width:70px}
+.kpi-select.si{border-color:rgba(16,185,129,.4);color:var(--emerald)}
+.kpi-select.no{border-color:rgba(244,63,94,.4);color:var(--rose)}
+.kpi-pts{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--t1);text-align:center}
+.kpi-mini-input{width:100%;min-width:110px;padding:5px 8px;background:var(--s2);border:1px solid var(--b2);border-radius:6px;color:var(--t0);font-family:var(--font);font-size:11px;outline:none}
+.kpi-mini-input:focus,.kpi-select:focus{border-color:var(--accent)}
 </style>
 </head>
 <body>
@@ -442,6 +465,11 @@ table.data-table tr:hover td{background:var(--s2)}
   <div class="nav-item" id="nav-peticiones" onclick="switchView('peticiones')">
     <span class="nav-icon">📤</span> Mis peticiones
     <span class="nav-badge violet" id="nb-peticiones">0</span>
+  </div>
+
+  <p class="sb-section" id="sb-section-kpi" style="display:none">Evaluación de tiendas</p>
+  <div class="nav-item" id="nav-kpi" style="display:none" onclick="switchView('kpi')">
+    <span class="nav-icon">📋</span> Formulario KPI
   </div>
 
   <div class="sb-footer">
@@ -618,6 +646,54 @@ table.data-table tr:hover td{background:var(--s2)}
       </table>
     </div>
   </div>
+
+  <!-- ══ FORMULARIO KPI (exclusivo Rafael) ══ -->
+  <div id="view-kpi" class="view">
+    <div class="info-banner violet">
+      <div>
+        <p>📋 Matriz de Cumplimiento y Desempeño en Tiendas</p>
+        <p>Selecciona la tienda, evalúa cada ítem y envía el resultado. Se notificará por correo a la tienda evaluada, TC IT, Gerencia y Rafael.</p>
+      </div>
+    </div>
+
+    <div class="kpi-header">
+      <div class="form-group" style="margin-bottom:0;min-width:260px">
+        <label class="form-label">Tienda a evaluar *</label>
+        <select class="form-select" id="kpiTienda" onchange="actualizarKpiTienda()"></select>
+      </div>
+      <div class="kpi-score-box">
+        <div class="kpi-score-val" id="kpiScoreVal">0</div>
+        <div class="kpi-score-label">Puntos de 100</div>
+      </div>
+    </div>
+
+    <div class="kpi-table-wrap">
+      <table class="kpi-table">
+        <thead>
+          <tr>
+            <th style="min-width:220px">Ítem a evaluar</th>
+            <th>Cumple</th>
+            <th>Puntos</th>
+            <th style="min-width:150px">Observaciones</th>
+            <th style="min-width:130px">Responsable</th>
+            <th>Fecha de Corrección</th>
+          </tr>
+        </thead>
+        <tbody id="kpiTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">Notas generales (opcional)</div>
+      <div class="form-card-sub">Comentario general que se incluirá al final del correo de resultado.</div>
+      <textarea class="form-textarea" id="kpiNotasGenerales" placeholder="Observación general de la visita/evaluación…" style="min-height:80px"></textarea>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn-cancel" onclick="limpiarKpi()">Limpiar</button>
+      <button class="btn-primary" id="btnEnviarKpi" onclick="enviarKpi()">📧 Enviar evaluación y notificar</button>
+    </div>
+  </div>
 </main>
 
 <!-- ══ MODAL REASIGNAR ══ -->
@@ -695,6 +771,7 @@ table.data-table tr:hover td{background:var(--s2)}
 
 <div class="toast-wrap" id="toastWrap"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
 // ══════════════════════════════════════════════
 // CONFIGURACIÓN CENTRAL — Backend real (Railway + Supabase)
@@ -939,6 +1016,12 @@ const PALABRAS_ALTO    = ["lento","error","falla","problema","no responde","rein
   if(u.toLowerCase() === SUPERVISORA_TESORERIA) {
     roleLabel.textContent = "SUPERVISORA · TESORERÍA";
     roleLabel.classList.add("supervisor");
+  }
+
+  // ══ Formulario KPI: exclusivo para Rafael ══
+  if(esRafael()){
+    document.getElementById("sb-section-kpi").style.display = "";
+    document.getElementById("nav-kpi").style.display = "";
   }
 })();
 
@@ -1186,6 +1269,7 @@ window.addEventListener("load", ()=>{
   initNotificaciones();   // ── NOTIF: pedir permiso al cargar ──
   recargarTodo();
   setInterval(recargarTodo, 60000);
+  if(esRafael()) initKpiForm();   // ── KPI: construir formulario si es Rafael ──
 });
 
 async function recargarTodo(){
@@ -1227,7 +1311,8 @@ function switchView(v){
     asignados:  "Asignados a mí",
     nueva:      "Nueva petición a técnico",
     peticiones: "Mis peticiones",
-    resueltos:  esSupervisora() ? "Resueltos · Tesorería" : "Mis resueltos"
+    resueltos:  esSupervisora() ? "Resueltos · Tesorería" : "Mis resueltos",
+    kpi:        "Formulario KPI · Evaluación de tiendas"
   };
   document.getElementById("viewTitle").textContent = titles[v] || v;
 }
@@ -1727,6 +1812,227 @@ window.addEventListener("click", e => {
   if(e.target===document.getElementById("resolucionModal")) cerrarResModal();
   if(e.target===document.getElementById("reasignarModal"))  cerrarReasignarModal();
 });
+
+// ══════════════════════════════════════════════════════════════
+// ★ FORMULARIO KPI — Matriz de Cumplimiento y Desempeño en Tiendas
+//   Exclusivo para el usuario "rafael"
+// ══════════════════════════════════════════════════════════════
+
+// ── Configuración EmailJS ──
+// 1) Crea cuenta gratis en https://www.emailjs.com/
+// 2) Agrega un "Email Service" (ej. Gmail) y copia su Service ID
+// 3) Crea un "Email Template" con variables: {{to_email}} {{tienda}} {{codigo_tienda}}
+//    {{puntaje}} {{fecha}} {{evaluador}} {{detalle_html}} {{notas_generales}}
+//    En el campo "To Email" del template pon: {{to_email}}
+// 4) Copia tu Public Key desde Account > General
+const EMAILJS_PUBLIC_KEY  = "TU_PUBLIC_KEY_AQUI";
+const EMAILJS_SERVICE_ID  = "TU_SERVICE_ID_AQUI";
+const EMAILJS_TEMPLATE_ID = "TU_TEMPLATE_ID_AQUI";
+
+function esRafael(){
+  return (window._miUsuario||"").toLowerCase() === "rafael";
+}
+
+// ── Tiendas y su correo interno (1 de los 4 destinatarios) ──
+const TIENDAS_KPI = [
+  { codigo:"La70SD",   nombre:"Almacenes La 70 · Santo Domingo", email:"almacenesla70sd@gmail.com" },
+  { codigo:"CMSD",      nombre:"Casa Michel · Santo Domingo",     email:"casamichelsd01@gmail.com" },
+  { codigo:"CMLV1",     nombre:"Casa Michel · La Vega 1",         email:"almacenesla70lv@gmail.com" },
+  { codigo:"CMLV2",     nombre:"Casa Michel · La Vega 2",         email:"casamichellvgm@gmail.com" },
+  { codigo:"CMSTGO",    nombre:"Casa Michel · Santiago",          email:"casamichelstgo@gmail.com" },
+  { codigo:"La70STGO",  nombre:"Almacenes La 70 · Santiago",      email:"almacenesla70stgo@gmail.com" },
+  { codigo:"CMBO",      nombre:"Casa Michel · Bonao",             email:"casamichelbonao01@gmail.com" },
+  { codigo:"CMMO",      nombre:"Casa Michel · Moca",              email:"casamichelmoca01@gmail.com" },
+  { codigo:"CMSFM",     nombre:"Casa Michel · San Francisco de Macorís", email:"casamichelsfm@gmail.com" },
+  { codigo:"La70SFM",   nombre:"Almacenes La 70 · San Francisco de Macorís", email:"almacenesla70sfm@gmail.com" }
+];
+
+// ── Correos fijos que reciben SIEMPRE el resultado ──
+const KPI_CORREOS_FIJOS = [
+  { nombre:"TC IT",     email:"departamentoIT@grupomichel.com" },
+  { nombre:"Gerente",   email:"e.cruz@grupomichel.com" },
+  { nombre:"Rafael",    email:"tecnico.logistica1@grupomichel.com" }
+];
+
+// ── 25 ítems de la matriz (4 puntos c/u = 100) ──
+const KPI_ITEMS = [
+  "Exhibición correcta/áreas",
+  "Productos (AMV) exhibidos",
+  "Precios visibles y correctos",
+  "Productos de baja rotación",
+  "Exactitud inventario físico vs sistema",
+  "Material POP en buen estado/visible",
+  "Quiebres de inventario/áreas",
+  "Uniforme y presentación personal",
+  "Actitud de servicio del personal",
+  "Roles definidos (caja, salón, Almacén)",
+  "Capacitación aplicada/personal",
+  "Limpieza general/áreas",
+  "Disciplina operativa/Seg. de procesos",
+  "Cumplimiento de Exhibiciones Estratégicas",
+  "Pasillos libres de obstáculos",
+  "Tiempo de espera en la caja",
+  "Cumplimiento y reporte de averías",
+  "Señalización clara",
+  "Cumplimiento de Cierre de Hallazgos",
+  "Protocolos de seguridad y salud",
+  "Cumplimiento de plan de acción/tareas",
+  "Normas internas de operación",
+  "Orden y Organización del Almacén",
+  "Mercancía Pendiente de Ubicar",
+  "Presencia según planificación de horarios"
+];
+
+function initKpiForm(){
+  // Selector de tiendas
+  const sel = document.getElementById("kpiTienda");
+  sel.innerHTML = TIENDAS_KPI.map(t => `<option value="${t.codigo}">${t.nombre}</option>`).join("");
+
+  // Tabla de ítems
+  const tbody = document.getElementById("kpiTableBody");
+  tbody.innerHTML = KPI_ITEMS.map((item, i) => `
+    <tr data-kpi-row="${i}">
+      <td class="kpi-item-name">${item}</td>
+      <td>
+        <select class="kpi-select" id="kpiCumple${i}" onchange="actualizarPuntosKpi(${i})">
+          <option value="">—</option>
+          <option value="si">Sí</option>
+          <option value="no">No</option>
+        </select>
+      </td>
+      <td class="kpi-pts" id="kpiPts${i}">0/4</td>
+      <td><input class="kpi-mini-input" id="kpiObs${i}" placeholder="Observación…"/></td>
+      <td><input class="kpi-mini-input" id="kpiResp${i}" placeholder="Responsable"/></td>
+      <td><input class="kpi-mini-input" type="date" id="kpiFecha${i}"/></td>
+    </tr>
+  `).join("");
+
+  actualizarKpiTotal();
+
+  if (typeof emailjs !== "undefined" && EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== "TU_PUBLIC_KEY_AQUI") {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  }
+}
+
+function actualizarKpiTienda(){ /* reservado por si se necesita lógica extra al cambiar tienda */ }
+
+function actualizarPuntosKpi(i){
+  const val = document.getElementById(`kpiCumple${i}`).value;
+  const sel = document.getElementById(`kpiCumple${i}`);
+  const pts = document.getElementById(`kpiPts${i}`);
+  sel.classList.remove("si","no");
+  if(val==="si"){ pts.textContent="4/4"; sel.classList.add("si"); }
+  else if(val==="no"){ pts.textContent="0/4"; sel.classList.add("no"); }
+  else{ pts.textContent="0/4"; }
+  actualizarKpiTotal();
+}
+
+function actualizarKpiTotal(){
+  let total = 0;
+  KPI_ITEMS.forEach((_, i) => {
+    const val = document.getElementById(`kpiCumple${i}`)?.value;
+    if(val==="si") total += 4;
+  });
+  const box = document.getElementById("kpiScoreVal");
+  box.textContent = total;
+  box.classList.remove("low","mid","high");
+  if(total < 60) box.classList.add("low");
+  else if(total < 85) box.classList.add("mid");
+  else box.classList.add("high");
+  return total;
+}
+
+function limpiarKpi(){
+  KPI_ITEMS.forEach((_, i) => {
+    document.getElementById(`kpiCumple${i}`).value = "";
+    document.getElementById(`kpiCumple${i}`).classList.remove("si","no");
+    document.getElementById(`kpiPts${i}`).textContent = "0/4";
+    document.getElementById(`kpiObs${i}`).value = "";
+    document.getElementById(`kpiResp${i}`).value = "";
+    document.getElementById(`kpiFecha${i}`).value = "";
+  });
+  document.getElementById("kpiNotasGenerales").value = "";
+  actualizarKpiTotal();
+  showToast("Formulario KPI limpiado","ok");
+}
+
+function construirDetalleHtmlKpi(){
+  let filas = "";
+  KPI_ITEMS.forEach((item, i) => {
+    const cumple = document.getElementById(`kpiCumple${i}`).value;
+    const pts    = document.getElementById(`kpiPts${i}`).textContent;
+    const obs    = document.getElementById(`kpiObs${i}`).value.trim();
+    const resp   = document.getElementById(`kpiResp${i}`).value.trim();
+    const fecha  = document.getElementById(`kpiFecha${i}`).value;
+    const cumpleLabel = cumple==="si" ? "✅ Sí" : cumple==="no" ? "❌ No" : "—";
+    filas += `<tr>
+      <td style="padding:6px 10px;border-bottom:1px solid #eee">${item}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #eee;text-align:center">${cumpleLabel}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #eee;text-align:center">${pts}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #eee">${obs||"—"}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #eee">${resp||"—"}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #eee">${fecha||"—"}</td>
+    </tr>`;
+  });
+  return `<table style="border-collapse:collapse;width:100%;font-family:Arial,sans-serif;font-size:12px">
+    <thead><tr style="background:#161626;color:#fff">
+      <th style="padding:6px 10px;text-align:left">Ítem</th>
+      <th style="padding:6px 10px">Cumple</th>
+      <th style="padding:6px 10px">Puntos</th>
+      <th style="padding:6px 10px;text-align:left">Observaciones</th>
+      <th style="padding:6px 10px;text-align:left">Responsable</th>
+      <th style="padding:6px 10px;text-align:left">Fecha Corrección</th>
+    </tr></thead>
+    <tbody>${filas}</tbody>
+  </table>`;
+}
+
+async function enviarKpi(){
+  const tiendaCodigo = document.getElementById("kpiTienda").value;
+  const tienda = TIENDAS_KPI.find(t => t.codigo === tiendaCodigo);
+  if(!tienda){ showToast("Selecciona una tienda","err"); return; }
+
+  const sinEvaluar = KPI_ITEMS.filter((_, i) => !document.getElementById(`kpiCumple${i}`).value);
+  if(sinEvaluar.length){
+    showToast(`Faltan ${sinEvaluar.length} ítem(s) por marcar Sí/No`,"warn");
+    return;
+  }
+
+  if (typeof emailjs === "undefined" || !EMAILJS_PUBLIC_KEY || EMAILJS_PUBLIC_KEY === "TU_PUBLIC_KEY_AQUI"){
+    showToast("Falta configurar EmailJS (Service ID / Template ID / Public Key) en el código","err");
+    return;
+  }
+
+  const btn = document.getElementById("btnEnviarKpi");
+  btn.disabled = true; btn.textContent = "Enviando…";
+
+  const total     = actualizarKpiTotal();
+  const notas     = document.getElementById("kpiNotasGenerales").value.trim();
+  const detalle   = construirDetalleHtmlKpi();
+  const destinatarios = [tienda.email, ...KPI_CORREOS_FIJOS.map(c=>c.email)].join(", ");
+
+  const params = {
+    to_email:        destinatarios,
+    tienda:          tienda.nombre,
+    codigo_tienda:   tienda.codigo,
+    puntaje:         `${total} / 100`,
+    fecha:           new Date().toLocaleDateString("es-DO"),
+    evaluador:       window._miNombre || window._miUsuario || "Rafael",
+    detalle_html:    detalle,
+    notas_generales: notas || "Sin notas adicionales."
+  };
+
+  try{
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
+    showToast(`Evaluación de "${tienda.nombre}" enviada ✓ (${total}/100)`,"ok");
+    limpiarKpi();
+  }catch(err){
+    console.error("EmailJS error:", err);
+    showToast("Error al enviar el correo: " + (err?.text || err?.message || "desconocido"), "err");
+  }finally{
+    btn.disabled = false; btn.textContent = "📧 Enviar evaluación y notificar";
+  }
+}
 </script>
 </body>
 </html>
