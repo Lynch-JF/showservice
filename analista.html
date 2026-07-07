@@ -413,6 +413,36 @@ table.data-table tr:hover td{background:var(--s2)}
   .chat-suggestions{overflow-x:auto;flex-wrap:nowrap;padding-bottom:8px}
   .chat-suggestion-chip{flex-shrink:0}
 }
+
+.kpi-wizard{max-width:640px;margin:0 auto}
+.kpi-progress-label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--t2);margin-bottom:8px}
+.kpi-progress{display:flex;gap:6px;margin-bottom:20px}
+.kpi-progress-step{flex:1;height:4px;border-radius:99px;background:var(--s3)}
+.kpi-progress-step.done{background:var(--accent)}
+.kpi-progress-step.active{background:var(--accent2)}
+.kpi-step{display:none}
+.kpi-step.active{display:block;animation:fadeIn .2s var(--ease)}
+.kpi-step-title{font-size:16px;font-weight:600;margin-bottom:4px;font-family:var(--serif);font-style:italic}
+.kpi-step-sub{font-family:var(--mono);font-size:11px;color:var(--t2);margin-bottom:18px}
+.kpi-score-bar{display:flex;align-items:center;justify-content:space-between;background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);padding:12px 16px;margin-bottom:16px}
+.kpi-score-bar-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t2)}
+.kpi-score-bar-tienda{font-size:13px;font-weight:600;color:var(--t0);margin-top:2px}
+.kpi-score-val{font-family:var(--serif);font-size:32px;color:var(--accent2)}
+.kpi-checklist-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);padding:14px 16px;margin-bottom:10px}
+.kpi-checklist-item{font-size:13px;font-weight:500;margin-bottom:10px}
+.kpi-toggle-group{display:flex;gap:8px}
+.kpi-toggle-btn{flex:1;padding:8px;border-radius:var(--r);border:1px solid var(--b2);background:var(--s2);color:var(--t2);font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.kpi-toggle-btn.si.active{background:rgba(16,185,129,.12);color:var(--emerald);border-color:rgba(16,185,129,.4)}
+.kpi-toggle-btn.no.active{background:rgba(244,63,94,.12);color:var(--rose);border-color:rgba(244,63,94,.4)}
+.kpi-obs-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);padding:14px 16px;margin-bottom:10px}
+.kpi-obs-card-title{font-size:12px;font-weight:600;color:var(--amber);margin-bottom:10px}
+.kpi-summary-box{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);padding:16px;margin-bottom:16px}
+.kpi-summary-row{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid var(--b1)}
+.kpi-summary-row:last-child{border-bottom:none}
+.kpi-summary-row span:first-child{color:var(--t2)}
+.kpi-summary-row span:last-child{font-weight:600;color:var(--t0)}
+.kpi-nav{display:flex;gap:10px;justify-content:space-between}
+  
 </style>
 </head>
 <body>
@@ -1915,95 +1945,158 @@ const KPI_ITEMS = [
   "Presencia según planificación de horarios"
 ];
 
+let kpiRespuestas = {}; // { indice: 'si' | 'no' }
+let kpiObs        = {}; // { indice: {obs, resp, fecha} }
+let kpiStepActual = 1;
+
 function initKpiForm(){
-  // Selector de tiendas
   const sel = document.getElementById("kpiTienda");
   sel.innerHTML = TIENDAS_KPI.map(t => `<option value="${t.codigo}">${t.nombre}</option>`).join("");
-
-  // Tabla de ítems
-  const tbody = document.getElementById("kpiTableBody");
-  tbody.innerHTML = KPI_ITEMS.map((item, i) => `
-    <tr data-kpi-row="${i}">
-      <td class="kpi-item-name">${item}</td>
-      <td>
-        <select class="kpi-select" id="kpiCumple${i}" onchange="actualizarPuntosKpi(${i})">
-          <option value="">—</option>
-          <option value="si">Sí</option>
-          <option value="no">No</option>
-        </select>
-      </td>
-      <td class="kpi-pts" id="kpiPts${i}">0/4</td>
-      <td><input class="kpi-mini-input" id="kpiObs${i}" placeholder="Observación…"/></td>
-      <td><input class="kpi-mini-input" id="kpiResp${i}" placeholder="Responsable"/></td>
-      <td><input class="kpi-mini-input" type="date" id="kpiFecha${i}"/></td>
-    </tr>
-  `).join("");
-
-  actualizarKpiTotal();
 
   if (typeof emailjs !== "undefined" && EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== "TU_PUBLIC_KEY_AQUI") {
     emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
   }
+  kpiIrPaso(1);
 }
 
-function actualizarKpiTienda(){ /* reservado por si se necesita lógica extra al cambiar tienda */ }
-
-function actualizarPuntosKpi(i){
-  const val = document.getElementById(`kpiCumple${i}`).value;
-  const sel = document.getElementById(`kpiCumple${i}`);
-  const pts = document.getElementById(`kpiPts${i}`);
-  sel.classList.remove("si","no");
-  if(val==="si"){ pts.textContent="4/4"; sel.classList.add("si"); }
-  else if(val==="no"){ pts.textContent="0/4"; sel.classList.add("no"); }
-  else{ pts.textContent="0/4"; }
-  actualizarKpiTotal();
-}
-
-function actualizarKpiTotal(){
-  let total = 0;
-  KPI_ITEMS.forEach((_, i) => {
-    const val = document.getElementById(`kpiCumple${i}`)?.value;
-    if(val==="si") total += 4;
+function kpiActualizarProgreso(){
+  document.getElementById("kpiProgressPct").textContent = (kpiStepActual*25)+"%";
+  const labels = {1:"Tienda",2:"Checklist",3:"Hallazgos",4:"Resumen"};
+  document.getElementById("kpiProgressLabel").textContent = `Paso ${kpiStepActual} de 4 · ${labels[kpiStepActual]}`;
+  document.querySelectorAll(".kpi-progress-step").forEach(el=>{
+    const n = parseInt(el.dataset.step);
+    el.classList.toggle("done", n<kpiStepActual);
+    el.classList.toggle("active", n===kpiStepActual);
   });
-  const box = document.getElementById("kpiScoreVal");
-  box.textContent = total;
-  box.classList.remove("low","mid","high");
-  if(total < 60) box.classList.add("low");
-  else if(total < 85) box.classList.add("mid");
-  else box.classList.add("high");
+}
+
+function kpiIrPaso(n){
+  kpiStepActual = n;
+  document.querySelectorAll(".kpi-step").forEach(el=>el.classList.remove("active"));
+  document.getElementById("kpiStep"+n).classList.add("active");
+  kpiActualizarProgreso();
+
+  const scoreBar = document.getElementById("kpiScoreBar");
+  if(n>=2){
+    scoreBar.style.display="";
+    const tienda = TIENDAS_KPI.find(t=>t.codigo===document.getElementById("kpiTienda").value);
+    document.getElementById("kpiScoreBarTienda").textContent = tienda?tienda.nombre:"—";
+  } else {
+    scoreBar.style.display="none";
+  }
+
+  if(n===2) kpiBuildChecklist();
+  if(n===3) kpiBuildObsCards();
+  if(n===4) kpiBuildResumen();
+}
+
+function kpiBuildChecklist(){
+  const cont = document.getElementById("kpiChecklistCards");
+  cont.innerHTML = KPI_ITEMS.map((item,i)=>`
+    <div class="kpi-checklist-card">
+      <div class="kpi-checklist-item">${i+1}. ${item}</div>
+      <div class="kpi-toggle-group">
+        <button type="button" class="kpi-toggle-btn si ${kpiRespuestas[i]==='si'?'active':''}" onclick="kpiMarcar(${i},'si')">✅ Sí</button>
+        <button type="button" class="kpi-toggle-btn no ${kpiRespuestas[i]==='no'?'active':''}" onclick="kpiMarcar(${i},'no')">❌ No</button>
+      </div>
+    </div>`).join("");
+  kpiActualizarScoreYProgreso();
+}
+
+function kpiMarcar(i,val){
+  kpiRespuestas[i]=val;
+  kpiBuildChecklist();
+}
+
+function kpiActualizarScoreYProgreso(){
+  const evaluados = Object.keys(kpiRespuestas).length;
+  document.getElementById("kpiChecklistProgress").textContent = `${evaluados} de ${KPI_ITEMS.length} evaluados`;
+  let total=0;
+  KPI_ITEMS.forEach((_,i)=>{ if(kpiRespuestas[i]==='si') total+=4; });
+  document.getElementById("kpiScoreVal").textContent = total;
   return total;
 }
 
+function kpiValidarPaso2(){
+  const faltan = KPI_ITEMS.filter((_,i)=>!kpiRespuestas[i]);
+  if(faltan.length){ showToast(`Faltan ${faltan.length} ítem(s) por marcar`,"warn"); return; }
+  kpiIrPaso(3);
+}
+
+function kpiBuildObsCards(){
+  const cont = document.getElementById("kpiObsCards");
+  const hoy  = new Date().toISOString().split("T")[0];
+  const noItems = KPI_ITEMS.map((item,i)=>({item,i})).filter(x=>kpiRespuestas[x.i]==='no');
+
+  if(!noItems.length){
+    cont.innerHTML = `<div class="empty-state"><div class="empty-icon">🎉</div><p>Todos los ítems cumplieron. No hay hallazgos que corregir.</p></div>`;
+    return;
+  }
+
+  noItems.forEach(({i})=>{ if(!kpiObs[i]) kpiObs[i]={obs:'',resp:'',fecha:hoy}; });
+
+  cont.innerHTML = noItems.map(({item,i})=>{
+    const o = kpiObs[i]||{};
+    return `<div class="kpi-obs-card">
+      <div class="kpi-obs-card-title">❌ ${item}</div>
+      <div class="form-group" style="margin-bottom:8px">
+        <label class="form-label">Observación</label>
+        <input class="form-input" id="kpiObsTexto${i}" value="${o.obs||''}" oninput="kpiGuardarObs(${i})" placeholder="Detalle del hallazgo…"/>
+      </div>
+      <div class="form-row" style="margin-bottom:0">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Responsable</label>
+          <input class="form-input" id="kpiObsResp${i}" value="${o.resp||''}" oninput="kpiGuardarObs(${i})" placeholder="Nombre"/>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Fecha corrección</label>
+          <input class="form-input" type="date" id="kpiObsFecha${i}" value="${o.fecha||hoy}" oninput="kpiGuardarObs(${i})"/>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function kpiGuardarObs(i){
+  kpiObs[i] = {
+    obs:  document.getElementById(`kpiObsTexto${i}`)?.value.trim()||'',
+    resp: document.getElementById(`kpiObsResp${i}`)?.value.trim()||'',
+    fecha:document.getElementById(`kpiObsFecha${i}`)?.value||''
+  };
+}
+
+function kpiBuildResumen(){
+  const tienda = TIENDAS_KPI.find(t=>t.codigo===document.getElementById("kpiTienda").value);
+  const total  = kpiActualizarScoreYProgreso();
+  const hallazgos = KPI_ITEMS.filter((_,i)=>kpiRespuestas[i]==='no').length;
+  document.getElementById("kpiResumenTienda").textContent    = tienda?tienda.nombre:"—";
+  document.getElementById("kpiResumenPuntaje").textContent   = `${total} / 100`;
+  document.getElementById("kpiResumenHallazgos").textContent = hallazgos;
+  document.getElementById("kpiResumenFecha").textContent     = new Date().toLocaleDateString("es-DO");
+}
+
 function limpiarKpi(){
-  KPI_ITEMS.forEach((_, i) => {
-    document.getElementById(`kpiCumple${i}`).value = "";
-    document.getElementById(`kpiCumple${i}`).classList.remove("si","no");
-    document.getElementById(`kpiPts${i}`).textContent = "0/4";
-    document.getElementById(`kpiObs${i}`).value = "";
-    document.getElementById(`kpiResp${i}`).value = "";
-    document.getElementById(`kpiFecha${i}`).value = "";
-  });
+  kpiRespuestas = {};
+  kpiObs = {};
   document.getElementById("kpiNotasGenerales").value = "";
-  actualizarKpiTotal();
+  kpiIrPaso(1);
   showToast("Formulario KPI limpiado","ok");
 }
 
 function construirDetalleHtmlKpi(){
   let filas = "";
-  KPI_ITEMS.forEach((item, i) => {
-    const cumple = document.getElementById(`kpiCumple${i}`).value;
-    const pts    = document.getElementById(`kpiPts${i}`).textContent;
-    const obs    = document.getElementById(`kpiObs${i}`).value.trim();
-    const resp   = document.getElementById(`kpiResp${i}`).value.trim();
-    const fecha  = document.getElementById(`kpiFecha${i}`).value;
-    const cumpleLabel = cumple==="si" ? "✅ Sí" : cumple==="no" ? "❌ No" : "—";
+  KPI_ITEMS.forEach((item,i)=>{
+    const cumple = kpiRespuestas[i];
+    const pts    = cumple==='si'?"4/4":"0/4";
+    const o      = kpiObs[i]||{};
+    const cumpleLabel = cumple==="si"?"✅ Sí":cumple==="no"?"❌ No":"—";
     filas += `<tr>
       <td style="padding:6px 10px;border-bottom:1px solid #eee">${item}</td>
       <td style="padding:6px 10px;border-bottom:1px solid #eee;text-align:center">${cumpleLabel}</td>
       <td style="padding:6px 10px;border-bottom:1px solid #eee;text-align:center">${pts}</td>
-      <td style="padding:6px 10px;border-bottom:1px solid #eee">${obs||"—"}</td>
-      <td style="padding:6px 10px;border-bottom:1px solid #eee">${resp||"—"}</td>
-      <td style="padding:6px 10px;border-bottom:1px solid #eee">${fecha||"—"}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #eee">${o.obs||"—"}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #eee">${o.resp||"—"}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #eee">${o.fecha||"—"}</td>
     </tr>`;
   });
   return `<table style="border-collapse:collapse;width:100%;font-family:Arial,sans-serif;font-size:12px">
@@ -2024,11 +2117,8 @@ async function enviarKpi(){
   const tienda = TIENDAS_KPI.find(t => t.codigo === tiendaCodigo);
   if(!tienda){ showToast("Selecciona una tienda","err"); return; }
 
-  const sinEvaluar = KPI_ITEMS.filter((_, i) => !document.getElementById(`kpiCumple${i}`).value);
-  if(sinEvaluar.length){
-    showToast(`Faltan ${sinEvaluar.length} ítem(s) por marcar Sí/No`,"warn");
-    return;
-  }
+  const faltan = KPI_ITEMS.filter((_,i)=>!kpiRespuestas[i]);
+  if(faltan.length){ showToast(`Faltan ${faltan.length} ítem(s) por marcar Sí/No`,"warn"); return; }
 
   if (typeof emailjs === "undefined" || !EMAILJS_PUBLIC_KEY || EMAILJS_PUBLIC_KEY === "TU_PUBLIC_KEY_AQUI"){
     showToast("Falta configurar EmailJS (Service ID / Template ID / Public Key) en el código","err");
@@ -2038,9 +2128,9 @@ async function enviarKpi(){
   const btn = document.getElementById("btnEnviarKpi");
   btn.disabled = true; btn.textContent = "Enviando…";
 
-  const total     = actualizarKpiTotal();
-  const notas     = document.getElementById("kpiNotasGenerales").value.trim();
-  const detalle   = construirDetalleHtmlKpi();
+  const total   = kpiActualizarScoreYProgreso();
+  const notas   = document.getElementById("kpiNotasGenerales").value.trim();
+  const detalle = construirDetalleHtmlKpi();
   const destinatarios = [tienda.email, ...KPI_CORREOS_FIJOS.map(c=>c.email)].join(", ");
 
   const params = {
@@ -2062,7 +2152,7 @@ async function enviarKpi(){
     console.error("EmailJS error:", err);
     showToast("Error al enviar el correo: " + (err?.text || err?.message || "desconocido"), "err");
   }finally{
-    btn.disabled = false; btn.textContent = "📧 Enviar evaluación y notificar";
+    btn.disabled = false; btn.textContent = "📧 Enviar y notificar";
   }
 }
 </script>
