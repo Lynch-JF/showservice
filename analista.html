@@ -1045,6 +1045,13 @@ initChatbot();
 
 
 
+// ── Usuarios con acceso al Formulario KPI (debe existir antes que cualquier código que llame a esRafael()) ──
+const USUARIOS_KPI = ["rafael", "doralina"];
+
+function esRafael(){
+  return USUARIOS_KPI.includes((window._miUsuario||"").toLowerCase());
+}
+
 const TECNICOS = {
   Juan:   "Juan Francisco Jiménez",
   Xavier: "Xavier Rosario",
@@ -1904,12 +1911,6 @@ window.addEventListener("click", e => {
 const EMAILJS_PUBLIC_KEY  = "TU_PUBLIC_KEY_AQUI";
 const EMAILJS_SERVICE_ID  = "TU_SERVICE_ID_AQUI";
 const EMAILJS_TEMPLATE_ID = "TU_TEMPLATE_ID_AQUI";
-
-const USUARIOS_KPI = ["rafael", "doralina"];
-
-function esRafael(){
-  return USUARIOS_KPI.includes((window._miUsuario||"").toLowerCase());
-}
 
 // ── Tiendas y su correo interno (1 de los 4 destinatarios) ──
 const TIENDAS_KPI = [
