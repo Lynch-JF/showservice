@@ -1962,95 +1962,183 @@ const KPI_ITEMS = [
   "Presencia según planificación de horarios"
 ];
 
+let kpiPaso = 1;
+let kpiRespuestas = [];
+
+function hoyISO(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+
 function initKpiForm(){
-  // Selector de tiendas
   const sel = document.getElementById("kpiTienda");
   sel.innerHTML = TIENDAS_KPI.map(t => `<option value="${t.codigo}">${t.nombre}</option>`).join("");
 
-  // Tabla de ítems
-  const tbody = document.getElementById("kpiTableBody");
-  tbody.innerHTML = KPI_ITEMS.map((item, i) => `
-    <tr data-kpi-row="${i}">
-      <td class="kpi-item-name">${item}</td>
-      <td>
-        <select class="kpi-select" id="kpiCumple${i}" onchange="actualizarPuntosKpi(${i})">
-          <option value="">—</option>
-          <option value="si">Sí</option>
-          <option value="no">No</option>
-        </select>
-      </td>
-      <td class="kpi-pts" id="kpiPts${i}">0/4</td>
-      <td><input class="kpi-mini-input" id="kpiObs${i}" placeholder="Observación…"/></td>
-      <td><input class="kpi-mini-input" id="kpiResp${i}" placeholder="Responsable"/></td>
-      <td><input class="kpi-mini-input" type="date" id="kpiFecha${i}"/></td>
-    </tr>
-  `).join("");
-
-  actualizarKpiTotal();
+  kpiRespuestas = KPI_ITEMS.map(() => ({ cumple:null, obs:"", resp:"", fecha:hoyISO() }));
+  renderKpiChecklist();
+  kpiIrPaso(1);
 
   if (typeof emailjs !== "undefined" && EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== "TU_PUBLIC_KEY_AQUI") {
     emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
   }
 }
 
-function actualizarKpiTienda(){ /* reservado por si se necesita lógica extra al cambiar tienda */ }
-
-function actualizarPuntosKpi(i){
-  const val = document.getElementById(`kpiCumple${i}`).value;
-  const sel = document.getElementById(`kpiCumple${i}`);
-  const pts = document.getElementById(`kpiPts${i}`);
-  sel.classList.remove("si","no");
-  if(val==="si"){ pts.textContent="4/4"; sel.classList.add("si"); }
-  else if(val==="no"){ pts.textContent="0/4"; sel.classList.add("no"); }
-  else{ pts.textContent="0/4"; }
-  actualizarKpiTotal();
+function renderKpiChecklist(){
+  const cont = document.getElementById("kpiChecklistCards");
+  cont.innerHTML = KPI_ITEMS.map((item,i) => `
+    <div class="kpi-item-card" id="kpiCard${i}">
+      <div class="kpi-item-top">
+        <div>
+          <div class="kpi-item-num">Ítem ${i+1} / ${KPI_ITEMS.length}</div>
+          <div class="kpi-item-title">${item}</div>
+        </div>
+      </div>
+      <div class="kpi-toggle-row">
+        <button class="kpi-toggle-btn si" onclick="kpiToggleItem(${i},'si')">✓ Sí</button>
+        <button class="kpi-toggle-btn no" onclick="kpiToggleItem(${i},'no')">✕ No</button>
+      </div>
+    </div>`).join("");
+  actualizarKpiChecklistProgress();
 }
 
-function actualizarKpiTotal(){
-  let total = 0;
-  KPI_ITEMS.forEach((_, i) => {
-    const val = document.getElementById(`kpiCumple${i}`)?.value;
-    if(val==="si") total += 4;
-  });
-  const box = document.getElementById("kpiScoreVal");
-  box.textContent = total;
-  box.classList.remove("low","mid","high");
-  if(total < 60) box.classList.add("low");
-  else if(total < 85) box.classList.add("mid");
-  else box.classList.add("high");
+function kpiToggleItem(i, val){
+  kpiRespuestas[i].cumple = val;
+  const card = document.getElementById(`kpiCard${i}`);
+  card.classList.remove("answered-si","answered-no");
+  card.classList.add(val==="si" ? "answered-si" : "answered-no");
+  card.querySelectorAll(".kpi-toggle-btn").forEach(b=>b.classList.remove("active"));
+  card.querySelector(`.kpi-toggle-btn.${val}`).classList.add("active");
+  actualizarKpiChecklistProgress();
+  actualizarKpiScore();
+}
+
+function actualizarKpiChecklistProgress(){
+  const respondidos = kpiRespuestas.filter(r=>r.cumple).length;
+  const el = document.getElementById("kpiChecklistProgress");
+  if(el) el.textContent = `${respondidos} de ${KPI_ITEMS.length} evaluados`;
+}
+
+function calcKpiScore(){
+  return kpiRespuestas.filter(r=>r.cumple==="si").length * 4;
+}
+
+function actualizarKpiScore(){
+  const total = calcKpiScore();
+  const val = document.getElementById("kpiScoreVal");
+  if(!val) return total;
+  val.textContent = total;
+  val.classList.remove("low","mid","high");
+  if(total < 60) val.classList.add("low");
+  else if(total < 85) val.classList.add("mid");
+  else val.classList.add("high");
   return total;
 }
 
-function limpiarKpi(){
-  KPI_ITEMS.forEach((_, i) => {
-    document.getElementById(`kpiCumple${i}`).value = "";
-    document.getElementById(`kpiCumple${i}`).classList.remove("si","no");
-    document.getElementById(`kpiPts${i}`).textContent = "0/4";
-    document.getElementById(`kpiObs${i}`).value = "";
-    document.getElementById(`kpiResp${i}`).value = "";
-    document.getElementById(`kpiFecha${i}`).value = "";
+function kpiTiendaSeleccionada(){
+  const cod = document.getElementById("kpiTienda").value;
+  return TIENDAS_KPI.find(t=>t.codigo===cod);
+}
+
+function kpiIrPaso(n){
+  kpiPaso = n;
+  document.querySelectorAll(".kpi-step").forEach(s=>s.classList.remove("active"));
+  document.getElementById(`kpiStep${n}`).classList.add("active");
+
+  document.querySelectorAll(".kpi-progress-step").forEach(s=>{
+    const step = parseInt(s.dataset.step);
+    s.classList.toggle("done", step < n);
+    s.classList.toggle("active", step === n);
   });
-  document.getElementById("kpiNotasGenerales").value = "";
-  actualizarKpiTotal();
-  showToast("Formulario KPI limpiado","ok");
+  const labels = {1:"Tienda",2:"Checklist",3:"Hallazgos",4:"Resumen y envío"};
+  document.getElementById("kpiProgressLabel").textContent = `Paso ${n} de 4 · ${labels[n]}`;
+  document.getElementById("kpiProgressPct").textContent = `${n*25}%`;
+
+  const scoreBar = document.getElementById("kpiScoreBar");
+  if(n >= 2){
+    scoreBar.style.display = "flex";
+    const t = kpiTiendaSeleccionada();
+    document.getElementById("kpiScoreBarTienda").textContent = t ? t.nombre : "—";
+    actualizarKpiScore();
+  } else {
+    scoreBar.style.display = "none";
+  }
+
+  if(n === 3) renderKpiObs();
+  if(n === 4) renderKpiResumen();
+
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function kpiValidarPaso2(){
+  const sinEvaluar = kpiRespuestas.filter(r=>!r.cumple).length;
+  if(sinEvaluar){ showToast(`Faltan ${sinEvaluar} ítem(s) por marcar Sí/No`,"warn"); return; }
+  kpiIrPaso(3);
+}
+
+function renderKpiObs(){
+  const cont = document.getElementById("kpiObsCards");
+  const indicesNo = kpiRespuestas.map((r,i)=>r.cumple==="no"?i:null).filter(i=>i!==null);
+
+  if(!indicesNo.length){
+    cont.innerHTML = `<div class="kpi-all-ok"><div class="kpi-all-ok-icon">🎉</div><p>Todos los ítems cumplieron. No hay hallazgos que corregir.</p></div>`;
+    return;
+  }
+
+  cont.innerHTML = indicesNo.map(i => `
+    <div class="kpi-obs-card">
+      <div class="kpi-obs-title">⚠ ${KPI_ITEMS[i]}</div>
+      <div class="kpi-obs-field">
+        <label class="kpi-obs-label">Detalle del hallazgo</label>
+        <textarea class="kpi-obs-textarea" id="kpiObsDetalle${i}" placeholder="Describe qué no cumplió…">${kpiRespuestas[i].obs}</textarea>
+      </div>
+      <div class="kpi-obs-field">
+        <label class="kpi-obs-label">Responsable de corregir</label>
+        <input class="kpi-obs-input" id="kpiObsResp${i}" placeholder="Nombre del responsable" value="${kpiRespuestas[i].resp}"/>
+      </div>
+      <div class="kpi-obs-field">
+        <label class="kpi-obs-label">Fecha de corrección</label>
+        <input class="kpi-obs-input" type="date" id="kpiObsFecha${i}" value="${kpiRespuestas[i].fecha}"/>
+      </div>
+    </div>`).join("");
+}
+
+function guardarKpiObs(){
+  kpiRespuestas.forEach((r,i)=>{
+    if(r.cumple==="no"){
+      const detalle = document.getElementById(`kpiObsDetalle${i}`);
+      const resp    = document.getElementById(`kpiObsResp${i}`);
+      const fecha   = document.getElementById(`kpiObsFecha${i}`);
+      if(detalle) r.obs   = detalle.value.trim();
+      if(resp)    r.resp  = resp.value.trim();
+      if(fecha)   r.fecha = fecha.value;
+    }
+  });
+}
+
+function renderKpiResumen(){
+  guardarKpiObs();
+  const t = kpiTiendaSeleccionada();
+  const total = actualizarKpiScore();
+  const hallazgos = kpiRespuestas.filter(r=>r.cumple==="no").length;
+  document.getElementById("kpiResumenTienda").textContent    = t ? t.nombre : "—";
+  document.getElementById("kpiResumenPuntaje").textContent   = `${total} / 100`;
+  document.getElementById("kpiResumenHallazgos").textContent = hallazgos;
+  document.getElementById("kpiResumenFecha").textContent     = new Date().toLocaleDateString("es-DO");
 }
 
 function construirDetalleHtmlKpi(){
   let filas = "";
   KPI_ITEMS.forEach((item, i) => {
-    const cumple = document.getElementById(`kpiCumple${i}`).value;
-    const pts    = document.getElementById(`kpiPts${i}`).textContent;
-    const obs    = document.getElementById(`kpiObs${i}`).value.trim();
-    const resp   = document.getElementById(`kpiResp${i}`).value.trim();
-    const fecha  = document.getElementById(`kpiFecha${i}`).value;
-    const cumpleLabel = cumple==="si" ? "✅ Sí" : cumple==="no" ? "❌ No" : "—";
+    const r = kpiRespuestas[i];
+    const cumpleLabel = r.cumple==="si" ? "✅ Sí" : r.cumple==="no" ? "❌ No" : "—";
+    const pts = r.cumple==="si" ? "4/4" : "0/4";
     filas += `<tr>
       <td style="padding:6px 10px;border-bottom:1px solid #eee">${item}</td>
       <td style="padding:6px 10px;border-bottom:1px solid #eee;text-align:center">${cumpleLabel}</td>
       <td style="padding:6px 10px;border-bottom:1px solid #eee;text-align:center">${pts}</td>
-      <td style="padding:6px 10px;border-bottom:1px solid #eee">${obs||"—"}</td>
-      <td style="padding:6px 10px;border-bottom:1px solid #eee">${resp||"—"}</td>
-      <td style="padding:6px 10px;border-bottom:1px solid #eee">${fecha||"—"}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #eee">${r.obs||"—"}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #eee">${r.resp||"—"}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #eee">${r.fecha||"—"}</td>
     </tr>`;
   });
   return `<table style="border-collapse:collapse;width:100%;font-family:Arial,sans-serif;font-size:12px">
@@ -2067,38 +2155,31 @@ function construirDetalleHtmlKpi(){
 }
 
 async function enviarKpi(){
-  const tiendaCodigo = document.getElementById("kpiTienda").value;
-  const tienda = TIENDAS_KPI.find(t => t.codigo === tiendaCodigo);
+  const tienda = kpiTiendaSeleccionada();
   if(!tienda){ showToast("Selecciona una tienda","err"); return; }
 
-  const sinEvaluar = KPI_ITEMS.filter((_, i) => !document.getElementById(`kpiCumple${i}`).value);
-  if(sinEvaluar.length){
-    showToast(`Faltan ${sinEvaluar.length} ítem(s) por marcar Sí/No`,"warn");
-    return;
-  }
+  const sinEvaluar = kpiRespuestas.filter(r=>!r.cumple).length;
+  if(sinEvaluar){ showToast(`Faltan ${sinEvaluar} ítem(s) por marcar Sí/No`,"warn"); return; }
 
   if (typeof emailjs === "undefined" || !EMAILJS_PUBLIC_KEY || EMAILJS_PUBLIC_KEY === "TU_PUBLIC_KEY_AQUI"){
     showToast("Falta configurar EmailJS (Service ID / Template ID / Public Key) en el código","err");
     return;
   }
 
+  guardarKpiObs();
   const btn = document.getElementById("btnEnviarKpi");
   btn.disabled = true; btn.textContent = "Enviando…";
 
-  const total     = actualizarKpiTotal();
-  const notas     = document.getElementById("kpiNotasGenerales").value.trim();
-  const detalle   = construirDetalleHtmlKpi();
+  const total   = calcKpiScore();
+  const notas   = document.getElementById("kpiNotasGenerales").value.trim();
+  const detalle = construirDetalleHtmlKpi();
   const destinatarios = [tienda.email, ...KPI_CORREOS_FIJOS.map(c=>c.email)].join(", ");
 
   const params = {
-    to_email:        destinatarios,
-    tienda:          tienda.nombre,
-    codigo_tienda:   tienda.codigo,
-    puntaje:         `${total} / 100`,
-    fecha:           new Date().toLocaleDateString("es-DO"),
-    evaluador:       window._miNombre || window._miUsuario || "Rafael",
-    detalle_html:    detalle,
-    notas_generales: notas || "Sin notas adicionales."
+    to_email: destinatarios, tienda: tienda.nombre, codigo_tienda: tienda.codigo,
+    puntaje: `${total} / 100`, fecha: new Date().toLocaleDateString("es-DO"),
+    evaluador: window._miNombre || window._miUsuario || "Rafael",
+    detalle_html: detalle, notas_generales: notas || "Sin notas adicionales."
   };
 
   try{
@@ -2109,8 +2190,16 @@ async function enviarKpi(){
     console.error("EmailJS error:", err);
     showToast("Error al enviar el correo: " + (err?.text || err?.message || "desconocido"), "err");
   }finally{
-    btn.disabled = false; btn.textContent = "📧 Enviar evaluación y notificar";
+    btn.disabled = false; btn.textContent = "📧 Enviar y notificar";
   }
+}
+
+function limpiarKpi(){
+  kpiRespuestas = KPI_ITEMS.map(() => ({ cumple:null, obs:"", resp:"", fecha:hoyISO() }));
+  renderKpiChecklist();
+  document.getElementById("kpiNotasGenerales").value = "";
+  kpiIrPaso(1);
+  showToast("Formulario KPI limpiado","ok");
 }
 </script>
 </body>
