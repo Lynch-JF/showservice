@@ -2013,16 +2013,26 @@ function toggleChatTickets(){
   }
 }
 
+// ══════════════════════════════════════════════════
+// PATCH — reemplaza tu función ctkPoll() en usuario.html
+// por esta versión (mismo comportamiento + logs de error)
+// ══════════════════════════════════════════════════
+
 async function ctkPoll(){
   const usuario = localStorage.getItem("usuario");
   if(!usuario || !todosTickets.length) return;
-  // revisamos los tickets más recientes para no saturar el backend
   const lista = [...todosTickets].reverse().slice(0, 15);
+
+  let erroresEncontrados = [];
 
   for(const t of lista){
     try{
       const r = await apiFetch(`/tickets/${t.id}/mensajes`);
-      if(!r.ok) continue;
+      if(!r.ok){
+        const errBody = await r.json().catch(() => ({}));
+        erroresEncontrados.push(`Ticket #${t.id}: HTTP ${r.status} — ${errBody.error || "sin detalle"}`);
+        continue;
+      }
       const mensajes = await r.json();
       if(!mensajes.length) continue;
 
@@ -2035,8 +2045,20 @@ async function ctkPoll(){
         showToast(`💬 Nuevo mensaje de ${ultimo.autor_usuario} en "${t.titulo}"`, "success");
       }
       ctkUltimoPorTicket[t.id] = { ultimo, mensajes, noLeido: noLeidoAhora };
-    } catch {}
+    } catch(err) {
+      erroresEncontrados.push(`Ticket #${t.id}: excepción — ${err.message}`);
+    }
   }
+
+  // ── SOLO PARA DEPURAR: quita este bloque cuando ya funcione ──
+  if(erroresEncontrados.length){
+    console.warn("[CHAT TICKETS] Errores al consultar mensajes:", erroresEncontrados);
+  }
+  // ────────────────────────────────────────────────────────────
+
+  ctkActualizarBadge();
+  if(ctkOpen && !ctkTicketActivo) ctkRenderLista();
+}
 
   ctkActualizarBadge();
   if(ctkOpen && !ctkTicketActivo) ctkRenderLista();
