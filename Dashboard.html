@@ -1243,17 +1243,19 @@ async function recargarTickets() {
     if (!r.ok) throw new Error("HTTP " + r.status);
     const data = await r.json();
 
-    todosTickets = (Array.isArray(data) ? data : [])
-      .filter(function(t){ return t.usuario === usuario; })
-      .map(function(t){
-        return {
-          ...t,
-          fecha:          t.creado_en ? new Date(t.creado_en).toLocaleString("es-DO") : "",
-          fecha_recibido: t.fecha_recibido ? new Date(t.fecha_recibido).toLocaleString("es-DO") : "",
-          fecha_resuelto: t.fecha_resuelto ? new Date(t.fecha_resuelto).toLocaleString("es-DO") : "",
-          recibido:       t.recibido ? "si" : ""
-        };
-      });
+ // Reemplazar por (agrega el .sort al final):
+todosTickets = (Array.isArray(data) ? data : [])
+  .filter(function(t){ return t.usuario === usuario; })
+  .map(function(t){
+    return {
+      ...t,
+      fecha:          t.creado_en ? new Date(t.creado_en).toLocaleString("es-DO") : "",
+      fecha_recibido: t.fecha_recibido ? new Date(t.fecha_recibido).toLocaleString("es-DO") : "",
+      fecha_resuelto: t.fecha_resuelto ? new Date(t.fecha_resuelto).toLocaleString("es-DO") : "",
+      recibido:       t.recibido ? "si" : ""
+    };
+  })
+  .sort(function(a,b){ return new Date(b.creado_en) - new Date(a.creado_en); }); // más nuevo primero, siempre
 
     const tot  = todosTickets.length;
     const pend = todosTickets.filter(function(t){ return t.estado === "Pendiente"; }).length;
@@ -1297,7 +1299,7 @@ function renderUrgSummary() {
 
 function renderUltimos() {
   const cont = document.getElementById("ultimosTickets"); if (!cont) return;
-  const ultimos = [...todosTickets].reverse().slice(0, 3);
+const ultimos = todosTickets.slice(0, 3);
   if (ultimos.length === 0) {
     cont.innerHTML = '<div class="empty-state"><div class="empty-icon">🎫</div>Aún no tienes tickets.<br><button class="btn-primary" style="margin-top:12px;font-size:12px;padding:8px 18px;width:auto" onclick="switchView(\'nuevo\')">Crear primer ticket</button></div>'; return;
   }
@@ -1322,7 +1324,7 @@ function renderMisTickets() {
   if (!cont) return;
   const q       = (document.getElementById("srchTickets") ? document.getElementById("srchTickets").value : "").toLowerCase();
   const tecnico = (document.getElementById("tecnicoFilter") ? document.getElementById("tecnicoFilter").value : "");
-  let lista = [...todosTickets].reverse();
+let lista = [...todosTickets];
   if (estadoFiltro) lista = lista.filter(function(t){ return t.estado === estadoFiltro; });
   if (tecnico)      lista = lista.filter(function(t){ return (t.asignado||"") === tecnico; });
   if (urgFiltro !== "todos") lista = lista.filter(function(t){ return calcUrgencia(t).level === urgFiltro; });
@@ -1506,7 +1508,7 @@ function buildSystemPrompt() {
   const pend    = todosTickets.filter(function(t){ return t.estado === "Pendiente"; }).length;
   const proc    = todosTickets.filter(function(t){ return t.estado === "En Proceso"; }).length;
   const res     = todosTickets.filter(function(t){ return t.estado === "Resuelto"; }).length;
-  const ultimos = [...todosTickets].reverse().slice(0,3)
+const ultimos = todosTickets.slice(0,3)
     .map(function(t){ return "• [" + t.id + '] "' + t.titulo + '" — ' + t.estado + " — Técnico: " + (NOMBRES_TEC[t.asignado]||t.asignado||"Sin asignar") + " — " + ((t.fecha||"").split(",")[0]); })
     .join("\n") || "No hay tickets aún.";
 
@@ -1751,7 +1753,7 @@ async function ctkPoll(){
   const usuario = localStorage.getItem("usuario");
   if(!usuario || !todosTickets.length) return;
   // revisamos los tickets más recientes para no saturar el backend
-  const lista = [...todosTickets].reverse().slice(0, 15);
+const lista = todosTickets.slice(0, 15);
 
   for(const t of lista){
     try{
