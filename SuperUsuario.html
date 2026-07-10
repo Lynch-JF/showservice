@@ -1207,13 +1207,14 @@ async function recargarTodo(force = false){
     if(!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
     allTickets = Array.isArray(data) ? data : [];
-    allTickets = allTickets.map(t => ({
-      ...t,
-      fecha:          t.creado_en ? new Date(t.creado_en).toLocaleDateString("es-DO") : "",
-      fecha_recibido: t.fecha_recibido ? new Date(t.fecha_recibido).toLocaleDateString("es-DO") : "",
-      fecha_resuelto: t.fecha_resuelto ? new Date(t.fecha_resuelto).toLocaleDateString("es-DO") : "",
-      recibido:       t.recibido ? "si" : "",
-    }));
+allTickets = allTickets.map(t => ({
+  ...t,
+  fecha:          t.creado_en ? new Date(t.creado_en).toLocaleDateString("es-DO") : "",
+  fecha_recibido: t.fecha_recibido ? new Date(t.fecha_recibido).toLocaleDateString("es-DO") : "",
+  fecha_resuelto: t.fecha_resuelto ? new Date(t.fecha_resuelto).toLocaleDateString("es-DO") : "",
+  recibido:       t.recibido ? "si" : "",
+})).sort((a,b) => new Date(b.creado_en) - new Date(a.creado_en)); // más nuevo primero, siempre
+
     ticketsById = {};
     allTickets.forEach(t => { if(t.id) ticketsById[t.id] = t; });
     renderTodo();
@@ -1326,7 +1327,7 @@ function renderDash(){
     </div>`).join("") || "<p style='color:var(--ink-faint);font-size:12px'>Sin datos</p>";
 
   const rt = document.getElementById("recentTickets");
-  if(rt) rt.innerHTML = allTickets.slice(-6).reverse().map(t =>
+if(rt) rt.innerHTML = allTickets.slice(0,6).map(t =>
     `<div class="recent-item" onclick="abrirDetalleById(${t.id})">
       <div><div class="recent-title">${esc(t.titulo||"")}</div><div class="recent-meta">${esc(t.usuario||"")} · ${esc(t.depto||"")}</div></div>
       <span class="badge ${t.estado==="Resuelto"?"b-res":t.estado==="En Proceso"?"b-proc":"b-pend"}">${esc(t.estado||"")}</span>
