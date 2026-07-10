@@ -440,19 +440,29 @@ table.data-table tr:hover td{background:var(--s2)}
 
 /* tarjeta de ítem del checklist */
 .kpi-item-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);padding:14px 16px;margin-bottom:10px;transition:border-color .2s}
-.kpi-item-card.answered-si{border-color:rgba(16,185,129,.3)}
-.kpi-item-card.answered-no{border-color:rgba(244,63,94,.3)}
+.kpi-item-card.answered-full{border-color:rgba(16,185,129,.3)}
+.kpi-item-card.answered-partial{border-color:rgba(245,158,11,.35)}
+.kpi-item-card.answered-zero{border-color:rgba(244,63,94,.3)}
 .kpi-item-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
 .kpi-item-num{font-family:var(--mono);font-size:9px;color:var(--t3)}
 .kpi-item-title{font-size:13px;font-weight:500;color:var(--t0);line-height:1.4}
-.kpi-toggle-row{display:flex;gap:8px}
-.kpi-toggle-btn{flex:1;padding:11px 8px;border-radius:var(--r);border:1px solid var(--b2);background:var(--s2);color:var(--t2);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center}
-.kpi-toggle-btn.si.active{background:rgba(16,185,129,.14);border-color:var(--emerald);color:var(--emerald)}
-.kpi-toggle-btn.no.active{background:rgba(244,63,94,.14);border-color:var(--rose);color:var(--rose)}
+.kpi-item-score-tag{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;border:1px solid var(--b2);color:var(--t2);white-space:nowrap}
+.kpi-item-card.answered-full .kpi-item-score-tag{color:var(--emerald);border-color:rgba(16,185,129,.35);background:rgba(16,185,129,.08)}
+.kpi-item-card.answered-partial .kpi-item-score-tag{color:var(--amber);border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08)}
+.kpi-item-card.answered-zero .kpi-item-score-tag{color:var(--rose);border-color:rgba(244,63,94,.4);background:rgba(244,63,94,.08)}
+.kpi-toggle-row{display:flex;gap:6px}
+.kpi-point-btn{flex:1;padding:10px 4px;border-radius:var(--r);border:1px solid var(--b2);background:var(--s2);color:var(--t2);font-family:var(--mono);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;text-align:center}
+.kpi-point-btn.active{transform:translateY(-1px)}
+.kpi-point-btn[data-pts="0"].active{background:rgba(244,63,94,.16);border-color:var(--rose);color:var(--rose)}
+.kpi-point-btn[data-pts="1"].active,
+.kpi-point-btn[data-pts="2"].active,
+.kpi-point-btn[data-pts="3"].active{background:rgba(245,158,11,.16);border-color:var(--amber);color:var(--amber)}
+.kpi-point-btn[data-pts="4"].active{background:rgba(16,185,129,.16);border-color:var(--emerald);color:var(--emerald)}
 
 /* tarjeta de observación (paso hallazgos) */
 .kpi-obs-card{background:var(--s1);border:1px solid rgba(244,63,94,.25);border-radius:var(--r2);padding:16px;margin-bottom:12px}
-.kpi-obs-title{font-size:13px;font-weight:600;color:var(--rose);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.kpi-obs-title{font-size:13px;font-weight:600;color:var(--rose);margin-bottom:12px;display:flex;align-items:center;gap:6px;justify-content:space-between}
+.kpi-obs-title-pts{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;border:1px solid rgba(245,158,11,.4);color:var(--amber);background:rgba(245,158,11,.08)}
 .kpi-obs-field{margin-bottom:10px}
 .kpi-obs-field:last-child{margin-bottom:0}
 .kpi-obs-label{display:block;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t2);margin-bottom:5px}
@@ -474,6 +484,7 @@ table.data-table tr:hover td{background:var(--s2)}
 .kpi-nav .btn-primary,.kpi-nav .btn-cancel{flex:1}
 @media(max-width:600px){
   .kpi-score-bar{top:8px}
+  .kpi-point-btn{padding:10px 2px;font-size:12px}
 }
 </style>
 </head>
@@ -734,10 +745,10 @@ table.data-table tr:hover td{background:var(--s2)}
         </div>
       </div>
 
-      <!-- PASO 3: Observaciones (solo ítems marcados "No") -->
+      <!-- PASO 3: Observaciones (ítems que no obtuvieron el máximo) -->
       <div class="kpi-step" id="kpiStep3">
         <div class="kpi-step-title">📝 Hallazgos a corregir</div>
-        <div class="kpi-step-sub">Detalla los ítems que no cumplieron. La fecha de corrección viene pre-llenada con hoy — puedes cambiarla.</div>
+        <div class="kpi-step-sub">Detalla los ítems que no obtuvieron el puntaje completo (4/4). La fecha de corrección viene pre-llenada con hoy — puedes cambiarla.</div>
         <div id="kpiObsCards"></div>
         <div class="kpi-nav">
           <button class="btn-cancel" onclick="kpiIrPaso(2)">← Atrás</button>
@@ -1899,6 +1910,7 @@ window.addEventListener("click", e => {
 // ══════════════════════════════════════════════════════════════
 // ★ FORMULARIO KPI — Matriz de Cumplimiento y Desempeño en Tiendas
 //   Exclusivo para el usuario "rafael"
+//   Cada ítem admite puntaje parcial: 0, 1, 2, 3 o 4 puntos (25 ítems × 4 = 100)
 // ══════════════════════════════════════════════════════════════
 
 // ── Configuración EmailJS ──
@@ -1974,7 +1986,7 @@ function initKpiForm(){
   const sel = document.getElementById("kpiTienda");
   sel.innerHTML = TIENDAS_KPI.map(t => `<option value="${t.codigo}">${t.nombre}</option>`).join("");
 
-  kpiRespuestas = KPI_ITEMS.map(() => ({ cumple:null, obs:"", resp:"", fecha:hoyISO() }));
+  kpiRespuestas = KPI_ITEMS.map(() => ({ puntos:null, obs:"", resp:"", fecha:hoyISO() }));
   renderKpiChecklist();
   kpiIrPaso(1);
 
@@ -1992,34 +2004,40 @@ function renderKpiChecklist(){
           <div class="kpi-item-num">Ítem ${i+1} / ${KPI_ITEMS.length}</div>
           <div class="kpi-item-title">${item}</div>
         </div>
+        <div class="kpi-item-score-tag" id="kpiScoreTag${i}">— / 4</div>
       </div>
       <div class="kpi-toggle-row">
-        <button class="kpi-toggle-btn si" onclick="kpiToggleItem(${i},'si')">✓ Sí</button>
-        <button class="kpi-toggle-btn no" onclick="kpiToggleItem(${i},'no')">✕ No</button>
+        <button class="kpi-point-btn" data-pts="0" onclick="kpiSetPuntos(${i},0)">0</button>
+        <button class="kpi-point-btn" data-pts="1" onclick="kpiSetPuntos(${i},1)">1</button>
+        <button class="kpi-point-btn" data-pts="2" onclick="kpiSetPuntos(${i},2)">2</button>
+        <button class="kpi-point-btn" data-pts="3" onclick="kpiSetPuntos(${i},3)">3</button>
+        <button class="kpi-point-btn" data-pts="4" onclick="kpiSetPuntos(${i},4)">4</button>
       </div>
     </div>`).join("");
   actualizarKpiChecklistProgress();
 }
 
-function kpiToggleItem(i, val){
-  kpiRespuestas[i].cumple = val;
+function kpiSetPuntos(i, pts){
+  kpiRespuestas[i].puntos = pts;
   const card = document.getElementById(`kpiCard${i}`);
-  card.classList.remove("answered-si","answered-no");
-  card.classList.add(val==="si" ? "answered-si" : "answered-no");
-  card.querySelectorAll(".kpi-toggle-btn").forEach(b=>b.classList.remove("active"));
-  card.querySelector(`.kpi-toggle-btn.${val}`).classList.add("active");
+  card.classList.remove("answered-full","answered-partial","answered-zero");
+  card.classList.add(pts===4 ? "answered-full" : pts===0 ? "answered-zero" : "answered-partial");
+  card.querySelectorAll(".kpi-point-btn").forEach(b=>b.classList.remove("active"));
+  card.querySelector(`.kpi-point-btn[data-pts="${pts}"]`).classList.add("active");
+  const tag = document.getElementById(`kpiScoreTag${i}`);
+  if(tag) tag.textContent = `${pts} / 4`;
   actualizarKpiChecklistProgress();
   actualizarKpiScore();
 }
 
 function actualizarKpiChecklistProgress(){
-  const respondidos = kpiRespuestas.filter(r=>r.cumple).length;
+  const respondidos = kpiRespuestas.filter(r=>r.puntos!==null).length;
   const el = document.getElementById("kpiChecklistProgress");
   if(el) el.textContent = `${respondidos} de ${KPI_ITEMS.length} evaluados`;
 }
 
 function calcKpiScore(){
-  return kpiRespuestas.filter(r=>r.cumple==="si").length * 4;
+  return kpiRespuestas.reduce((sum,r)=> sum + (r.puntos!==null ? r.puntos : 0), 0);
 }
 
 function actualizarKpiScore(){
@@ -2070,26 +2088,29 @@ function kpiIrPaso(n){
 }
 
 function kpiValidarPaso2(){
-  const sinEvaluar = kpiRespuestas.filter(r=>!r.cumple).length;
-  if(sinEvaluar){ showToast(`Faltan ${sinEvaluar} ítem(s) por marcar Sí/No`,"warn"); return; }
+  const sinEvaluar = kpiRespuestas.filter(r=>r.puntos===null).length;
+  if(sinEvaluar){ showToast(`Faltan ${sinEvaluar} ítem(s) por calificar`,"warn"); return; }
   kpiIrPaso(3);
 }
 
 function renderKpiObs(){
   const cont = document.getElementById("kpiObsCards");
-  const indicesNo = kpiRespuestas.map((r,i)=>r.cumple==="no"?i:null).filter(i=>i!==null);
+  const indicesIncompletos = kpiRespuestas.map((r,i)=> (r.puntos!==null && r.puntos<4) ? i : null).filter(i=>i!==null);
 
-  if(!indicesNo.length){
-    cont.innerHTML = `<div class="kpi-all-ok"><div class="kpi-all-ok-icon">🎉</div><p>Todos los ítems cumplieron. No hay hallazgos que corregir.</p></div>`;
+  if(!indicesIncompletos.length){
+    cont.innerHTML = `<div class="kpi-all-ok"><div class="kpi-all-ok-icon">🎉</div><p>Todos los ítems obtuvieron el puntaje completo. No hay hallazgos que corregir.</p></div>`;
     return;
   }
 
-  cont.innerHTML = indicesNo.map(i => `
+  cont.innerHTML = indicesIncompletos.map(i => `
     <div class="kpi-obs-card">
-      <div class="kpi-obs-title">⚠ ${KPI_ITEMS[i]}</div>
+      <div class="kpi-obs-title">
+        <span>⚠ ${KPI_ITEMS[i]}</span>
+        <span class="kpi-obs-title-pts">${kpiRespuestas[i].puntos} / 4</span>
+      </div>
       <div class="kpi-obs-field">
         <label class="kpi-obs-label">Detalle del hallazgo</label>
-        <textarea class="kpi-obs-textarea" id="kpiObsDetalle${i}" placeholder="Describe qué no cumplió…">${kpiRespuestas[i].obs}</textarea>
+        <textarea class="kpi-obs-textarea" id="kpiObsDetalle${i}" placeholder="Describe qué no cumplió del todo…">${kpiRespuestas[i].obs}</textarea>
       </div>
       <div class="kpi-obs-field">
         <label class="kpi-obs-label">Responsable de corregir</label>
@@ -2104,7 +2125,7 @@ function renderKpiObs(){
 
 function guardarKpiObs(){
   kpiRespuestas.forEach((r,i)=>{
-    if(r.cumple==="no"){
+    if(r.puntos!==null && r.puntos<4){
       const detalle = document.getElementById(`kpiObsDetalle${i}`);
       const resp    = document.getElementById(`kpiObsResp${i}`);
       const fecha   = document.getElementById(`kpiObsFecha${i}`);
@@ -2119,7 +2140,7 @@ function renderKpiResumen(){
   guardarKpiObs();
   const t = kpiTiendaSeleccionada();
   const total = actualizarKpiScore();
-  const hallazgos = kpiRespuestas.filter(r=>r.cumple==="no").length;
+  const hallazgos = kpiRespuestas.filter(r=>r.puntos!==null && r.puntos<4).length;
   document.getElementById("kpiResumenTienda").textContent    = t ? t.nombre : "—";
   document.getElementById("kpiResumenPuntaje").textContent   = `${total} / 100`;
   document.getElementById("kpiResumenHallazgos").textContent = hallazgos;
@@ -2130,12 +2151,12 @@ function construirDetalleHtmlKpi(){
   let filas = "";
   KPI_ITEMS.forEach((item, i) => {
     const r = kpiRespuestas[i];
-    const cumpleLabel = r.cumple==="si" ? "✅ Sí" : r.cumple==="no" ? "❌ No" : "—";
-    const pts = r.cumple==="si" ? "4/4" : "0/4";
+    const pts = r.puntos!==null ? r.puntos : 0;
+    const cumpleLabel = pts===4 ? "✅ Completo" : pts===0 ? "❌ No cumple" : "⚠ Parcial";
     filas += `<tr>
       <td style="padding:6px 10px;border-bottom:1px solid #eee">${item}</td>
       <td style="padding:6px 10px;border-bottom:1px solid #eee;text-align:center">${cumpleLabel}</td>
-      <td style="padding:6px 10px;border-bottom:1px solid #eee;text-align:center">${pts}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #eee;text-align:center">${pts}/4</td>
       <td style="padding:6px 10px;border-bottom:1px solid #eee">${r.obs||"—"}</td>
       <td style="padding:6px 10px;border-bottom:1px solid #eee">${r.resp||"—"}</td>
       <td style="padding:6px 10px;border-bottom:1px solid #eee">${r.fecha||"—"}</td>
@@ -2158,8 +2179,8 @@ async function enviarKpi(){
   const tienda = kpiTiendaSeleccionada();
   if(!tienda){ showToast("Selecciona una tienda","err"); return; }
 
-  const sinEvaluar = kpiRespuestas.filter(r=>!r.cumple).length;
-  if(sinEvaluar){ showToast(`Faltan ${sinEvaluar} ítem(s) por marcar Sí/No`,"warn"); return; }
+  const sinEvaluar = kpiRespuestas.filter(r=>r.puntos===null).length;
+  if(sinEvaluar){ showToast(`Faltan ${sinEvaluar} ítem(s) por calificar`,"warn"); return; }
 
   if (typeof emailjs === "undefined" || !EMAILJS_PUBLIC_KEY || EMAILJS_PUBLIC_KEY === "TU_PUBLIC_KEY_AQUI"){
     showToast("Falta configurar EmailJS (Service ID / Template ID / Public Key) en el código","err");
@@ -2195,7 +2216,7 @@ async function enviarKpi(){
 }
 
 function limpiarKpi(){
-  kpiRespuestas = KPI_ITEMS.map(() => ({ cumple:null, obs:"", resp:"", fecha:hoyISO() }));
+  kpiRespuestas = KPI_ITEMS.map(() => ({ puntos:null, obs:"", resp:"", fecha:hoyISO() }));
   renderKpiChecklist();
   document.getElementById("kpiNotasGenerales").value = "";
   kpiIrPaso(1);
