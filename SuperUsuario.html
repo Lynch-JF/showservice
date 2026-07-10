@@ -560,6 +560,38 @@ table.data-table tr:hover td{background:var(--surface-alt)}
   .kpi-row{grid-template-columns:1fr}
   .sla-row{grid-template-columns:1fr}
 }
+
+/* ── CHAT POR TICKET ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.ticket-chat{margin-top:14px;border-top:1px solid var(--border);padding-top:14px}
+.tc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.tc-title{font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px}
+.tc-count{font-family:var(--mono);font-size:9px;color:var(--ink-soft);background:var(--surface-sunk);padding:2px 8px;border-radius:99px;border:1px solid var(--border)}
+.tc-messages{max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:10px;background:var(--surface-alt);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;scroll-behavior:smooth}
+.tc-messages::-webkit-scrollbar{width:3px}
+.tc-messages::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:99px}
+.tc-msg{display:flex;gap:7px;align-items:flex-end;animation:fadeUp .18s var(--ease)}
+.tc-msg.mine{flex-direction:row-reverse}
+.tc-av{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--primary),var(--violet))}
+.tc-msg.tech .tc-av{background:linear-gradient(135deg,var(--emerald),var(--cyan))}
+.tc-msg.admin .tc-av{background:linear-gradient(135deg,var(--amber),#d97706)}
+.tc-bubble-wrap{max-width:78%;display:flex;flex-direction:column;gap:2px}
+.tc-msg.mine .tc-bubble-wrap{align-items:flex-end}
+.tc-author{font-family:var(--mono);font-size:9px;color:var(--ink-faint);padding:0 4px}
+.tc-bubble{padding:8px 11px;border-radius:12px;font-size:12px;line-height:1.55;color:var(--ink);word-break:break-word}
+.tc-msg:not(.mine) .tc-bubble{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:3px}
+.tc-msg.mine .tc-bubble{background:var(--primary);color:#fff;border-bottom-right-radius:3px}
+.tc-time{font-family:var(--mono);font-size:8px;color:var(--ink-faint);padding:0 4px}
+.tc-empty{text-align:center;color:var(--ink-faint);font-size:11px;padding:24px 0;font-family:var(--mono)}
+.tc-input-row{display:flex;gap:6px;align-items:center}
+#tcInput{flex:1;padding:8px 12px;background:var(--surface-alt);border:1px solid var(--border-strong);border-radius:99px;color:var(--ink);font-family:var(--font);font-size:13px;outline:none;transition:border-color .15s}
+#tcInput:focus{border-color:var(--primary)}
+#tcSendBtn{width:34px;height:34px;border-radius:50%;background:var(--primary);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:all .15s}
+#tcSendBtn:hover{opacity:.88}
+#tcSendBtn:disabled{opacity:.4;cursor:not-allowed}
+.tc-closed-notice{text-align:center;padding:10px;font-size:11px;color:var(--ink-faint);background:var(--surface-alt);border:1px dashed var(--border-strong);border-radius:var(--r-sm);font-family:var(--mono)}
+
+   
 </style>
 </head>
 <body>
@@ -971,7 +1003,7 @@ table.data-table tr:hover td{background:var(--surface-alt)}
       </div>
       <button class="dm-close" onclick="cerrarDetalleBtn()" aria-label="Cerrar">✕</button>
     </div>
-    <div class="dm-body">
+  <div class="dm-body">
       <div class="dm-info-grid">
         <div class="dm-info-cell"><div class="ic-label">Reportado por</div><div class="ic-val" id="dm-usuario">—</div></div>
         <div class="dm-info-cell"><div class="ic-label">Asignado a</div><div class="ic-val" id="dm-asignado">—</div></div>
@@ -986,6 +1018,23 @@ table.data-table tr:hover td{background:var(--surface-alt)}
         <div class="dm-section-label">Resolución</div>
         <div class="dm-resolution"><div class="res-title">✓ Detalle de resolución</div><div id="dm-resolution-text">—</div><div class="res-participants" id="dm-resolution-meta">—</div></div>
       </div>
+      <hr class="dm-divider" style="margin-bottom:14px"/>
+      <div class="ticket-chat" id="ticketChat">
+        <div class="tc-header">
+          <span class="tc-title">💬 Chat del ticket</span>
+          <span class="tc-count" id="tcCount">0 mensajes</span>
+        </div>
+        <div class="tc-messages" id="tcMessages">
+          <div class="tc-empty">Cargando conversación…</div>
+        </div>
+        <div class="tc-input-row" id="tcInputRow">
+          <input type="text" id="tcInput" placeholder="Escribe un mensaje…" autocomplete="off"
+            onkeydown="if(event.key==='Enter'){tcEnviarMensaje();}">
+          <button id="tcSendBtn" onclick="tcEnviarMensaje()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
     </div>
     <div class="dm-footer">
       <div class="dm-footer-actions" id="dm-footer-actions"></div>
@@ -994,6 +1043,7 @@ table.data-table tr:hover td{background:var(--surface-alt)}
   </div>
 </div>
 
+   
 <!-- MODAL USUARIO -->
 <div class="modal-overlay" id="userModal">
   <div class="modal">
@@ -1439,6 +1489,7 @@ function abrirDetalle(t){
   else if(t.estado==="En Proceso" && esMio) bots += `<button class="btn btn-emerald btn-sm" onclick="resolverDesdeModal(${t.id})">✓ Resolver</button>`;
   if(esMio && t.recibido!=="si" && t.estado!=="Resuelto") bots += `<button class="btn btn-indigo btn-sm" onclick="marcarRecibido(${t.id})">📩 Recibido</button>`;
   setDM("dm-footer-actions", bots, "innerHTML");
+     abrirChatTicket(t.id, t.estado);
   document.getElementById("detailOverlay").classList.add("open");
   document.body.style.overflow = "hidden";
 }
@@ -1452,9 +1503,12 @@ function buildTL(t){
   return ev;
 }
 function cerrarDetalle(e){ if(e.target===document.getElementById("detailOverlay")) cerrarDetalleBtn(); }
-function cerrarDetalleBtn(){ document.getElementById("detailOverlay").classList.remove("open"); document.body.style.overflow=""; ticketDetalle=null; }
-document.addEventListener("keydown", e => { if(e.key==="Escape"){ cerrarDetalleBtn(); cerrarResolucionModal(); cerrarModal(); cerrarPlantModal(); } });
-
+function cerrarDetalleBtn(){
+  document.getElementById("detailOverlay").classList.remove("open");
+  document.body.style.overflow="";
+  ticketDetalle=null;
+  cerrarChatTicket();
+}
 // ── ACCIONES TICKETS ──
 async function cambiarEstado(id, estado){
   try{
@@ -2033,6 +2087,111 @@ async function nexoSendMessage(){
   } catch(err){ nexoRemoveTyping(); nexoAppendBot("⚠️ Error: "+err.message); }
   finally{ nexoTyping=false; input.disabled=false; btn.disabled=false; input.focus(); }
 }
+
+// ══════════════════════════════════════════════════
+// CHAT POR TICKET
+// ══════════════════════════════════════════════════
+let tcTicketActual = null;
+let tcPollingInterval = null;
+const tcUsuarioActual = MI_USUARIO;
+
+async function abrirChatTicket(ticketId, estadoTicket){
+  tcTicketActual = ticketId;
+  document.getElementById("tcMessages").innerHTML = `<div class="tc-empty">Cargando conversación…</div>`;
+
+  const inputRow = document.getElementById("tcInputRow");
+  if(estadoTicket === "Resuelto"){
+    inputRow.innerHTML = `<div class="tc-closed-notice" style="width:100%">🔒 Este ticket está resuelto. El chat quedó cerrado.</div>`;
+  } else {
+    inputRow.innerHTML = `
+      <input type="text" id="tcInput" placeholder="Escribe un mensaje…" autocomplete="off"
+        onkeydown="if(event.key==='Enter'){tcEnviarMensaje();}">
+      <button id="tcSendBtn" onclick="tcEnviarMensaje()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>`;
+  }
+
+  await tcCargarMensajes();
+  tcIniciarPolling();
+}
+
+function cerrarChatTicket(){
+  tcTicketActual = null;
+  if(tcPollingInterval){ clearInterval(tcPollingInterval); tcPollingInterval = null; }
+}
+
+async function tcCargarMensajes(){
+  if(!tcTicketActual) return;
+  try{
+    const r = await apiFetch(`/tickets/${tcTicketActual}/mensajes`);
+    if(!r.ok) throw new Error();
+    const mensajes = await r.json();
+    tcRenderMensajes(mensajes);
+  } catch{
+    document.getElementById("tcMessages").innerHTML = `<div class="tc-empty">⚠ Error al cargar el chat</div>`;
+  }
+}
+
+function tcRenderMensajes(mensajes){
+  const cont = document.getElementById("tcMessages");
+  document.getElementById("tcCount").textContent = `${mensajes.length} mensaje${mensajes.length!==1?"s":""}`;
+
+  if(!mensajes.length){
+    cont.innerHTML = `<div class="tc-empty">Aún no hay mensajes. Escribe el primero 👋</div>`;
+    return;
+  }
+
+  const estabaAbajo = cont.scrollTop + cont.clientHeight >= cont.scrollHeight - 30;
+
+  cont.innerHTML = mensajes.map(m => {
+    const esMio = m.autor_usuario === tcUsuarioActual;
+    const rolCls = m.autor_rol === "tecnico" ? "tech" : (m.autor_rol === "admin" || m.autor_rol === "superadmin") ? "admin" : "";
+    const iniciales = (m.autor_usuario||"??").substring(0,2).toUpperCase();
+    const hora = new Date(m.creado_en).toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"});
+    return `
+      <div class="tc-msg ${esMio?"mine":rolCls}">
+        <div class="tc-av">${iniciales}</div>
+        <div class="tc-bubble-wrap">
+          ${!esMio?`<span class="tc-author">${esc(m.autor_usuario)}</span>`:""}
+          <div class="tc-bubble">${esc(m.contenido)}</div>
+          <span class="tc-time">${hora}</span>
+        </div>
+      </div>`;
+  }).join("");
+
+  if(estabaAbajo) cont.scrollTop = cont.scrollHeight;
+}
+
+async function tcEnviarMensaje(){
+  const input = document.getElementById("tcInput");
+  const btn = document.getElementById("tcSendBtn");
+  if(!input) return;
+  const texto = input.value.trim();
+  if(!texto || !tcTicketActual) return;
+
+  input.disabled = true; if(btn) btn.disabled = true;
+  try{
+    const r = await apiFetch(`/tickets/${tcTicketActual}/mensajes`, {
+      method: "POST",
+      body: JSON.stringify({ contenido: texto })
+    });
+    if(!r.ok) throw new Error();
+    input.value = "";
+    await tcCargarMensajes();
+  } catch{
+    showToast("No se pudo enviar el mensaje","error");
+  } finally {
+    input.disabled = false; if(btn) btn.disabled = false; input.focus();
+  }
+}
+
+function tcIniciarPolling(){
+  if(tcPollingInterval) clearInterval(tcPollingInterval);
+  tcPollingInterval = setInterval(() => {
+    if(tcTicketActual && !document.hidden) tcCargarMensajes();
+  }, 8000);
+}
+       
 
 init();
 </script>
