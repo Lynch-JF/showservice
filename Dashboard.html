@@ -2013,11 +2013,6 @@ function toggleChatTickets(){
   }
 }
 
-// ══════════════════════════════════════════════════
-// PATCH — reemplaza tu función ctkPoll() en usuario.html
-// por esta versión (mismo comportamiento + logs de error)
-// ══════════════════════════════════════════════════
-
 async function ctkPoll(){
   const usuario = localStorage.getItem("usuario");
   if(!usuario || !todosTickets.length) return;
@@ -2042,16 +2037,6 @@ async function ctkPoll(){
       ctkUltimoPorTicket[t.id] = { ultimo, mensajes, noLeido: noLeidoAhora };
     } catch {}
   }
-
-  // ── SOLO PARA DEPURAR: quita este bloque cuando ya funcione ──
-  if(erroresEncontrados.length){
-    console.warn("[CHAT TICKETS] Errores al consultar mensajes:", erroresEncontrados);
-  }
-  // ────────────────────────────────────────────────────────────
-
-  ctkActualizarBadge();
-  if(ctkOpen && !ctkTicketActivo) ctkRenderLista();
-}
 
   ctkActualizarBadge();
   if(ctkOpen && !ctkTicketActivo) ctkRenderLista();
