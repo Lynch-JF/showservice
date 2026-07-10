@@ -527,6 +527,76 @@ select optgroup{background:var(--surface-2);color:var(--ink-3);font-size:11px}
 .ctp-btn-fill:hover{opacity:.9}
 .ctp-btn-edit{padding:8px 12px;border-radius:var(--radius);background:transparent;color:var(--ink-2);border:1px solid var(--border-2);cursor:pointer;font-size:11px;font-weight:700;transition:all .15s}
 .ctp-btn-edit:hover{color:var(--ink);background:var(--surface-2)}
+
+/* ════ CHAT DE TICKETS (mensajes de técnicos) ════ */
+#chatTicketsFab{
+  position:fixed;bottom:28px;right:84px;width:54px;height:54px;border-radius:50%;
+  background:var(--surface);border:1px solid var(--border-2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  box-shadow:var(--shadow-lg);z-index:198;transition:transform .2s var(--ease);color:var(--ink-2);
+}
+@media(max-width:767px){#chatTicketsFab{bottom:calc(var(--bottomnav-h) + 16px);right:74px;width:50px;height:50px;font-size:19px}}
+#chatTicketsFab:hover{transform:scale(1.07);border-color:var(--brand);color:var(--brand)}
+#chatTicketsFab .fab-badge-count{
+  position:absolute;top:-4px;right:-4px;min-width:19px;height:19px;padding:0 4px;background:var(--crit);color:#fff;
+  border-radius:99px;border:2px solid var(--bg);display:none;align-items:center;justify-content:center;
+  font-family:var(--font-mono);font-size:10px;font-weight:700;
+}
+#chatTicketsFab .fab-badge-count.show{display:flex}
+
+#chatTicketsPanel{
+  position:fixed;bottom:92px;right:20px;width:380px;max-width:calc(100vw - 32px);max-height:min(560px,72vh);
+  background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius-xl);box-shadow:var(--shadow-lg);
+  display:flex;flex-direction:column;z-index:197;overflow:hidden;opacity:0;transform:translateY(12px) scale(.97);
+  pointer-events:none;transition:opacity .22s var(--ease),transform .22s var(--ease);
+}
+@media(max-width:767px){#chatTicketsPanel{bottom:calc(var(--bottomnav-h) + 74px);right:16px}}
+#chatTicketsPanel.open{opacity:1;transform:translateY(0) scale(1);pointer-events:all}
+
+.ctk-header{padding:14px 16px;background:var(--surface-2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.ctk-header-icon{width:34px;height:34px;border-radius:50%;background:var(--gradient-brand);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;color:#fff}
+.ctk-header-info{flex:1;min-width:0}
+.ctk-header-name{font-size:13px;font-weight:700;color:var(--ink);font-family:var(--font-display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctk-header-status{font-family:var(--font-mono);font-size:9px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctk-close-btn{background:var(--surface-3);border:none;color:var(--ink-2);width:26px;height:26px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.ctk-back-btn{background:var(--surface-3);border:none;color:var(--ink-2);width:26px;height:26px;border-radius:50%;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.ctk-back-btn.show{display:flex}
+
+.ctk-list{flex:1;overflow-y:auto;padding:10px}
+.ctk-empty{text-align:center;padding:40px 16px;color:var(--ink-3);font-family:var(--font-mono);font-size:11px}
+.ctk-ticket-item{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:var(--radius);cursor:pointer;transition:background .15s;margin-bottom:4px;border:1px solid transparent}
+.ctk-ticket-item:hover{background:var(--surface-2)}
+.ctk-ticket-item.unread{background:var(--ok-bg);border-color:var(--ok-bd)}
+.ctk-ti-avatar{width:32px;height:32px;border-radius:50%;background:var(--gradient-brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.ctk-ti-content{flex:1;min-width:0}
+.ctk-ti-title{font-size:12px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctk-ti-preview{font-size:11px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.ctk-ti-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.ctk-ti-time{font-family:var(--font-mono);font-size:9px;color:var(--ink-3)}
+.ctk-ti-dot{width:8px;height:8px;border-radius:50%;background:var(--brand);display:none}
+.ctk-ti-dot.show{display:block}
+
+.ctk-thread{display:none;flex-direction:column;flex:1;min-height:0}
+.ctk-thread.active{display:flex}
+.ctk-thread-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.ctk-msg{display:flex;gap:7px;align-items:flex-end}
+.ctk-msg.mine{flex-direction:row-reverse}
+.ctk-msg-av{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;background:var(--gradient-brand)}
+.ctk-msg.tech .ctk-msg-av{background:linear-gradient(135deg,var(--med),#1f4fb0)}
+.ctk-bubble-wrap{max-width:78%;display:flex;flex-direction:column;gap:2px}
+.ctk-msg.mine .ctk-bubble-wrap{align-items:flex-end}
+.ctk-author{font-family:var(--font-mono);font-size:9px;color:var(--ink-3);padding:0 4px}
+.ctk-bubble{padding:8px 12px;border-radius:13px;font-size:12px;line-height:1.5;color:var(--ink);word-break:break-word}
+.ctk-msg:not(.mine) .ctk-bubble{background:var(--surface-2);border:1px solid var(--border);border-bottom-left-radius:3px}
+.ctk-msg.mine .ctk-bubble{background:var(--gradient-brand);color:#fff;border-bottom-right-radius:3px}
+.ctk-time{font-family:var(--font-mono);font-size:8px;color:var(--ink-3);padding:0 4px}
+.ctk-input-row{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
+.ctk-input-row input{flex:1;padding:9px 13px;border-radius:99px;background:var(--surface-2);border:1px solid var(--border-2);color:var(--ink);font-size:12px;outline:none;margin-bottom:0}
+.ctk-input-row input:focus{border-color:var(--brand)}
+.ctk-send-btn{width:34px;height:34px;border-radius:50%;background:var(--gradient-brand);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.ctk-send-btn:disabled{opacity:.45;cursor:not-allowed}
+.ctk-closed-notice{margin:10px 12px;padding:9px;text-align:center;font-size:11px;color:var(--ink-3);background:var(--surface-2);border:1px dashed var(--border-2);border-radius:var(--radius);font-family:var(--font-mono)}
+   
 </style>
 </head>
 <body>
@@ -859,6 +929,39 @@ select optgroup{background:var(--surface-2);color:var(--ink-3);font-size:11px}
     </button>
   </div>
   <div class="chat-footer">GM Tickets TI · Grupo Michel · v4.0</div>
+</div>
+
+
+   <div class="chat-footer">GM Tickets TI · Grupo Michel · v4.0</div>
+</div>
+
+<!-- ════ CHAT DE TICKETS (mensajes de técnicos) ════ -->
+<button id="chatTicketsFab" onclick="toggleChatTickets()" title="Mensajes de tickets">
+  💬
+  <div class="fab-badge-count" id="ctkBadgeCount">0</div>
+</button>
+
+<div id="chatTicketsPanel">
+  <div class="ctk-header">
+    <button class="ctk-back-btn" id="ctkBackBtn" onclick="ctkVolverALista()">←</button>
+    <div class="ctk-header-icon">💬</div>
+    <div class="ctk-header-info">
+      <div class="ctk-header-name" id="ctkHeaderTitle">Mensajes de tickets</div>
+      <div class="ctk-header-status" id="ctkHeaderSub">Conversaciones con técnicos</div>
+    </div>
+    <button class="ctk-close-btn" onclick="toggleChatTickets()">✕</button>
+  </div>
+
+  <div class="ctk-list" id="ctkList"></div>
+
+  <div class="ctk-thread" id="ctkThread">
+    <div class="ctk-thread-msgs" id="ctkThreadMsgs"></div>
+    <div class="ctk-input-row" id="ctkInputRow">
+      <input type="text" id="ctkInput" placeholder="Escribe un mensaje…" autocomplete="off"
+        onkeydown="if(event.key==='Enter'){ctkEnviarMensaje();}">
+      <button class="ctk-send-btn" id="ctkSendBtn" onclick="ctkEnviarMensaje()">➤</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast-wrap" id="toastWrap"></div>
@@ -1323,7 +1426,10 @@ async function cargarAnalistas() {
   setInterval(updateClock, 1000);
 
   initChatbot();
-  cargarAnalistas().then(cargarManual).finally(function(){ recargarTickets(); iniciarAutoRefresh(); });
+  cargarAnalistas().then(cargarManual).finally(function(){
+    recargarTickets().then(function(){ ctkIniciarPolling(); });
+    iniciarAutoRefresh();
+  });
 })();
 
 function updateClock() {
@@ -1680,6 +1786,8 @@ function toggleChat() {
   const panel = document.getElementById("chatbotPanel");
   const badge = document.getElementById("fabBadge");
   if (chatOpen) {
+    document.getElementById("chatTicketsPanel").classList.remove("open");
+    ctkOpen = false;
     panel.classList.add("open");
     if (badge) badge.classList.remove("show");
     setTimeout(function(){ var inp = document.getElementById("chatInput"); if(inp) inp.focus(); }, 250);
@@ -1874,6 +1982,213 @@ async function sendChatMessage() {
     sendBtn.disabled = false;
     input.focus();
   }
+}
+
+   /* ══════════════════════════════════════════════════════
+   CHAT DE TICKETS — mensajes de técnicos
+   Reutiliza /tickets/:id/mensajes (mismo endpoint que SuperAdmin.html)
+══════════════════════════════════════════════════════ */
+let ctkOpen = false;
+let ctkTicketActivo = null;
+let ctkPollingInterval = null;
+let ctkUltimoPorTicket = {}; // { [ticketId]: { ultimo, mensajes, noLeido } }
+
+function ctkLastSeenKey(ticketId){ return "ctk_lastseen_" + ticketId; }
+function ctkGetLastSeen(ticketId){ return parseInt(localStorage.getItem(ctkLastSeenKey(ticketId)) || "0", 10); }
+function ctkSetLastSeen(ticketId, msgId){ localStorage.setItem(ctkLastSeenKey(ticketId), String(msgId || 0)); }
+
+function toggleChatTickets(){
+  ctkOpen = !ctkOpen;
+  const panel = document.getElementById("chatTicketsPanel");
+  if(ctkOpen){
+    document.getElementById("chatbotPanel").classList.remove("open");
+    chatOpen = false;
+    const fabBadge = document.getElementById("fabBadge");
+    if(fabBadge) fabBadge.classList.remove("show");
+  }
+  panel.classList.toggle("open", ctkOpen);
+  if(ctkOpen){
+    ctkVolverALista();
+    ctkPoll();
+  }
+}
+
+async function ctkPoll(){
+  const usuario = localStorage.getItem("usuario");
+  if(!usuario || !todosTickets.length) return;
+  // revisamos los tickets más recientes para no saturar el backend
+  const lista = [...todosTickets].reverse().slice(0, 15);
+
+  for(const t of lista){
+    try{
+      const r = await apiFetch(`/tickets/${t.id}/mensajes`);
+      if(!r.ok) continue;
+      const mensajes = await r.json();
+      if(!mensajes.length) continue;
+
+      const ultimo = mensajes[mensajes.length - 1];
+      const esDeOtro = ultimo.autor_usuario !== usuario;
+      const yaAvisado = ctkUltimoPorTicket[t.id]?.ultimo?.id === ultimo.id;
+      const noLeidoAhora = esDeOtro && ultimo.id > ctkGetLastSeen(t.id);
+
+      if(noLeidoAhora && !yaAvisado && !ctkOpen){
+        showToast(`💬 Nuevo mensaje de ${ultimo.autor_usuario} en "${t.titulo}"`, "success");
+      }
+      ctkUltimoPorTicket[t.id] = { ultimo, mensajes, noLeido: noLeidoAhora };
+    } catch {}
+  }
+
+  ctkActualizarBadge();
+  if(ctkOpen && !ctkTicketActivo) ctkRenderLista();
+}
+
+function ctkActualizarBadge(){
+  const total = Object.values(ctkUltimoPorTicket).filter(i => i.noLeido).length;
+  const badge = document.getElementById("ctkBadgeCount");
+  if(badge){ badge.textContent = total; badge.classList.toggle("show", total > 0); }
+}
+
+function ctkRenderLista(){
+  const cont = document.getElementById("ctkList");
+  document.getElementById("ctkThread").classList.remove("active");
+  document.getElementById("ctkList").style.display = "";
+  document.getElementById("ctkBackBtn").classList.remove("show");
+  document.getElementById("ctkHeaderTitle").textContent = "Mensajes de tickets";
+  document.getElementById("ctkHeaderSub").textContent = "Conversaciones con técnicos";
+  if(!cont) return;
+
+  const entries = Object.entries(ctkUltimoPorTicket)
+    .filter(([id]) => todosTickets.some(t => String(t.id) === String(id)))
+    .sort((a,b) => new Date(b[1].ultimo.creado_en) - new Date(a[1].ultimo.creado_en));
+
+  if(!entries.length){
+    cont.innerHTML = `<div class="ctk-empty">📭 Aún no hay mensajes de técnicos en tus tickets.</div>`;
+    return;
+  }
+
+  cont.innerHTML = entries.map(([id, info]) => {
+    const t = todosTickets.find(x => String(x.id) === String(id));
+    const ini = (info.ultimo.autor_usuario || "??").substring(0,2).toUpperCase();
+    const hora = new Date(info.ultimo.creado_en).toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"});
+    const titulo = (t ? t.titulo : ("Ticket #" + id)) || "";
+    const preview = `${info.ultimo.autor_usuario}: ${(info.ultimo.contenido || "").replace(/</g,"&lt;")}`;
+    return `<div class="ctk-ticket-item ${info.noLeido ? "unread" : ""}" onclick="ctkAbrirTicket('${id}')">
+      <div class="ctk-ti-avatar">${ini}</div>
+      <div class="ctk-ti-content">
+        <div class="ctk-ti-title">${titulo}</div>
+        <div class="ctk-ti-preview">${preview}</div>
+      </div>
+      <div class="ctk-ti-meta">
+        <span class="ctk-ti-time">${hora}</span>
+        <span class="ctk-ti-dot ${info.noLeido ? "show" : ""}"></span>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function ctkVolverALista(){
+  ctkTicketActivo = null;
+  ctkRenderLista();
+}
+
+async function ctkAbrirTicket(id){
+  ctkTicketActivo = id;
+  const t = todosTickets.find(x => String(x.id) === String(id));
+
+  document.getElementById("ctkHeaderTitle").textContent = t ? t.titulo : ("Ticket #" + id);
+  document.getElementById("ctkHeaderSub").textContent = t ? (t.depto || "") : "";
+  document.getElementById("ctkBackBtn").classList.add("show");
+  document.getElementById("ctkList").style.display = "none";
+  document.getElementById("ctkThread").classList.add("active");
+
+  const inputRow = document.getElementById("ctkInputRow");
+  if(t && t.estado === "Resuelto"){
+    inputRow.innerHTML = `<div class="ctk-closed-notice" style="width:100%">🔒 Este ticket está resuelto. El chat quedó cerrado.</div>`;
+  } else {
+    inputRow.innerHTML = `<input type="text" id="ctkInput" placeholder="Escribe un mensaje…" autocomplete="off"
+        onkeydown="if(event.key==='Enter'){ctkEnviarMensaje();}">
+      <button class="ctk-send-btn" id="ctkSendBtn" onclick="ctkEnviarMensaje()">➤</button>`;
+  }
+
+  await ctkCargarMensajes(id);
+
+  const info = ctkUltimoPorTicket[id];
+  if(info && info.ultimo){
+    ctkSetLastSeen(id, info.ultimo.id);
+    info.noLeido = false;
+  }
+  ctkActualizarBadge();
+}
+
+async function ctkCargarMensajes(id){
+  const cont = document.getElementById("ctkThreadMsgs");
+  cont.innerHTML = `<div class="ctk-empty">Cargando…</div>`;
+  try{
+    const r = await apiFetch(`/tickets/${id}/mensajes`);
+    if(!r.ok) throw new Error();
+    const mensajes = await r.json();
+    ctkRenderMensajes(mensajes);
+    if(mensajes.length){
+      ctkUltimoPorTicket[id] = ctkUltimoPorTicket[id] || {};
+      ctkUltimoPorTicket[id].mensajes = mensajes;
+      ctkUltimoPorTicket[id].ultimo = mensajes[mensajes.length - 1];
+    }
+  } catch {
+    cont.innerHTML = `<div class="ctk-empty">⚠ Error al cargar el chat</div>`;
+  }
+}
+
+function ctkRenderMensajes(mensajes){
+  const cont = document.getElementById("ctkThreadMsgs");
+  const usuario = localStorage.getItem("usuario");
+  if(!mensajes.length){
+    cont.innerHTML = `<div class="ctk-empty">Aún no hay mensajes en este ticket.</div>`;
+    return;
+  }
+  cont.innerHTML = mensajes.map(m => {
+    const esMio = m.autor_usuario === usuario;
+    const esTec = m.autor_rol === "tecnico" || m.autor_rol === "admin" || m.autor_rol === "superadmin";
+    const ini = (m.autor_usuario || "??").substring(0,2).toUpperCase();
+    const hora = new Date(m.creado_en).toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"});
+    return `<div class="ctk-msg ${esMio ? "mine" : (esTec ? "tech" : "")}">
+      <div class="ctk-msg-av">${ini}</div>
+      <div class="ctk-bubble-wrap">
+        ${!esMio ? `<span class="ctk-author">${m.autor_usuario}</span>` : ""}
+        <div class="ctk-bubble">${(m.contenido || "").replace(/</g,"&lt;")}</div>
+        <span class="ctk-time">${hora}</span>
+      </div>
+    </div>`;
+  }).join("");
+  cont.scrollTop = cont.scrollHeight;
+}
+
+async function ctkEnviarMensaje(){
+  const input = document.getElementById("ctkInput");
+  const btn = document.getElementById("ctkSendBtn");
+  if(!input || !ctkTicketActivo) return;
+  const texto = input.value.trim();
+  if(!texto) return;
+
+  input.disabled = true; if(btn) btn.disabled = true;
+  try{
+    const r = await apiFetch(`/tickets/${ctkTicketActivo}/mensajes`, {
+      method: "POST",
+      body: JSON.stringify({ contenido: texto })
+    });
+    if(!r.ok) throw new Error();
+    input.value = "";
+    await ctkCargarMensajes(ctkTicketActivo);
+  } catch {
+    showToast("No se pudo enviar el mensaje","error");
+  } finally {
+    input.disabled = false; if(btn) btn.disabled = false; input.focus();
+  }
+}
+
+function ctkIniciarPolling(){
+  if(ctkPollingInterval) clearInterval(ctkPollingInterval);
+  ctkPoll();
+  ctkPollingInterval = setInterval(() => { if(!document.hidden) ctkPoll(); }, 20000);
 }
 
 /* ══════════════════════════════════════════════════════
