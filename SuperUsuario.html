@@ -591,7 +591,53 @@ table.data-table tr:hover td{background:var(--surface-alt)}
 #tcSendBtn:disabled{opacity:.4;cursor:not-allowed}
 .tc-closed-notice{text-align:center;padding:10px;font-size:11px;color:var(--ink-faint);background:var(--surface-alt);border:1px dashed var(--border-strong);border-radius:var(--r-sm);font-family:var(--mono)}
 
-   
+/* ── CHAT INTERNO (1 a 1) ── */
+.wa-wrap{display:flex;gap:14px;height:calc(100vh - 160px);min-height:480px}
+.wa-contacts{width:300px;flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow-y:auto;box-shadow:var(--shadow-xs)}
+.wa-contacts-hdr{padding:14px 16px;border-bottom:1px solid var(--border);font-family:var(--font-display);font-size:13px;font-weight:600;position:sticky;top:0;background:var(--surface);z-index:2}
+.wa-contact-item{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.wa-contact-item:hover{background:var(--surface-alt)}
+.wa-contact-item.active{background:var(--primary-soft)}
+.wa-contact-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.wa-contact-info{flex:1;min-width:0}
+.wa-contact-name{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wa-contact-role{font-family:var(--mono);font-size:9px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.5px}
+.wa-contact-last{font-size:11px;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.wa-contact-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.wa-contact-time{font-family:var(--mono);font-size:9px;color:var(--ink-faint)}
+.wa-unread-badge{background:var(--primary);color:#fff;font-family:var(--mono);font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:99px;min-width:16px;text-align:center}
+.wa-panel{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-xs)}
+.wa-panel-empty{flex:1;display:flex;align-items:center;justify-content:center;color:var(--ink-faint);font-size:13px;flex-direction:column;gap:10px}
+.wa-panel-empty-icon{font-size:32px;opacity:.5}
+.wa-panel-hdr{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.wa-back-btn{display:none;width:30px;height:30px;border-radius:50%;background:var(--surface-alt);border:1px solid var(--border);color:var(--ink-soft);cursor:pointer;align-items:center;justify-content:center;flex-shrink:0}
+.wa-panel-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.wa-panel-name{font-size:13.5px;font-weight:600}
+.wa-panel-role{font-family:var(--mono);font-size:10px;color:var(--ink-faint)}
+.wa-msgs{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:8px;background:var(--surface-alt)}
+.wa-msg{display:flex;gap:7px;align-items:flex-end;max-width:75%;animation:fadeUp .18s var(--ease)}
+.wa-msg.mine{align-self:flex-end;flex-direction:row-reverse}
+.wa-bubble-wrap{display:flex;flex-direction:column}
+.wa-msg.mine .wa-bubble-wrap{align-items:flex-end}
+.wa-bubble{padding:8px 12px;border-radius:12px;font-size:12.5px;line-height:1.5;background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:3px;word-break:break-word}
+.wa-msg.mine .wa-bubble{background:var(--primary);color:#fff;border:none;border-bottom-right-radius:3px}
+.wa-time{font-family:var(--mono);font-size:8.5px;color:var(--ink-faint);margin-top:2px;padding:0 4px}
+.wa-input-row{padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px}
+.wa-input-row input{flex:1;padding:9px 14px;border-radius:99px;border:1px solid var(--border);background:var(--surface-alt);outline:none;font-size:12.5px}
+.wa-input-row input:focus{border-color:var(--primary)}
+.wa-send-btn{width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wa-send-btn:disabled{opacity:.5;cursor:not-allowed}
+.wa-empty-contacts{text-align:center;padding:30px 16px;color:var(--ink-faint);font-family:var(--mono);font-size:11px}
+@media (max-width: 900px){
+  .wa-wrap{height:calc(100vh - 220px)}
+  .wa-contacts{width:100%;position:absolute;inset:0;z-index:2;border-radius:var(--r-lg)}
+  .wa-panel{position:absolute;inset:0;z-index:1;border-radius:var(--r-lg)}
+  .wa-wrap{position:relative}
+  .wa-wrap.wa-show-panel .wa-contacts{display:none}
+  .wa-wrap:not(.wa-show-panel) .wa-panel{display:none}
+  .wa-back-btn{display:flex}
+}
+
 </style>
 </head>
 <body>
@@ -613,6 +659,7 @@ table.data-table tr:hover td{background:var(--surface-alt)}
     <div class="nav-item" id="nav-mistickets" onclick="switchView('mistickets')"><span class="nav-icon">◈</span> Mis tickets</div>
 
     <p class="sb-section">Equipo</p>
+    <div class="nav-item" id="nav-chat" onclick="switchView('chat')"><span class="nav-icon">💬</span> Chat interno<span class="nav-badge rose" id="nb-chat" style="display:none">0</span></div>
     <div class="nav-item" id="nav-notificaciones" onclick="switchView('notificaciones');renderNotificaciones()"><span class="nav-icon">🔔</span> Notificaciones<span class="nav-badge rose" id="nb-notif" style="display:none">0</span></div>
     <div class="nav-item" id="nav-comentarios" onclick="switchView('comentarios');renderComentTicketList()"><span class="nav-icon">💬</span> Comentarios</div>
     <div class="nav-item" id="nav-plantillas" onclick="switchView('plantillas');renderPlantillas()"><span class="nav-icon">📄</span> Plantillas</div>
@@ -738,6 +785,40 @@ table.data-table tr:hover td{background:var(--surface-alt)}
     </div>
     <div class="sec-head"><span class="sec-title">Todos mis tickets asignados</span><span class="sec-count" id="misCount">0 tickets</span></div>
     <div class="tickets-grid" id="misGrid"></div>
+  </div>
+
+  <!-- CHAT INTERNO -->
+  <div id="view-chat" class="view">
+    <div class="sec-head"><span class="sec-title">Chat interno</span><span class="sec-count" id="waTotalUnread" style="display:none">0 sin leer</span></div>
+    <div class="wa-wrap" id="waWrap">
+      <div class="wa-contacts" id="waContacts">
+        <div class="wa-contacts-hdr">Contactos</div>
+        <div id="waContactsList"><div class="wa-empty-contacts">Cargando contactos…</div></div>
+      </div>
+      <div class="wa-panel" id="waPanel">
+        <div class="wa-panel-empty" id="waPanelEmpty">
+          <div class="wa-panel-empty-icon">💬</div>
+          <p>Selecciona un contacto para empezar a chatear.</p>
+        </div>
+        <div id="waConversation" style="display:none;flex-direction:column;height:100%">
+          <div class="wa-panel-hdr">
+            <button class="wa-back-btn" onclick="cerrarConversacion()">←</button>
+            <div class="wa-panel-av" id="waPanelAv">??</div>
+            <div>
+              <div class="wa-panel-name" id="waPanelName">—</div>
+              <div class="wa-panel-role" id="waPanelRole">—</div>
+            </div>
+          </div>
+          <div class="wa-msgs" id="waMsgs"></div>
+          <div class="wa-input-row">
+            <input type="text" id="waInput" placeholder="Escribe un mensaje…" autocomplete="off" onkeydown="if(event.key==='Enter'){enviarMensajeChat();}"/>
+            <button class="wa-send-btn" id="waSendBtn" onclick="enviarMensajeChat()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- NOTIFICACIONES -->
@@ -1196,6 +1277,7 @@ function init(){
   cargarPlantillas();
   setInterval(() => recargarTodo(false), 5 * 60 * 1000);
   nexoInit();
+  initChatInterno();
 }
 function updateClock(){ const e=document.getElementById("nowTime"); if(e) e.textContent = new Date().toLocaleString("es-DO"); }
 
@@ -1236,7 +1318,7 @@ function renderTodo(){
 // ── NAVIGATION ──
 const VIEW_TITLES = {
   dashboard:"Dashboard", tickets:"Todos los tickets", trabajar:"A trabajar",
-  resueltos:"Mis resueltos", mistickets:"Mis tickets",
+  resueltos:"Mis resueltos", mistickets:"Mis tickets", chat:"Chat interno",
   notificaciones:"Notificaciones", comentarios:"Comentarios internos", plantillas:"Plantillas de respuesta",
   vencidos:"Tickets vencidos", tiempos:"Tiempos de respuesta", calidad:"Métricas de calidad",
   reportes:"Reportes", usuarios:"Usuarios", config:"Configuración"
@@ -1249,6 +1331,7 @@ function switchView(v){
   const nd = document.getElementById("nav-" + v); if(nd) nd.classList.add("active");
   const vt = document.getElementById("viewTitle"); if(vt) vt.textContent = VIEW_TITLES[v] || v;
   if(v === "usuarios") cargarUsuarios(false);
+  if(v === "chat") renderContactosChat();
   closeSidebar();
 }
 
@@ -1407,6 +1490,8 @@ function buildCard(t){
   const eCls = t.estado==="Resuelto"?"b-res":t.estado==="En Proceso"?"b-proc":"b-pend";
   const resH = t.estado==="Resuelto" && t.resolucion
     ? `<div class="t-resolution">✓ ${esc(t.resolucion)}<br><small style="opacity:.75">Participantes: ${esc(t.participantes||"N/A")} — ${esc(t.fecha_resuelto||"")}</small></div>` : "";
+  const puedeChatear = t.asignado && t.asignado.toLowerCase() !== MI_USUARIO.toLowerCase();
+  const chatBtn = puedeChatear ? `<button class="btn btn-ghost btn-sm" onclick="chatearConTecnico('${esc(t.asignado)}')">💬 Chat</button>` : "";
   const div = document.createElement("div"); div.className = "t-card";
   div.innerHTML = `
     ${urg.strip ? `<div class="t-strip ${urg.strip}"></div>` : ""}
@@ -1426,7 +1511,7 @@ function buildCard(t){
       <div class="t-date">📅 ${esc(t.fecha||"")}</div>
     </div>
     ${resH}
-    <div class="t-actions"><button class="btn btn-ghost btn-sm" onclick="abrirDetalleById(${t.id})">🔍 Ver detalle</button></div>`;
+    <div class="t-actions"><button class="btn btn-ghost btn-sm" onclick="abrirDetalleById(${t.id})">🔍 Ver detalle</button>${chatBtn}</div>`;
   return div;
 }
 function buildTrabajarCard(t){
@@ -2192,7 +2277,200 @@ function tcIniciarPolling(){
     if(tcTicketActual && !document.hidden) tcCargarMensajes();
   }, 8000);
 }
-       
+
+// ══════════════════════════════════════════════════
+// CHAT INTERNO (1 a 1, estilo WhatsApp)
+// ══════════════════════════════════════════════════
+let chatDirectorio = [];        // roster completo (excluye a MI_USUARIO)
+let chatConversaciones = [];     // conversaciones reales desde /api/chat/conversaciones
+let chatActivo = null;           // nombre_usuario del contacto abierto
+let chatPollingInterval = null;
+
+// Directorio de respaldo si /api/usuarios falla
+function construirDirectorioChat(){
+  const base = [
+    { nombre_usuario:"Xavier", nombre_completo:"Xavier Rosario", rol:"tecnico" },
+    { nombre_usuario:"Joel", nombre_completo:"Joel Holguin", rol:"admin" },
+    { nombre_usuario:"Yanna", nombre_completo:"Yanna Martínez", rol:"admin" },
+    { nombre_usuario:"Eliana", nombre_completo:"Eliana", rol:"analista" },
+  ];
+  chatDirectorio = base.filter(u => (u.nombre_usuario||"").toLowerCase() !== MI_USUARIO.toLowerCase());
+}
+
+async function initChatInterno(){
+  try{
+    const res = await apiFetch("/usuarios");
+    if(!res.ok) throw new Error();
+    const roster = await res.json();
+    chatDirectorio = (Array.isArray(roster) ? roster : [])
+      .filter(u => (u.nombre_usuario||"").toLowerCase() !== MI_USUARIO.toLowerCase())
+      .map(u => ({ nombre_usuario:u.nombre_usuario, nombre_completo:u.nombre_completo||u.nombre_usuario, rol:u.rol||"usuario" }));
+  } catch{
+    construirDirectorioChat();
+  }
+  await refrescarConversaciones();
+  if(chatPollingInterval) clearInterval(chatPollingInterval);
+  chatPollingInterval = setInterval(refrescarConversaciones, 6000);
+}
+
+async function refrescarConversaciones(){
+  try{
+    const res = await apiFetch("/chat/conversaciones");
+    if(!res.ok) throw new Error();
+    const nuevas = await res.json();
+    const teniaNoLeidos = chatConversaciones.reduce((a,c)=>a+(c.no_leidos||0),0);
+    chatConversaciones = Array.isArray(nuevas) ? nuevas : [];
+    const tieneNoLeidos = chatConversaciones.reduce((a,c)=>a+(c.no_leidos||0),0);
+    const chatViewAbierta = document.getElementById("view-chat")?.classList.contains("active");
+    if(tieneNoLeidos > teniaNoLeidos && (!chatViewAbierta || !chatActivo)){
+      if(Notification && Notification.permission === "granted"){
+        new Notification("Nuevo mensaje — GM Tickets TI", { body:"Tienes mensajes sin leer en el chat interno." });
+      } else if(Notification && Notification.permission !== "denied"){
+        Notification.requestPermission();
+      }
+    }
+    actualizarBadgeChat();
+    if(chatViewAbierta) renderContactosChat();
+    if(chatActivo && chatViewAbierta) await cargarMensajesChat(chatActivo, true);
+  } catch{ /* silencioso, se reintenta en el próximo ciclo */ }
+}
+
+function actualizarBadgeChat(){
+  const totalNoLeidos = chatConversaciones.reduce((a,c)=>a+(c.no_leidos||0),0);
+  const badge = document.getElementById("nb-chat");
+  if(badge){ badge.textContent = totalNoLeidos; badge.style.display = totalNoLeidos > 0 ? "" : "none"; }
+  const tw = document.getElementById("waTotalUnread");
+  if(tw){
+    tw.style.display = totalNoLeidos > 0 ? "" : "none";
+    tw.textContent = totalNoLeidos + " sin leer";
+  }
+}
+
+function renderContactosChat(){
+  const cont = document.getElementById("waContactsList");
+  if(!cont) return;
+  const conConvo = new Set(chatConversaciones.map(c => c.otro_usuario));
+  const sinConvo = chatDirectorio.filter(u => !conConvo.has(u.nombre_usuario));
+  if(!chatConversaciones.length && !sinConvo.length){
+    cont.innerHTML = `<div class="wa-empty-contacts">Sin contactos disponibles.</div>`;
+    return;
+  }
+  const colorFor = s => { let h=0; for(let i=0;i<(s||"").length;i++) h=(h<<5)-h+s.charCodeAt(i); return DEP_COLORS[Math.abs(h)%DEP_COLORS.length]; };
+  const iniciales = s => (s||"??").substring(0,2).toUpperCase();
+  const bloqueConvos = chatConversaciones.map(c => `
+    <div class="wa-contact-item ${chatActivo===c.otro_usuario?"active":""}" onclick="abrirConversacion('${esc(c.otro_usuario)}','${esc(c.otro_nombre_completo||c.otro_usuario)}','${esc(c.otro_rol||"")}')">
+      <div class="wa-contact-av" style="background:${colorFor(c.otro_usuario)}">${iniciales(c.otro_nombre_completo||c.otro_usuario)}</div>
+      <div class="wa-contact-info">
+        <div class="wa-contact-name">${esc(c.otro_nombre_completo||c.otro_usuario)}</div>
+        <div class="wa-contact-last">${esc(c.ultimo_mensaje||"")}</div>
+      </div>
+      <div class="wa-contact-meta">
+        ${c.ultimo_creado_en?`<span class="wa-contact-time">${new Date(c.ultimo_creado_en).toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"})}</span>`:""}
+        ${c.no_leidos>0?`<span class="wa-unread-badge">${c.no_leidos}</span>`:""}
+      </div>
+    </div>`).join("");
+  const bloqueDirectorio = sinConvo.map(u => `
+    <div class="wa-contact-item ${chatActivo===u.nombre_usuario?"active":""}" onclick="abrirConversacion('${esc(u.nombre_usuario)}','${esc(u.nombre_completo)}','${esc(u.rol)}')">
+      <div class="wa-contact-av" style="background:${colorFor(u.nombre_usuario)}">${iniciales(u.nombre_completo)}</div>
+      <div class="wa-contact-info">
+        <div class="wa-contact-name">${esc(u.nombre_completo)}</div>
+        <div class="wa-contact-role">${esc(u.rol)}</div>
+      </div>
+    </div>`).join("");
+  cont.innerHTML = bloqueConvos + bloqueDirectorio;
+}
+
+async function abrirConversacion(usuario, nombreCompleto, rol){
+  chatActivo = usuario;
+  document.getElementById("waPanelEmpty").style.display = "none";
+  document.getElementById("waConversation").style.display = "flex";
+  document.getElementById("waPanelAv").textContent = (nombreCompleto||usuario).substring(0,2).toUpperCase();
+  document.getElementById("waPanelName").textContent = nombreCompleto || usuario;
+  document.getElementById("waPanelRole").textContent = rol || "";
+  document.getElementById("waWrap")?.classList.add("wa-show-panel");
+  renderContactosChat();
+  await cargarMensajesChat(usuario);
+  await marcarChatLeido(usuario);
+}
+
+function cerrarConversacion(){
+  chatActivo = null;
+  document.getElementById("waWrap")?.classList.remove("wa-show-panel");
+  document.getElementById("waPanelEmpty").style.display = "flex";
+  document.getElementById("waConversation").style.display = "none";
+  renderContactosChat();
+}
+
+async function cargarMensajesChat(otro, silencioso){
+  if(!silencioso) document.getElementById("waMsgs").innerHTML = `<div class="wa-empty-contacts">Cargando…</div>`;
+  try{
+    const res = await apiFetch(`/chat/${encodeURIComponent(otro)}`);
+    if(!res.ok) throw new Error();
+    const mensajes = await res.json();
+    pintarMensajesChat(Array.isArray(mensajes) ? mensajes : []);
+  } catch{
+    if(!silencioso) document.getElementById("waMsgs").innerHTML = `<div class="wa-empty-contacts">⚠ Error al cargar el chat</div>`;
+  }
+}
+
+function pintarMensajesChat(mensajes){
+  const cont = document.getElementById("waMsgs");
+  if(!cont) return;
+  if(!mensajes.length){
+    cont.innerHTML = `<div class="wa-empty-contacts">Aún no hay mensajes. Escribe el primero 👋</div>`;
+    return;
+  }
+  const estabaAbajo = cont.scrollTop + cont.clientHeight >= cont.scrollHeight - 30;
+  cont.innerHTML = mensajes.map(m => {
+    const esMio = m.de_usuario === MI_USUARIO;
+    const hora = new Date(m.creado_en).toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"});
+    return `<div class="wa-msg ${esMio?"mine":""}">
+      <div class="wa-bubble-wrap">
+        <div class="wa-bubble">${esc(m.mensaje)}</div>
+        <span class="wa-time">${hora}</span>
+      </div>
+    </div>`;
+  }).join("");
+  if(estabaAbajo || true) cont.scrollTop = cont.scrollHeight;
+}
+
+async function enviarMensajeChat(){
+  const input = document.getElementById("waInput");
+  const btn = document.getElementById("waSendBtn");
+  if(!input || !chatActivo) return;
+  const texto = input.value.trim();
+  if(!texto) return;
+  input.disabled = true; if(btn) btn.disabled = true;
+  try{
+    const r = await apiFetch("/chat", { method:"POST", body: JSON.stringify({ para: chatActivo, mensaje: texto }) });
+    if(!r.ok) throw new Error();
+    input.value = "";
+    await cargarMensajesChat(chatActivo, true);
+    await refrescarConversaciones();
+  } catch{
+    showToast("No se pudo enviar el mensaje","error");
+  } finally {
+    input.disabled = false; if(btn) btn.disabled = false; input.focus();
+  }
+}
+
+async function marcarChatLeido(otro){
+  try{
+    await apiFetch(`/chat/leer/${encodeURIComponent(otro)}`, { method:"PATCH" });
+    await refrescarConversaciones();
+  } catch{ /* no crítico */ }
+}
+
+// Salta directo a la conversación con el técnico asignado desde una tarjeta de ticket
+function chatearConTecnico(tecnico){
+  if(!tecnico) return;
+  const dirEntry = chatDirectorio.find(u => (u.nombre_usuario||"").toLowerCase() === tecnico.toLowerCase());
+  const convoEntry = chatConversaciones.find(c => (c.otro_usuario||"").toLowerCase() === tecnico.toLowerCase());
+  const nombreCompleto = dirEntry?.nombre_completo || convoEntry?.otro_nombre_completo || tecnico;
+  const rol = dirEntry?.rol || convoEntry?.otro_rol || "";
+  switchView("chat");
+  abrirConversacion(tecnico, nombreCompleto, rol);
+}
 
 init();
 </script>
