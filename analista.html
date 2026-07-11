@@ -486,6 +486,46 @@ table.data-table tr:hover td{background:var(--s2)}
   .kpi-score-bar{top:8px}
   .kpi-point-btn{padding:10px 2px;font-size:12px}
 }
+
+  .wa-wrap{display:grid;grid-template-columns:280px 1fr;height:calc(100vh - var(--topbar) - 52px);border:1px solid var(--b1);border-radius:var(--r2);overflow:hidden;background:var(--s1)}
+.wa-contacts{border-right:1px solid var(--b1);overflow-y:auto;background:var(--s0)}
+.wa-contacts-search{padding:10px}
+.wa-contact{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--b1);transition:background .15s}
+.wa-contact:hover{background:var(--s2)}
+.wa-contact.active{background:var(--s3)}
+.wa-contact-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--indigo));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.wa-contact-info{flex:1;min-width:0}
+.wa-contact-name{font-size:12.5px;font-weight:600;color:var(--t0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wa-contact-preview{font-family:var(--mono);font-size:10px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.wa-contact-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.wa-contact-time{font-family:var(--mono);font-size:9px;color:var(--t3)}
+.wa-unread{background:var(--accent);color:#fff;font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 6px;border-radius:99px;min-width:16px;text-align:center}
+.wa-panel{display:flex;flex-direction:column;min-width:0}
+.wa-panel-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--t2);gap:10px}
+.wa-panel-empty-icon{font-size:40px;opacity:.4}
+.wa-header{padding:12px 16px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:10px;background:var(--s1)}
+.wa-header-name{font-size:13px;font-weight:600;color:var(--t0)}
+.wa-header-sub{font-family:var(--mono);font-size:9px;color:var(--t2)}
+.wa-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px;background:var(--s0)}
+.wa-msg{display:flex;max-width:70%}
+.wa-msg.own{align-self:flex-end;flex-direction:row-reverse}
+.wa-bubble{padding:8px 12px;border-radius:14px;font-size:12.5px;line-height:1.5;color:var(--t0);background:var(--s2);border:1px solid var(--b1);border-bottom-left-radius:4px}
+.wa-msg.own .wa-bubble{background:var(--accent);color:#fff;border-bottom-right-radius:4px;border-bottom-left-radius:14px}
+.wa-bubble-time{display:block;font-family:var(--mono);font-size:8px;margin-top:4px;opacity:.65;text-align:right}
+.wa-input-area{padding:10px 12px;border-top:1px solid var(--b1);display:flex;gap:8px;background:var(--s1)}
+.wa-input{flex:1;padding:9px 14px;background:var(--s2);border:1px solid var(--b2);border-radius:99px;color:var(--t0);font-family:var(--font);font-size:12.5px;outline:none}
+.wa-input:focus{border-color:var(--accent)}
+.wa-send-btn{width:36px;height:36px;border-radius:50%;background:var(--accent);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wa-back-btn{display:none;background:transparent;border:none;color:var(--t2);font-size:16px;cursor:pointer;margin-right:4px}
+@media(max-width:900px){
+  .wa-wrap{grid-template-columns:1fr;height:calc(100vh - var(--topbar) - 32px)}
+  .wa-wrap.wa-chat-open .wa-contacts{display:none}
+  .wa-wrap:not(.wa-chat-open) .wa-panel{display:none}
+  .wa-back-btn{display:inline-flex !important}
+}
+
+
+  
 </style>
 </head>
 <body>
@@ -516,6 +556,12 @@ table.data-table tr:hover td{background:var(--s2)}
   <div class="nav-item" id="nav-peticiones" onclick="switchView('peticiones')">
     <span class="nav-icon">📤</span> Mis peticiones
     <span class="nav-badge violet" id="nb-peticiones">0</span>
+  </div>
+
+  <p class="sb-section">Comunicación</p>
+  <div class="nav-item" id="nav-chat" onclick="switchView('chat')">
+    <span class="nav-icon">💬</span> Chat interno
+    <span class="nav-badge violet" id="nb-chat">0</span>
   </div>
 
   <p class="sb-section" id="sb-section-kpi" style="display:none">Evaluación de tiendas</p>
@@ -688,13 +734,34 @@ table.data-table tr:hover td{background:var(--s2)}
       <table class="data-table">
         <thead>
           <tr>
-            <th>#</th><th>Título</th><th>Técnico</th><th>Fecha</th><th>Estado</th><th>Resolución</th>
+            <th>#</th><th>Título</th><th>Técnico</th><th>Fecha</th><th>Estado</th><th>Resolución</th><th></th>
           </tr>
         </thead>
         <tbody id="petTableBody">
-          <tr class="loading-row"><td colspan="6"><span class="spinner"></span>Cargando…</td></tr>
+          <tr class="loading-row"><td colspan="7"><span class="spinner"></span>Cargando…</td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- ══ CHAT INTERNO (estilo WhatsApp) ══ -->
+  <div id="view-chat" class="view">
+    <div class="wa-wrap" id="waWrap">
+      <div class="wa-contacts" id="waContacts">
+        <div class="wa-contacts-search">
+          <div class="search-wrap">
+            <span class="search-icon">⊹</span>
+            <input class="search-input" id="waSearch" placeholder="Buscar analista o técnico…" oninput="renderContactosChat()"/>
+          </div>
+        </div>
+        <div id="waContactList"></div>
+      </div>
+      <div class="wa-panel" id="waPanel">
+        <div class="wa-panel-empty" id="waEmpty">
+          <div class="wa-panel-empty-icon">💬</div>
+          <p>Selecciona a alguien para empezar a chatear</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1397,6 +1464,7 @@ function fillLoad(id){ const b=document.getElementById(id); if(!b)return; b.styl
 const esSupervisora = () => (window._miUsuario||"").toLowerCase() === SUPERVISORA_TESORERIA;
 
 function switchView(v){
+  chat: "Chat interno"
   document.querySelectorAll(".view").forEach(el=>el.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(el=>el.classList.remove("active"));
   document.getElementById("view-"+v)?.classList.add("active");
@@ -1905,6 +1973,7 @@ function showToast(msg, type="ok"){
 window.addEventListener("click", e => {
   if(e.target===document.getElementById("resolucionModal")) cerrarResModal();
   if(e.target===document.getElementById("reasignarModal"))  cerrarReasignarModal();
+  initChatInterno();
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -2222,6 +2291,144 @@ function limpiarKpi(){
   kpiIrPaso(1);
   showToast("Formulario KPI limpiado","ok");
 }
+
+  // ══════ CHAT INTERNO (estilo WhatsApp) ══════
+let chatContactos = [], chatActivo = null, chatConversaciones = {};
+
+function construirDirectorioChat(){
+  const mi = (window._miUsuario||"").toLowerCase();
+  const dir = {};
+  Object.entries(TECNICOS).forEach(([k,n]) => dir[k.toLowerCase()] = {usuario:k, nombre:n, tipo:"Técnico TI"});
+  Object.entries(ANALISTAS_TESORERIA).forEach(([k,n]) => dir[k] = {usuario:k, nombre:n.replace(" (Supervisora)",""), tipo:"Analista"});
+  delete dir[mi];
+  return Object.values(dir);
+}
+
+async function initChatInterno(){
+  chatContactos = construirDirectorioChat();
+  try{
+    const r = await apiFetch("/usuarios"); // si tienes/creas este endpoint, trae el roster real
+    if(r.ok){
+      const data = await r.json();
+      const mi = (window._miUsuario||"").toLowerCase();
+      chatContactos = data.filter(u=>(u.usuario||"").toLowerCase()!==mi)
+        .map(u=>({usuario:u.usuario, nombre:u.nombre_completo||u.usuario, tipo:u.rol||"Usuario"}));
+    }
+  }catch(e){}
+  await refrescarConversaciones();
+  renderContactosChat();
+  setInterval(refrescarConversaciones, 6000);
+}
+
+async function refrescarConversaciones(){
+  try{
+    const r = await apiFetch("/chat/conversaciones");
+    if(!r.ok) return;
+    const prevUnread = Object.values(chatConversaciones).reduce((s,c)=>s+(c.no_leidos||0),0);
+    const data = await r.json();
+    chatConversaciones = {};
+    (data||[]).forEach(c => chatConversaciones[(c.usuario||"").toLowerCase()] = c);
+    const nowUnread = Object.values(chatConversaciones).reduce((s,c)=>s+(c.no_leidos||0),0);
+    if(nowUnread > prevUnread && !chatOpen) dispararNotif("Nuevo mensaje", "Tienes mensajes nuevos en el chat interno");
+    actualizarBadgeChat();
+    renderContactosChat();
+    if(chatActivo) cargarMensajesChat(chatActivo, true);
+  }catch(e){}
+}
+
+function actualizarBadgeChat(){
+  const total = Object.values(chatConversaciones).reduce((s,c)=>s+(c.no_leidos||0),0);
+  const b = document.getElementById("nb-chat");
+  if(b){ b.textContent = total; b.style.display = total>0 ? "" : "none"; }
+}
+
+function renderContactosChat(){
+  const cont = document.getElementById("waContactList");
+  if(!cont) return;
+  const s = (document.getElementById("waSearch")?.value||"").toLowerCase();
+  let list = chatContactos.filter(c => c.nombre.toLowerCase().includes(s) || c.usuario.toLowerCase().includes(s));
+  list.sort((a,b)=>{
+    const ta = chatConversaciones[a.usuario.toLowerCase()]?.ultimo_fecha ? new Date(chatConversaciones[a.usuario.toLowerCase()].ultimo_fecha).getTime() : 0;
+    const tb = chatConversaciones[b.usuario.toLowerCase()]?.ultimo_fecha ? new Date(chatConversaciones[b.usuario.toLowerCase()].ultimo_fecha).getTime() : 0;
+    return tb-ta;
+  });
+  cont.innerHTML = list.map(c=>{
+    const conv = chatConversaciones[c.usuario.toLowerCase()] || {};
+    const iniciales = c.nombre.split(" ").map(p=>p[0]).join("").substring(0,2).toUpperCase();
+    const preview = conv.ultimo_mensaje ? conv.ultimo_mensaje.substring(0,32)+(conv.ultimo_mensaje.length>32?"…":"") : c.tipo;
+    const hora = conv.ultimo_fecha ? new Date(conv.ultimo_fecha).toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"}) : "";
+    const unread = conv.no_leidos ? `<span class="wa-unread">${conv.no_leidos}</span>` : "";
+    return `<div class="wa-contact ${chatActivo===c.usuario?'active':''}" onclick="abrirConversacion('${c.usuario}')">
+      <div class="wa-contact-av">${iniciales}</div>
+      <div class="wa-contact-info"><div class="wa-contact-name">${c.nombre}</div><div class="wa-contact-preview">${preview}</div></div>
+      <div class="wa-contact-meta"><span class="wa-contact-time">${hora}</span>${unread}</div>
+    </div>`;
+  }).join("") || `<div class="empty-state" style="padding:30px 16px"><p>Sin contactos.</p></div>`;
+}
+
+async function abrirConversacion(usuario){
+  chatActivo = usuario;
+  document.getElementById("waWrap").classList.add("wa-chat-open");
+  renderContactosChat();
+  const contacto = chatContactos.find(c=>c.usuario===usuario) || {nombre:usuario, tipo:""};
+  const iniciales = contacto.nombre.split(" ").map(p=>p[0]).join("").substring(0,2).toUpperCase();
+  document.getElementById("waPanel").innerHTML = `
+    <div class="wa-header">
+      <button class="wa-back-btn" onclick="cerrarConversacion()">←</button>
+      <div class="wa-contact-av">${iniciales}</div>
+      <div><div class="wa-header-name">${contacto.nombre}</div><div class="wa-header-sub">${contacto.tipo}</div></div>
+    </div>
+    <div class="wa-messages" id="waMessages"><div class="empty-state" style="padding:20px"><span class="spinner"></span></div></div>
+    <div class="wa-input-area">
+      <input class="wa-input" id="waInput" placeholder="Escribe un mensaje…" onkeydown="if(event.key==='Enter'){enviarMensajeChat()}"/>
+      <button class="wa-send-btn" onclick="enviarMensajeChat()">➤</button>
+    </div>`;
+  await cargarMensajesChat(usuario);
+  await marcarChatLeido(usuario);
+  document.getElementById("waInput")?.focus();
+}
+
+function cerrarConversacion(){ document.getElementById("waWrap").classList.remove("wa-chat-open"); }
+
+async function cargarMensajesChat(usuario, silencioso){
+  try{
+    const r = await apiFetch(`/chat/${encodeURIComponent(usuario)}`);
+    if(!r.ok) throw new Error();
+    pintarMensajesChat(await r.json());
+  }catch(e){ if(!silencioso) showToast("Error al cargar la conversación","err"); }
+}
+
+function pintarMensajesChat(mensajes){
+  const cont = document.getElementById("waMessages");
+  if(!cont) return;
+  const mi = (window._miUsuario||"").toLowerCase();
+  cont.innerHTML = (mensajes||[]).map(m=>{
+    const own = (m.de_usuario||"").toLowerCase()===mi;
+    const hora = m.creado_en ? new Date(m.creado_en).toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"}) : "";
+    return `<div class="wa-msg ${own?'own':''}"><div class="wa-bubble">${(m.mensaje||"").replace(/</g,"&lt;")}<span class="wa-bubble-time">${hora}</span></div></div>`;
+  }).join("") || `<div class="empty-state" style="padding:30px"><p>Aún no hay mensajes. Escribe el primero.</p></div>`;
+  cont.scrollTop = cont.scrollHeight;
+}
+
+async function enviarMensajeChat(){
+  const input = document.getElementById("waInput");
+  const texto = input.value.trim();
+  if(!texto || !chatActivo) return;
+  input.value = "";
+  try{
+    const r = await apiFetch("/chat", { method:"POST", body: JSON.stringify({ para: chatActivo, mensaje: texto }) });
+    if(!r.ok) throw new Error();
+    await cargarMensajesChat(chatActivo, true);
+    await refrescarConversaciones();
+  }catch(e){ showToast("Error al enviar el mensaje","err"); input.value = texto; }
+}
+
+async function marcarChatLeido(usuario){
+  try{ await apiFetch(`/chat/leer/${encodeURIComponent(usuario)}`, { method:"PATCH" }); }catch(e){}
+  await refrescarConversaciones();
+}
+
+  
 </script>
 </body>
 </html>
