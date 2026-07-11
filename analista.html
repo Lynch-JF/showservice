@@ -2307,12 +2307,17 @@ function construirDirectorioChat(){
 async function initChatInterno(){
   chatContactos = construirDirectorioChat();
   try{
-    const r = await apiFetch("/usuarios"); // si tienes/creas este endpoint, trae el roster real
+    const r = await apiFetch("/usuarios");
     if(r.ok){
       const data = await r.json();
       const mi = (window._miUsuario||"").toLowerCase();
-      chatContactos = data.filter(u=>(u.usuario||"").toLowerCase()!==mi)
-        .map(u=>({usuario:u.usuario, nombre:u.nombre_completo||u.usuario, tipo:u.rol||"Usuario"}));
+      chatContactos = data
+        .filter(u => (u.nombre_usuario||"").toLowerCase() !== mi && u.activo !== false)
+        .map(u => ({
+          usuario: u.nombre_usuario,
+          nombre: u.nombre_completo || u.nombre_usuario,
+          tipo: u.rol || "Usuario"
+        }));
     }
   }catch(e){}
   await refrescarConversaciones();
@@ -2343,10 +2348,11 @@ function actualizarBadgeChat(){
 }
 
 function renderContactosChat(){
+function renderContactosChat(){
   const cont = document.getElementById("waContactList");
   if(!cont) return;
   const s = (document.getElementById("waSearch")?.value||"").toLowerCase();
-  let list = chatContactos.filter(c => c.nombre.toLowerCase().includes(s) || c.usuario.toLowerCase().includes(s));
+  let list = chatContactos.filter(c => c && c.usuario && (c.nombre.toLowerCase().includes(s) || c.usuario.toLowerCase().includes(s)));
   list.sort((a,b)=>{
     const ta = chatConversaciones[a.usuario.toLowerCase()]?.ultimo_fecha ? new Date(chatConversaciones[a.usuario.toLowerCase()].ultimo_fecha).getTime() : 0;
     const tb = chatConversaciones[b.usuario.toLowerCase()]?.ultimo_fecha ? new Date(chatConversaciones[b.usuario.toLowerCase()].ultimo_fecha).getTime() : 0;
