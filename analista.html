@@ -977,7 +977,7 @@ function buildSystemPrompt(){
 
   return "Eres GM Asistente, el asistente virtual interno del sistema GM Tickets TI de Grupo Michel, en el panel de ANALISTA. Ayudas a analistas a gestionar tickets de usuarios que les asignan, y a escalar peticiones al equipo técnico de TI cuando lo necesiten.\n\n" +
   "CONTEXTO DEL ANALISTA ACTUAL:\n- Nombre: " + nombre + "\n- Rol: " + (superv ? "Supervisora de Tesorería" : "Analista") + "\n- Tickets asignados activos: " + asig.length + "\n- Peticiones enviadas a técnicos: " + pets.length + "\n- Tickets resueltos: " + resCount + "\n- Asignados recientes:\n" + listaAsig + "\n\n" +
-  "FUNCIONES DEL PANEL ANALISTA:\n- \"Asignados a mí\": tickets de usuarios que debes atender. Botones: marcar recibido, pasar a En Proceso, marcar Resuelto.\n- \"Mis resueltos\": historial de tickets que cerraste.\n- \"Nueva petición\": para escalar un problema técnico a un técnico de TI (Juan, Xavier, Joel o Yanna), con título, descripción y archivos adjuntos opcionales.\n- \"Mis peticiones\": seguimiento de lo que has escalado a técnicos.\n" + (superv ? "- Como supervisora de Tesorería, también puedes reasignar tickets entre analistas del equipo desde el botón 🔀 Reasignar.\n" : "") +
+  "FUNCIONES DEL PANEL ANALISTA:\n- \"Asignados a mí\": tickets de usuarios que debes atender. Botones: marcar recibido, pasar a En Proceso, marcar Resuelto.\n- \"Mis resueltos\": historial de tickets que cerraste.\n- \"Nueva petición\": para escalar un problema técnico a un técnico de TI (Juan, Xavier, Joel o Yanna), con título, descripción y archivos adjuntos opcionales.\n- \"Mis peticiones\": seguimiento de lo que has escalado a técnicos.\n- \"Chat interno\": puedes hablar directo con cualquier técnico o analista.\n" + (superv ? "- Como supervisora de Tesorería, también puedes reasignar tickets entre analistas del equipo desde el botón 🔀 Reasignar.\n" : "") +
   "\nINSTRUCCIONES:\n- Responde SIEMPRE en español dominicano, de forma clara, profesional y concisa (máximo 3-4 párrafos cortos)\n- Usa el contexto de tickets que tienes para responder preguntas sobre su carga de trabajo\n- Guía paso a paso sobre cómo usar las funciones del panel cuando lo pregunten\n- No inventes datos que no estén en el contexto\n- Si preguntan algo fuera de tu alcance (ej. password de otro sistema, temas no relacionados a TI), indica que contacten al equipo de TI o a su supervisor.";
 }
 
@@ -1429,6 +1429,7 @@ updateClock(); setInterval(updateClock, 1000);
 window.addEventListener("load", ()=>{
   initNotificaciones();   // ── NOTIF: pedir permiso al cargar ──
   recargarTodo();
+  initChatInterno();       // ── CHAT: cargar contactos y conversaciones al iniciar ──
   setInterval(recargarTodo, 60000);
   if(esRafael()) initKpiForm();   // ── KPI: construir formulario si es Rafael ──
 });
@@ -1464,7 +1465,6 @@ function fillLoad(id){ const b=document.getElementById(id); if(!b)return; b.styl
 const esSupervisora = () => (window._miUsuario||"").toLowerCase() === SUPERVISORA_TESORERIA;
 
 function switchView(v){
-  chat: "Chat interno"
   document.querySelectorAll(".view").forEach(el=>el.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(el=>el.classList.remove("active"));
   document.getElementById("view-"+v)?.classList.add("active");
@@ -1474,6 +1474,7 @@ function switchView(v){
     nueva:      "Nueva petición a técnico",
     peticiones: "Mis peticiones",
     resueltos:  esSupervisora() ? "Resueltos · Tesorería" : "Mis resueltos",
+    chat:       "Chat interno",
     kpi:        "Formulario KPI · Evaluación de tiendas"
   };
   document.getElementById("viewTitle").textContent = titles[v] || v;
@@ -1934,17 +1935,24 @@ function renderPeticiones(){
   list = list.slice().reverse();
   document.getElementById("petCount").textContent = list.length+" petición"+(list.length!==1?"es":"");
   if(!list.length){
-    tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--t2);font-family:var(--mono);font-size:11px">${petFilter!=="todos"?"Sin peticiones con ese estado.":"Aún no has enviado peticiones a técnicos."}</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--t2);font-family:var(--mono);font-size:11px">${petFilter!=="todos"?"Sin peticiones con ese estado.":"Aún no has enviado peticiones a técnicos."}</td></tr>`;
     return;
   }
   const ecMap = {Resuelto:"b-res","En Proceso":"b-proc",Pendiente:"b-pend"};
   tbody.innerHTML = list.map(t=>{
     const ecCls  = ecMap[t.estado]||"b-pend";
-    const tec    = TECNICOS[t.asignado] || ANALISTAS_TESORERIA[(t.asignado||"").toLowerCase()] || t.asignado || "Sin asignar";
+    const tecKey = t.asignado || "";
+    const tec    = TECNICOS[tecKey] || ANALISTAS_TESORERIA[(tecKey||"").toLowerCase()] || tecKey || "Sin asignar";
     const recib  = t.recibido==="si"?`<span style="font-family:var(--mono);font-size:9px;color:var(--emerald)">📩 Recibido</span>`:"";
     const resol  = t.resolucion
       ? `<span style="font-size:11px;color:var(--emerald)">${t.resolucion.substring(0,50)}${t.resolucion.length>50?"…":""}</span>`
       : `<span style="font-family:var(--mono);font-size:9px;color:var(--t3)">—</span>`;
+
+    const puedeChatear = tecKey && tecKey!=="Sin asignar";
+    const chatBtn = puedeChatear
+      ? `<button class="btn-topbar" style="padding:5px 10px;font-size:10px" onclick="chatearConTecnico('${encodeURIComponent(tecKey)}')" title="Hablar con ${tec}">💬</button>`
+      : `<span style="color:var(--t3);font-size:11px">—</span>`;
+
     return `<tr>
       <td style="font-family:var(--mono);font-size:9px;color:var(--t3)">${t.id||"—"}</td>
       <td style="font-weight:600;color:var(--t0);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.titulo||"—"}</td>
@@ -1952,6 +1960,7 @@ function renderPeticiones(){
       <td style="font-family:var(--mono);font-size:10px;color:var(--t2)">${(t.fecha||"").split(",")[0]||"—"}</td>
       <td><span class="badge ${ecCls}">${t.estado||"—"}</span></td>
       <td style="max-width:200px">${resol}</td>
+      <td style="text-align:center">${chatBtn}</td>
     </tr>`;
   }).join("");
 }
@@ -1973,7 +1982,6 @@ function showToast(msg, type="ok"){
 window.addEventListener("click", e => {
   if(e.target===document.getElementById("resolucionModal")) cerrarResModal();
   if(e.target===document.getElementById("reasignarModal"))  cerrarReasignarModal();
-  initChatInterno();
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -2292,7 +2300,9 @@ function limpiarKpi(){
   showToast("Formulario KPI limpiado","ok");
 }
 
-  // ══════ CHAT INTERNO (estilo WhatsApp) ══════
+// ══════════════════════════════════════════════
+// ★ CHAT INTERNO (estilo WhatsApp) — entre analistas y técnicos
+// ══════════════════════════════════════════════
 let chatContactos = [], chatActivo = null, chatConversaciones = {};
 
 function construirDirectorioChat(){
@@ -2305,6 +2315,7 @@ function construirDirectorioChat(){
 }
 
 async function initChatInterno(){
+  // Directorio de respaldo (por si /api/usuarios falla o no aplica)
   chatContactos = construirDirectorioChat();
   try{
     const r = await apiFetch("/usuarios");
@@ -2315,11 +2326,11 @@ async function initChatInterno(){
         .filter(u => (u.nombre_usuario||"").toLowerCase() !== mi && u.activo !== false)
         .map(u => ({
           usuario: u.nombre_usuario,
-          nombre: u.nombre_completo || u.nombre_usuario,
-          tipo: u.rol || "Usuario"
+          nombre:  u.nombre_completo || u.nombre_usuario,
+          tipo:    u.rol || "Usuario"
         }));
     }
-  }catch(e){}
+  }catch(e){ /* si falla, se queda con el directorio de respaldo */ }
   await refrescarConversaciones();
   renderContactosChat();
   setInterval(refrescarConversaciones, 6000);
@@ -2347,7 +2358,6 @@ function actualizarBadgeChat(){
   if(b){ b.textContent = total; b.style.display = total>0 ? "" : "none"; }
 }
 
-function renderContactosChat(){
 function renderContactosChat(){
   const cont = document.getElementById("waContactList");
   if(!cont) return;
@@ -2434,7 +2444,11 @@ async function marcarChatLeido(usuario){
   await refrescarConversaciones();
 }
 
-  
+function chatearConTecnico(usuarioEnc){
+  const usuario = decodeURIComponent(usuarioEnc);
+  switchView("chat");
+  setTimeout(()=> abrirConversacion(usuario), 50);
+}
 </script>
 </body>
 </html>
