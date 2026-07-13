@@ -2349,7 +2349,7 @@ function actualizarBadgeChat(){
 function renderContactosChat(){
   const cont = document.getElementById("waContactsList");
   if(!cont) return;
-  const conConvo = new Set(chatConversaciones.map(c => c.otro_usuario));
+  const conConvo = new Set(chatConversaciones.map(c => c.usuario));
   const sinConvo = chatDirectorio.filter(u => !conConvo.has(u.nombre_usuario));
   if(!chatConversaciones.length && !sinConvo.length){
     cont.innerHTML = `<div class="wa-empty-contacts">Sin contactos disponibles.</div>`;
@@ -2357,18 +2357,26 @@ function renderContactosChat(){
   }
   const colorFor = s => { let h=0; for(let i=0;i<(s||"").length;i++) h=(h<<5)-h+s.charCodeAt(i); return DEP_COLORS[Math.abs(h)%DEP_COLORS.length]; };
   const iniciales = s => (s||"??").substring(0,2).toUpperCase();
-  const bloqueConvos = chatConversaciones.map(c => `
-    <div class="wa-contact-item ${chatActivo===c.otro_usuario?"active":""}" onclick="abrirConversacion('${esc(c.otro_usuario)}','${esc(c.otro_nombre_completo||c.otro_usuario)}','${esc(c.otro_rol||"")}')">
-      <div class="wa-contact-av" style="background:${colorFor(c.otro_usuario)}">${iniciales(c.otro_nombre_completo||c.otro_usuario)}</div>
+  const dirLookup = u => chatDirectorio.find(d => (d.nombre_usuario||"").toLowerCase() === (u||"").toLowerCase());
+
+  const bloqueConvos = chatConversaciones.map(c => {
+    const dir = dirLookup(c.usuario);
+    const nombreCompleto = dir?.nombre_completo || c.usuario;
+    const rol = dir?.rol || "";
+    return `
+    <div class="wa-contact-item ${chatActivo===c.usuario?"active":""}" onclick="abrirConversacion('${esc(c.usuario)}','${esc(nombreCompleto)}','${esc(rol)}')">
+      <div class="wa-contact-av" style="background:${colorFor(c.usuario)}">${iniciales(nombreCompleto)}</div>
       <div class="wa-contact-info">
-        <div class="wa-contact-name">${esc(c.otro_nombre_completo||c.otro_usuario)}</div>
+        <div class="wa-contact-name">${esc(nombreCompleto)}</div>
         <div class="wa-contact-last">${esc(c.ultimo_mensaje||"")}</div>
       </div>
       <div class="wa-contact-meta">
-        ${c.ultimo_creado_en?`<span class="wa-contact-time">${new Date(c.ultimo_creado_en).toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"})}</span>`:""}
+        ${c.ultimo_fecha?`<span class="wa-contact-time">${new Date(c.ultimo_fecha).toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"})}</span>`:""}
         ${c.no_leidos>0?`<span class="wa-unread-badge">${c.no_leidos}</span>`:""}
       </div>
-    </div>`).join("");
+    </div>`;
+  }).join("");
+
   const bloqueDirectorio = sinConvo.map(u => `
     <div class="wa-contact-item ${chatActivo===u.nombre_usuario?"active":""}" onclick="abrirConversacion('${esc(u.nombre_usuario)}','${esc(u.nombre_completo)}','${esc(u.rol)}')">
       <div class="wa-contact-av" style="background:${colorFor(u.nombre_usuario)}">${iniciales(u.nombre_completo)}</div>
@@ -2465,9 +2473,9 @@ async function marcarChatLeido(otro){
 function chatearConTecnico(tecnico){
   if(!tecnico) return;
   const dirEntry = chatDirectorio.find(u => (u.nombre_usuario||"").toLowerCase() === tecnico.toLowerCase());
-  const convoEntry = chatConversaciones.find(c => (c.otro_usuario||"").toLowerCase() === tecnico.toLowerCase());
-  const nombreCompleto = dirEntry?.nombre_completo || convoEntry?.otro_nombre_completo || tecnico;
-  const rol = dirEntry?.rol || convoEntry?.otro_rol || "";
+  const convoEntry = chatConversaciones.find(c => (c.usuario||"").toLowerCase() === tecnico.toLowerCase());
+  const nombreCompleto = dirEntry?.nombre_completo || tecnico;
+  const rol = dirEntry?.rol || "";
   switchView("chat");
   abrirConversacion(tecnico, nombreCompleto, rol);
 }
