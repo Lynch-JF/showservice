@@ -251,6 +251,7 @@ select optgroup{background:var(--surface-2);color:var(--ink-3);font-size:11px}
 .adj-link:hover{background:var(--ok-bd)}
 .btn-delete{margin-top:10px;padding:7px 13px;background:var(--crit-bg);color:var(--crit);border:1px solid var(--crit-bd);border-radius:var(--radius);font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
 .btn-delete:hover{background:var(--crit);color:#fff}
+.ticket-actions-row{display:flex;gap:8px;flex-wrap:wrap}
 .empty-state{text-align:center;padding:50px 20px;color:var(--ink-3);font-size:13px;font-family:var(--font-mono)}
 .empty-icon{font-size:36px;margin-bottom:12px;opacity:.6}
 .profile-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;display:flex;align-items:center;gap:16px;margin-bottom:20px;box-shadow:var(--shadow);position:relative;overflow:hidden;flex-wrap:wrap}
@@ -835,6 +836,7 @@ let chatTyping          = false;
 
 let aiTicketDraft = null;
 let faqVisible    = false;
+let editandoTicketId = null;
 
 async function generarEstructuraTicket(problemaNatural) {
   const depto   = localStorage.getItem("depto") || "Sin departamento";
@@ -1052,12 +1054,103 @@ function iniciarEnvioTicket() {
   if (!titulo) { showToast("Escribe un título para el ticket","error"); return; }
   if (!desc)   { showToast("Agrega una descripción del problema","error"); return; }
 
+  if (editandoTicketId) { actualizarTicket(); return; }
+
   if (faqVisible) {
     showToast("Revisa las soluciones sugeridas o haz clic en 'Crear ticket de todos modos'","warning");
     document.getElementById("faqPanel").scrollIntoView({ behavior:"smooth", block:"center" });
     return;
   }
   crearTicket();
+}
+
+function abrirEdicionTicket(idEnc) {
+  const id = decodeURIComponent(idEnc);
+  const t = todosTickets.find(function(x){ return String(x.id) === String(id); });
+  if (!t) { showToast("No se encontró el ticket","error"); return; }
+
+  editandoTicketId = id;
+
+  switchView("nuevo");
+
+  const aiBanner = document.getElementById("aiPrefillBanner");
+  if (aiBanner) aiBanner.classList.remove("visible");
+  const faqPanel = document.getElementById("faqPanel");
+  if (faqPanel) faqPanel.classList.remove("visible");
+  faqVisible = false;
+
+  document.getElementById("titulo").value      = t.titulo || "";
+  document.getElementById("descripcion").value = t.descripcion || "";
+
+  const sel = document.getElementById("asignadoA");
+  if (sel) sel.value = t.asignado || "Sin asignar";
+
+  const btn = document.getElementById("btnEnviarTicket");
+  btn.textContent = "💾 Guardar cambios";
+
+  mostrarBannerEdicion();
+
+  const card = document.querySelector("#view-nuevo .card");
+  if (card) card.scrollIntoView({ behavior:"smooth", block:"start" });
+  showToast("Editando ticket " + id,"success");
+}
+
+function mostrarBannerEdicion() {
+  let banner = document.getElementById("editBanner");
+  if (!banner) {
+    banner = document.createElement("div");
+    banner.id = "editBanner";
+    banner.style.cssText = "margin-bottom:14px;padding:10px 14px;background:var(--med-bg);border:1px solid var(--med-bd);border-radius:var(--radius);font-size:12px;color:var(--med);display:flex;align-items:center;gap:8px;flex-wrap:wrap";
+    const cardTitle = document.querySelector("#view-nuevo .card-title");
+    if (cardTitle) cardTitle.parentNode.insertBefore(banner, cardTitle.nextSibling);
+  }
+  banner.innerHTML = "✏ <strong>Editando ticket " + editandoTicketId + "</strong>" +
+    '<button type="button" onclick="cancelarEdicion()" style="margin-left:auto;padding:5px 12px;border-radius:99px;background:transparent;border:1px solid var(--med-bd);color:var(--med);font-family:var(--font-mono);font-size:10px;font-weight:700;cursor:pointer">Cancelar edición</button>';
+  banner.style.display = "flex";
+}
+
+function cancelarEdicion() {
+  editandoTicketId = null;
+  const banner = document.getElementById("editBanner");
+  if (banner) banner.style.display = "none";
+  const titulo = document.getElementById("titulo");
+  const descripcion = document.getElementById("descripcion");
+  const asignado = document.getElementById("asignadoA");
+  const btn = document.getElementById("btnEnviarTicket");
+  if (titulo) titulo.value = "";
+  if (descripcion) descripcion.value = "";
+  if (asignado) asignado.value = "Sin asignar";
+  if (btn) btn.textContent = "🚀 Enviar Ticket";
+}
+
+async function actualizarTicket() {
+  const titulo    = (document.getElementById("titulo").value || "").trim();
+  const desc      = (document.getElementById("descripcion").value || "").trim();
+  const asignado  = document.getElementById("asignadoA").value;
+  const id        = editandoTicketId;
+  const btn       = document.getElementById("btnEnviarTicket");
+
+  btn.disabled = true;
+  btn.textContent = "Guardando...";
+
+  try {
+    const r = await apiFetch("/tickets/" + encodeURIComponent(id), {
+      method: "PATCH",
+      body: JSON.stringify({ titulo: titulo, descripcion: desc, asignado: asignado })
+    });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+
+    showToast("Ticket actualizado ✓","success");
+    cancelarEdicion();
+    switchView("mistickets");
+    recargarTickets();
+  } catch(e) {
+    console.error("actualizarTicket:", e);
+    showToast("No se pudo guardar los cambios","error");
+    btn.textContent = "💾 Guardar cambios";
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 let urgenciaIATimeout = null;
@@ -1364,9 +1457,13 @@ function buildTicketCard(t, conBotonEliminar) {
     }).join("");
     adjHtml = '<div class="adj-links">' + links + "</div>";
   }
+  const btnEdit = (conBotonEliminar && t.estado === "Pendiente")
+    ? '<button class="btn-delete" style="background:var(--med-bg);color:var(--med);border-color:var(--med-bd)" onclick="abrirEdicionTicket(\'' + encodeURIComponent(t.id) + '\')">✏ Editar</button>'
+    : "";
   const btnDel = (conBotonEliminar && t.estado === "Pendiente")
     ? '<button class="btn-delete" onclick="eliminarTicket(\'' + encodeURIComponent(t.id) + '\')">🗑 Eliminar</button>'
     : "";
+  const accionesHtml = (btnEdit || btnDel) ? '<div class="ticket-actions-row">' + btnEdit + btnDel + '</div>' : "";
   return '<div class="ticket-card' + (estaRecibido ? " recibido-card" : "") + '">' +
     '<div class="urgency-strip ' + urg.strip + '"></div>' +
     '<div class="ticket-card-top"><div>' +
@@ -1378,7 +1475,7 @@ function buildTicketCard(t, conBotonEliminar) {
     '<div class="ticket-desc">' + (t.descripcion||"") + "</div>" +
     '<div class="ticket-meta-row">' + badgeAsig + '<span class="ticket-fecha">📅 ' + ((t.fecha||"").split(",")[0]||"") + "</span></div>" +
     (estaRecibido ? '<div class="recibido-notice">📩 Tu ticket fue recibido por <strong>' + nombreAsignado + "</strong>" + (t.fecha_recibido ? " el " + t.fecha_recibido.split(",")[0] : "") + '. Está siendo atendido.</div>' : "") +
-    resHtml + adjHtml + btnDel + "</div>";
+    resHtml + adjHtml + accionesHtml + "</div>";
 }
 
 function getFileIconEmoji(ext) {
@@ -1399,6 +1496,8 @@ function eliminarTicket(idEnc) {
 }
 
 function switchView(v) {
+  if (v !== "nuevo" && editandoTicketId) cancelarEdicion();
+
   document.querySelectorAll(".view").forEach(function(el){ el.classList.remove("active"); });
   document.getElementById("view-" + v).classList.add("active");
 
