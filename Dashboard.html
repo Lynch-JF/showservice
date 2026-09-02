@@ -447,8 +447,7 @@ select optgroup{background:var(--surface-2);color:var(--ink-3);font-size:11px}
     <div class="nav-item active" id="nav-inicio" data-view="inicio" onclick="switchView('inicio')"><span class="nav-icon">◼</span><span>Inicio</span></div>
     <div class="nav-item" id="nav-nuevo" data-view="nuevo" onclick="switchView('nuevo')"><span class="nav-icon">＋</span><span>Nuevo Ticket</span></div>
     <div class="nav-item" id="nav-mistickets" data-view="mistickets" onclick="switchView('mistickets')"><span class="nav-icon">🎫</span><span>Mis Tickets</span><span class="nav-badge" id="nb-pendientes" style="display:none">0</span></div>
-    <div class="nav-item" id="nav-checklist" onclick="abrirChecklist()"><span class="nav-icon">📋</span><span>Checklist Apertura/Cierre</span></div>
-    <p class="sb-section">Cuenta</p>
+<div class="nav-item" id="nav-checklist" onclick="abrirChecklist()" style="display:none"><span class="nav-icon">📋</span><span>Checklist Apertura/Cierre</span></div>    <p class="sb-section">Cuenta</p>
     <div class="nav-item" id="nav-config" data-view="config" onclick="switchView('config');renderConfig()"><span class="nav-icon">⚙</span><span>Configuración</span></div>
     <div class="nav-item" id="nav-ayuda" onclick="abrirAyuda()"><span class="nav-icon">📞</span><span>Ayuda rápida</span></div>
   </div>
@@ -470,8 +469,7 @@ select optgroup{background:var(--surface-2);color:var(--ink-3);font-size:11px}
     </div>
     <div class="topbar-right">
       <button class="icon-btn" id="darkBtn" onclick="toggleDarkMode()" title="Cambiar tema">🌙</button>
-      <button class="icon-btn" onclick="abrirChecklist()" title="Checklist Apertura/Cierre">📋</button>
-      <button class="icon-btn" onclick="abrirAyuda()" title="Ayuda rápida" style="display:none" id="topbarAyudaMobile">📞</button>
+<button class="bnav-item" id="bnavChecklist" onclick="abrirChecklist()" style="display:none"><span class="bnav-icon">📋</span><span>Checklist</span></button>      <button class="icon-btn" onclick="abrirAyuda()" title="Ayuda rápida" style="display:none" id="topbarAyudaMobile">📞</button>
       <button class="btn-refresh" id="refreshBtn" onclick="recargarTickets()">
         <svg id="refreshIcon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
         Actualizar
@@ -720,6 +718,38 @@ select optgroup{background:var(--surface-2);color:var(--ink-3);font-size:11px}
     </div>
   </div>
 </div>
+
+<div class="overlay" id="checklistModal">
+  <div class="modal" style="max-width:760px">
+    <div class="modal-title">📋 Checklist de Apertura y Cierre — Tiendas</div>
+    <div class="modal-sub">Control operativo diario · Completa antes de cerrar la sucursal</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin-bottom:6px">
+      <div><label class="form-label">Sucursal</label><input type="text" id="chkSucursal" style="margin-bottom:0"></div>
+      <div><label class="form-label">Fecha</label><input type="text" id="chkFecha" readonly style="margin-bottom:0"></div>
+      <div><label class="form-label">Administrador responsable</label><input type="text" id="chkAdmin" style="margin-bottom:0"></div>
+      <div><label class="form-label">Auditor (si aplica)</label><input type="text" id="chkAuditor" style="margin-bottom:0"></div>
+      <div><label class="form-label">Hora de apertura</label><input type="text" id="chkHoraApertura" placeholder="08:00 am" style="margin-bottom:0"></div>
+      <div><label class="form-label">Hora de cierre</label><input type="text" id="chkHoraCierre" placeholder="06:00 pm" style="margin-bottom:0"></div>
+    </div>
+
+    <div id="chkSecciones" style="margin-top:16px"></div>
+
+    <label class="form-label" style="margin-top:6px">Incidencias y observaciones del día</label>
+    <textarea id="chkIncidencias" placeholder="Describe cualquier novedad relevante..."></textarea>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin-bottom:6px">
+      <div><label class="form-label">Firma del administrador (escribe tu nombre)</label><input type="text" id="chkFirmaAdmin" style="margin-bottom:0"></div>
+      <div><label class="form-label">Firma supervisor/auditor (opcional)</label><input type="text" id="chkFirmaAuditor" style="margin-bottom:0"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="cerrarChecklist()">Cancelar</button>
+      <button class="btn-primary" style="width:auto" id="btnGuardarChecklist" onclick="guardarChecklist()">💾 Guardar checklist</button>
+    </div>
+  </div>
+</div>
+
 
 <button id="chatbotFab" onclick="toggleChat()" title="Asistente IA — GM Tickets">
   🤖
@@ -1301,6 +1331,7 @@ async function cargarAnalistas() {
   document.getElementById("perfilDepto").textContent  = depto;
   document.getElementById("deptoDisplay").textContent = depto;
   document.getElementById("perfilAvatar").textContent = nombreCompleto.split(" ").map(function(p){ return p[0]; }).join("").substring(0,2).toUpperCase();
+  aplicarVisibilidadChecklist();
 
   updateClock();
   setInterval(updateClock, 1000);
@@ -1974,6 +2005,265 @@ async function ctkCargarMensajes(id){
     cont.innerHTML = `<div class="ctk-empty">⚠ Error al cargar el chat</div>`;
   }
 }
+
+
+/* ============================================================
+   CHECKLIST DE APERTURA Y CIERRE — GM Tickets
+   Pegar este bloque dentro del <script> existente del HTML,
+   antes de la línea:  function mostrarTickets() { recargarTickets(); }
+   (o en cualquier punto después de que apiFetch/showToast ya
+   estén definidos, que es donde vive en el archivo original).
+   ============================================================ */
+
+const CHECKLIST_TEMPLATES = {
+  tienda: {
+    nombre: "Tienda",
+    secciones: [
+      {
+        id: "apertura", numero: "01", titulo: "APERTURA",
+        items: [
+          { actividad: "La apertura de la tienda se realiza con la presencia del responsable de la llave y al menos dos colaboradores.", responsable: "Administrador" },
+          { actividad: "Se realiza un recorrido por toda la tienda para verificar que no existan puertas o ventanas forzadas, daños en las instalaciones, filtraciones, fugas de agua, anomalías eléctricas, mercancía fuera de lugar u otra novedad ocurrida durante el cierre.", responsable: "Administrador" },
+          { actividad: "Se verifica el funcionamiento de los equipos principales (aires acondicionados, iluminación, computadoras, impresoras, sistema de facturación, internet, cámaras, DVR/NVR, UPS y planta eléctrica, según aplique).", responsable: "Administrador" },
+          { actividad: "Se verifica que el sistema de cámaras de seguridad se encuentre funcionando correctamente y grabando y sin objetos obstruyendo la captura.", responsable: "Administrador" },
+          { actividad: "El administrador entrega y registra el fondo de caja correspondiente al personal de facturación.", responsable: "Administrador" },
+          { actividad: "En las tiendas con planta eléctrica automática, se verifica que el transfer esté configurado en modo Automático durante la apertura.", responsable: "Administrador" },
+          { actividad: "Se verifica que todos los colaboradores se encuentren correctamente uniformados, identificados con su carnet y con una adecuada presentación personal.", responsable: "Administrador" },
+          { actividad: "Se inspeccionan los baños para verificar su limpieza, disponibilidad de papel higiénico, jabón y demás insumos necesarios.", responsable: "Colaborador" },
+          { actividad: "Se verifica el estado del frente de la tienda (aceras, parqueos, entrada principal, letreros y áreas exteriores), asegurando que se encuentren limpios y organizados.", responsable: "Colaborador" }
+        ]
+      },
+      {
+        id: "jornada", numero: "02", titulo: "DURANTE LA JORNADA",
+        items: [
+          { actividad: "El administrador realiza recorridos periódicos para verificar el orden, limpieza y correcta organización de las áreas de venta, cajas, almacén y áreas comunes.", responsable: "Administrador" },
+          { actividad: "Luego de culminado el horario de almuerzo, el administrador verifica que el comedor quede limpio, organizado y en condiciones adecuadas de higiene.", responsable: "Administrador" },
+          { actividad: "Se registra cualquier incidencia relevante presentada durante la jornada (fallas de equipos, novedades de seguridad, averías, accidentes, reclamaciones de clientes o cualquier situación que requiera seguimiento).", responsable: "Administrador" }
+        ]
+      },
+      {
+        id: "cierre", numero: "03", titulo: "CIERRE",
+        items: [
+          { actividad: "Antes del cierre, el personal realiza la limpieza y organización general de la tienda, dejando las áreas de venta, cajas, almacén y oficinas listas para la apertura del día siguiente.", responsable: "Colaboradores" },
+          { actividad: "Se verifica que los equipos que no deban permanecer encendidos sean apagados correctamente y que las luces queden según el procedimiento establecido.", responsable: "Administrador" },
+          { actividad: "Se confirma que puertas, ventanas, oficinas, almacenes y vitrinas queden correctamente cerrados y asegurados.", responsable: "Administrador" },
+          { actividad: "Se activa el sistema de alarma (cuando aplique) y se verifica que la tienda quede completamente protegida antes de la salida del personal.", responsable: "Administrador" },
+          { actividad: "Se confirma que ningún colaborador permanezca dentro de las instalaciones al momento del cierre definitivo.", responsable: "Administrador" },
+          { actividad: "Al finalizar la jornada, el transfer debe dejarse configurado en modo Manual, como parte del procedimiento de cierre.", responsable: "Administrador" }
+        ]
+      }
+    ]
+  },
+  sujumi: {
+    nombre: "SUJUMI (Almacén)",
+    secciones: [
+      {
+        id: "apertura", numero: "01", titulo: "APERTURA",
+        items: [
+          { actividad: "La apertura del centro se realiza con la presencia del responsable de la llave y al menos dos colaboradores.", responsable: "Encargado de Almacén" },
+          { actividad: "Se desactiva manualmente el sistema de alarmas a través del panel.", responsable: "Encargado de Almacén" },
+          { actividad: "Se deben subir los breaker de los aires acondicionados y cualquier otro que deba activarse para la operación del día.", responsable: "Encargado de Almacén" },
+          { actividad: "Se realiza un recorrido por todo el almacén y el área de oficinas para verificar que no existan puertas o ventanas forzadas, daños en las instalaciones, filtraciones, fugas de agua, anomalías eléctricas, mercancía fuera de lugar u otra novedad ocurrida durante el cierre.", responsable: "Encargado de Almacén" },
+          { actividad: "Se verifica el funcionamiento de los equipos principales (aires acondicionados, iluminación, computadoras, impresoras, sistema de facturación, internet, cámaras, DVR/NVR, UPS y planta eléctrica, según aplique).", responsable: "Encargado de Almacén" },
+          { actividad: "Si la planta eléctrica tiene transfer automático, se verifica que el transfer esté configurado en modo Automático durante la apertura.", responsable: "Encargado de Almacén" },
+          { actividad: "Se verifica que todos los colaboradores se encuentren correctamente uniformados, identificados con su carnet y con una adecuada presentación personal.", responsable: "Encargado de Almacén" },
+          { actividad: "Se inspeccionan los baños para verificar su limpieza, disponibilidad de papel higiénico, jabón y demás insumos necesarios.", responsable: "Encargado de Almacén" },
+          { actividad: "Se verifica el estado del frente del centro (aceras, parqueos, entrada principal, letreros y áreas exteriores), asegurando que se encuentren limpios y organizados.", responsable: "Encargado de Almacén" }
+        ]
+      },
+      {
+        id: "jornada", numero: "02", titulo: "DURANTE LA JORNADA",
+        items: [
+          { actividad: "El administrador realiza recorridos periódicos para verificar el orden, limpieza y correcta organización de las áreas de almacén, oficinas y áreas comunes.", responsable: "Encargado de Almacén" },
+          { actividad: "Luego de culminado el horario de almuerzo, se verifica que el comedor quede limpio, organizado y en condiciones adecuadas de higiene.", responsable: "Encargado de Almacén" },
+          { actividad: "Se registra cualquier incidencia relevante presentada durante la jornada (fallas de equipos, novedades de seguridad, averías, accidentes, reclamaciones de clientes o cualquier situación que requiera seguimiento).", responsable: "Encargado de Almacén" }
+        ]
+      },
+      {
+        id: "cierre", numero: "03", titulo: "CIERRE",
+        items: [
+          { actividad: "Antes del cierre, el personal realiza la limpieza y organización general, dejando todas las áreas listas para la apertura del día siguiente.", responsable: "Encargado de Almacén" },
+          { actividad: "Se verifica que los equipos que no deban permanecer encendidos sean apagados correctamente y que las luces queden según el procedimiento establecido.", responsable: "Encargado de Almacén" },
+          { actividad: "Se confirma que puertas, ventanas, oficinas, almacenes y vitrinas queden correctamente cerrados y asegurados.", responsable: "Encargado de Almacén" },
+          { actividad: "Se activa el sistema de alarma (cuando aplique) y se verifica que el centro quede completamente protegido antes de la salida del personal.", responsable: "Encargado de Almacén" },
+          { actividad: "Se confirma que ningún colaborador permanezca dentro de las instalaciones al momento del cierre definitivo.", responsable: "Encargado de Almacén" },
+          { actividad: "Al finalizar la jornada, el transfer de la planta eléctrica debe dejarse configurado en modo Manual, como parte del procedimiento de cierre. Así mismo, los breaker de los aires acondicionados u otros equipos que puedan representar algún riesgo durante la ausencia del personal.", responsable: "Encargado de Almacén" }
+        ]
+      }
+    ]
+  }
+};
+
+/* ------------------------------------------------------------
+   VISIBILIDAD DEL CHECKLIST — solo departamentos de tienda (CM* / LA70*)
+   ADVERTENCIA: este archivo (usuario.html) solo lo abren usuarios con
+   rol === "usuario" (ver init(): si rol !== "usuario" redirige a index.html).
+   Por eso aquí NO se puede distinguir por rol admin/analista/superadmin —
+   esos usuarios (evaluadores de SUJUMI) nunca llegan a esta pantalla.
+   Si también necesitan ver el checklist, hay que agregarlo en su propio
+   panel (admin/analista), no en este archivo.
+   ------------------------------------------------------------ */
+function usuarioVeChecklist() {
+  const depto = (localStorage.getItem("depto") || "").trim();
+  return /^(CM|LA70)/i.test(depto);
+}
+
+function aplicarVisibilidadChecklist() {
+  const puede = usuarioVeChecklist();
+  const navItem = document.getElementById("nav-checklist");
+  const bnavItem = document.getElementById("bnavChecklist");
+  if (navItem) navItem.style.display = puede ? "" : "none";
+  if (bnavItem) bnavItem.style.display = puede ? "" : "none";
+}
+
+let checklistTipoActivo = "tienda";
+
+/* Detecta el tipo de checklist según el nombre de la sucursal escrita.
+   Ajusta esta lista si hay más marcas/sucursales con formato propio. */
+function detectarTipoChecklist(sucursalTexto) {
+  const t = (sucursalTexto || "").toLowerCase();
+  if (t.includes("sujumi")) return "sujumi";
+  return "tienda";
+}
+
+function renderChecklistSecciones(tipo) {
+  const cont = document.getElementById("chkSecciones");
+  if (!cont) return;
+  const tpl = CHECKLIST_TEMPLATES[tipo] || CHECKLIST_TEMPLATES.tienda;
+  checklistTipoActivo = tipo;
+
+  const tipoLabel = tipo === "sujumi"
+    ? '<span style="font-family:var(--font-mono);font-size:9px;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--med-bg);color:var(--med);border:1px solid var(--med-bd)">📦 Formato SUJUMI (Almacén)</span>'
+    : '<span style="font-family:var(--font-mono);font-size:9px;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--ok-bg);color:var(--brand);border:1px solid var(--ok-bd)">🏬 Formato Tienda</span>';
+
+  let html = '<div style="margin-bottom:12px">' + tipoLabel +
+    ' <span style="font-family:var(--font-mono);font-size:9px;color:var(--ink-3);margin-left:6px">detectado según la sucursal escrita</span></div>';
+
+  tpl.secciones.forEach(function (sec) {
+    html += '<div style="margin-bottom:16px">';
+    html += '<div style="font-family:var(--font-display);font-size:12px;font-weight:700;color:var(--brand);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)">' +
+      sec.numero + ' — ' + sec.titulo + '</div>';
+    sec.items.forEach(function (item, idx) {
+      const checkId = "chk_" + sec.id + "_" + idx;
+      html += '<div style="display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed var(--border)">';
+      html += '<input type="checkbox" id="' + checkId + '" style="margin-top:3px;width:16px;height:16px;flex-shrink:0;accent-color:var(--brand)">';
+      html += '<div style="flex:1">';
+      html += '<label for="' + checkId + '" style="font-size:12px;color:var(--ink);line-height:1.5;cursor:pointer">' + item.actividad + '</label>';
+      html += '<div style="font-family:var(--font-mono);font-size:9px;color:var(--ink-3);margin-top:3px">👤 ' + item.responsable + '</div>';
+      html += '<input type="text" id="' + checkId + '_obs" placeholder="Observación (opcional)" style="margin-top:6px;margin-bottom:0;padding:6px 10px;font-size:11px">';
+      html += '</div></div>';
+    });
+    html += '</div>';
+  });
+
+  cont.innerHTML = html;
+}
+
+function abrirChecklist() {
+  const modal = document.getElementById("checklistModal");
+  if (!modal) return;
+
+  ["chkSucursal", "chkAdmin", "chkAuditor", "chkHoraApertura", "chkHoraCierre",
+   "chkIncidencias", "chkFirmaAdmin", "chkFirmaAuditor"].forEach(function (id) {
+    const el = document.getElementById(id);
+    if (el) el.value = "";
+  });
+
+  const fechaEl = document.getElementById("chkFecha");
+  if (fechaEl) fechaEl.value = new Date().toLocaleDateString("es-DO", { day: "2-digit", month: "2-digit", year: "numeric" });
+
+  renderChecklistSecciones("tienda");
+
+  const sucursalInput = document.getElementById("chkSucursal");
+  if (sucursalInput) {
+    sucursalInput.oninput = function () {
+      const tipoDetectado = detectarTipoChecklist(sucursalInput.value);
+      if (tipoDetectado !== checklistTipoActivo) renderChecklistSecciones(tipoDetectado);
+    };
+  }
+
+  modal.classList.add("open");
+}
+
+function cerrarChecklist() {
+  const modal = document.getElementById("checklistModal");
+  if (modal) modal.classList.remove("open");
+}
+
+/* Cerrar al hacer clic fuera del modal (mismo patrón que #ayudaModal) */
+document.getElementById("checklistModal").addEventListener("click", function (e) {
+  if (e.target === this) this.classList.remove("open");
+});
+
+async function guardarChecklist() {
+  const sucursal = (document.getElementById("chkSucursal").value || "").trim();
+  const admin = (document.getElementById("chkAdmin").value || "").trim();
+  const firma = (document.getElementById("chkFirmaAdmin").value || "").trim();
+
+  if (!sucursal) { showToast("Escribe el nombre de la sucursal", "error"); return; }
+  if (!admin) { showToast("Escribe el administrador responsable", "error"); return; }
+  if (!firma) { showToast("Falta la firma del administrador", "error"); return; }
+
+  const tpl = CHECKLIST_TEMPLATES[checklistTipoActivo] || CHECKLIST_TEMPLATES.tienda;
+  const items = [];
+  tpl.secciones.forEach(function (sec) {
+    sec.items.forEach(function (item, idx) {
+      const checkEl = document.getElementById("chk_" + sec.id + "_" + idx);
+      const obsEl = document.getElementById("chk_" + sec.id + "_" + idx + "_obs");
+      items.push({
+        seccion: sec.titulo,
+        actividad: item.actividad,
+        responsable: item.responsable,
+        cumplido: !!(checkEl && checkEl.checked),
+        observacion: (obsEl && obsEl.value.trim()) || ""
+      });
+    });
+  });
+
+  const payload = {
+    tipo: checklistTipoActivo,
+    sucursal: sucursal,
+    fecha: document.getElementById("chkFecha").value,
+    administrador: admin,
+    auditor: (document.getElementById("chkAuditor").value || "").trim(),
+    hora_apertura: (document.getElementById("chkHoraApertura").value || "").trim(),
+    hora_cierre: (document.getElementById("chkHoraCierre").value || "").trim(),
+    items: items,
+    incidencias: (document.getElementById("chkIncidencias").value || "").trim(),
+    firma_administrador: firma,
+    firma_auditor: (document.getElementById("chkFirmaAuditor").value || "").trim(),
+    usuario: localStorage.getItem("usuario") || "",
+    creado_en: new Date().toISOString()
+  };
+
+  const btn = document.getElementById("btnGuardarChecklist");
+  if (btn) { btn.disabled = true; btn.textContent = "Guardando..."; }
+
+  try {
+    const r = await apiFetch("/checklists", { method: "POST", body: JSON.stringify(payload) });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    showToast("Checklist guardado ✓", "success");
+    cerrarChecklist();
+  } catch (e) {
+    console.error("guardarChecklist:", e);
+    showToast("No se pudo guardar el checklist. Verifica que exista el endpoint /checklists en el backend.", "error");
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = "💾 Guardar checklist"; }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function ctkRenderMensajes(mensajes){
   const cont = document.getElementById("ctkThreadMsgs");
