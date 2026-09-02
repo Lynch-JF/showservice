@@ -447,6 +447,7 @@ select optgroup{background:var(--surface-2);color:var(--ink-3);font-size:11px}
     <div class="nav-item active" id="nav-inicio" data-view="inicio" onclick="switchView('inicio')"><span class="nav-icon">◼</span><span>Inicio</span></div>
     <div class="nav-item" id="nav-nuevo" data-view="nuevo" onclick="switchView('nuevo')"><span class="nav-icon">＋</span><span>Nuevo Ticket</span></div>
     <div class="nav-item" id="nav-mistickets" data-view="mistickets" onclick="switchView('mistickets')"><span class="nav-icon">🎫</span><span>Mis Tickets</span><span class="nav-badge" id="nb-pendientes" style="display:none">0</span></div>
+    <div class="nav-item" id="nav-checklist" onclick="abrirChecklist()"><span class="nav-icon">📋</span><span>Checklist Apertura/Cierre</span></div>
     <p class="sb-section">Cuenta</p>
     <div class="nav-item" id="nav-config" data-view="config" onclick="switchView('config');renderConfig()"><span class="nav-icon">⚙</span><span>Configuración</span></div>
     <div class="nav-item" id="nav-ayuda" onclick="abrirAyuda()"><span class="nav-icon">📞</span><span>Ayuda rápida</span></div>
@@ -469,6 +470,7 @@ select optgroup{background:var(--surface-2);color:var(--ink-3);font-size:11px}
     </div>
     <div class="topbar-right">
       <button class="icon-btn" id="darkBtn" onclick="toggleDarkMode()" title="Cambiar tema">🌙</button>
+      <button class="icon-btn" onclick="abrirChecklist()" title="Checklist Apertura/Cierre">📋</button>
       <button class="icon-btn" onclick="abrirAyuda()" title="Ayuda rápida" style="display:none" id="topbarAyudaMobile">📞</button>
       <button class="btn-refresh" id="refreshBtn" onclick="recargarTickets()">
         <svg id="refreshIcon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
@@ -679,7 +681,7 @@ select optgroup{background:var(--surface-2);color:var(--ink-3);font-size:11px}
   <button class="bnav-item active" data-view="inicio" onclick="switchView('inicio')"><span class="bnav-icon">◼</span><span>Inicio</span></button>
   <button class="bnav-item" data-view="mistickets" onclick="switchView('mistickets')"><span class="bnav-icon">🎫</span><span class="bnav-dot" id="bnDotPend"></span><span>Tickets</span></button>
   <button class="bnav-fab" onclick="switchView('nuevo')" title="Nuevo ticket">＋</button>
-  <button class="bnav-item" onclick="abrirAyuda()"><span class="bnav-icon">📞</span><span>Ayuda</span></button>
+  <button class="bnav-item" onclick="abrirChecklist()"><span class="bnav-icon">📋</span><span>Checklist</span></button>
   <button class="bnav-item" data-view="config" onclick="switchView('config');renderConfig()"><span class="bnav-icon">⚙</span><span>Ajustes</span></button>
 </nav>
 
