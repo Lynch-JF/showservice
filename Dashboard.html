@@ -2159,12 +2159,23 @@ function renderChecklistSecciones(tipo) {
   cont.innerHTML = html;
 }
 
+/* Formatea la hora actual como "08:00 am" / "06:00 pm" (mismo formato de los placeholders) */
+function formatearHoraActual12() {
+  const d = new Date();
+  let h = d.getHours();
+  const m = d.getMinutes();
+  const ampm = h >= 12 ? "pm" : "am";
+  h = h % 12; if (h === 0) h = 12;
+  const mm = m < 10 ? "0" + m : String(m);
+  const hh = h < 10 ? "0" + h : String(h);
+  return hh + ":" + mm + " " + ampm;
+}
+
 function abrirChecklist() {
   const modal = document.getElementById("checklistModal");
   if (!modal) return;
 
-  ["chkSucursal", "chkAdmin", "chkAuditor", "chkHoraApertura", "chkHoraCierre",
-   "chkIncidencias", "chkFirmaAdmin", "chkFirmaAuditor"].forEach(function (id) {
+  ["chkAuditor", "chkHoraCierre", "chkIncidencias", "chkFirmaAdmin", "chkFirmaAuditor"].forEach(function (id) {
     const el = document.getElementById(id);
     if (el) el.value = "";
   });
@@ -2172,9 +2183,22 @@ function abrirChecklist() {
   const fechaEl = document.getElementById("chkFecha");
   if (fechaEl) fechaEl.value = new Date().toLocaleDateString("es-DO", { day: "2-digit", month: "2-digit", year: "numeric" });
 
-  renderChecklistSecciones("tienda");
+  /* Autocompletar con datos que el sistema ya conoce del usuario */
+  const depto = (localStorage.getItem("depto") || "").trim();
+  const nombreCompleto = localStorage.getItem("nombreCompleto") || localStorage.getItem("usuario") || "";
 
   const sucursalInput = document.getElementById("chkSucursal");
+  if (sucursalInput) sucursalInput.value = depto;
+
+  const adminInput = document.getElementById("chkAdmin");
+  if (adminInput) adminInput.value = nombreCompleto;
+
+  const horaAperturaInput = document.getElementById("chkHoraApertura");
+  if (horaAperturaInput) horaAperturaInput.value = formatearHoraActual12();
+
+  /* El tipo de checklist se detecta de una vez según la sucursal ya autocompletada */
+  renderChecklistSecciones(detectarTipoChecklist(depto));
+
   if (sucursalInput) {
     sucursalInput.oninput = function () {
       const tipoDetectado = detectarTipoChecklist(sucursalInput.value);
@@ -2251,7 +2275,6 @@ async function guardarChecklist() {
     if (btn) { btn.disabled = false; btn.textContent = "💾 Guardar checklist"; }
   }
 }
-
 
 
 
