@@ -1258,6 +1258,9 @@ body.light .rep-t-item { background:var(--s2) }
   <p class="sb-section">Evaluación de tiendas</p>
   <div class="nav-item" id="nav-kpi" onclick="switchView('kpi')"><span class="nav-icon">📋</span><span class="nav-label">Formulario KPI</span></div>
 
+<p class="sb-section">Checklists Tiendas</p>
+<div class="nav-item" id="nav-checklists" onclick="switchView('checklists');if(!checklistsInited){cargarChecklists();checklistsInited=true;}"><span class="nav-icon">🧾</span><span class="nav-label">Apertura/Cierre</span></div>
+   
   <p class="sb-section">Admin</p>
   <div class="nav-item" id="nav-usuarios" onclick="switchView('usuarios')"><span class="nav-icon">⊞</span><span class="nav-label">Usuarios</span></div>
   <div class="nav-item" id="nav-config"   onclick="switchView('config')"><span class="nav-icon">⚙</span><span class="nav-label">Configuración</span></div>
@@ -1537,6 +1540,29 @@ body.light .rep-t-item { background:var(--s2) }
     </div>
   </div>
 
+  <!-- ══ CHECKLISTS DE TIENDAS (Apertura/Jornada/Cierre) ══ -->
+  <div id="view-checklists" class="view">
+    <div class="filters">
+      <div class="search-wrap">
+        <span class="search-ico">🔍</span>
+        <input class="search-input" type="text" id="chkSearch" placeholder="Buscar por sucursal o administrador…" oninput="renderChecklistsLista()">
+      </div>
+      <select class="form-select" id="chkFiltroSeccion" style="width:auto;padding:7px 12px;font-size:11px" onchange="renderChecklistsLista()">
+        <option value="">Todas las secciones</option>
+        <option value="apertura">🌅 Apertura</option>
+        <option value="jornada">☀️ Jornada</option>
+        <option value="cierre">🌙 Cierre</option>
+      </select>
+      <input type="date" class="form-select" id="chkFiltroFecha" style="width:auto;padding:7px 12px;font-size:11px" onchange="renderChecklistsLista()">
+      <button class="f-btn" onclick="document.getElementById('chkFiltroFecha').value='';document.getElementById('chkFiltroSeccion').value='';document.getElementById('chkSearch').value='';renderChecklistsLista()">✖ Limpiar</button>
+    </div>
+    <div class="sec-head"><span class="sec-title">🧾 Checklists enviados</span><span class="sec-count" id="chkCount">0</span></div>
+    <div class="tickets-grid" id="chkGrid">
+      <div class="empty-state"><div class="empty-icon">🧾</div><p>Cargando checklists…</p></div>
+    </div>
+  </div>
+   
+
   <!-- ══ USUARIOS ══ -->
   <div id="view-usuarios" class="view">
     <div class="users-header">
@@ -1701,6 +1727,18 @@ body.light .rep-t-item { background:var(--s2) }
   </div>
 </div>
 
+<!-- ══ MODAL DETALLE CHECKLIST ══ -->
+<div id="chkDetalleModal" class="modal-overlay">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-title" id="chkDetTitulo">Checklist</div>
+    <div class="modal-sub" id="chkDetSub">—</div>
+    <div id="chkDetBody"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="document.getElementById('chkDetalleModal').classList.remove('open')">Cerrar</button>
+    </div>
+  </div>
+</div>
+   
 <!-- ══ MODAL AYUDA ══ -->
 <div id="ayudaModal" class="modal-overlay">
   <div class="modal" style="max-width:560px">
@@ -1822,7 +1860,7 @@ let sheetUsers=[], editingRowNum=null;
 })();
 
 window.addEventListener("click",e=>{
-  ["ayudaModal","resueltoModal","reasignarModal","userModal","histOverlay"].forEach(id=>{
+  ["ayudaModal","resueltoModal","reasignarModal","userModal","histOverlay","chkDetalleModal"].forEach(id=>{
     const el=document.getElementById(id); if(e.target===el) el.classList.remove("open");
   });
 });
@@ -2800,6 +2838,129 @@ async function nexoSendMessage(){
   }
   finally{nexoTyping=false;input.disabled=false;btn.disabled=false;input.focus();}
 }
+
+
+
+
+
+// ══════════════════════════════════════════════════
+// CHECKLISTS DE TIENDAS (Apertura/Jornada/Cierre)
+// ══════════════════════════════════════════════════
+let allChecklists = [];
+let checklistsInited = false;
+
+const CHK_SECCION_LABEL = { apertura:"🌅 Apertura", jornada:"☀️ Jornada", cierre:"🌙 Cierre" };
+
+async function cargarChecklists(){
+  const grid = document.getElementById("chkGrid");
+  grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🧾</div><p>Cargando checklists…</p></div>`;
+  try{
+    const r = await apiFetch("/checklists");
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    const data = await r.json();
+    allChecklists = (Array.isArray(data)?data:[]).sort((a,b)=> new Date(b.creado_en||0) - new Date(a.creado_en||0));
+    renderChecklistsLista();
+  }catch(e){
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠</div><p>No se pudieron cargar los checklists.</p></div>`;
+    if(e.message!=="Unauthorized") showToast("Error al cargar checklists","err");
+  }
+}
+
+function renderChecklistsLista(){
+  const grid = document.getElementById("chkGrid");
+  const cnt  = document.getElementById("chkCount");
+  const q      = (document.getElementById("chkSearch")?.value||"").toLowerCase();
+  const secF   = document.getElementById("chkFiltroSeccion")?.value||"";
+  const fechaF = document.getElementById("chkFiltroFecha")?.value||"";
+
+  let lista = [...allChecklists];
+  if(secF)   lista = lista.filter(c => c.seccion === secF);
+  if(q)      lista = lista.filter(c => (c.sucursal||"").toLowerCase().includes(q) || (c.administrador||"").toLowerCase().includes(q));
+  if(fechaF) lista = lista.filter(c => {
+    try{ const d = new Date(c.creado_en); const iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; return iso === fechaF; }
+    catch{ return false; }
+  });
+
+  if(cnt) cnt.textContent = lista.length;
+  if(!lista.length){
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><p>No hay checklists con esos filtros.</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = "";
+  lista.forEach(c => grid.appendChild(buildChecklistCard(c)));
+}
+
+function buildChecklistCard(c){
+  const items = Array.isArray(c.items) ? c.items : [];
+  const total = items.length;
+  const cumplidos = items.filter(i=>i.cumplido).length;
+  const hallazgos = items.filter(i=>!i.cumplido).length;
+  const fecha = c.creado_en ? new Date(c.creado_en).toLocaleString("es-DO") : (c.fecha||"—");
+  const secLbl = CHK_SECCION_LABEL[c.seccion] || c.seccion;
+  const pct = total ? Math.round(cumplidos/total*100) : 0;
+  const badgeColor = pct===100 ? "b-res" : pct>=70 ? "b-proc" : "b-pend";
+
+  const div = document.createElement("div");
+  div.className = "t-card";
+  div.style.cursor = "pointer";
+  div.onclick = () => abrirDetalleChecklist(c);
+  div.innerHTML = `
+    <div class="t-top">
+      <div>
+        <div class="t-id">${secLbl} · #${c.id||""}</div>
+        <div class="t-title">${c.sucursal||"—"}</div>
+      </div>
+      <div class="t-status-col"><span class="badge ${badgeColor}">${cumplidos}/${total} ✓</span>${hallazgos>0?`<span class="urgency-badge urg-alto">${hallazgos} hallazgo${hallazgos>1?"s":""}</span>`:""}</div>
+    </div>
+    <div class="t-desc">👤 Administrador: <strong style="color:var(--t1)">${c.administrador||"—"}</strong></div>
+    <div class="t-meta"><span class="badge b-user">✍ ${c.firma_administrador||"Sin firma"}</span></div>
+    <hr class="t-hr"/>
+    <div class="t-bottom"><div class="t-assigned">Enviado por <strong>${c.usuario||"—"}</strong></div><div class="t-date">📅 ${fecha}</div></div>
+  `;
+  return div;
+}
+
+function abrirDetalleChecklist(c){
+  const secLbl = CHK_SECCION_LABEL[c.seccion] || c.seccion;
+  const fecha = c.creado_en ? new Date(c.creado_en).toLocaleString("es-DO") : (c.fecha||"—");
+  document.getElementById("chkDetTitulo").textContent = `${secLbl} — ${c.sucursal||""}`;
+  document.getElementById("chkDetSub").textContent = `Enviado por ${c.usuario||"—"} · ${fecha}`;
+
+  const items = Array.isArray(c.items) ? c.items : [];
+  let extras = `<div class="cfg-info-row"><span>Administrador responsable</span><span>${c.administrador||"—"}</span></div>`;
+  extras += `<div class="cfg-info-row"><span>Firma administrador</span><span>${c.firma_administrador||"—"}</span></div>`;
+  if(c.hora_apertura) extras += `<div class="cfg-info-row"><span>Hora de apertura</span><span>${c.hora_apertura}</span></div>`;
+  if(c.hora_cierre)   extras += `<div class="cfg-info-row"><span>Hora de cierre</span><span>${c.hora_cierre}</span></div>`;
+  if(c.auditor)        extras += `<div class="cfg-info-row"><span>Auditor</span><span>${c.auditor}</span></div>`;
+  if(c.firma_auditor)  extras += `<div class="cfg-info-row"><span>Firma auditor</span><span>${c.firma_auditor}</span></div>`;
+  if(c.incidencias)    extras += `<div class="cfg-info-row" style="align-items:flex-start"><span>Incidencias</span><span style="text-align:right;max-width:60%">${c.incidencias}</span></div>`;
+
+  const itemsHtml = items.map((it,i)=>{
+    const ok = !!it.cumplido;
+    return `<div style="padding:10px 0;border-bottom:1px solid var(--b1)">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+        <span style="font-size:12px;color:var(--t1);flex:1">${i+1}. ${it.actividad||""}</span>
+        <span class="badge ${ok?"b-res":"b-pend"}">${ok?"✓ Cumplió":"✕ No cumplió"}</span>
+      </div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--t3);margin-top:3px">👤 ${it.responsable||""}</div>
+      ${it.observacion ? `<div style="margin-top:6px;padding:8px 10px;background:rgba(244,63,94,.06);border-left:2px solid var(--rose);border-radius:0 6px 6px 0;font-size:11px;color:var(--t1)">📝 ${it.observacion}</div>` : ""}
+    </div>`;
+  }).join("");
+
+  document.getElementById("chkDetBody").innerHTML = `
+    <div style="margin-bottom:14px">${extras}</div>
+    <div class="cfg-card-title" style="font-size:12px;margin-bottom:6px">Ítems evaluados</div>
+    ${itemsHtml || '<p style="color:var(--t2);font-size:12px">Sin ítems registrados.</p>'}
+  `;
+
+  document.getElementById("chkDetalleModal").classList.add("open");
+}
+
+
+
+
+   
 </script>
 </body>
 </html>
