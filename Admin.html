@@ -1011,6 +1011,60 @@ img { max-width:100%; }
 #nexoSendBtn:disabled { opacity:.4; cursor:not-allowed; transform:none }
 .nexo-footer { padding:5px 10px 7px; font-family:var(--mono); font-size:9px; color:var(--t3); text-align:center; border-top:1px solid var(--b1); flex-shrink:0 }
 
+/* MIS ASIGNADOS */
+.mis-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
+.mis-stat{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);padding:14px;text-align:center}
+.mis-val{font-size:26px;font-weight:700;letter-spacing:-1px}
+.mis-lbl{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t2);margin-top:3px}
+.s-tot .mis-val{color:var(--blue2)}.s-pen .mis-val{color:var(--amber)}.s-pro .mis-val{color:var(--cyan)}.s-res .mis-val{color:var(--emerald)}
+.btn-chat{padding:5px 11px;border-radius:var(--r);font-size:11px;font-weight:600;background:var(--s2);color:var(--t1);border:1px solid var(--b2);transition:all .15s}
+.btn-chat:hover{border-color:var(--blue);color:var(--blue2)}
+
+/* CHAT INTERNO */
+.wa-wrap{display:flex;gap:12px;height:calc(100dvh - var(--topbar) - 120px);min-height:460px;position:relative}
+.wa-contacts{width:290px;flex-shrink:0;background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);overflow-y:auto}
+.wa-contacts-hdr{padding:12px 14px;border-bottom:1px solid var(--b1);font-size:12px;font-weight:600;position:sticky;top:0;background:var(--s1);z-index:2}
+.wa-contact-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--b1);cursor:pointer;transition:background .15s}
+.wa-contact-item:hover{background:var(--s2)}
+.wa-contact-item.active{background:var(--blue-g)}
+.wa-contact-av,.wa-panel-av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;flex-shrink:0}
+.wa-contact-av{width:36px;height:36px;font-size:12px}
+.wa-panel-av{width:32px;height:32px;font-size:11px}
+.wa-contact-info{flex:1;min-width:0}
+.wa-contact-name{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wa-contact-role{font-family:var(--mono);font-size:9px;color:var(--t2);text-transform:uppercase}
+.wa-contact-last{font-size:11px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wa-contact-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.wa-contact-time{font-family:var(--mono);font-size:9px;color:var(--t3)}
+.wa-unread-badge{background:var(--blue);color:#fff;font-family:var(--mono);font-size:9px;font-weight:700;padding:1px 6px;border-radius:99px}
+.wa-panel{flex:1;min-width:0;background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);display:flex;flex-direction:column;overflow:hidden}
+.wa-panel-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--t2);font-size:12px}
+.wa-panel-hdr{padding:12px 16px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:10px}
+.wa-panel-name{font-size:13px;font-weight:600}
+.wa-panel-role{font-family:var(--mono);font-size:10px;color:var(--t2)}
+.wa-back-btn{display:none;width:30px;height:30px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);color:var(--t1);align-items:center;justify-content:center}
+.wa-msgs{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px;background:var(--s0)}
+.wa-msg{display:flex;max-width:78%;animation:fadeUp .18s var(--ease)}
+.wa-msg.mine{align-self:flex-end}
+.wa-bubble-wrap{display:flex;flex-direction:column}
+.wa-msg.mine .wa-bubble-wrap{align-items:flex-end}
+.wa-bubble{padding:8px 12px;border-radius:12px;font-size:12.5px;line-height:1.5;background:var(--s2);border:1px solid var(--b1);border-bottom-left-radius:3px;word-break:break-word}
+.wa-msg.mine .wa-bubble{background:var(--blue);color:#fff;border-color:transparent;border-radius:12px;border-bottom-right-radius:3px}
+.wa-time{font-family:var(--mono);font-size:8.5px;color:var(--t3);margin-top:2px;padding:0 4px}
+.wa-input-row{padding:10px 12px;border-top:1px solid var(--b1);display:flex;gap:8px}
+.wa-input-row input{flex:1;min-width:0;padding:8px 14px;border-radius:99px;border:1px solid var(--b2);background:var(--s2);color:var(--t0);font-family:var(--font);font-size:16px;outline:none}
+.wa-input-row input:focus{border-color:var(--blue)}
+.wa-send-btn{width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;border:none;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wa-send-btn:disabled{opacity:.5}
+.wa-empty-contacts{text-align:center;padding:28px 14px;color:var(--t2);font-family:var(--mono);font-size:11px}
+body.light .wa-contacts,body.light .wa-panel,body.light .wa-contacts-hdr,body.light .mis-stat{background:#fff}
+body.light .wa-msgs{background:var(--s1)}
+@media (max-width:900px){
+  .wa-contacts,.wa-panel{position:absolute;inset:0;width:100%}
+  .wa-wrap.wa-show-panel .wa-contacts,.wa-wrap:not(.wa-show-panel) .wa-panel{display:none}
+  .wa-back-btn{display:flex}
+}
+
 /* ═══════════════════════════════════════
    LIGHT THEME
 ═══════════════════════════════════════ */
@@ -1244,7 +1298,8 @@ body.light .rep-t-item { background:var(--s2) }
     <button class="sb-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Colapsar">‹</button>
     <button class="sb-close-mobile" onclick="closeMobileSidebar()" title="Cerrar">✕</button>
   </div>
-
+<p class="sb-section">Equipo</p>
+<div class="nav-item" id="nav-chat" onclick="switchView('chat')"><span class="nav-icon">💬</span><span class="nav-label">Chat interno</span><span class="nav-badge" id="nb-chat" style="display:none;background:var(--rose)">0</span></div>
   <p class="sb-section">Principal</p>
   <div class="nav-item active" id="nav-dashboard"  onclick="switchView('dashboard')"><span class="nav-icon">▣</span><span class="nav-label">Dashboard</span></div>
   <div class="nav-item"        id="nav-asignados"  onclick="switchView('asignados')"><span class="nav-icon">📌</span><span class="nav-label">Mis Asignados</span><span class="nav-badge" id="nb-asignados" style="display:none">0</span></div>
@@ -1313,20 +1368,55 @@ body.light .rep-t-item { background:var(--s2) }
   </div>
 
   <!-- ══ MIS ASIGNADOS ══ -->
-  <div id="view-asignados" class="view">
-    <div class="load-bar"><div class="load-bar-fill" id="loadBarAsi"></div></div>
-    <div class="aviso-banner">⚒ Tickets asignados a ti · Usa los botones para cambiar el estado o marcar como recibido.</div>
-    <div class="urg-filter-row" id="urgFilterAsignados">
-      <span class="urg-lbl">Urgencia:</span>
-      <button class="urg-pill active"     onclick="setUrgFilter('todos',this,'urgFilterAsignados')">Todos</button>
-      <button class="urg-pill up-critico" onclick="setUrgFilter('critico',this,'urgFilterAsignados')">🔴 Crítico</button>
-      <button class="urg-pill up-alto"    onclick="setUrgFilter('alto',this,'urgFilterAsignados')">🟠 Alto</button>
-      <button class="urg-pill up-medio"   onclick="setUrgFilter('medio',this,'urgFilterAsignados')">🟡 Medio</button>
-    </div>
-    <div class="sec-head"><span class="sec-title">Mis asignados activos</span><span class="sec-count" id="asiCount">0</span></div>
-    <div class="horiz-cards" id="misAsignadosGrid"><div class="empty-state"><div class="empty-icon">📌</div><p>No tienes tickets asignados activos.</p></div></div>
+<div id="view-asignados" class="view">
+  <div class="load-bar"><div class="load-bar-fill" id="loadBarAsi"></div></div>
+  <div class="mis-stats">
+    <div class="mis-stat s-tot"><div class="mis-val" id="mis-total">—</div><div class="mis-lbl">Total</div></div>
+    <div class="mis-stat s-pen"><div class="mis-val" id="mis-pend">—</div><div class="mis-lbl">Pendientes</div></div>
+    <div class="mis-stat s-pro"><div class="mis-val" id="mis-proc">—</div><div class="mis-lbl">En proceso</div></div>
+    <div class="mis-stat s-res"><div class="mis-val" id="mis-res">—</div><div class="mis-lbl">Resueltos</div></div>
   </div>
+  <div class="filters" id="asiFilters">
+    <div class="search-wrap"><span class="search-ico">🔍</span><input class="search-input" id="asiSearch" placeholder="Buscar en mis tickets…" oninput="renderAsignados()"></div>
+    <button class="f-btn active" onclick="setAsiFilter('todos',this)">Todos</button>
+    <button class="f-btn f-pend" onclick="setAsiFilter('Pendiente',this)">Pendiente</button>
+    <button class="f-btn f-proc" onclick="setAsiFilter('En Proceso',this)">En Proceso</button>
+    <button class="f-btn f-res" onclick="setAsiFilter('Resuelto',this)">Resuelto</button>
+  </div>
+  <div class="urg-filter-row" id="urgFilterAsignados">
+    <span class="urg-lbl">Urgencia:</span>
+    <button class="urg-pill active" onclick="setUrgFilter('todos',this,'urgFilterAsignados')">Todos</button>
+    <button class="urg-pill up-critico" onclick="setUrgFilter('critico',this,'urgFilterAsignados')">🔴 Crítico</button>
+    <button class="urg-pill up-alto" onclick="setUrgFilter('alto',this,'urgFilterAsignados')">🟠 Alto</button>
+    <button class="urg-pill up-medio" onclick="setUrgFilter('medio',this,'urgFilterAsignados')">🟡 Medio</button>
+  </div>
+  <div class="sec-head"><span class="sec-title">Todos mis tickets asignados</span><span class="sec-count" id="asiCount">0</span></div>
+  <div class="tickets-grid" id="misAsignadosGrid"></div>
+</div>
 
+<div id="view-chat" class="view">
+  <div class="sec-head"><span class="sec-title">💬 Chat interno</span><span class="sec-count" id="waTotalUnread" style="display:none">0</span></div>
+  <div class="wa-wrap" id="waWrap">
+    <div class="wa-contacts"><div class="wa-contacts-hdr">Contactos</div><div id="waContactsList"><div class="wa-empty-contacts">Cargando…</div></div></div>
+    <div class="wa-panel">
+      <div class="wa-panel-empty" id="waPanelEmpty"><div style="font-size:30px;opacity:.5">💬</div><p>Selecciona un contacto para chatear.</p></div>
+      <div id="waConversation" style="display:none;flex-direction:column;height:100%">
+        <div class="wa-panel-hdr">
+          <button class="wa-back-btn" onclick="cerrarConversacion()">←</button>
+          <div class="wa-panel-av" id="waPanelAv">??</div>
+          <div><div class="wa-panel-name" id="waPanelName">—</div><div class="wa-panel-role" id="waPanelRole">—</div></div>
+        </div>
+        <div class="wa-msgs" id="waMsgs"></div>
+        <div class="wa-input-row">
+          <input type="text" id="waInput" placeholder="Escribe un mensaje…" autocomplete="off" onkeydown="if(event.key==='Enter')enviarMensajeChat()">
+          <button class="wa-send-btn" id="waSendBtn" onclick="enviarMensajeChat()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+   
   <!-- ══ PENDIENTES ══ -->
   <div id="view-pendientes" class="view">
     <div class="load-bar"><div class="load-bar-fill" id="loadBarPend"></div></div>
@@ -1864,7 +1954,7 @@ window.addEventListener("click",e=>{
     const el=document.getElementById(id); if(e.target===el) el.classList.remove("open");
   });
 });
-window.addEventListener("load",()=>{ poblarFiltroMeses(); recargarTodo(false); cargarUsuariosSheet(); iniciarAutoRefresh(); initDragScroll(); nexoInit(); initKpiForm(); });
+window.addEventListener("load",()=>{ poblarFiltroMeses(); recargarTodo(false); cargarUsuariosSheet(); iniciarAutoRefresh(); initDragScroll(); nexoInit(); initKpiForm(); initChatInterno(); });
 
 // ══════════════════════════════════════════════════
 // MOBILE SIDEBAR (off-canvas drawer ≤900px)
@@ -1961,7 +2051,7 @@ function actualizarNavBadges(){
 // ══════════════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════════════
-const VIEW_TITLES={dashboard:"Dashboard",asignados:"Mis Asignados",pendientes:"Pendientes",proceso:"En Proceso",resueltos:"Resueltos",reportes:"Reportes",kpi:"Formulario KPI · Evaluación de tiendas",usuarios:"Usuarios",config:"Configuración"};
+const VIEW_TITLES={dashboard:"Dashboard",asignados:"Mis Asignados",pendientes:"Pendientes",proceso:"En Proceso",resueltos:"Resueltos",reportes:"Reportes",kpi:"Formulario KPI · Evaluación de tiendas",usuarios:"Usuarios",config:"Configuración", chat:"Chat interno"};
 function switchView(v){
   document.querySelectorAll(".view").forEach(el=>el.classList.remove("active"));
   const ve=document.getElementById("view-"+v); if(ve) ve.classList.add("active");
@@ -1969,6 +2059,7 @@ function switchView(v){
   const nav=document.getElementById("nav-"+v); if(nav) nav.classList.add("active");
   const vt=document.getElementById("viewTitle"); if(vt) vt.textContent=VIEW_TITLES[v]||v;
   if(v==="usuarios") cargarUsuariosSheet();
+   if(v==="chat") renderContactosChat();
   if(isMobileLayout()) closeMobileSidebar();
   window.scrollTo({top:0,behavior:"instant"in window?undefined:"auto"});
 }
@@ -2070,6 +2161,8 @@ function buildCard(t,opciones={}){
     if(t.estado==="Pendiente") botonesAccion=`<button class="btn-proc" onclick="cambiarEstadoAdmin(${t.id},'En Proceso')">⚙ En Proceso</button><button class="btn-resolve" onclick="abrirModalResolucion(${t.id})">✓ Resuelto</button>`;
     else if(t.estado==="En Proceso") botonesAccion=`<button class="btn-resolve" onclick="abrirModalResolucion(${t.id})">✓ Resuelto</button>`;
   }
+   const puedeChat=t.asignado&&t.asignado!=="Sin asignar"&&t.asignado.toLowerCase()!==adminActual.toLowerCase();
+const btnChat=puedeChat?`<button class="btn-chat" data-u="${esc(t.asignado)}" onclick="chatearConTecnico(this.dataset.u)">💬 Chat</button>`:"";
   const btnReasignar=(esAdmin&&t.estado!=="Resuelto")?`<button class="btn-reassign" onclick="abrirReasignarAdmin(${t.id})">🔁 Reasignar</button>`:"";
   const div=document.createElement("div");
   div.className="t-card";
@@ -2085,7 +2178,7 @@ function buildCard(t,opciones={}){
     <hr class="t-hr"/>
     <div class="t-bottom"><div class="t-assigned">Asignado a <strong>${nombreM}</strong></div><div class="t-date">📅 ${(t.fecha||"").split(",")[0]||""}</div></div>
     ${adjH}${resH}
-    <div class="t-actions">${btnRecibir}${botonesAccion}${btnReasignar}</div>`;
+<div class="t-actions">${btnRecibir}${botonesAccion}${btnReasignar}${btnChat}</div>`;
   return div;
 }
 
@@ -2096,13 +2189,27 @@ function filtrarUrgencia(lista,filterId){
   const f=urgFilterMap[filterId]||"todos";
   return f==="todos"?lista:lista.filter(t=>calcUrgencia(t).level===f);
 }
+let asiFilter="todos";
+function setAsiFilter(f,btn){
+  asiFilter=f;
+  document.querySelectorAll("#asiFilters .f-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active"); renderAsignados();
+}
 function renderAsignados(){
-  const mis=allTickets.filter(t=>(t.asignado||"").toLowerCase()===adminActual.toLowerCase()&&t.estado!=="Resuelto");
-  const fil=filtrarUrgencia(mis,"urgFilterAsignados").sort((a,b)=>{const o={critico:0,alto:1,medio:2,normal:3};return o[calcUrgencia(a).level]-o[calcUrgencia(b).level];});
+  const mis=allTickets.filter(t=>(t.asignado||"").toLowerCase()===adminActual.toLowerCase());
   const se=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  se("mis-total",mis.length);
+  se("mis-pend",mis.filter(t=>t.estado==="Pendiente").length);
+  se("mis-proc",mis.filter(t=>t.estado==="En Proceso").length);
+  se("mis-res",mis.filter(t=>t.estado==="Resuelto").length);
+  const q=(document.getElementById("asiSearch")?.value||"").toLowerCase();
+  let fil=mis.filter(t=>asiFilter==="todos"||t.estado===asiFilter);
+  if(q) fil=fil.filter(t=>(t.titulo||"").toLowerCase().includes(q)||(t.depto||"").toLowerCase().includes(q)||(t.usuario||"").toLowerCase().includes(q));
+  const o={critico:0,alto:1,medio:2,normal:3};
+  fil=filtrarUrgencia(fil,"urgFilterAsignados").sort((a,b)=>o[calcUrgencia(a).level]-o[calcUrgencia(b).level]);
   se("asiCount",fil.length);
   const grid=document.getElementById("misAsignadosGrid");grid.innerHTML="";
-  if(!fil.length){grid.innerHTML=`<div class="empty-state"><div class="empty-icon">📌</div><p>Sin tickets asignados activos.</p></div>`;return;}
+  if(!fil.length){grid.innerHTML=`<div class="empty-state"><div class="empty-icon">📌</div><p>Sin tickets con ese filtro.</p></div>`;return;}
   fil.forEach(t=>grid.appendChild(buildCard(t,{esAdmin:true,esMio:true})));
 }
 function renderPendientes(){
@@ -2958,7 +3065,106 @@ function abrirDetalleChecklist(c){
 }
 
 
+// ══════════ CHAT INTERNO (1 a 1) ══════════
+let chatDir=[],chatConvs=[],chatActivo=null,chatTimer=null;
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+const chatColor=s=>{let h=0;for(const c of s||"")h=(h<<5)-h+c.charCodeAt(0);return DEP_COLORS[Math.abs(h)%DEP_COLORS.length];};
+const chatIni=s=>(s||"??").substring(0,2).toUpperCase();
+const chatInfo=u=>chatDir.find(d=>(d.nombre_usuario||"").toLowerCase()===(u||"").toLowerCase())||{nombre_usuario:u,nombre_completo:NOMBRES_COMPLETOS[u]||u,rol:""};
+const chatHora=d=>new Date(d).toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"});
 
+async function initChatInterno(){
+  try{
+    const r=await apiFetch("/usuarios"); if(!r.ok)throw new Error();
+    const list=await r.json();
+    chatDir=(Array.isArray(list)?list:[]).filter(u=>(u.nombre_usuario||"").toLowerCase()!==adminActual.toLowerCase())
+      .map(u=>({nombre_usuario:u.nombre_usuario,nombre_completo:u.nombre_completo||u.nombre_usuario,rol:u.rol||"usuario"}));
+  }catch{ chatDir=[]; }
+  await refrescarConversaciones();
+  if(chatTimer)clearInterval(chatTimer);
+  chatTimer=setInterval(()=>{ if(!document.hidden) refrescarConversaciones(); },6000);
+}
+async function refrescarConversaciones(){
+  try{
+    const r=await apiFetch("/chat/conversaciones"); if(!r.ok)throw new Error();
+    const nuevas=await r.json();
+    const antes=chatConvs.reduce((a,c)=>a+(c.no_leidos||0),0);
+    chatConvs=Array.isArray(nuevas)?nuevas:[];
+    const ahora=chatConvs.reduce((a,c)=>a+(c.no_leidos||0),0);
+    const abierta=document.getElementById("view-chat")?.classList.contains("active");
+    if(ahora>antes&&(!abierta||!chatActivo)&&typeof Notification!=="undefined"){
+      if(Notification.permission==="granted") new Notification("Nuevo mensaje — GM Tickets TI",{body:"Tienes mensajes sin leer en el chat interno."});
+      else if(Notification.permission!=="denied") Notification.requestPermission();
+    }
+    actualizarBadgeChat();
+    if(abierta){ renderContactosChat(); if(chatActivo) await cargarMensajesChat(chatActivo,true); }
+  }catch{}
+}
+function actualizarBadgeChat(){
+  const n=chatConvs.reduce((a,c)=>a+(c.no_leidos||0),0);
+  const b=document.getElementById("nb-chat"); if(b){b.textContent=n;b.style.display=n>0?"":"none";}
+  const w=document.getElementById("waTotalUnread"); if(w){w.style.display=n>0?"":"none";w.textContent=n+" sin leer";}
+}
+function renderContactosChat(){
+  const cont=document.getElementById("waContactsList"); if(!cont)return;
+  const conConvo=new Set(chatConvs.map(c=>c.usuario));
+  const sin=chatDir.filter(u=>!conConvo.has(u.nombre_usuario));
+  if(!chatConvs.length&&!sin.length){cont.innerHTML=`<div class="wa-empty-contacts">Sin contactos disponibles.</div>`;return;}
+  const item=(u,nombre,rol,extra)=>`<div class="wa-contact-item ${chatActivo===u?"active":""}" data-u="${esc(u)}" onclick="abrirConversacion(this.dataset.u)">
+    <div class="wa-contact-av" style="background:${chatColor(u)}">${chatIni(nombre)}</div>${extra}</div>`;
+  cont.innerHTML=chatConvs.map(c=>{
+    const i=chatInfo(c.usuario);
+    return item(c.usuario,i.nombre_completo,i.rol,`<div class="wa-contact-info"><div class="wa-contact-name">${esc(i.nombre_completo)}</div><div class="wa-contact-last">${esc(c.ultimo_mensaje||"")}</div></div>
+      <div class="wa-contact-meta">${c.ultimo_fecha?`<span class="wa-contact-time">${chatHora(c.ultimo_fecha)}</span>`:""}${c.no_leidos>0?`<span class="wa-unread-badge">${c.no_leidos}</span>`:""}</div>`);
+  }).join("")+sin.map(u=>item(u.nombre_usuario,u.nombre_completo,u.rol,`<div class="wa-contact-info"><div class="wa-contact-name">${esc(u.nombre_completo)}</div><div class="wa-contact-role">${esc(u.rol)}</div></div>`)).join("");
+}
+async function abrirConversacion(usuario){
+  chatActivo=usuario;
+  const i=chatInfo(usuario);
+  document.getElementById("waPanelEmpty").style.display="none";
+  document.getElementById("waConversation").style.display="flex";
+  document.getElementById("waPanelAv").textContent=chatIni(i.nombre_completo);
+  document.getElementById("waPanelAv").style.background=chatColor(usuario);
+  document.getElementById("waPanelName").textContent=i.nombre_completo;
+  document.getElementById("waPanelRole").textContent=i.rol||"";
+  document.getElementById("waWrap").classList.add("wa-show-panel");
+  renderContactosChat();
+  await cargarMensajesChat(usuario);
+  try{ await apiFetch(`/chat/leer/${encodeURIComponent(usuario)}`,{method:"PATCH"}); await refrescarConversaciones(); }catch{}
+}
+function cerrarConversacion(){
+  chatActivo=null;
+  document.getElementById("waWrap").classList.remove("wa-show-panel");
+  document.getElementById("waPanelEmpty").style.display="flex";
+  document.getElementById("waConversation").style.display="none";
+  renderContactosChat();
+}
+async function cargarMensajesChat(otro,silencioso){
+  const cont=document.getElementById("waMsgs");
+  if(!silencioso) cont.innerHTML=`<div class="wa-empty-contacts">Cargando…</div>`;
+  try{
+    const r=await apiFetch(`/chat/${encodeURIComponent(otro)}`); if(!r.ok)throw new Error();
+    const ms=await r.json();
+    if(!ms.length){cont.innerHTML=`<div class="wa-empty-contacts">Aún no hay mensajes. Escribe el primero 👋</div>`;return;}
+    const abajo=cont.scrollTop+cont.clientHeight>=cont.scrollHeight-40;
+    cont.innerHTML=ms.map(m=>`<div class="wa-msg ${m.de_usuario===adminActual?"mine":""}"><div class="wa-bubble-wrap"><div class="wa-bubble">${esc(m.mensaje)}</div><span class="wa-time">${chatHora(m.creado_en)}</span></div></div>`).join("");
+    if(abajo||!silencioso) cont.scrollTop=cont.scrollHeight;
+  }catch{ if(!silencioso) cont.innerHTML=`<div class="wa-empty-contacts">⚠ Error al cargar el chat</div>`; }
+}
+async function enviarMensajeChat(){
+  const input=document.getElementById("waInput"),btn=document.getElementById("waSendBtn");
+  const texto=input.value.trim(); if(!texto||!chatActivo)return;
+  input.disabled=true;btn.disabled=true;
+  try{
+    const r=await apiFetch("/chat",{method:"POST",body:JSON.stringify({para:chatActivo,mensaje:texto})});
+    if(!r.ok)throw new Error();
+    input.value="";
+    await cargarMensajesChat(chatActivo,true);
+    await refrescarConversaciones();
+  }catch{ showToast("No se pudo enviar el mensaje","err"); }
+  finally{ input.disabled=false;btn.disabled=false;input.focus(); }
+}
+function chatearConTecnico(u){ if(!u)return; switchView("chat"); abrirConversacion(u); }
 
    
 </script>
