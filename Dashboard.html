@@ -555,13 +555,9 @@ select optgroup{background:var(--surface-2);color:var(--ink-3);font-size:11px}
         <label class="form-label">Asignar técnico</label>
         <select id="asignadoA">
           <option value="Sin asignar">-- Asignar a técnico --</option>
-          <optgroup label="Técnicos TI">
-            <option value="Xavier">Xavier Rosario</option>
-            <option value="Juan">Juan Francisco Jimenez</option>
-            <option value="Yanna">Yanna Martínez</option>
-            <option value="Joel">Joel Holguin</option>
-          </optgroup>
-          <optgroup label="Analistas" id="analistaOptgroup"></optgroup>
+          <optgroup label="Técnicos TI" id="tecnicoOptgroup" hidden></optgroup>
+          <optgroup label="Administradores" id="adminOptgroup" hidden></optgroup>
+          <optgroup label="Analistas" id="analistaOptgroup" hidden></optgroup>
         </select>
         <div class="depto-info">
           🏢 <strong style="margin-right:4px">Departamento:</strong>
@@ -593,13 +589,9 @@ select optgroup{background:var(--surface-2);color:var(--ink-3);font-size:11px}
       <div class="filter-sep"></div>
       <select class="tecnico-select" id="tecnicoFilter" onchange="renderMisTickets()">
         <option value="">👤 Todos</option>
-        <optgroup label="Técnicos TI">
-          <option value="Xavier">Xavier Rosario</option>
-          <option value="Juan">Juan F. Jiménez</option>
-          <option value="Yanna">Yanna Martínez</option>
-          <option value="Joel">Joel Holguin</option>
-        </optgroup>
-        <optgroup label="Analistas" id="analistaFilterOptgroup"></optgroup>
+        <optgroup label="Técnicos TI" id="tecnicoFilterOptgroup" hidden></optgroup>
+        <optgroup label="Administradores" id="adminFilterOptgroup" hidden></optgroup>
+        <optgroup label="Analistas" id="analistaFilterOptgroup" hidden></optgroup>
         <option value="Sin asignar">Sin asignar</option>
       </select>
       <input class="search-input" id="srchTickets" placeholder="Buscar tickets…" oninput="renderMisTickets()">
@@ -894,7 +886,8 @@ const OPENROUTER_MODEL   = "cohere/north-mini-code:free";
 
 const VIEW_TITLES = { inicio:"Inicio", nuevo:"Nuevo Ticket", mistickets:"Mis Tickets", config:"Configuración" };
 
-let NOMBRES_TEC = { Xavier:"Xavier Rosario", Juan:"Juan Francisco Jiménez", Yanna:"Yanna Martínez", Joel:"Joel Holguin" };
+let NOMBRES_TEC = {};   // { nombre_usuario: nombre_completo } — se llena desde /usuarios
+let ROLES_TEC   = {};   // { nombre_usuario: "tecnico" | "admin" | "superadmin" | "analista" }
 
 let manualTI = [];
 
@@ -943,6 +936,10 @@ async function generarEstructuraTicket(problemaNatural) {
   const depto   = localStorage.getItem("depto") || "Sin departamento";
   const usuario = localStorage.getItem("nombreCompleto") || "Usuario";
 
+  const listaPersonal = Object.keys(NOMBRES_TEC)
+    .map(function(u){ return "- " + u + " (" + NOMBRES_TEC[u] + ", " + ROLES_TEC[u] + ")"; })
+    .join("\n") || "- (sin personal cargado)";
+
   const prompt = `Eres un sistema experto en soporte técnico IT. El usuario "${usuario}" del departamento "${depto}" reporta el siguiente problema:
 
 "${problemaNatural}"
@@ -954,7 +951,7 @@ Analiza el texto y genera un ticket de soporte bien estructurado. Responde ÚNIC
   "descripcion": "Descripción completa y profesional del problema. Incluye síntomas, posible impacto y contexto del usuario. 2-3 oraciones.",
   "urgencia": "critico|alto|medio|normal",
   "categoria": "hardware|software|red|acceso|impresora|correo|sistema|otro",
-  "tecnico_sugerido": "Xavier|Joel|Yanna|Juan|Sin asignar"
+  "tecnico_sugerido": "uno de los usuarios de la lista de personal, o Sin asignar"
 }
 
 Reglas de urgencia:
@@ -973,11 +970,8 @@ Reglas de categoría:
 - sistema: ERP, sistema empresarial, plataforma interna
 - otro: cualquier cosa que no encaje
 
-Reglas de técnico sugerido:
-- Xavier: problemas generales de hardware y red
-- Joel: software, sistemas operativos, correo
-- Yanna: impresoras, periféricos, acceso
-- Juan: problemas críticos, ERP, administración de sistemas
+Personal disponible (usa exactamente el usuario antes del paréntesis):
+${listaPersonal}
 - Sin asignar: si no hay suficiente contexto`;
 
   const response = await fetch(OPENROUTER_API_URL, {
@@ -1357,23 +1351,53 @@ function calcUrgencia(t) {
   return { level:"normal", label:"⚪ NORMAL", cls:"urg-normal", strip:"strip-normal" };
 }
 
-async function cargarAnalistas() {
+function normalizarRol(r) {
+  return (r || "").toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\s_-]/g, "");
+}
+
+async function cargarPersonal() {
+  const GRUPOS = {
+    tecnico:    ["tecnicoOptgroup",  "tecnicoFilterOptgroup"],
+    admin:      ["adminOptgroup",    "adminFilterOptgroup"],
+    superadmin: ["adminOptgroup",    "adminFilterOptgroup"],
+    analista:   ["analistaOptgroup", "analistaFilterOptgroup"]
+  };
   try {
     const r = await apiFetch("/usuarios");
     if (!r.ok) throw new Error("HTTP " + r.status);
     const data = await r.json();
     if (!Array.isArray(data)) return;
-    const analistas = data.filter(function(u){ return (u.rol||"").toLowerCase() === "analista"; });
-    if (!analistas.length) return;
-    analistas.forEach(function(u){ NOMBRES_TEC[u.nombre_usuario] = u.nombre_completo || u.nombre_usuario; });
-    const og1 = document.getElementById("analistaOptgroup");
-    const og2 = document.getElementById("analistaFilterOptgroup");
-    analistas.forEach(function(u) {
-      const nombre = u.nombre_completo || u.nombre_usuario;
-      if (og1) { const opt = document.createElement("option"); opt.value = u.nombre_usuario; opt.textContent = nombre; og1.appendChild(opt); }
-      if (og2) { const opt = document.createElement("option"); opt.value = u.nombre_usuario; opt.textContent = nombre; og2.appendChild(opt); }
+
+    const personal = data
+      .filter(function(u){ return GRUPOS[normalizarRol(u.rol)]; })
+      .sort(function(a,b){
+        return (a.nombre_completo || a.nombre_usuario || "").localeCompare(b.nombre_completo || b.nombre_usuario || "", "es");
+      });
+
+    NOMBRES_TEC = {}; ROLES_TEC = {};
+    Object.values(GRUPOS).flat().forEach(function(id){
+      const og = document.getElementById(id);
+      if (og) { og.innerHTML = ""; og.hidden = true; }
     });
-  } catch(e) { console.warn("Analistas no cargados (puede requerir permisos de admin):", e); }
+
+    personal.forEach(function(u) {
+      const rol    = normalizarRol(u.rol);
+      const nombre = u.nombre_completo || u.nombre_usuario;
+      NOMBRES_TEC[u.nombre_usuario] = nombre;
+      ROLES_TEC[u.nombre_usuario]   = rol;
+      GRUPOS[rol].forEach(function(id) {
+        const og = document.getElementById(id);
+        if (!og) return;
+        const opt = document.createElement("option");
+        opt.value = u.nombre_usuario;
+        opt.textContent = nombre + (rol === "superadmin" ? " (SuperAdmin)" : "");
+        og.appendChild(opt);
+        og.hidden = false;
+      });
+    });
+  } catch(e) { console.warn("Personal no cargado (¿/usuarios requiere permisos de admin?):", e); }
 }
 
 (function init() {
@@ -1406,7 +1430,7 @@ async function cargarAnalistas() {
   setInterval(updateClock, 1000);
 
   initChatbot();
-  cargarAnalistas().then(cargarManual).finally(function(){
+  cargarPersonal().then(cargarManual).finally(function(){
     recargarTickets().then(function(){ ctkIniciarPolling(); });
     iniciarAutoRefresh();
   });
@@ -1538,8 +1562,7 @@ let lista = [...todosTickets];
 function buildTicketCard(t, conBotonEliminar) {
   const ec  = t.estado === "Resuelto" ? "b-res" : t.estado === "En Proceso" ? "b-proc" : "b-pend";
   const urg = calcUrgencia(t);
-  const TECNICOS_FIJOS = ["Xavier","Juan","Yanna","Joel"];
-  const esAnalista     = t.asignado && !TECNICOS_FIJOS.includes(t.asignado) && t.asignado !== "Sin asignar";
+  const esAnalista     = ROLES_TEC[t.asignado] === "analista";
   const nombreAsignado = NOMBRES_TEC[t.asignado] || t.asignado || "Sin asignar";
   const badgeAsig = (t.asignado && t.asignado !== "Sin asignar")
     ? '<span class="badge ' + (esAnalista ? "b-analista" : "b-asignado") + '">' + (esAnalista ? "📊" : "👤") + " " + nombreAsignado + "</span>"
