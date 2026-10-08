@@ -627,6 +627,9 @@ body.light .wa-msgs{background:var(--bg)}
 @supports (padding:max(0px)){
   #nexoFab{bottom:max(24px,calc(14px + env(safe-area-inset-bottom)))}
 }
+body.on-chat #nexoFab,body.on-chat #nexoPanel{display:none}
+.wa-panel-role{text-transform:none}
+.wa-panel-role::first-letter{text-transform:uppercase}
 </style>
 </head>
 <body>
@@ -1448,6 +1451,7 @@ function switchView(v){
   const vt=document.getElementById("viewTitle"); if(vt) vt.textContent=VIEW_TITLES[v]||v;
   if(v==="usuarios") cargarUsuariosSheet();
    if(v==="chat") renderContactosChat();
+  document.body.classList.toggle("on-chat", v === "chat");
   if(isMobileLayout()) closeMobileSidebar();
   window.scrollTo(0,0);
 }
