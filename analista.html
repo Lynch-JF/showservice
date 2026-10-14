@@ -728,6 +728,8 @@ body.on-chat #nexoFab,body.on-chat #nexoPanel{display:none}
   <symbol id="i-store" viewBox="0 0 24 24"><path d="M3 9 4.5 4h15L21 9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v8h14v-8"/><path d="M10 20v-5h4v5"/></symbol>
   <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
   <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h10M18 18h2"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="16" cy="18" r="2"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.8-9.8"/><path d="m16 7 3 3"/><path d="m18.5 4.5 2 2"/></symbol>
   <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/></symbol>
   <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
   <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
@@ -774,6 +776,7 @@ body.on-chat #nexoFab,body.on-chat #nexoPanel{display:none}
   </div>
 
   <nav class="sb-nav" aria-label="Secciones">
+    <button type="button" class="nav-item" id="nav-volver-super" style="display:none" onclick="location.href='SuperUsuario.html'" title="Volver al panel superadmin"><span class="nav-icon"><svg class="ico"><use href="#i-back"/></svg></span><span class="nav-label">Volver a superadmin</span></button>
     <p class="sb-section">Mi trabajo</p>
     <button type="button" class="nav-item active" id="nav-asignados" onclick="switchView('asignados')" title="Asignados a mí"><span class="nav-icon"><svg class="ico"><use href="#i-inbox"/></svg></span><span class="nav-label">Asignados a mí</span><span class="nav-badge amber" id="nb-asignados" style="display:none">0</span></button>
     <button type="button" class="nav-item" id="nav-resueltos" onclick="switchView('resueltos')" title="Resueltos"><span class="nav-icon"><svg class="ico"><use href="#i-check-circle"/></svg></span><span class="nav-label" id="nav-resueltos-label">Mis resueltos</span><span class="nav-badge emerald" id="nb-resueltos" style="display:none">0</span></button>
@@ -784,9 +787,13 @@ body.on-chat #nexoFab,body.on-chat #nexoPanel{display:none}
 
     <p class="sb-section">Equipo</p>
     <button type="button" class="nav-item" id="nav-chat" onclick="switchView('chat')" title="Chat interno"><span class="nav-icon"><svg class="ico"><use href="#i-chat"/></svg></span><span class="nav-label">Chat interno</span><span class="nav-badge alert" id="nb-chat" style="display:none">0</span></button>
+    <button type="button" class="nav-item" id="nav-avisos" onclick="switchView('avisos')" title="Notificaciones"><span class="nav-icon"><svg class="ico"><use href="#i-bell"/></svg></span><span class="nav-label">Notificaciones</span><span class="nav-badge alert" id="nb-avisos" style="display:none">0</span></button>
 
     <p class="sb-section" id="sb-section-kpi" style="display:none">Tiendas</p>
     <button type="button" class="nav-item" id="nav-kpi" style="display:none" onclick="switchView('kpi')" title="Evaluación de tiendas"><span class="nav-icon"><svg class="ico"><use href="#i-clipboard"/></svg></span><span class="nav-label">Evaluación de tiendas</span></button>
+
+    <p class="sb-section">Cuenta</p>
+    <button type="button" class="nav-item" id="nav-pass" onclick="Cuenta.cambiarContrasena()" title="Cambiar contraseña"><span class="nav-icon"><svg class="ico"><use href="#i-key"/></svg></span><span class="nav-label">Cambiar contraseña</span></button>
   </nav>
 
   <div class="sb-footer">
@@ -916,6 +923,10 @@ body.on-chat #nexoFab,body.on-chat #nexoPanel{display:none}
   </div>
 
   <!-- ══ EVALUACIÓN DE TIENDAS (solo usuarios autorizados) ══ -->
+  <div id="view-avisos" class="view">
+    <div id="avisosList"></div>
+  </div>
+
   <div id="view-kpi" class="view">
     <div class="kpi-wizard">
       <div class="kpi-progress-label"><span id="kpiProgressLabel">Paso 1 de 4: Tienda</span><span id="kpiProgressPct">25%</span></div>
@@ -1013,6 +1024,7 @@ body.on-chat #nexoFab,body.on-chat #nexoPanel{display:none}
 <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="JS/avisos.js"></script>
 <script>
 /* ══════════════════════════════════════════════════════
    CONFIG — Backend (Railway + Supabase)
@@ -1097,7 +1109,7 @@ const ORDEN_URG = { critico:0, alto:1, medio:2, normal:3 };
 /* ══ SESIÓN / NAVEGACIÓN / TEMA ══ */
 function anLogout() { ["usuario","rol","depto","nombreCompleto","gmt_token"].forEach(k => localStorage.removeItem(k)); window.location.href = "index.html"; }
 function updateClock() { const e = document.getElementById("nowTime"); if (e) e.textContent = new Date().toLocaleString("es-DO", { weekday:"long", day:"numeric", month:"long", hour:"2-digit", minute:"2-digit" }); }
-const TITULOS = { asignados:"Asignados a mí", nueva:"Nueva petición", peticiones:"Mis peticiones", chat:"Chat interno", kpi:"Evaluación de tiendas" };
+const TITULOS = { asignados:"Asignados a mí", nueva:"Nueva petición", peticiones:"Mis peticiones", chat:"Chat interno", avisos:"Notificaciones", kpi:"Evaluación de tiendas" };
 function switchView(v) {
   document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
   document.getElementById("view-" + v)?.classList.add("active");
@@ -1197,6 +1209,7 @@ async function recargarTodo(manual) {
     lastSyncTs = Date.now();
     chequearNotificaciones(allTickets);
     actualizarBadges(); renderAsignados(); renderResueltos(); renderPeticiones(); actualizarEstadoSync();
+    if (avisos) avisos.actualizar();
     if (chatListo) renderContactosChat();
     if (manual) showToast("Datos actualizados", "ok");
   } catch (e) { if (e.message !== "Unauthorized") showToast("No se pudieron cargar los tickets. Revisa la conexión y pulsa Actualizar.", "err"); }
@@ -1293,9 +1306,11 @@ function buildTicketCard(t, mostrarAtendido) {
   if (esSupervisora() && t.estado !== "Resuelto" && analistasTesoreria().some(a => lower(a.nombre_usuario) === lower(t.asignado)))
     acciones += `<button class="btn-reassign" onclick="abrirReasignarModal(${idJs(t.id)})">${ico("swap")}Reasignar</button>`;
   if (t.estado !== "Resuelto") acciones += botonChat(t.usuario, "Escribir al usuario");
+  acciones += `<button class="btn-chat" onclick="verMensajesTicket(${idJs(t.id)})" title="Mensajes dentro del ticket">${ico("chat")}Mensajes del ticket</button>`;
 
   const div = document.createElement("div");
   div.className = "t-card";
+  div.dataset.tid = t.id;
   div.innerHTML = `
     <div class="urgency-bar ${urg.strip}"></div>
     <div class="t-top">
@@ -1486,14 +1501,14 @@ function renderPeticiones() {
   list.sort(porFechaDesc);
   document.getElementById("petCount").textContent = list.length;
   if (!list.length) { tbody.innerHTML = `<tr class="loading-row"><td colspan="7">${todas.length ? "Ninguna petición coincide con los filtros." : "Todavía no has enviado peticiones."}</td></tr>`; return; }
-  tbody.innerHTML = list.map(t => `<tr>
+  tbody.innerHTML = list.map(t => `<tr data-tid="${esc(t.id)}">
       <td class="t-sub">${esc(t.id)}</td>
       <td><div class="u-name ellip" title="${esc(t.titulo)}">${esc(t.titulo) || "Sin título"}</div></td>
       <td>${esc(nombreDe(t.asignado))}${t.recibido === "si" ? `<div class="t-sub">Recibido</div>` : ""}</td>
       <td class="t-sub">${esc((t.fecha || "").split(",")[0]) || "—"}</td>
       <td><span class="badge ${estadoCls(t.estado)}">${esc(t.estado)}</span></td>
       <td><div class="ellip t-sub" title="${esc(t.resolucion)}">${esc(t.resolucion) || "—"}</div></td>
-      <td>${botonChat(t.asignado, "Chat")}</td>
+      <td style="white-space:nowrap">${botonChat(t.asignado, "Chat")}<button class="btn-chat" onclick="verMensajesTicket(${idJs(t.id)})" title="Mensajes dentro del ticket">${ico("chat")}Mensajes</button></td>
     </tr>`).join("");
 }
 
@@ -1700,6 +1715,31 @@ function actualizarBadgeChat() {
   const n = chatConvs.reduce((a, c) => a + (c.no_leidos || 0), 0);
   const b = document.getElementById("nb-chat"); b.textContent = n; b.style.display = n > 0 ? "" : "none";
   const w = document.getElementById("waTotalUnread"); w.style.display = n > 0 ? "" : "none"; w.textContent = `${n} sin leer`;
+  if (avisos) avisos.actualizar();
+}
+
+/* ══ NOTIFICACIONES (vista) ══ */
+let avisos = null;
+function verMensajesTicket(id) {
+  const t = allTickets.find(x => String(x.id) === String(id)); if (!t) return;
+  Avisos.conversacion(t, () => avisos && avisos.refrescar());
+}
+function iniciarAvisos() {
+  avisos = Avisos.iniciar({
+    usuario: MI_USER, rol: localStorage.getItem("rol"),
+    lista: "avisosList", badges: ["nb-avisos"],
+    tickets: () => allTickets, chats: () => chatConvs,
+    nombre: u => nombreDe(u),
+    escritorio: false, // este panel ya avisa en el escritorio con la campana de arriba
+    vacio: "Aquí aparecen los tickets que te asignan, los cambios en tus peticiones y los mensajes nuevos.",
+    abrir: n => {
+      if (n.chat) { chatear(n.chat); return; }
+      const t = allTickets.find(x => String(x.id) === String(n.id)); if (!t) return;
+      if (n.tipo === "msg") { verMensajesTicket(t.id); return; }
+      switchView(esMio(t.usuario) && !esMio(t.asignado) ? "peticiones" : t.estado === "Resuelto" ? "resueltos" : "asignados");
+      Avisos.resaltar(t.id);
+    }
+  });
 }
 function renderContactosChat() {
   const cont = document.getElementById("waContactsList"); if (!cont) return;
@@ -1841,7 +1881,8 @@ async function sendChatMessage() {
 
 /* ══ ARRANQUE ══ */
 (function init() {
-  if (localStorage.getItem("rol") !== "analista" || !getToken()) { window.location.href = "index.html"; return; }
+  if (!["analista","superadmin"].includes(localStorage.getItem("rol")) || !getToken()) { window.location.href = "index.html"; return; }
+  if (localStorage.getItem("rol") === "superadmin") { const v = document.getElementById("nav-volver-super"); if (v) v.style.display = ""; }
   const n = MI_NOMBRE();
   document.getElementById("anAvatar").textContent = iniciales(n);
   document.getElementById("anName").textContent = n;
@@ -1870,6 +1911,7 @@ async function sendChatMessage() {
   setTimeout(() => { if (!chatOpen) document.getElementById("nexoFabBadge").classList.add("show"); }, 2000);
 
   cargarDirectorio().then(() => { renderAsignados(); renderResueltos(); renderPeticiones(); });
+  iniciarAvisos();
   recargarTodo().then(initChat);
   setInterval(() => { if (!document.hidden) recargarTodo(); }, 60000);
 })();

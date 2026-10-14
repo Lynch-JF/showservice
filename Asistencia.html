@@ -692,6 +692,8 @@ body.on-chat #nexoFab,body.on-chat #nexoPanel{display:none}
   <symbol id="i-store" viewBox="0 0 24 24"><path d="M3 9 4.5 4h15L21 9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v8h14v-8"/><path d="M10 20v-5h4v5"/></symbol>
   <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
   <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h10M18 18h2"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="16" cy="18" r="2"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></symbol>
   <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/></symbol>
   <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
   <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
@@ -736,6 +738,7 @@ body.on-chat #nexoFab,body.on-chat #nexoPanel{display:none}
   </div>
 
   <nav class="sb-nav" aria-label="Secciones">
+    <button type="button" class="nav-item" id="nav-volver-super" style="display:none" onclick="location.href='SuperUsuario.html'" title="Volver al panel superadmin"><span class="nav-icon"><svg class="ico"><use href="#i-back"/></svg></span><span class="nav-label">Volver a superadmin</span></button>
     <p class="sb-section">Mi trabajo</p>
     <button type="button" class="nav-item active" id="nav-dashboard" onclick="switchView('dashboard')" title="Resumen"><span class="nav-icon"><svg class="ico"><use href="#i-grid"/></svg></span><span class="nav-label">Resumen</span></button>
     <button type="button" class="nav-item" id="nav-tickets" onclick="switchView('tickets')" title="Mis tickets"><span class="nav-icon"><svg class="ico"><use href="#i-inbox"/></svg></span><span class="nav-label">Mis tickets</span><span class="nav-badge amber" id="nb-activos" style="display:none">0</span></button>
@@ -743,6 +746,7 @@ body.on-chat #nexoFab,body.on-chat #nexoPanel{display:none}
 
     <p class="sb-section">Equipo</p>
     <button type="button" class="nav-item" id="nav-chat" onclick="switchView('chat')" title="Chat interno"><span class="nav-icon"><svg class="ico"><use href="#i-chat"/></svg></span><span class="nav-label">Chat interno</span><span class="nav-badge alert" id="nb-chat" style="display:none">0</span></button>
+    <button type="button" class="nav-item" id="nav-avisos" onclick="switchView('avisos')" title="Notificaciones"><span class="nav-icon"><svg class="ico"><use href="#i-bell"/></svg></span><span class="nav-label">Notificaciones</span><span class="nav-badge alert" id="nb-avisos" style="display:none">0</span></button>
     <button type="button" class="nav-item" id="nav-reportes" onclick="switchView('reportes')" title="Mis reportes"><span class="nav-icon"><svg class="ico"><use href="#i-chart"/></svg></span><span class="nav-label">Mis reportes</span></button>
 
     <p class="sb-section">Cuenta</p>
@@ -934,6 +938,10 @@ body.on-chat #nexoFab,body.on-chat #nexoPanel{display:none}
   </div>
 
   <!-- ══ CONFIGURACIÓN ══ -->
+  <div id="view-avisos" class="view">
+    <div id="avisosList"></div>
+  </div>
+
   <div id="view-config" class="view">
     <div class="profile-banner">
       <div class="profile-av" id="cfgAvatarBig">--</div>
@@ -1056,6 +1064,7 @@ body.on-chat #nexoFab,body.on-chat #nexoPanel{display:none}
 
 <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
 
+<script src="JS/avisos.js"></script>
 <script>
 /* ══════════════════════════════════════════════════════
    CONFIG — Backend (Railway + Supabase)
@@ -1146,6 +1155,7 @@ let allTickets = [], misTickets = [];
 let pendingResolveId = null, autoRefreshTimer = null, urgKanbanFilter = "todos";
 let repInited = false, repMes = new Date().getMonth(), repAnio = new Date().getFullYear(), repBarChart = null;
 let lastSyncTs = 0;
+let avisos = null;
 
 /* ══ SESIÓN / NAVEGACIÓN ══ */
 function logout() {
@@ -1157,7 +1167,7 @@ function updateClock() {
   const e = document.getElementById("clockEl");
   if (e) e.textContent = new Date().toLocaleString("es-DO", { weekday:"long", day:"numeric", month:"long", hour:"2-digit", minute:"2-digit" });
 }
-const VIEW_TITLES = { dashboard:"Resumen", tickets:"Mis tickets", resueltos:"Mis tickets resueltos", chat:"Chat interno", reportes:"Mis reportes", config:"Configuración" };
+const VIEW_TITLES = { dashboard:"Resumen", tickets:"Mis tickets", resueltos:"Mis tickets resueltos", chat:"Chat interno", avisos:"Notificaciones", reportes:"Mis reportes", config:"Configuración" };
 function switchView(v) {
   document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
   document.getElementById("view-" + v)?.classList.add("active");
@@ -1262,6 +1272,7 @@ function renderTodo() {
   if (repInited) renderReportes();
   if (document.getElementById("view-config").classList.contains("active")) renderConfigView();
   if (chatListo) renderContactosChat();
+  if (avisos) avisos.actualizar();
 }
 function actualizarNavBadges() {
   const set = (id, n) => { const el = document.getElementById(id); if (!el) return; el.textContent = n; el.style.display = n > 0 ? "" : "none"; };
@@ -1370,7 +1381,8 @@ function buildTicketCard(t) {
   if (pend) acciones += `<button class="btn-proc" onclick="cambiarEstado(${idJs(t.id)},'En Proceso')">${ico("loader")}Pasar a en proceso</button>`;
   acciones += `<button class="btn-resolve" onclick="abrirResModal(${idJs(t.id)})">${ico("check-circle")}Resolver</button>`;
   acciones += botonChat(t.usuario, "Escribir al usuario");
-  return `<div class="t-card">
+  acciones += `<button class="btn-chat" onclick="verMensajesTicket(${idJs(t.id)})" title="Mensajes dentro del ticket">${ico("chat")}Mensajes del ticket</button>`;
+  return `<div class="t-card" data-tid="${esc(t.id)}">
     <div class="urgency-bar ${urg.strip}"></div>
     <div class="t-top">
       <div class="t-head"><div class="t-id">#${esc(t.id)}</div><div class="t-title">${esc(t.titulo) || "Sin título"}</div></div>
@@ -1382,6 +1394,11 @@ function buildTicketCard(t) {
     <div class="t-bottom"><div class="t-assigned">Abierto por <strong>${esc(t.usuario) || "—"}</strong></div><div class="t-date">${ico("calendar")}${esc((t.fecha || "").split(",")[0])}</div></div>
     <div class="t-actions">${acciones}</div>
   </div>`;
+}
+
+function verMensajesTicket(id) {
+  const t = allTickets.find(x => String(x.id) === String(id)); if (!t) return;
+  Avisos.conversacion(t, () => avisos && avisos.refrescar());
 }
 
 /* ══ CAMBIOS DE ESTADO (siempre descartan la copia local) ══ */
@@ -1414,7 +1431,7 @@ function renderResueltos() {
   document.getElementById("resCount").textContent = lista.length;
   const grid = document.getElementById("resGrid");
   if (!lista.length) { grid.innerHTML = `<div class="empty-state"><div class="empty-icon">${ico("check-circle")}</div><p>${hayResueltos ? "Ningún ticket resuelto coincide con los filtros." : "Todavía no has resuelto tickets."}</p></div>`; return; }
-  grid.innerHTML = lista.map(t => `<div class="t-card">
+  grid.innerHTML = lista.map(t => `<div class="t-card" data-tid="${esc(t.id)}">
       <div class="t-top"><div class="t-head"><div class="t-id">#${esc(t.id)}</div><div class="t-title">${esc(t.titulo) || "Sin título"}</div></div><div class="t-status-col"><span class="badge b-res">Resuelto</span></div></div>
       <div class="t-meta"><span class="badge b-depto">${esc(t.depto) || "Sin departamento"}</span>${t.usuario ? `<span class="badge b-user">${ico("user")}${esc(t.usuario)}</span>` : ""}</div>
       ${t.resolucion ? `<div class="t-resolution">${esc(t.resolucion)}<small>${t.participantes ? "Con " + esc(t.participantes) + ". " : ""}${t.fecha_resuelto ? "Resuelto el " + esc(t.fecha_resuelto.split(",")[0]) : ""}</small></div>` : ""}
@@ -1720,6 +1737,7 @@ function actualizarBadgeChat() {
   const n = chatConvs.reduce((a,c) => a + (c.no_leidos || 0), 0);
   const b = document.getElementById("nb-chat"); if (b) { b.textContent = n; b.style.display = n > 0 ? "" : "none"; }
   const w = document.getElementById("waTotalUnread"); if (w) { w.style.display = n > 0 ? "" : "none"; w.textContent = plural(n, "sin leer", "sin leer"); }
+  if (avisos) avisos.actualizar();
 }
 function renderContactosChat() {
   const cont = document.getElementById("waContactsList"); if (!cont) return;
@@ -1893,6 +1911,7 @@ async function nexoSendMessage() {
   if (localStorage.getItem("gmtickets_theme") === "light") document.body.classList.add("light");
   if (localStorage.getItem("tecSidebarCollapsed") === "1") { document.getElementById("tecSidebar").classList.add("collapsed"); document.getElementById("tecMain").classList.add("expanded"); }
   pintarTema(); cargarPrefs(); pintarIdentidad();
+  if (localStorage.getItem("rol") === "superadmin") { const v = document.getElementById("nav-volver-super"); if (v) v.style.display = ""; }
   updateClock(); setInterval(updateClock, 15000);
   setInterval(actualizarEstadoCache, 30000);
 
@@ -1915,6 +1934,19 @@ async function nexoSendMessage() {
   recargar(false).then(() => { if (chatListo) renderContactosChat(); });
   iniciarAutoRefresh();
   nexoInit();
+  avisos = Avisos.iniciar({
+    usuario: MI_USER, rol,
+    lista: "avisosList", badges: ["nb-avisos"],
+    tickets: () => allTickets, chats: () => chatConvs,
+    nombre: u => chatInfo(u).nombre_completo,
+    abrir: n => {
+      if (n.chat) { chatear(n.chat); return; }
+      const t = allTickets.find(x => String(x.id) === String(n.id)); if (!t) return;
+      if (n.tipo === "msg") { Avisos.conversacion(t, () => avisos.refrescar()); return; }
+      switchView(t.estado === "Resuelto" ? "resueltos" : "tickets");
+      Avisos.resaltar(t.id);
+    }
+  });
   initChat();
 })();
 </script>
