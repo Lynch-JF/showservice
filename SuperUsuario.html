@@ -1102,6 +1102,7 @@ body:not(.light) .toast.ok .ico{color:#12875d}
         </div></div>
       </div>
     </div>
+    <div id="cfg-respaldo"></div>
   </section>
 
   </div>
@@ -2847,6 +2848,17 @@ function init(){
 }
 if(SESION_OK) init();
 
+</script>
+<!-- Respaldo completo de la base de datos (solo superadmin y admin; el backend también lo exige) -->
+<script src="JS/respaldo-ui.js"></script>
+<script>
+  RespaldoUI.montar(document.getElementById('cfg-respaldo'), {
+    api: ((typeof API_BASE !== 'undefined' && API_BASE) || window.API_BASE || 'https://gm-tickets-backend-production.up.railway.app/api') + '/respaldo',
+    token: () => localStorage.getItem('gmt_token') || '',
+    rol: () => localStorage.getItem('rol') || '',
+    roles: ['superadmin', 'admin'],
+    prefijo: 'gm-tickets',
+  });
 </script>
 </body>
 </html>

@@ -1106,6 +1106,7 @@ body.on-chat #nexoFab,body.on-chat #nexoPanel{display:none}
         <div class="danger-zone-row"><div><div class="danger-zone-row-title">Borrar todos los datos locales</div><div class="danger-zone-row-sub">Elimina todo lo guardado en este navegador y cierra la sesión.</div></div><button class="btn-danger-full" onclick="resetSistemaCompleto()">Borrar todo</button></div>
       </div>
     </div>
+    <div id="cfg-respaldo"></div>
   </div>
 
 </main>
@@ -2685,6 +2686,17 @@ async function enviarMensajeChat(){
 function chatearConTecnico(u){ if(!u)return; switchView("chat"); abrirConversacion(u); }
 
    
+</script>
+<!-- Respaldo completo de la base de datos (solo superadmin y admin; el backend también lo exige) -->
+<script src="JS/respaldo-ui.js"></script>
+<script>
+  RespaldoUI.montar(document.getElementById('cfg-respaldo'), {
+    api: ((typeof API_BASE !== 'undefined' && API_BASE) || window.API_BASE || 'https://gm-tickets-backend-production.up.railway.app/api') + '/respaldo',
+    token: () => localStorage.getItem('gmt_token') || '',
+    rol: () => localStorage.getItem('rol') || '',
+    roles: ['superadmin', 'admin'],
+    prefijo: 'gm-tickets',
+  });
 </script>
 </body>
 </html>
